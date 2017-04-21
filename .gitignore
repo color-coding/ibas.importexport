@@ -13,10 +13,15 @@
 hs_err_pid*
 
 # ibas packages
-ibas.importexport.service/src/main/webapp/3rdparty/
+*/src/main/webapp/3rdparty/
 
-# logs
+# log file
 *_log_*.txt
 
-# release
+# release folder
 /release/
+/.vs/
+/.metadata/
+/.recommenders/
+/RemoteSystemsTempFiles/
+/Servers/
