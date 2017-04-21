@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Domain>
+<Domain Name="ImportExport" ShortName="IE">
+  <Model Name="DataExportTemplate" Description="数据导出模板" ModelType="Simple" Mapped="${Company}_IE_ODET">
+    <Property Name="ObjectKey" Description="编号" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="ObjectKey" PrimaryKey="Yes"/>
+    <Property Name="ObjectCode" Description="类型" DataType="Alphanumeric" DataSubType="Default" EditSize="30" Mapped="Object"/>
+    <Property Name="LogInst" Description="实例号（版本）" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="LogInst"/>
+    <Property Name="DataSource" Description="数据源" DataType="Alphanumeric" DataSubType="Default" EditSize="8" Mapped="DataSource"/>
+    <Property Name="Series" Description="服务系列" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="Series"/>
+    <Property Name="CreateDate" Description="创建日期" DataType="Date" DataSubType="Default" EditSize="8" Mapped="CreateDate"/>
+    <Property Name="CreateTime" Description="创建时间" DataType="Date" DataSubType="Time" EditSize="8" Mapped="CreateTime"/>
+    <Property Name="UpdateDate" Description="修改日期" DataType="Date" DataSubType="Default" EditSize="8" Mapped="UpdateDate"/>
+    <Property Name="UpdateTime" Description="修改时间" DataType="Date" DataSubType="Time" EditSize="8" Mapped="UpdateTime"/>
+    <Property Name="CreateUserSign" Description="创建用户" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="Creator"/>
+    <Property Name="UpdateUserSign" Description="修改用户" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="Updator"/>
+    <Property Name="CreateActionId" Description="创建动作标识" DataType="Alphanumeric" DataSubType="Default" EditSize="36" Mapped="CreateActId"/>
+    <Property Name="UpdateActionId" Description="更新动作标识" DataType="Alphanumeric" DataSubType="Default" EditSize="36" Mapped="UpdateActId"/>
+    <Property Name="DataOwner" Description="数据所有者" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="DataOwner"/>
+    <Property Name="TeamMembers" Description="团队成员" DataType="Alphanumeric" DataSubType="Default" EditSize="100" Mapped="TeamMembers"/>
+    <Property Name="Organization" Description="数据所属组织" DataType="Alphanumeric" DataSubType="Default" EditSize="8" Mapped="OrgCode"/>
+    <Property Name="ApprovalStatus" Description="审批状态" DataType="Alphanumeric" DataSubType="Default" EditSize="1" DeclaredType="emApprovalStatus" Mapped="ApvlStatus"/>
+    <Property Name="Reference1" Description="参考1" DataType="Alphanumeric" DataSubType="Default" EditSize="30" Mapped="Ref1"/>
+    <Property Name="Reference2" Description="参考2" DataType="Alphanumeric" DataSubType="Default" EditSize="50" Mapped="Ref2"/>
+    <Property Name="Remarks" Description="备注" DataType="Memo" DataSubType="Default" EditSize="8" Mapped="Remarks"/>
+    <Property Name="Code" Description="编码" DataType="Alphanumeric" DataSubType="Default" EditSize="8" Mapped="Code" UniqueKey="Yes"/>
+    <Property Name="Name" Description="名称" DataType="Alphanumeric" DataSubType="Default" EditSize="30" Mapped="Name"/>
+    <Property Name="Notes" Description="注释" DataType="Alphanumeric" DataSubType="Default" EditSize="100" Mapped="Notes"/>
+    <Property Name="Width" Description="输出宽度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="Width"/>
+    <Property Name="Height" Description="输出高度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="Height"/>
+    <Property Name="LeftMargin" Description="左边距" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="LMargin"/>
+    <Property Name="RightMargin" Description="右边距" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="RMargin"/>
+    <Property Name="TopMargin" Description="上边距" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="TMargin"/>
+    <Property Name="BottomMargin" Description="下边距" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="BMargin"/>
+    <Property Name="CanChange" Description="是否可以修改" DataType="Alphanumeric" DataSubType="Default" EditSize="1" DeclaredType="emYesNo" Mapped="CanChange"/>
+    <Property Name="PaperSize" Description="纸张大小" DataType="Alphanumeric" DataSubType="Default" EditSize="8" DeclaredType="emPaperSize" Mapped="PaperSize"/>
+    <Property Name="LanguageCode" Description="语言编码" DataType="Alphanumeric" DataSubType="Default" EditSize="10" Mapped="Language"/>
+    <Property Name="Category" Description="类型" DataType="Alphanumeric" DataSubType="Default" EditSize="6" Mapped="Category"/>
+    <Property Name="PageHeaderLeft" Description="页眉-左坐标" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="PHLeft"/>
+    <Property Name="PageHeaderTop" Description="页眉-上坐标" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="PHTop"/>
+    <Property Name="PageHeaderWidth" Description="页眉-宽度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="PHWidth"/>
+    <Property Name="PageHeaderHeight" Description="页眉-高度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="PHHeight"/>
+    <Property Name="StartOfSectionLeft" Description="开始部分-左坐标" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="SSLeft"/>
+    <Property Name="StartOfSectionTop" Description="开始部分-上坐标" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="SSTop"/>
+    <Property Name="StartOfSectionWidth" Description="开始部分-宽度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="SSWidth"/>
+    <Property Name="StartOfSectionHeight" Description="开始部分-高度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="SSHeight"/>
+    <Property Name="RepetitiveAreaHeaderLeft" Description="重复区域头-左坐标" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="RAHLeft"/>
+    <Property Name="RepetitiveAreaHeaderTop" Description="重复区域头-上坐标" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="RAHTop"/>
+    <Property Name="RepetitiveAreaHeaderWidth" Description="重复区域头-宽度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="RAHWidth"/>
+    <Property Name="RepetitiveAreaHeaderHeight" Description="重复区域头-高度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="RAHHeight"/>
+    <Property Name="RepetitiveAreaLeft" Description="重复区域-左坐标" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="RALeft"/>
+    <Property Name="RepetitiveAreaTop" Description="重复区域-上坐标" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="RATop"/>
+    <Property Name="RepetitiveAreaWidth" Description="重复区域-宽度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="RAWidth"/>
+    <Property Name="RepetitiveAreaHeight" Description="重复区域-高度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="RAHeight"/>
+    <Property Name="RepetitiveAreaFooterLeft" Description="重复区域脚-左坐标" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="RAFLeft"/>
+    <Property Name="RepetitiveAreaFooterTop" Description="重复区域脚-上坐标" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="RAFTop"/>
+    <Property Name="RepetitiveAreaFooterWidth" Description="重复区域脚-宽度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="RAFWidth"/>
+    <Property Name="RepetitiveAreaFooterHeight" Description="重复区域脚-高度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="RAFHeight"/>
+    <Property Name="EndOfSectionLeft" Description="结束部分-左坐标" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="ESLeft"/>
+    <Property Name="EndOfSectionTop" Description="结束部分-上坐标" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="ESTop"/>
+    <Property Name="EndOfSectionWidth" Description="结束部分-宽度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="ESWidth"/>
+    <Property Name="EndOfSectionHeight" Description="结束部分-高度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="ESHeight"/>
+    <Property Name="PageFooterLeft" Description="页脚-左坐标" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="PFLeft"/>
+    <Property Name="PageFooterTop" Description="页脚-上坐标" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="PFTop"/>
+    <Property Name="PageFooterWidth" Description="页脚-宽度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="PFWidth"/>
+    <Property Name="PageFooterHeight" Description="页脚-高度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="PFHeight"/>
+    <Property Name="AreaMargin" Description="区域间隔" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="AreaMargin"/>
+    <Property Name="BOCode" Description="业务对象编码" DataType="Alphanumeric" DataSubType="Default" EditSize="30" Mapped="BOCode"/>
+    <Property Name="Plantform" Description="平台简码" DataType="Alphanumeric" DataSubType="Default" EditSize="15" Mapped="Plantform"/>
+    <Property Name="CopyNumber" Description="输出份数" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="CopyNum"/>
+  </Model>
+  <Model Name="DataExportTemplateItem" Description="数据导出模板-项" ModelType="SimpleLine" Mapped="${Company}_IE_DET1">
+    <Property Name="ObjectKey" Description="编号" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="ObjectKey" PrimaryKey="Yes"/>
+    <Property Name="ObjectCode" Description="类型" DataType="Alphanumeric" DataSubType="Default" EditSize="30" Mapped="Object"/>
+    <Property Name="LineId" Description="行号" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="LineId" PrimaryKey="Yes"/>
+    <Property Name="DataSource" Description="数据源" DataType="Alphanumeric" DataSubType="Default" EditSize="8" Mapped="DataSource"/>
+    <Property Name="LogInst" Description="实例号（版本）" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="LogInst"/>
+    <Property Name="CreateDate" Description="创建日期" DataType="Date" DataSubType="Default" EditSize="8" Mapped="CreateDate"/>
+    <Property Name="CreateTime" Description="创建时间" DataType="Date" DataSubType="Time" EditSize="8" Mapped="CreateTime"/>
+    <Property Name="UpdateDate" Description="修改日期" DataType="Date" DataSubType="Default" EditSize="8" Mapped="UpdateDate"/>
+    <Property Name="UpdateTime" Description="修改时间" DataType="Date" DataSubType="Time" EditSize="8" Mapped="UpdateTime"/>
+    <Property Name="CreateUserSign" Description="创建用户" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="Creator"/>
+    <Property Name="UpdateUserSign" Description="修改用户" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="Updator"/>
+    <Property Name="CreateActionId" Description="创建动作标识" DataType="Alphanumeric" DataSubType="Default" EditSize="36" Mapped="CreateActId"/>
+    <Property Name="UpdateActionId" Description="更新动作标识" DataType="Alphanumeric" DataSubType="Default" EditSize="36" Mapped="UpdateActId"/>
+    <Property Name="Reference1" Description="参考1" DataType="Alphanumeric" DataSubType="Default" EditSize="30" Mapped="Ref1"/>
+    <Property Name="Reference2" Description="参考2" DataType="Alphanumeric" DataSubType="Default" EditSize="50" Mapped="Ref2"/>
+    <Property Name="AreaType" Description="区域类型" DataType="Alphanumeric" DataSubType="Default" EditSize="6" DeclaredType="emAreaType" Mapped="AreaType"/>
+    <Property Name="ItemUID" Description="项标识" DataType="Alphanumeric" DataSubType="Default" EditSize="8" Mapped="ItemUID"/>
+    <Property Name="ItemLeft" Description="项左坐标" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="ItemLeft"/>
+    <Property Name="ItemTop" Description="项上坐标" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="ItemTop"/>
+    <Property Name="SourceType" Description="数据源" DataType="Alphanumeric" DataSubType="Default" EditSize="2" DeclaredType="emDataSourceType" Mapped="SourceType"/>
+    <Property Name="ItemString" Description="项字符串" DataType="Alphanumeric" DataSubType="Default" EditSize="100" Mapped="ItemString"/>
+    <Property Name="ItemVisible" Description="项是否可见" DataType="Alphanumeric" DataSubType="Default" EditSize="1" DeclaredType="emYesNo" Mapped="ItemVisible"/>
+    <Property Name="Width" Description="项宽度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="Width"/>
+    <Property Name="Height" Description="项高度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="Height"/>
+    <Property Name="LeftMargin" Description="左边距" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="LMargin"/>
+    <Property Name="RightMargin" Description="右边距" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="RMargin"/>
+    <Property Name="TopMargin" Description="上边距" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="TMargin"/>
+    <Property Name="BottomMargin" Description="下边距" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="BMargin"/>
+    <Property Name="LeftLine" Description="左线长度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="LeftLine"/>
+    <Property Name="RightLine" Description="右线长度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="RightLine"/>
+    <Property Name="TopLine" Description="上线长度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="TopLine"/>
+    <Property Name="BottomLine" Description="下线长度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="BottomLine"/>
+    <Property Name="FontName" Description="字体名称" DataType="Alphanumeric" DataSubType="Default" EditSize="50" Mapped="FontName"/>
+    <Property Name="FontSize" Description="字体大小" DataType="Numeric" DataSubType="Default" EditSize="10" Mapped="FontSize"/>
+    <Property Name="TextStyle" Description="文本样式" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="TextStyle"/>
+    <Property Name="HorizontalJustification" Description="水平对齐方式" DataType="Alphanumeric" DataSubType="Default" EditSize="3" DeclaredType="emHorizontalJustification" Mapped="XJustific"/>
+    <Property Name="VerticalJustification" Description="竖直对齐方式" DataType="Alphanumeric" DataSubType="Default" EditSize="3" DeclaredType="emVerticalJustification" Mapped="YJustific"/>
+    <Property Name="Background_Red" Description="背景色-红" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="BGRed"/>
+    <Property Name="Background_Green" Description="背景色-绿" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="BGGreen"/>
+    <Property Name="Background_Blue" Description="背景色-蓝" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="BGBlue"/>
+    <Property Name="Foreground_Red" Description="前景色-红" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="FGRed"/>
+    <Property Name="Foreground_Green" Description="前景色-绿" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="FGGreen"/>
+    <Property Name="Foreground_Blue" Description="前景色-蓝" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="FGBlue"/>
+    <Property Name="Marker_Red" Description="高亮显示色-红" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="MrkrRed"/>
+    <Property Name="Marker_Green" Description="高亮显示色-绿" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="MrkrGreen"/>
+    <Property Name="Marker_Blue" Description="高亮显示色-蓝" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="MrkrBlue"/>
+    <Property Name="Border_Red" Description="框架色-红" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="BrdrRed"/>
+    <Property Name="Border_Green" Description="框架色-绿" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="BrdrGreen"/>
+    <Property Name="Border_Blue" Description="框架色-蓝" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="BrdrBlue"/>
+    <Property Name="ValFormat" Description="显示格式" DataType="Alphanumeric" DataSubType="Default" EditSize="50" Mapped="ValFormat"/>
+  </Model>
+  <BusinessObject MappedModel="DataExportTemplate" ShortName="${Company}_IE_EXPORTTEMPLATE">
+    <RelatedBO Relation="OneToMany" MappedModel="DataExportTemplateItem"/>
+  </BusinessObject>
+</Domain>

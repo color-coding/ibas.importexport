@@ -1,0 +1,10 @@
+{
+  "importexport": "数据导入&导出",
+  "importexport_icon": "sap-icon://share",
+  "importexport_func_dataexporttemplate": "数据导出模板",
+  "importexport_app_dataexporttemplate_list": "数据导出模板列表",
+  "importexport_app_dataexporttemplate_choose": "数据导出模板选择",
+  "importexport_app_dataexporttemplate_view": "数据导出模板查看",
+  "importexport_app_dataexporttemplate_edit": "数据导出模板编辑",
+  "importexport_closing_delimiter": "----结束----"
+}
