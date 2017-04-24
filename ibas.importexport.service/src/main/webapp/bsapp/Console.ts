@@ -7,7 +7,15 @@
  */
 
 import * as ibas from "ibas/index";
-import { DataExportTemplateFunc, DataExportTemplateChooseServiceMapping, DataExportTemplateLinkServiceMapping } from "./dataexporttemplate/index";
+import {
+    DataExportTemplateFunc,
+    DataExportTemplateChooseServiceMapping,
+    DataExportTemplateLinkServiceMapping
+} from "./dataexporttemplate/index";
+import {
+    DataExportServiceMapping,
+    DataListExportServiceMapping,
+} from "./dataexport/index";
 
 /** 模块控制台 */
 export class Console extends ibas.ModuleConsole {
@@ -35,9 +43,11 @@ export class Console extends ibas.ModuleConsole {
         // 注册服务应用
         this.register(new DataExportTemplateChooseServiceMapping());
         this.register(new DataExportTemplateLinkServiceMapping());
+        this.register(new DataExportServiceMapping());
+        this.register(new DataListExportServiceMapping());
         // 注册常驻应用
 
-        
+
     }
     /** 运行 */
     run(): void {

@@ -6,5 +6,14 @@
   "importexport_app_dataexporttemplate_choose": "数据导出模板选择",
   "importexport_app_dataexporttemplate_view": "数据导出模板查看",
   "importexport_app_dataexporttemplate_edit": "数据导出模板编辑",
+  "importexport_service_dataexport": "数据导出服务",
+  "importexpor_export": "导出",
+  "importexpor_export_mode_name": "名称",
+  "importexpor_export_mode_description": "描述",
+  "importexport_export_icon": "sap-icon://outbox",
+  "importexport_import_icon": "sap-icon://inbox",
+  "importexport_export_json": "导出为json数据",
+  "importexport_export_result_can_not_showed": "[{0}]的导出结果无法显示",
+  "importexport_export_is_running": "正在执行[{0}]，请稍后",
   "importexport_closing_delimiter": "----结束----"
 }
