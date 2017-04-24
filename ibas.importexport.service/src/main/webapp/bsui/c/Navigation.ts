@@ -11,6 +11,8 @@ import * as dataexporttemplateApps from "../../bsapp/dataexporttemplate/index";
 import * as dataexporttemplateViews from "./dataexporttemplate/index";
 import * as dataexportApps from "../../bsapp/dataexport/index";
 import * as dataexportViews from "./dataexport/index";
+import * as dataimportApps from "../../bsapp/dataimport/index";
+import * as dataimportViews from "./dataimport/index";
 
 /**
  * 视图导航
@@ -38,6 +40,9 @@ export default class Navigation extends ibas.ViewNavigation {
                 break;
             case dataexportApps.DataExportService.APPLICATION_ID:
                 view = new dataexportViews.DataExportView();
+                break;
+            case dataimportApps.DataImportApp.APPLICATION_ID:
+                view = new dataimportViews.DataImportView();
                 break;
             default:
                 break;

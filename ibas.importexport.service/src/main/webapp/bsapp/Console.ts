@@ -16,6 +16,9 @@ import {
     DataExportServiceMapping,
     DataListExportServiceMapping,
 } from "./dataexport/index";
+import {
+    DataImportFunc
+} from "./dataimport/index";
 
 /** 模块控制台 */
 export class Console extends ibas.ModuleConsole {
@@ -40,6 +43,7 @@ export class Console extends ibas.ModuleConsole {
     protected registers(): void {
         // 注册功能
         this.register(new DataExportTemplateFunc());
+        this.register(new DataImportFunc());
         // 注册服务应用
         this.register(new DataExportTemplateChooseServiceMapping());
         this.register(new DataExportTemplateLinkServiceMapping());

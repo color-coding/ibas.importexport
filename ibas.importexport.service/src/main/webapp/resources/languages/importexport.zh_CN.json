@@ -15,5 +15,10 @@
   "importexport_export_json": "导出为json数据",
   "importexport_export_result_can_not_showed": "[{0}]的导出结果无法显示",
   "importexport_export_is_running": "正在执行[{0}]，请稍后",
+  "importexport_func_dataimport": "数据导入",
+  "importexport_app_dataimport": "数据导入",
+  "importexpor_import": "导入",
+  "importexpor_import_data": "导入数据",
+  "importexpor_import_result": "导入结果",
   "importexport_closing_delimiter": "----结束----"
 }
