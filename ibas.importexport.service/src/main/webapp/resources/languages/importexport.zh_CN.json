@@ -23,5 +23,7 @@
   "importexpor_businessobject_key": "对象标记",
   "importexpor_please_choose_file": "请选择导入的文件",
   "importexpor_network_error": "出现网络错误，请稍后重试",
+  "importexpor_importing": "正在导入请稍后",
+  "importexpor_import_done": "导入完成",
   "importexport_closing_delimiter": "----结束----"
 }

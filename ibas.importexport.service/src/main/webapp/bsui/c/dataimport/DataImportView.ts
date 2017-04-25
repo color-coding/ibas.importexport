@@ -39,6 +39,9 @@ export class DataImportView extends ibas.BOView implements IDataImportView {
             },
             uploadComplete(event: any): void {
                 // 上传文件完成
+                that.application.viewShower.proceeding(
+                    that, ibas.emMessageType.SUCCESS, ibas.i18n.prop("importexpor_import_done"));
+                that.application.viewShower.busy(that, false, null);
                 if (event.getParameters().status === 200) {
                     // 上传成功，把返回的消息提交
                     that.fireViewEvents(that.importCompletedEvent, event.getParameters().responseRaw);
@@ -95,6 +98,9 @@ export class DataImportView extends ibas.BOView implements IDataImportView {
                         type: sap.m.ButtonType.Transparent,
                         icon: "sap-icon://inbox",
                         press: function (): void {
+                            that.application.viewShower.proceeding(
+                                that, ibas.emMessageType.WARNING, ibas.i18n.prop("importexpor_importing"));
+                            that.application.viewShower.busy(that, true, null);
                             that.uploader.upload();
                         }
                     })

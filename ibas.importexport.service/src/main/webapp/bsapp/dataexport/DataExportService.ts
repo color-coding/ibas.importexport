@@ -68,11 +68,11 @@ export class DataExportService extends ibas.Application<IDataExportView> impleme
                         }
                     }
                 });
+                this.close();
+                this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("importexport_export_is_running", mode.description));
             } else {
                 this.proceeding(ibas.emMessageType.WARNING, ibas.i18n.prop("msg_invalid_parameter", "mode"));
             }
-            this.close();
-            this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("importexport_export_is_running", mode.description));
         } catch (error) {
             this.messages(error);
         }

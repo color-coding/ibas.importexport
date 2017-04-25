@@ -11,6 +11,6 @@
     "name": "TrainingTesting",
     "category": "",
     "address": ".../3rdparty/trainingtesting/",
-    "repository": "http://localhost:8080/trainingtesting/services/rest/data"
+    "repository": ".../../../test/repository"
   }
 ]

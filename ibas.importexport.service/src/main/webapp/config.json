@@ -9,7 +9,7 @@
     "repositoryAddress|BORepositoryShellOffLine": "./test/repository",
     "repositoryAddress|BORepositoryShell": "http://localhost:8080/initialfantasy/services/rest/data",
     "offline|BORepositoryImportExport": false,
-    "offline|BORepositoryTrainingTesting": false
+    "offline|BORepositoryTrainingTesting": true
   },
   "languages": [
     "zh_CN",
