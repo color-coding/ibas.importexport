@@ -20,6 +20,7 @@
   "importexpor_import": "导入",
   "importexpor_import_data": "导入数据",
   "importexpor_import_result": "导入结果",
+  "importexpor_businessobject_key": "对象标记",
   "importexpor_please_choose_file": "请选择导入的文件",
   "importexpor_network_error": "出现网络错误，请稍后重试",
   "importexport_closing_delimiter": "----结束----"

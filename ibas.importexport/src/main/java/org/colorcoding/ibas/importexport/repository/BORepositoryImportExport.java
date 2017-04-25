@@ -54,7 +54,9 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 		try {
 			opRslt = new OperationResult<String>();
 			myTrans = this.beginTransaction();
-
+			opRslt.addResultObjects(new DataExportTemplate());
+			opRslt.addResultObjects(new DataExportTemplate());
+			opRslt.addResultObjects(new DataExportTemplate());
 			if (myTrans) {
 				this.commitTransaction();
 			}

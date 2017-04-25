@@ -32,6 +32,7 @@ export class DataImportView extends ibas.BOView implements IDataImportView {
             sendXHR: true,// false时没有返回值
             sameFilenameAllowed: true,
             placeholder: ibas.i18n.prop("importexpor_please_choose_file"),
+            width: "100%",
             change(): void {
                 // 选择文件发生变化
                 that.showResults([]);
@@ -72,14 +73,14 @@ export class DataImportView extends ibas.BOView implements IDataImportView {
             enableSelectAll: false,
             visibleRowCount: 10,
             visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Interactive,
-            //  rows: "{/}",
+            rows: "{/}",
             columns: [
                 new sap.ui.table.Column("", {
-                    label: ibas.i18n.prop("importexpor_import_result"),
+                    label: ibas.i18n.prop("importexpor_businessobject_key"),
                     template: new sap.m.Text("", {
                         wrapping: false
                     }).bindProperty("text", {
-                        path: "/"
+                        path: ""
                     })
                 }),
             ]
