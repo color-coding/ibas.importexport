@@ -13,3 +13,5 @@ export * from "./DataExportTemplate";
 import * as ibas from "ibas/index";
 import { DataExportTemplate } from "./DataExportTemplate";
 ibas.boFactory.register(DataExportTemplate);
+// 注册其他
+ibas.boFactory.register(ibas.FileData);

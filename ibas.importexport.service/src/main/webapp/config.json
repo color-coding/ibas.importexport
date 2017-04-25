@@ -7,7 +7,9 @@
     "defaultUser": "admin",
     "defaultPassword": "1q2w3e",
     "repositoryAddress|BORepositoryShellOffLine": "./test/repository",
-    "repositoryAddress|BORepositoryShell": "http://localhost:8080/initialfantasy/services/rest/datas"
+    "repositoryAddress|BORepositoryShell": "http://localhost:8080/initialfantasy/services/rest/data",
+    "offline|BORepositoryImportExport": false,
+    "offline|BORepositoryTrainingTesting": false
   },
   "languages": [
     "zh_CN",
