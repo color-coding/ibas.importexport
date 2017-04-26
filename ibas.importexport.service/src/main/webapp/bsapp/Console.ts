@@ -58,8 +58,8 @@ export class Console extends ibas.ModuleConsole {
         // 获取根地址
         let rootUrl: string = ibas.url.rootUrl(Console.ROOT_FILE_NAME);
         // 加载语言-框架默认
-        ibas.i18n.load(ibas.strings.format("{0}/resources/languages/importexport.{1}.json", rootUrl, ibas.i18n.language));
-        ibas.i18n.load(ibas.strings.format("{0}/resources/languages/bo/dataexporttemplate.{1}.json", rootUrl, ibas.i18n.language));
+        ibas.i18n.load(ibas.strings.format("{0}/resources/languages/importexport.json", rootUrl));
+        ibas.i18n.load(ibas.strings.format("{0}/resources/languages/bo/dataexporttemplate.json", rootUrl));
         // 设置资源属性
         this.description = ibas.i18n.prop(this.name.toLowerCase());
         this.icon = ibas.i18n.prop(this.name.toLowerCase() + "_icon");
