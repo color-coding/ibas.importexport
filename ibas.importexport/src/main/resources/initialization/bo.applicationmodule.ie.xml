@@ -4,4 +4,5 @@
 	<Activated>YES</Activated>
 	<ModuleId>cbd4ef0f-ee88-4ea7-96c7-13f974026b58</ModuleId>
 	<ModuleName>ibas.importexport</ModuleName>
+	<PlatformId>COMBINATION</PlatformId>
 </ns:ApplicationModule>
