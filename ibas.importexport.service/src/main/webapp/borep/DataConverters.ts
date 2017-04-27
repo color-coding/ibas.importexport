@@ -13,7 +13,7 @@ import {
 } from "../api/index";
 
 /** ImportExport 模块的数据转换者 */
-export class DataConverterOnline extends ibas.DataConverter4ibas {
+export class DataConverterOnline extends ibas.DataConverter4j {
 
     /** 创建业务对象转换者 */
     protected createConverter(): ibas.BOConverter {
@@ -41,8 +41,7 @@ class ImportExportBOConverter extends ibas.BOConverter {
      * @returns 转换的值
      */
     protected convertData(boName: string, property: string, value: any): any {
-        // 不做处理，原始返回
-        return value;
+        return super.convertData(boName, property, value);
     }
 
     /**
