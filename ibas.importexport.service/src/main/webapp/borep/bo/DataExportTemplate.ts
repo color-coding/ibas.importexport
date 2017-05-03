@@ -19,6 +19,7 @@ import {
     BODocumentLine,
     BOSimple,
     BOSimpleLine,
+    config,
 } from "ibas/index";
 import {
     IDataExportTemplate,
@@ -771,7 +772,7 @@ export class DataExportTemplate extends BOSimple<DataExportTemplate> implements 
     /** 初始化数据 */
     protected init(): void {
         this.dataExportTemplateItems = new DataExportTemplateItems(this);
-        this.objectCode = DataExportTemplate.BUSINESS_OBJECT_CODE;
+        this.objectCode = config.applyVariables(DataExportTemplate.BUSINESS_OBJECT_CODE);
     }
 }
 

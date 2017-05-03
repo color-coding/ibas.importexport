@@ -15,8 +15,6 @@ export class DataExportTemplateFunc extends ibas.ModuleFunction {
     static FUNCTION_ID = "c1ab26cc-bd69-4b0f-b766-755c8dcfce5b";
     /** 功能名称 */
     static FUNCTION_NAME = "importexport_func_dataexporttemplate";
-    /** 根文件名称 */
-    static ROOT_FILE_NAME: string = "importexport/index";
     /** 构造函数 */
     constructor() {
         super();
