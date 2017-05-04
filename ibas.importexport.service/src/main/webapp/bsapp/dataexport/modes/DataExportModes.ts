@@ -52,10 +52,10 @@ export class DataExportModeJson extends DataExportMode {
     /** 导出 */
     export(caller: IDataExportCaller): void {
         if (ibas.objects.isNull(caller)) {
-            throw new Error(ibas.i18n.prop("msg_invalid_parameter", "caller"));
+            throw new Error(ibas.i18n.prop("sys_invalid_parameter", "caller"));
         }
         if (ibas.objects.isNull(caller.datas)) {
-            throw new Error(ibas.i18n.prop("msg_invalid_parameter", "caller.datas"));
+            throw new Error(ibas.i18n.prop("sys_invalid_parameter", "caller.datas"));
         }
         let name: string = "unknown";
         if (!ibas.objects.isNull(caller.datas[0])) {

@@ -44,7 +44,7 @@ export class DataExportService extends ibas.Application<IDataExportView> impleme
         } else {
             // 输入数据无效，服务不运行
             this.proceeding(ibas.emMessageType.WARNING,
-                ibas.i18n.prop("importexport_service_dataexport") + ibas.i18n.prop("msg_invalid_parameter", "data"));
+                ibas.i18n.prop("importexport_service_dataexport") + ibas.i18n.prop("sys_invalid_parameter", "data"));
         }
     }
     /** 导出的数据 */
@@ -71,7 +71,7 @@ export class DataExportService extends ibas.Application<IDataExportView> impleme
                 this.close();
                 this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("importexport_export_is_running", mode.description));
             } else {
-                this.proceeding(ibas.emMessageType.WARNING, ibas.i18n.prop("msg_invalid_parameter", "mode"));
+                this.proceeding(ibas.emMessageType.WARNING, ibas.i18n.prop("sys_invalid_parameter", "mode"));
             }
         } catch (error) {
             this.messages(error);

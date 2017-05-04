@@ -34,7 +34,7 @@ export class DataExportView extends ibas.BODialogView implements IDataExportView
                 }
             }),
             new sap.m.Button("", {
-                text: ibas.i18n.prop("sys_shell_ui_exit"),
+                text: ibas.i18n.prop("sys_shell_exit"),
                 type: sap.m.ButtonType.Transparent,
                 press: function (): void {
                     that.fireViewEvents(that.closeEvent);

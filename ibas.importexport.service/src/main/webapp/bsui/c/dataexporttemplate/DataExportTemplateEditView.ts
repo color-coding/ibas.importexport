@@ -35,7 +35,7 @@ export class DataExportTemplateEditView extends ibas.BOEditView implements IData
             extension: new sap.m.Toolbar("", {
                 content: [
                     new sap.m.Button("", {
-                        text: ibas.i18n.prop("sys_shell_ui_data_add"),
+                        text: ibas.i18n.prop("sys_shell_data_add"),
                         type: sap.m.ButtonType.Transparent,
                         icon: "sap-icon://add",
                         press: function (): void {
@@ -43,7 +43,7 @@ export class DataExportTemplateEditView extends ibas.BOEditView implements IData
                         }
                     }),
                     new sap.m.Button("", {
-                        text: ibas.i18n.prop("sys_shell_ui_data_remove"),
+                        text: ibas.i18n.prop("sys_shell_data_remove"),
                         type: sap.m.ButtonType.Transparent,
                         icon: "sap-icon://less",
                         press: function (): void {
@@ -64,7 +64,7 @@ export class DataExportTemplateEditView extends ibas.BOEditView implements IData
             subHeader: new sap.m.Toolbar("", {
                 content: [
                     new sap.m.Button("", {
-                        text: ibas.i18n.prop("sys_shell_ui_data_save"),
+                        text: ibas.i18n.prop("sys_shell_data_save"),
                         type: sap.m.ButtonType.Transparent,
                         icon: "sap-icon://save",
                         press: function (): void {
@@ -73,7 +73,7 @@ export class DataExportTemplateEditView extends ibas.BOEditView implements IData
                     }),
                     new sap.m.ToolbarSeparator(""),
                     new sap.m.Button("", {
-                        text: ibas.i18n.prop("sys_shell_ui_data_delete"),
+                        text: ibas.i18n.prop("sys_shell_data_delete"),
                         type: sap.m.ButtonType.Transparent,
                         icon: "sap-icon://delete",
                         press: function (): void {
