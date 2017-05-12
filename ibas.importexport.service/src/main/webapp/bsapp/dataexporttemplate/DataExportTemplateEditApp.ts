@@ -14,7 +14,7 @@ import { BORepositoryImportExport } from "../../borep/BORepositories";
 export class DataExportTemplateEditApp extends ibas.BOEditApplication<IDataExportTemplateEditView, bo.DataExportTemplate> {
 
     /** 应用标识 */
-    static APPLICATION_ID: string = "649eff99-c949-4580-8c4d-127c9209654f";
+    static APPLICATION_ID: string = "dd91f0e4-a4c7-4efc-9ebd-6908ef77cdcf";
     /** 应用名称 */
     static APPLICATION_NAME: string = "importexport_app_dataexporttemplate_edit";
     /** 业务对象编码 */
@@ -32,26 +32,56 @@ export class DataExportTemplateEditApp extends ibas.BOEditApplication<IDataExpor
         super.registerView();
         // 其他事件
         this.view.deleteDataEvent = this.deleteData;
+        this.view.createDataEvent = this.createData;
         this.view.addDataExportTemplateItemEvent = this.addDataExportTemplateItem;
         this.view.removeDataExportTemplateItemEvent = this.removeDataExportTemplateItem;
     }
     /** 视图显示后 */
     protected viewShowed(): void {
         // 视图加载完成
+        if (ibas.objects.isNull(this.editData)) {
+            // 创建编辑对象实例
+            this.editData = new bo.DataExportTemplate();
+            this.proceeding(ibas.emMessageType.WARNING, ibas.i18n.prop("sys_shell_data_created_new"));
+        }
         this.view.showDataExportTemplate(this.editData);
         this.view.showDataExportTemplateItems(this.editData.dataExportTemplateItems.filterDeleted());
     }
     /** 运行,覆盖原方法 */
     run(...args: any[]): void {
-        // 尝试设置编辑对象
-        if (!ibas.objects.isNull(args) && args.length === 1 && ibas.objects.instanceOf(args[0], bo.DataExportTemplate)) {
-            this.editData = args[0];
-        }
-        // 创建编辑对象实例
-        if (ibas.objects.isNull(this.editData)) {
-            this.editData = new bo.DataExportTemplate();
-            this.proceeding(ibas.emMessageType.WARNING, ibas.i18n.prop("sys_shell_data_created_new"));
-
+        let that = this;
+        if (ibas.objects.instanceOf(arguments[0], bo.DataExportTemplate)) {
+            // 尝试重新查询编辑对象
+            let criteria: ibas.ICriteria = arguments[0].criteria();
+            if (!ibas.objects.isNull(criteria) && criteria.conditions.length > 0) {
+                // 有效的查询对象查询
+                let boRepository: BORepositoryImportExport = new BORepositoryImportExport();
+                boRepository.fetchDataExportTemplate({
+                    criteria: criteria,
+                    onCompleted(opRslt: ibas.IOperationResult<bo.DataExportTemplate>): void {
+                        let data: bo.DataExportTemplate;
+                        if (opRslt.resultCode === 0) {
+                            data = opRslt.resultObjects.firstOrDefault();
+                        }
+                        if (ibas.objects.instanceOf(data, bo.DataExportTemplate)) {
+                            // 查询到了有效数据
+                            that.editData = data;
+                            that.show();
+                        } else {
+                            // 数据重新检索无效
+                            that.messages({
+                                type: ibas.emMessageType.WARNING,
+                                message: ibas.i18n.prop("sys_shell_data_deleted_and_created"),
+                                onCompleted(): void {
+                                    that.show();
+                                }
+                            });
+                        }
+                    }
+                });
+                // 开始查询数据
+                return;
+            }
         }
         super.run();
     }
@@ -71,10 +101,10 @@ export class DataExportTemplateEditApp extends ibas.BOEditApplication<IDataExpor
                             throw new Error(opRslt.message);
                         }
                         if (opRslt.resultObjects.length === 0) {
+                            // 删除成功，释放当前对象
                             that.messages(ibas.emMessageType.SUCCESS,
                                 ibas.i18n.prop("sys_shell_data_delete") + ibas.i18n.prop("sys_shell_sucessful"));
-                            // 创建新的对象
-                            that.editData = new bo.DataExportTemplate();
+                            that.editData = undefined;
                         } else {
                             // 替换编辑对象
                             that.editData = opRslt.resultObjects.firstOrDefault();
@@ -110,17 +140,67 @@ export class DataExportTemplateEditApp extends ibas.BOEditApplication<IDataExpor
             }
         });
     }
+    /** 新建数据，参数1：是否克隆 */
+    protected createData(clone: boolean): void {
+        let that = this;
+        let createData: Function = function (): void {
+            if (clone) {
+                // 克隆对象
+                that.editData = that.editData.clone();
+                that.proceeding(ibas.emMessageType.WARNING, ibas.i18n.prop("sys_shell_data_cloned_new"));
+                that.viewShowed();
+            } else {
+                // 新建对象
+                that.editData = new bo.DataExportTemplate();
+                that.proceeding(ibas.emMessageType.WARNING, ibas.i18n.prop("sys_shell_data_created_new"));
+                that.viewShowed();
+            }
+        };
+        if (that.editData.isDirty) {
+            this.messages({
+                type: ibas.emMessageType.QUESTION,
+                title: ibas.i18n.prop(this.name),
+                message: ibas.i18n.prop("sys_data_not_saved_whether_to_continue"),
+                actions: [ibas.emMessageAction.YES, ibas.emMessageAction.NO],
+                onCompleted(action: ibas.emMessageAction): void {
+                    if (action === ibas.emMessageAction.YES) {
+                        createData();
+                    }
+                }
+            });
+        } else {
+            createData();
+        }
+    }
     /** 添加数据导出模板-项事件 */
     addDataExportTemplateItem(): void {
         this.editData.dataExportTemplateItems.create();
+        // 仅显示没有标记删除的
         this.view.showDataExportTemplateItems(this.editData.dataExportTemplateItems.filterDeleted());
     }
     /** 删除数据导出模板-项事件 */
-    removeDataExportTemplateItem(item: bo.DataExportTemplateItem): void {
-        if (this.editData.dataExportTemplateItems.indexOf(item) >= 0) {
-            this.editData.dataExportTemplateItems.remove(item);
-            this.view.showDataExportTemplateItems(this.editData.dataExportTemplateItems.filterDeleted());
+    removeDataExportTemplateItem(items: bo.DataExportTemplateItem[]): void {
+        // 非数组，转为数组
+        if (!(items instanceof Array)) {
+            items = [items];
         }
+        if (items.length === 0) {
+            return;
+        }
+        // 移除项目
+        for (let item of items) {
+            if (this.editData.dataExportTemplateItems.indexOf(item) >= 0) {
+                if (item.isNew) {
+                    // 新建的移除集合
+                    this.editData.dataExportTemplateItems.remove(item);
+                } else {
+                    // 非新建标记删除
+                    item.delete();
+                }
+            }
+        }
+        // 仅显示没有标记删除的
+        this.view.showDataExportTemplateItems(this.editData.dataExportTemplateItems.filterDeleted());
     }
 
 }
@@ -130,6 +210,8 @@ export interface IDataExportTemplateEditView extends ibas.IBOEditView {
     showDataExportTemplate(data: bo.DataExportTemplate): void;
     /** 删除数据事件 */
     deleteDataEvent: Function;
+    /** 新建数据事件，参数1：是否克隆 */
+    createDataEvent: Function;
     /** 添加数据导出模板-项事件 */
     addDataExportTemplateItemEvent: Function;
     /** 删除数据导出模板-项事件 */
