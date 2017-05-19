@@ -3,6 +3,6 @@
 <ns:ApplicationModule xmlns:ns="http://colorcoding.org/ibas/initialfantasy/bo">
 	<Activated>YES</Activated>
 	<ModuleId>cbd4ef0f-ee88-4ea7-96c7-13f974026b58</ModuleId>
-	<ModuleName>ibas.importexport</ModuleName>
+	<ModuleName>ImportExport</ModuleName>
 	<PlatformId>COMBINATION</PlatformId>
 </ns:ApplicationModule>

@@ -25,7 +25,7 @@
                 <version>2.6</version>
                 <configuration>
                     <archiveClasses>true</archiveClasses>
-                    <warSourceExcludes>**/*.ts,**/*.bat,**/*.sh,3rdparty/*.txt,3rdparty/ibas/**,3rdparty/openui5/**,3rdparty/trainingtesting/**,test/**</warSourceExcludes>
+                    <warSourceExcludes>**/*.ts,**/*.bat,**/*.sh,3rdparty/*.txt,3rdparty/ibas/**,3rdparty/openui5/**,modules/**,test/**</warSourceExcludes>
                 </configuration>
             </plugin>
         </plugins>
