@@ -41,7 +41,7 @@ export class DataExportTemplateChooseApp extends ibas.BOChooseService<IDataExpor
     protected fetchData(criteria: ibas.ICriteria): void {
         try {
             this.busy(true);
-            let that = this;
+            let that: this = this;
             let boRepository: BORepositoryImportExport = new BORepositoryImportExport();
             boRepository.fetchDataExportTemplate({
                 criteria: criteria,
@@ -77,7 +77,7 @@ export class DataExportTemplateChooseApp extends ibas.BOChooseService<IDataExpor
         // 关闭自身
         this.destroy();
         // 调用编辑应用
-        let app = new DataExportTemplateEditApp();
+        let app: DataExportTemplateEditApp = new DataExportTemplateEditApp();
         app.navigation = this.navigation;
         app.viewShower = this.viewShower;
         app.run();

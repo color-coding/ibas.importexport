@@ -29,14 +29,15 @@ import {
     emAreaType,
     emDataSourceType,
     emHorizontalJustification,
-    emVerticalJustification
+    emVerticalJustification,
+    BO_CODE_EXPORTTEMPLATE
 } from "../../api/index";
 
 /** 数据导出模板 */
 export class DataExportTemplate extends BOSimple<DataExportTemplate> implements IDataExportTemplate {
 
     /** 业务对象编码 */
-    static BUSINESS_OBJECT_CODE: string = "${Company}_IE_EXPORTTEMPLATE";
+    static BUSINESS_OBJECT_CODE: string = BO_CODE_EXPORTTEMPLATE;
     /** 构造函数 */
     constructor() {
         super();

@@ -12,6 +12,6 @@ export * from "./DataExportTemplate";
 // 注册业务对象到工厂
 import * as ibas from "ibas/index";
 import { DataExportTemplate } from "./DataExportTemplate";
-ibas.boFactory.register(DataExportTemplate);
+ibas.boFactory.register(DataExportTemplate.BUSINESS_OBJECT_CODE, DataExportTemplate);
 // 注册其他
 ibas.boFactory.register(ibas.FileData);

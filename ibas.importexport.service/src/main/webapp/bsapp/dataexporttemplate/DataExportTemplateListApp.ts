@@ -44,8 +44,8 @@ export class DataExportTemplateListApp extends ibas.BOListApplication<IDataExpor
     protected fetchData(criteria: ibas.ICriteria): void {
         try {
             this.busy(true);
-            let that = this;
-            let boRepository = new BORepositoryImportExport();
+            let that: this = this;
+            let boRepository: BORepositoryImportExport = new BORepositoryImportExport();
             boRepository.fetchDataExportTemplate({
                 criteria: criteria,
                 onCompleted(opRslt: ibas.IOperationResult<bo.DataExportTemplate>): void {
@@ -67,7 +67,7 @@ export class DataExportTemplateListApp extends ibas.BOListApplication<IDataExpor
     }
     /** 新建数据 */
     protected newData(): void {
-        let app = new DataExportTemplateEditApp();
+        let app: DataExportTemplateEditApp = new DataExportTemplateEditApp();
         app.navigation = this.navigation;
         app.viewShower = this.viewShower;
         app.run();
@@ -81,7 +81,7 @@ export class DataExportTemplateListApp extends ibas.BOListApplication<IDataExpor
             ));
             return;
         }
-        let app = new DataExportTemplateViewApp();
+        let app: DataExportTemplateViewApp = new DataExportTemplateViewApp();
         app.navigation = this.navigation;
         app.viewShower = this.viewShower;
         app.run(data);
@@ -96,7 +96,7 @@ export class DataExportTemplateListApp extends ibas.BOListApplication<IDataExpor
             ));
             return;
         }
-        let app = new DataExportTemplateEditApp();
+        let app: DataExportTemplateEditApp = new DataExportTemplateEditApp();
         app.navigation = this.navigation;
         app.viewShower = this.viewShower;
         app.run(data);
@@ -123,7 +123,7 @@ export class DataExportTemplateListApp extends ibas.BOListApplication<IDataExpor
         if (beDeleteds.length === 0) {
             return;
         }
-        let that = this;
+        let that: this = this;
         this.messages({
             type: ibas.emMessageType.QUESTION,
             title: ibas.i18n.prop(this.name),

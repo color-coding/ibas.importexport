@@ -21,7 +21,7 @@ export class DataExportView extends ibas.BODialogView implements IDataExportView
     exportDataEvent: Function;
     /** 绘制工具条 */
     darwBars(): any {
-        let that = this;
+        let that: this = this;
         return [
             new sap.m.Button("", {
                 text: ibas.i18n.prop("importexpor_export"),
@@ -40,11 +40,11 @@ export class DataExportView extends ibas.BODialogView implements IDataExportView
                     that.fireViewEvents(that.closeEvent);
                 }
             }),
-        ]
+        ];
     }
     /** 绘制视图 */
     darw(): any {
-        let that = this;
+        let that: this = this;
         this.table = new sap.ui.table.Table("", {
             enableSelectAll: false,
             visibleRowCount: 5,

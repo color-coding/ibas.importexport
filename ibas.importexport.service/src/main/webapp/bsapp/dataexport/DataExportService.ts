@@ -52,7 +52,7 @@ export class DataExportService extends ibas.Application<IDataExportView> impleme
     /** 导出数据，参数1：使用的方式 */
     exportData(mode: IDataExportMode): void {
         try {
-            let that = this;
+            let that: this = this;
             if (!ibas.objects.isNull(mode)) {
                 mode.export({
                     datas: this.exportDatas,
