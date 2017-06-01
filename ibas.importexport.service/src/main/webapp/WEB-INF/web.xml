@@ -27,7 +27,7 @@
     </init-param>
     <load-on-startup>2</load-on-startup>
   </servlet>
-  <servlet>
+<!--   <servlet>
     <servlet-name>soap</servlet-name>
     <servlet-class>org.colorcoding.ibas.bobas.cxf.CXFServlet</servlet-class>
     <init-param>
@@ -35,7 +35,7 @@
       <param-value>org.colorcoding.ibas.importexport.service.soap</param-value>
     </init-param>
     <load-on-startup>3</load-on-startup>
-  </servlet>
+  </servlet> -->
   <servlet-mapping>
     <servlet-name>default</servlet-name>
     <url-pattern>/*</url-pattern>
@@ -44,10 +44,10 @@
     <servlet-name>rest</servlet-name>
     <url-pattern>/services/rest/*</url-pattern>
   </servlet-mapping>
-  <servlet-mapping>
+<!--   <servlet-mapping>
     <servlet-name>soap</servlet-name>
     <url-pattern>/services/soap/*</url-pattern>
-  </servlet-mapping>
+  </servlet-mapping> -->
   <filter>
     <filter-name>CorsFilter</filter-name>
     <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
