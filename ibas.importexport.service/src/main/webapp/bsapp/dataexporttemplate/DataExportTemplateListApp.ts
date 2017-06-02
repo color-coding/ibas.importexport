@@ -42,28 +42,24 @@ export class DataExportTemplateListApp extends ibas.BOListApplication<IDataExpor
     }
     /** 查询数据 */
     protected fetchData(criteria: ibas.ICriteria): void {
-        try {
-            this.busy(true);
-            let that: this = this;
-            let boRepository: BORepositoryImportExport = new BORepositoryImportExport();
-            boRepository.fetchDataExportTemplate({
-                criteria: criteria,
-                onCompleted(opRslt: ibas.IOperationResult<bo.DataExportTemplate>): void {
-                    try {
-                        if (opRslt.resultCode !== 0) {
-                            throw new Error(opRslt.message);
-                        }
-                        that.view.showData(opRslt.resultObjects);
-                        that.busy(false);
-                    } catch (error) {
-                        that.messages(error);
+        this.busy(true);
+        let that: this = this;
+        let boRepository: BORepositoryImportExport = new BORepositoryImportExport();
+        boRepository.fetchDataExportTemplate({
+            criteria: criteria,
+            onCompleted(opRslt: ibas.IOperationResult<bo.DataExportTemplate>): void {
+                try {
+                    if (opRslt.resultCode !== 0) {
+                        throw new Error(opRslt.message);
                     }
+                    that.view.showData(opRslt.resultObjects);
+                    that.busy(false);
+                } catch (error) {
+                    that.messages(error);
                 }
-            });
-            this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("sys_shell_fetching_data"));
-        } catch (error) {
-            this.messages(error);
-        }
+            }
+        });
+        this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("sys_shell_fetching_data"));
     }
     /** 新建数据 */
     protected newData(): void {
@@ -110,8 +106,8 @@ export class DataExportTemplateListApp extends ibas.BOListApplication<IDataExpor
             ));
             return;
         }
-        let beDeleteds:ibas.ArrayList<bo.DataExportTemplate> = new ibas.ArrayList<bo.DataExportTemplate>();
-        if (data instanceof Array ) {
+        let beDeleteds: ibas.ArrayList<bo.DataExportTemplate> = new ibas.ArrayList<bo.DataExportTemplate>();
+        if (data instanceof Array) {
             for (let item of data) {
                 if (ibas.objects.instanceOf(item, bo.DataExportTemplate)) {
                     item.delete();
@@ -133,7 +129,7 @@ export class DataExportTemplateListApp extends ibas.BOListApplication<IDataExpor
                 if (action === ibas.emMessageAction.YES) {
                     try {
                         let boRepository: BORepositoryImportExport = new BORepositoryImportExport();
-                        let saveMethod: Function = function(beSaved: bo.DataExportTemplate):void {
+                        let saveMethod: Function = function (beSaved: bo.DataExportTemplate): void {
                             boRepository.saveDataExportTemplate({
                                 beSaved: beSaved,
                                 onCompleted(opRslt: ibas.IOperationResult<bo.DataExportTemplate>): void {
@@ -149,7 +145,7 @@ export class DataExportTemplateListApp extends ibas.BOListApplication<IDataExpor
                                             // 处理完成
                                             that.busy(false);
                                             that.messages(ibas.emMessageType.SUCCESS,
-                                            ibas.i18n.prop("sys_shell_data_delete") + ibas.i18n.prop("sys_shell_sucessful"));
+                                                ibas.i18n.prop("sys_shell_data_delete") + ibas.i18n.prop("sys_shell_sucessful"));
                                         }
                                     } catch (error) {
                                         that.messages(ibas.emMessageType.ERROR,

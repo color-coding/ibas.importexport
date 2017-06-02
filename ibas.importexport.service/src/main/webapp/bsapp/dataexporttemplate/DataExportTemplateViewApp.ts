@@ -64,26 +64,22 @@ export class DataExportTemplateViewApp extends ibas.BOViewService<IDataExportTem
             // 添加查询条件
 
         }
-        try {
-            let boRepository: BORepositoryImportExport = new BORepositoryImportExport();
-            boRepository.fetchDataExportTemplate({
-                criteria: criteria,
-                onCompleted(opRslt: ibas.IOperationResult<bo.DataExportTemplate>): void {
-                    try {
-                        if (opRslt.resultCode !== 0) {
-                            throw new Error(opRslt.message);
-                        }
-                        that.viewData = opRslt.resultObjects.firstOrDefault();
-                        that.viewShowed();
-                    } catch (error) {
-                        that.messages(error);
+        let boRepository: BORepositoryImportExport = new BORepositoryImportExport();
+        boRepository.fetchDataExportTemplate({
+            criteria: criteria,
+            onCompleted(opRslt: ibas.IOperationResult<bo.DataExportTemplate>): void {
+                try {
+                    if (opRslt.resultCode !== 0) {
+                        throw new Error(opRslt.message);
                     }
+                    that.viewData = opRslt.resultObjects.firstOrDefault();
+                    that.viewShowed();
+                } catch (error) {
+                    that.messages(error);
                 }
-            });
-            this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("sys_shell_fetching_data"));
-        } catch (error) {
-            that.messages(error);
-        }
+            }
+        });
+        this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("sys_shell_fetching_data"));
     }
     /** 获取服务的契约 */
     protected getServiceProxies(): ibas.IServiceProxy<ibas.IServiceContract>[] {

@@ -33,7 +33,7 @@ export class DataImportApp extends ibas.Application<IDataImportView>  {
         // 视图加载完成
         // 设置导入方法地址
         let url: string = (new BORepositoryImportExport()).getImportUrl();
-       // url = "http://localhost:8080/demo/services/jersey/files/upload";
+        // url = "http://localhost:8080/demo/services/jersey/files/upload";
         this.view.uploadUrl = url;
     }
     /** 运行,覆盖原方法 */
@@ -42,15 +42,11 @@ export class DataImportApp extends ibas.Application<IDataImportView>  {
     }
     /** 导入完成 */
     importCompleted(data: any): void {
-        try {
-            let opRslt: ibas.IOperationResult<string> = (new BORepositoryImportExport()).parseImportResult(data);
-            if (opRslt.resultCode !== 0) {
-                throw new Error(opRslt.message);
-            }
-            this.view.showResults(opRslt.resultObjects);
-        } catch (error) {
-            this.messages(error);
+        let opRslt: ibas.IOperationResult<string> = (new BORepositoryImportExport()).parseImportResult(data);
+        if (opRslt.resultCode !== 0) {
+            throw new Error(opRslt.message);
         }
+        this.view.showResults(opRslt.resultObjects);
     }
 }
 /** 数据导出服务-视图 */

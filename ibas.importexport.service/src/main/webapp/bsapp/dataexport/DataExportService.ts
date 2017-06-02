@@ -51,30 +51,26 @@ export class DataExportService extends ibas.Application<IDataExportView> impleme
     private exportDatas: ibas.List<any>;
     /** 导出数据，参数1：使用的方式 */
     exportData(mode: IDataExportMode): void {
-        try {
-            let that: this = this;
-            if (!ibas.objects.isNull(mode)) {
-                mode.export({
-                    datas: this.exportDatas,
-                    onCompleted(result: IExportResult): void {
-                        try {
-                            if (ibas.objects.isNull(result.address)) {
-                                // 没有地址表示失败
-                                throw new Error(result.content);
-                            }
-                            that.view.showReslut(result);
-                        } catch (error) {
-                            that.messages(error);
+        let that: this = this;
+        if (!ibas.objects.isNull(mode)) {
+            mode.export({
+                datas: this.exportDatas,
+                onCompleted(result: IExportResult): void {
+                    try {
+                        if (ibas.objects.isNull(result.address)) {
+                            // 没有地址表示失败
+                            throw new Error(result.content);
                         }
+                        that.view.showReslut(result);
+                    } catch (error) {
+                        that.messages(error);
                     }
-                });
-                this.close();
-                this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("importexport_export_is_running", mode.description));
-            } else {
-                this.proceeding(ibas.emMessageType.WARNING, ibas.i18n.prop("sys_invalid_parameter", "mode"));
-            }
-        } catch (error) {
-            this.messages(error);
+                }
+            });
+            this.close();
+            this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("importexport_export_is_running", mode.description));
+        } else {
+            this.proceeding(ibas.emMessageType.WARNING, ibas.i18n.prop("sys_invalid_parameter", "mode"));
         }
     }
 }
