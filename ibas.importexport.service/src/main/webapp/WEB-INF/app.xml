@@ -18,7 +18,13 @@
         <add key="MasterDbUserPassword" value="1q2w3e" />
         <!--配置项目-序列化管理方式-->
         <add key="SerializationWay" value="jersey" />
-        <!--配置项目-对象删除前重新加载-->
-        <add key="RefetchBeforeDelete" value="true" />
+		<!--配置项目-对象删除前重新加载 -->
+		<add key="RefetchBeforeDelete" value="true" />
+        <!-- 配置项目-审批方法 -->
+		<add key="ApprovalWay" value="fantasy" />
+		<!-- 配置项目-组织方式 -->
+		<add key="OrganizationWay" value="fantasy" />
+		<!-- 配置项目-权限判断方式 -->
+		<add key="OwnershipWay" value="fantasy" />
     </appSettings>
 </ns2:configuration>
