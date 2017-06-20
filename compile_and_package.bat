@@ -59,13 +59,4 @@ for /f %%m in (%WORK_FOLDER%compile_order.txt) do (
     )
   )
 )
-REM 本地安装开发版本服务包
-for /f %%l in ('dir /s /a /b %WORK_FOLDER%release\ibcp.*.service*.jar' ) do (
-  set PACKAGES=%%~nl
-  echo --注册[!PACKAGES!]到本地（注意版本号超过两位请调整脚本）
-  set NAME=!PACKAGES:~0,-6!
-  set VERSION=!PACKAGES:~-5!
-  echo 名称：!NAME!  版本：!VERSION!
-  call "%MAVEN_HOME%\bin\mvn" install:install-file -DartifactId=!NAME! -Dversion=!VERSION! -Dfile=%%l -DgroupId=club.ibas -Dpackaging=jar >>%LOGFILE%
-)
 echo --编译完成，更多信息请查看[compile_and_package_log_%OPNAME%.txt]
