@@ -58,8 +58,12 @@ export class DataExportModeJson extends DataExportMode {
             throw new Error(ibas.i18n.prop("sys_invalid_parameter", "caller.datas"));
         }
         let name: string = "unknown";
-        if (!ibas.objects.isNull(caller.datas[0])) {
-            name = ibas.objects.getName(ibas.objects.getType(caller.datas[0]));
+        let data: any = caller.datas[0];
+        if (!ibas.objects.isNull(data)) {
+            name = ibas.objects.getName(ibas.objects.getType(data));
+        }
+        if (name === "Object" && !ibas.objects.isNull(data[ibas.REMOTE_OBJECT_TYPE_PROPERTY_NAME])) {
+            name = data[ibas.REMOTE_OBJECT_TYPE_PROPERTY_NAME];
         }
         name = ibas.strings.format("{0}_{1}.json", name, ibas.dates.toString(new Date(), "yyyyMMdd_hhmmss"));
         let result: IExportResult = {

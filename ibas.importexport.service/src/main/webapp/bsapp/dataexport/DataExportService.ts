@@ -37,15 +37,30 @@ export class DataExportService extends ibas.Application<IDataExportView> impleme
     }
     /** 运行,覆盖原方法 */
     run(...args: any[]): void {
-        if (!ibas.objects.isNull(args) && args.length === 1 && !ibas.objects.isNull(args[0].data)) {
-            this.exportDatas = new ibas.ArrayList<any>();
-            this.exportDatas.add(args[0].data);
-            super.run();
-        } else {
-            // 输入数据无效，服务不运行
-            this.proceeding(ibas.emMessageType.WARNING,
-                ibas.i18n.prop("importexport_service_dataexport") + ibas.i18n.prop("sys_invalid_parameter", "data"));
+        if (!ibas.objects.isNull(args) && args.length === 1) {
+            let contract: ibas.IBOServiceContract = <ibas.IBOServiceContract>args[0];
+            if (!ibas.objects.isNull(contract.data)) {
+                this.exportDatas = new ibas.ArrayList<any>();
+                if (!ibas.objects.isNull(contract.converter)) {
+                    // 存在数据转换者，转换数据
+                    if (Array.isArray(contract.data)) {
+                        for (let item of contract.data) {
+                            this.exportDatas.add(contract.converter.convert(item, this.name));
+                        }
+                    } else {
+                        this.exportDatas.add(contract.converter.convert(contract.data, this.name));
+                    }
+                } else {
+                    this.exportDatas.add(contract.data);
+                }
+                super.run();
+                return;
+            }
         }
+        // 输入数据无效，服务不运行
+        this.proceeding(ibas.emMessageType.WARNING,
+            ibas.i18n.prop("importexport_service_dataexport") + ibas.i18n.prop("sys_invalid_parameter", "data"));
+
     }
     /** 导出的数据 */
     private exportDatas: ibas.List<any>;
