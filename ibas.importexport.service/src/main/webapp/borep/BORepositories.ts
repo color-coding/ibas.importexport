@@ -9,20 +9,14 @@
 import * as ibas from "ibas/index";
 import * as bo from "./bo/index";
 import { IBORepositoryImportExport, BO_REPOSITORY_IMPORTEXPORT } from "../api/index";
-import { DataConverterOnline, DataConverterOffline } from "./DataConverters";
+import { DataConverter4ie } from "./DataConverters";
 
 /** 数据导入&导出 业务仓库 */
 export class BORepositoryImportExport extends ibas.BORepositoryApplication implements IBORepositoryImportExport {
 
     /** 创建此模块的后端与前端数据的转换者 */
     protected createConverter(): ibas.IDataConverter {
-        if (this.offline) {
-            // 离线状态
-            return new DataConverterOffline();
-        } else {
-            return new DataConverterOnline();
-
-        }
+        return new DataConverter4ie();
     }
     /** 获取导入方法地址 */
     getImportUrl(): string {

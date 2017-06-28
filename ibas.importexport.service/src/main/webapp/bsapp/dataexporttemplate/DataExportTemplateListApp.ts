@@ -9,6 +9,7 @@
 import * as ibas from "ibas/index";
 import * as bo from "../../borep/bo/index";
 import { BORepositoryImportExport } from "../../borep/BORepositories";
+import { DataConverter4ie } from "../../borep/DataConverters";
 import { DataExportTemplateViewApp } from "./DataExportTemplateViewApp";
 import { DataExportTemplateEditApp } from "./DataExportTemplateEditApp";
 
@@ -168,7 +169,12 @@ export class DataExportTemplateListApp extends ibas.BOListApplication<IDataExpor
     }
     /** 获取服务的契约 */
     protected getServiceProxies(): ibas.IServiceProxy<ibas.IServiceContract>[] {
-        return [];
+        return [
+            new ibas.BOListServiceProxy({
+                data: this.view.getSelecteds(),
+                converter: new DataConverter4ie(),
+            })
+        ];
     }
 }
 /** 视图-数据导出模板 */
@@ -179,4 +185,6 @@ export interface IDataExportTemplateListView extends ibas.IBOListView {
     deleteDataEvent: Function;
     /** 显示数据 */
     showData(datas: bo.DataExportTemplate[]): void;
+    /** 获取选择的数据 */
+    getSelecteds(): bo.DataExportTemplate[];
 }

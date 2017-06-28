@@ -171,4 +171,8 @@ export class DataExportTemplateListView extends ibas.BOListView implements IData
         this.table.setFirstVisibleRow(0);
         this.table.setModel(null);
     }
+    /** 获取选择的数据 */
+    getSelecteds(): bo.DataExportTemplate[] {
+        return utils.getTableSelecteds<bo.DataExportTemplate>(this.table);
+    }
 }

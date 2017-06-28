@@ -12,17 +12,17 @@ import {
     emPaperSize
 } from "../api/index";
 
-/** ImportExport 模块的数据转换者 */
-export class DataConverterOnline extends ibas.DataConverter4j {
+/** 数据转换者 */
+export class DataConverter4ie extends ibas.DataConverter4j {
 
     /** 创建业务对象转换者 */
     protected createConverter(): ibas.BOConverter {
-        return new ImportExportBOConverter();
+        return new BOConverter4ie;
     }
 }
 
-/** ImportExport 模块的业务对象转换者 */
-class ImportExportBOConverter extends ibas.BOConverter {
+/** 业务对象转换者 */
+class BOConverter4ie extends ibas.BOConverter {
 
     /**
      * 自定义解析
@@ -41,6 +41,11 @@ class ImportExportBOConverter extends ibas.BOConverter {
      * @returns 转换的值
      */
     protected convertData(boName: string, property: string, value: any): any {
+        if (boName === bo.DataExportTemplate.name) {
+            if (property === bo.DataExportTemplate.PROPERTY_PAPERSIZE_NAME) {
+                return ibas.enums.toString(emPaperSize, value);
+            }
+        }
         return super.convertData(boName, property, value);
     }
 
@@ -58,27 +63,5 @@ class ImportExportBOConverter extends ibas.BOConverter {
             }
         }
         return super.parsingData(boName, property, value);
-    }
-}
-/** ImportExport 模块的离线数据转换者 */
-export class DataConverterOffline implements ibas.IDataConverter {
-
-    /**
-     * 转换业务对象数据
-     * @param data 本地类型
-     * @param sign 特殊标记
-     * @returns 目标类型
-     */
-    convert(data: any, sign: string): any {
-        return data;
-    }
-    /**
-     * 解析业务对象数据
-     * @param data 目标类型
-     * @param sign 特殊标记
-     * @returns 本地类型
-     */
-    parsing(data: any, sign: string): any {
-        return data;
     }
 }
