@@ -1,4 +1,6 @@
-package org.colorcoding.ibas.importexport.transformers;
+package org.colorcoding.ibas.importexport.transformers.excel;
+
+import org.colorcoding.ibas.importexport.transformers.ITransformer;
 
 /**
  * 转换者工厂
@@ -24,10 +26,8 @@ public class TransformerFactory {
 		if (sign == null || sign.isEmpty()) {
 			return null;
 		}
-		if (JsonTransformer.TYPE_NAME.equalsIgnoreCase(sign)) {
-			return new JsonTransformer();
-		} else if (XmlTransformer.TYPE_NAME.equalsIgnoreCase(sign)) {
-			return new XmlTransformer();
+		if (ExcelTransformer.TYPE_NAME.equalsIgnoreCase(sign)) {
+			return new ExcelTransformer();
 		}
 		return null;
 	}

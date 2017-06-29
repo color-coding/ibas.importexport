@@ -8,7 +8,7 @@
 
 import * as ibas from "ibas/index";
 import * as bo from "./bo/index";
-import { IBORepositoryImportExport, BO_REPOSITORY_IMPORTEXPORT } from "../api/index";
+import { IBORepositoryImportExport, SchemaMethodsCaller, BO_REPOSITORY_IMPORTEXPORT } from "../api/index";
 import { DataConverter4ie } from "./DataConverters";
 
 /** 数据导入&导出 业务仓库 */
@@ -40,6 +40,28 @@ export class BORepositoryImportExport extends ibas.BORepositoryApplication imple
             jData = JSON.parse(data);
         }
         return this.createConverter().parsing(jData, "import");
+    }
+    /** 创建远程仓库 */
+    protected createRemoteRepository(): ibas.IRemoteRepository {
+        let boRepository: ibas.BORepositoryAjax = new ibas.BORepositoryAjax();
+        boRepository.address = this.address;
+        boRepository.token = this.token;
+        boRepository.converter = this.createConverter();
+        return boRepository;
+    }
+    /**
+     * 获取业务对象架构
+     * @param caller 调用者
+     */
+    schema(caller: SchemaMethodsCaller<string>): void {
+        let remoteRepository: ibas.IRemoteRepository = this.createRemoteRepository();
+        if (ibas.objects.isNull(remoteRepository)) {
+            throw new Error(ibas.i18n.prop("sys_invalid_parameter", "remoteRepository"));
+        }
+        let method: string =
+            ibas.strings.format("schema?boCode={0}&type={1}&token={2}",
+                caller.boCode, caller.type, this.token);
+        remoteRepository.callRemoteMethod(method, undefined, caller);
     }
     /**
      * 查询 数据导出模板

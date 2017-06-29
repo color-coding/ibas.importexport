@@ -96,7 +96,7 @@ export class DataImportView extends ibas.BOView implements IDataImportView {
                     new sap.m.Button("", {
                         text: ibas.i18n.prop("importexpor_import"),
                         type: sap.m.ButtonType.Transparent,
-                        icon: "sap-icon://inbox",
+                        icon: "sap-icon://toaster-up",
                         press: function (): void {
                             that.application.viewShower.proceeding(
                                 that, ibas.emMessageType.WARNING, ibas.i18n.prop("importexpor_importing"));

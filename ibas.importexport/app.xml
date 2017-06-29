@@ -24,5 +24,7 @@
         <add key="OrganizationWay" value="fantasy" />
         <!-- 配置项目-权限判断方式 -->
         <add key="OwnershipWay" value="fantasy" />
+        <!-- 配置项目-转换者工厂，多个时“;”分隔 -->
+        <add key="TransformerFactories" value="org.colorcoding.ibas.importexport.transformers.excel.TransformerFactory;" />
     </appSettings>
 </ns2:configuration>

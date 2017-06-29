@@ -1,14 +1,22 @@
 package org.colorcoding.ibas.importexport.repository;
 
+import java.io.ByteArrayOutputStream;
+
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.OperationResult;
+import org.colorcoding.ibas.bobas.core.BOFactory;
 import org.colorcoding.ibas.bobas.core.RepositoryException;
 import org.colorcoding.ibas.bobas.data.FileData;
+import org.colorcoding.ibas.bobas.i18n.i18n;
 import org.colorcoding.ibas.bobas.ownership.PermissionGroup;
 import org.colorcoding.ibas.bobas.repository.BORepositoryServiceApplication;
+import org.colorcoding.ibas.bobas.serialization.ISerializer;
+import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
 import org.colorcoding.ibas.importexport.bo.dataexporttemplate.DataExportTemplate;
 import org.colorcoding.ibas.importexport.bo.dataexporttemplate.IDataExportTemplate;
+import org.colorcoding.ibas.importexport.transformers.ITransformer;
+import org.colorcoding.ibas.importexport.transformers.TransformerFactory;
 
 /**
  * ImportExport仓库
@@ -52,8 +60,17 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 		OperationResult<String> opRslt = null;
 		boolean myTrans = false;
 		try {
-			opRslt = new OperationResult<String>();
+			this.setUserToken(token);
+			if (data == null || data.getOriginalName().indexOf(".") < 0) {
+				throw new Exception(i18n.prop("msg_importexport_invaild_file_data"));
+			}
+			String type = data.getOriginalName().substring(data.getOriginalName().indexOf("."));
+			ITransformer transformer = TransformerFactory.create().create(type);
+			if (transformer == null) {
+				throw new Exception(i18n.prop("msg_importexport_not_found_transformer", type));
+			}
 			myTrans = this.beginTransaction();
+			opRslt = new OperationResult<String>();
 			opRslt.addResultObjects(new DataExportTemplate());
 			opRslt.addResultObjects(new DataExportTemplate());
 			opRslt.addResultObjects(new DataExportTemplate());
@@ -132,6 +149,34 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	public IOperationResult<IDataExportTemplate> saveDataExportTemplate(IDataExportTemplate bo) {
 		return new OperationResult<IDataExportTemplate>(
 				this.saveDataExportTemplate((DataExportTemplate) bo, this.getUserToken()));
+	}
+
+	// --------------------------------------------------------------------------------------------//
+	@Override
+	public IOperationResult<String> schema(String boCode, String type) {
+		return this.schema(boCode, type, this.getUserToken());
+	}
+
+	@Override
+	public OperationResult<String> schema(String boCode, String type, String token) {
+		OperationResult<String> opRslt = new OperationResult<String>();
+		try {
+			this.setUserToken(token);
+			Class<?> boType = BOFactory.create().getBOClass(boCode);
+			if (boType == null) {
+				throw new Exception(i18n.prop("msg_importexport_not_found_class", boCode));
+			}
+			ISerializer<?> serializer = SerializerFactory.create().createManager().create(type);
+			if (serializer == null) {
+				throw new Exception(i18n.prop("msg_importexport_not_found_serializer", type));
+			}
+			ByteArrayOutputStream writer = new ByteArrayOutputStream();
+			serializer.getSchema(boType, writer);
+			opRslt.addResultObjects(writer.toString());
+		} catch (Exception e) {
+			opRslt = new OperationResult<String>(e);
+		}
+		return opRslt;
 	}
 
 	// --------------------------------------------------------------------------------------------//

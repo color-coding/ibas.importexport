@@ -8,4 +8,5 @@ package org.colorcoding.ibas.importexport.transformers;
  */
 public class JsonTransformer extends FileTransformer {
 
+	public final static String TYPE_NAME = "json";
 }
