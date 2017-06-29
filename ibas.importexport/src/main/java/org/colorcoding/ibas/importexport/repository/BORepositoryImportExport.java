@@ -44,7 +44,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			if (data == null || data.getOriginalName().indexOf(".") < 0) {
 				throw new Exception(i18n.prop("msg_importexport_invaild_file_data"));
 			}
-			String type = data.getOriginalName().substring(data.getOriginalName().indexOf("."));
+			String type = data.getOriginalName().substring(data.getOriginalName().indexOf(".") + 1);
 			ITransformer transformer = TransformerFactory.create().create(type);
 			if (transformer == null) {
 				throw new Exception(i18n.prop("msg_importexport_not_found_transformer", type));
