@@ -26,26 +26,6 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 		implements IBORepositoryImportExportSvc, IBORepositoryImportExportApp {
 
 	// --------------------------------------------------------------------------------------------//
-	/**
-	 * 开启事务
-	 */
-	public boolean beginTransaction() throws RepositoryException {
-		return super.beginTransaction();
-	}
-
-	/**
-	 * 提交事务
-	 */
-	public void commitTransaction() throws RepositoryException {
-		super.commitTransaction();
-	}
-
-	/**
-	 * 回滚事务
-	 */
-	public void rollbackTransaction() throws RepositoryException {
-		super.rollbackTransaction();
-	}
 
 	/**
 	 * 导入数据

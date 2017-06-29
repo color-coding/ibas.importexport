@@ -11,7 +11,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.OperationResult;
-import org.colorcoding.ibas.bobas.core.RepositoryException;
 import org.colorcoding.ibas.bobas.data.FileData;
 import org.colorcoding.ibas.bobas.repository.jersey.FileRepositoryService;
 import org.colorcoding.ibas.importexport.repository.BORepositoryImportExport;
@@ -36,8 +35,6 @@ public class FileService extends FileRepositoryService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public OperationResult<String> importData(@FormDataParam("file") InputStream fileStream,
 			@FormDataParam("file") FormDataContentDisposition fileDisposition, @QueryParam("token") String token) {
-		BORepositoryImportExport boRepository = null;
-		boolean myTrans = false;
 		OperationResult<String> opRslt = null;
 		try {
 			opRslt = new OperationResult<String>();
@@ -50,8 +47,7 @@ public class FileService extends FileRepositoryService {
 				throw new Error(opRsltFile.getMessage());
 			}
 			// 导入文件
-			boRepository = new BORepositoryImportExport();
-			myTrans = boRepository.beginTransaction();
+			BORepositoryImportExport boRepository = new BORepositoryImportExport();
 			boRepository.setUserToken(token);
 			for (FileData data : opRsltFile.getResultObjects()) {
 				IOperationResult<String> opRsltImport = boRepository.importData(data);
@@ -64,18 +60,8 @@ public class FileService extends FileRepositoryService {
 				// 记录结果
 				opRslt.addResultObjects(opRsltImport.getResultObjects());
 			}
-			if (myTrans) {
-				boRepository.commitTransaction();
-			}
 		} catch (Exception e) {
 			opRslt = new OperationResult<String>(e);
-			if (myTrans && boRepository != null) {
-				try {
-					boRepository.rollbackTransaction();
-				} catch (RepositoryException e1) {
-					opRslt.setMessage(opRslt.getMessage() + "&" + e1.getMessage());
-				}
-			}
 		}
 		return opRslt;
 	}
