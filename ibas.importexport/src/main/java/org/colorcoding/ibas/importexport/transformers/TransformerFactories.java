@@ -31,7 +31,6 @@ public final class TransformerFactories {
 	}
 
 	protected void init() {
-		this.getFactories().add(new TransformerFactory());
 		String factories = MyConfiguration.getConfigValue(MyConfiguration.CONFIG_ITEM_TRANSFORMER_FACTORIES);
 		if (factories != null && factories.length() > 0) {
 			for (String item : factories.split(";")) {
@@ -51,6 +50,7 @@ public final class TransformerFactories {
 				}
 			}
 		}
+		this.getFactories().add(new TransformerFactory());
 	}
 
 	private List<TransformerFactory> factories;

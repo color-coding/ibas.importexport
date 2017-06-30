@@ -1,7 +1,11 @@
 package org.colorcoding.ibas.importexport.transformers;
 
+import java.util.List;
+
 /**
  * 转换者
+ * 
+ * 待转换bo有数据时，进行BO到数据的转换，否则反之。
  * 
  * @author Niuren.Zhu
  *
@@ -23,11 +27,18 @@ public interface ITransformer {
 	Object getData();
 
 	/**
-	 * 设置-业务对象
+	 * 添加待转换业务对象
 	 * 
 	 * @param items
 	 */
-	void addBOs(Iterable<Object> items);
+	void addBOs(List<Object> items);
+
+	/**
+	 * 添加待转换业务对象
+	 * 
+	 * @param items
+	 */
+	void addBOs(Object[] items);
 
 	/**
 	 * 获取-业务对象
@@ -35,6 +46,20 @@ public interface ITransformer {
 	 * @return
 	 */
 	Object[] getBOs();
+
+	/**
+	 * 获取已知类型
+	 * 
+	 * @return
+	 */
+	List<Class<?>> getKnownTypes();
+
+	/**
+	 * 添加已知类型
+	 * 
+	 * @param type
+	 */
+	void addKnownType(Class<?> type);
 
 	/**
 	 * 转换

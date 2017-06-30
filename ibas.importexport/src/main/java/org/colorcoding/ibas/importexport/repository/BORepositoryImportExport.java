@@ -6,6 +6,7 @@ import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.core.BOFactory;
+import org.colorcoding.ibas.bobas.core.IBusinessObjectBase;
 import org.colorcoding.ibas.bobas.core.RepositoryException;
 import org.colorcoding.ibas.bobas.data.FileData;
 import org.colorcoding.ibas.bobas.i18n.i18n;
@@ -44,16 +45,33 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			if (data == null || data.getOriginalName().indexOf(".") < 0) {
 				throw new Exception(i18n.prop("msg_importexport_invaild_file_data"));
 			}
+			// 创建转换者
 			String type = data.getOriginalName().substring(data.getOriginalName().indexOf(".") + 1);
 			ITransformer transformer = TransformerFactory.create().create(type);
 			if (transformer == null) {
 				throw new Exception(i18n.prop("msg_importexport_not_found_transformer", type));
 			}
+			// 转换文件数据到业务对象
+			transformer.setData(data.getLocation());
+			transformer.transform();
 			myTrans = this.beginTransaction();
 			opRslt = new OperationResult<String>();
-			opRslt.addResultObjects(new DataExportTemplate());
-			opRslt.addResultObjects(new DataExportTemplate());
-			opRslt.addResultObjects(new DataExportTemplate());
+			// 保存业务对象
+			for (Object object : transformer.getBOs()) {
+				if (object instanceof IBusinessObjectBase) {
+					IOperationResult<IBusinessObjectBase> opRsltSave = this.save((IBusinessObjectBase) object, token);
+					if (opRsltSave.getError() != null) {
+						throw opRsltSave.getError();
+					}
+					if (opRsltSave.getResultCode() != 0) {
+						throw new Exception(opRsltSave.getMessage());
+					}
+					IBusinessObjectBase bo = opRsltSave.getResultObjects().firstOrDefault();
+					if (bo != null) {
+						opRslt.addResultObjects(bo.toString());
+					}
+				}
+			}
 			if (myTrans) {
 				this.commitTransaction();
 			}

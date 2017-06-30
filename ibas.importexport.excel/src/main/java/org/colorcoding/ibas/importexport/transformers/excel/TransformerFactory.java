@@ -23,9 +23,6 @@ public class TransformerFactory {
 	}
 
 	public ITransformer create(String sign) {
-		if (sign == null || sign.isEmpty()) {
-			return null;
-		}
 		if (ExcelTransformer.TYPE_NAME.equalsIgnoreCase(sign)) {
 			return new ExcelTransformer();
 		}
