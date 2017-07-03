@@ -13,12 +13,20 @@ import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.data.FileData;
 import org.colorcoding.ibas.bobas.repository.jersey.FileRepositoryService;
+import org.colorcoding.ibas.importexport.MyConfiguration;
 import org.colorcoding.ibas.importexport.repository.BORepositoryImportExport;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 @Path("file")
 public class FileService extends FileRepositoryService {
+
+	public final static String CONFIG_ITEM_IMPORT_WORK_FOLDER = "ImportWorkFolder";
+
+	public FileService() {
+		this.getRepository().setRepositoryFolder(
+				MyConfiguration.getConfigValue(CONFIG_ITEM_IMPORT_WORK_FOLDER, MyConfiguration.getTempFolder()));
+	}
 
 	@POST
 	@Path("upload")
