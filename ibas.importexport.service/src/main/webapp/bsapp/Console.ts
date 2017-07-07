@@ -40,11 +40,13 @@ export class Console extends ibas.ModuleConsole {
     /** 初始化 */
     protected registers(): void {
         // 注册功能
-        this.register(new DataExportTemplateFunc());
         this.register(new DataImportFunc());
+        if (ibas.config.get(ibas.CONFIG_ITEM_DEBUG_MODE)) {
+            this.register(new DataExportTemplateFunc());
+            this.register(new DataExportTemplateChooseServiceMapping());
+            this.register(new DataExportTemplateLinkServiceMapping());
+        }
         // 注册服务应用
-        this.register(new DataExportTemplateChooseServiceMapping());
-        this.register(new DataExportTemplateLinkServiceMapping());
         this.register(new DataExportServiceMapping());
         this.register(new DataListExportServiceMapping());
         // 注册常驻应用
