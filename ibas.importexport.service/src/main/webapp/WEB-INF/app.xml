@@ -9,7 +9,7 @@
         <!-- 配置项目-数据库类型 -->
         <add key="MasterDbType" value="MSSQL" />
         <!-- 配置项目-数据库地址-->
-        <add key="MasterDbServer" value="localhost" />
+        <add key="MasterDbServer" value="ibas-db-mssql" />
         <!-- 配置项目-数据库名称 -->
         <add key="MasterDbName" value="ibas_demo" />
         <!-- 配置项目-数据库用户名称 -->

@@ -11,7 +11,7 @@
         <!-- 配置项目-数据库地址-->
         <add key="MasterDbServer" value="localhost" />
         <!-- 配置项目-数据库名称 -->
-        <add key="MasterDbName" value="ibas_demo" />
+        <add key="MasterDbServer" value="ibas-db-mssql" />
         <!-- 配置项目-数据库用户名称 -->
         <add key="MasterDbUserID" value="sa" />
         <!-- 配置项目-数据库用户密码 -->
