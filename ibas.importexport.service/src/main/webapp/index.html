@@ -56,18 +56,23 @@
             }
             document.getElementsByTagName('head')[0].appendChild(domScript);
         }
-        $.ajax({
-            type: 'GET',
-            url: document.location.href + "./3rdparty/openui5/resources/sap-ui-version.json",
-            success: function () {
-                // 本地库存在，则加载本地
-                loadUI5(document.location.href + "./3rdparty/openui5/resources/sap-ui-core.js");
-            },
-            error: function () {
-                // 本地库不存在，则加载远程
-                loadUI5("https://openui5.hana.ondemand.com/resources/sap-ui-core.js");
-            }
-        });
+        // 检查#参数
+        if (document.location.href.indexOf("#") < 0) {
+            $.ajax({
+                type: 'GET',
+                url: document.location.href + "./3rdparty/openui5/resources/sap-ui-version.json",
+                success: function () {
+                    // 本地库存在，则加载本地
+                    loadUI5(document.location.href + "./3rdparty/openui5/resources/sap-ui-core.js");
+                },
+                error: function () {
+                    // 本地库不存在，则加载远程
+                    loadUI5("https://openui5.hana.ondemand.com/resources/sap-ui-core.js");
+                }
+            });
+        } else {
+            document.location.href = document.location.href.substring(0, document.location.href.indexOf("#"));
+        }
     </script>
 </head>
 
