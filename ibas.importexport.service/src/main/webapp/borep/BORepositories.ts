@@ -8,7 +8,10 @@
 
 import * as ibas from "ibas/index";
 import * as bo from "./bo/index";
-import { IBORepositoryImportExport, SchemaMethodsCaller, BO_REPOSITORY_IMPORTEXPORT } from "../api/index";
+import {
+    IBORepositoryImportExport, SchemaMethodsCaller,
+    BO_REPOSITORY_IMPORTEXPORT,
+} from "../api/index";
 import { DataConverter4ie } from "./DataConverters";
 
 /** 数据导入&导出 业务仓库 */
@@ -18,28 +21,15 @@ export class BORepositoryImportExport extends ibas.BORepositoryApplication imple
     protected createConverter(): ibas.IDataConverter {
         return new DataConverter4ie();
     }
-    /** 获取导入方法地址 */
-    getImportUrl(): string {
-        let url: string = this.address;
-        if (!url.endsWith("/")) {
-            url = url + "/";
-        }
-        if (url.endsWith("/data/")) {
-            url = url.substring(0, url.lastIndexOf("/data/") + 1);
-        }
-        let token: string = this.token;
-        if (ibas.objects.isNull(token)) {
-            token = "";
-        }
-        return ibas.strings.format("{0}file/import?token={1}", url, token);
-    }
-    /** 获取导入方法地址 */
-    parseImportResult(data: any): ibas.IOperationResult<string> {
-        let jData: Object = data;
-        if (typeof data === "string") {
-            jData = JSON.parse(data);
-        }
-        return this.createConverter().parsing(jData, "import");
+    /**
+     * 导入
+     * @param caller 调用者
+     */
+    import(caller: ibas.UploadFileCaller): void {
+        let fileRepository: ibas.FileRepositoryUploadAjax = new ibas.FileRepositoryUploadAjax();
+        fileRepository.address = this.address.replace("/services/rest/data/", "/services/rest/file/");
+        fileRepository.converter = this.createConverter();
+        fileRepository.uploadFile("import", caller);
     }
     /** 创建远程仓库 */
     protected createRemoteRepository(): ibas.IRemoteRepository {

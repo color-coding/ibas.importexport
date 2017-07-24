@@ -26,35 +26,45 @@ export class DataImportApp extends ibas.Application<IDataImportView>  {
     /** 注册视图 */
     protected registerView(): void {
         super.registerView();
-        this.view.importCompletedEvent = this.importCompleted;
+        this.view.importEvent = this.import;
     }
     /** 视图显示后 */
     protected viewShowed(): void {
         // 视图加载完成
-        // 设置导入方法地址
-        let url: string = (new BORepositoryImportExport()).getImportUrl();
-        // url = "http://localhost:8080/demo/services/jersey/files/upload";
-        this.view.uploadUrl = url;
     }
     /** 运行,覆盖原方法 */
     run(...args: any[]): void {
         super.run();
     }
-    /** 导入完成 */
-    importCompleted(data: any): void {
-        let opRslt: ibas.IOperationResult<string> = (new BORepositoryImportExport()).parseImportResult(data);
-        if (opRslt.resultCode !== 0) {
-            throw new Error(opRslt.message);
-        }
-        this.view.showResults(opRslt.resultObjects);
+    /** 导入 */
+    import(data: FormData): void {
+        this.view.showResults([]);
+        let that: this = this;
+        let boRepository: BORepositoryImportExport = new BORepositoryImportExport();
+        boRepository.import({
+            fileData: data,
+            onCompleted(opRslt: ibas.IOperationResult<string>): void {
+                try {
+                    that.busy(false);
+                    if (opRslt.resultCode !== 0) {
+                        throw new Error(opRslt.message);
+                    }
+                    that.messages(ibas.emMessageType.SUCCESS,
+                        ibas.i18n.prop("sys_shell_upload") + ibas.i18n.prop("sys_shell_sucessful"));
+                    that.view.showResults(opRslt.resultObjects);
+                } catch (error) {
+                    that.messages(error);
+                }
+            }
+        });
+        this.busy(true);
+        this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("sys_shell_uploading_file"));
     }
 }
 /** 数据导出服务-视图 */
 export interface IDataImportView extends ibas.IView {
-    /** 上传数据地址 */
-    uploadUrl: string;
-    /** 导入数据完成，参数为返回的消息 */
-    importCompletedEvent: Function;
+    /** 导入 */
+    importEvent: Function;
     /** 显示结果 */
     showResults(results: any[]): void;
 }
