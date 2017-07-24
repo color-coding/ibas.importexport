@@ -26,7 +26,9 @@ export class BORepositoryImportExport extends ibas.BORepositoryApplication imple
      * @param caller 调用者
      */
     import(caller: ibas.UploadFileCaller): void {
+        if (!this.address.endsWith("/")) { this.address += "/"; }
         let fileRepository: ibas.FileRepositoryUploadAjax = new ibas.FileRepositoryUploadAjax();
+        fileRepository.token = this.token;
         fileRepository.address = this.address.replace("/services/rest/data/", "/services/rest/file/");
         fileRepository.converter = this.createConverter();
         fileRepository.uploadFile("import", caller);

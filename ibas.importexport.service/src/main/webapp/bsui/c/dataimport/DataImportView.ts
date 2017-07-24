@@ -27,8 +27,8 @@ export class DataImportView extends ibas.BOView implements IDataImportView {
         this.form.addContent(new sap.ui.core.Title("", { text: ibas.i18n.prop("importexpor_import_data") }));
         this.uploader = new sap.ui.unified.FileUploader("", {
             name: "file",
-            placeholder: ibas.i18n.prop("importexpor_please_choose_file"),
             width: "100%",
+            placeholder: ibas.i18n.prop("importexpor_please_choose_file"),
         });
         this.form.addContent(this.uploader);
         this.form.addContent(new sap.ui.core.Title("", { text: ibas.i18n.prop("importexpor_import_result") }));
@@ -59,7 +59,9 @@ export class DataImportView extends ibas.BOView implements IDataImportView {
                         icon: "sap-icon://toaster-up",
                         press: function (): void {
                             let fileData: FormData = new FormData();
-                            that.importEvent(fileData);
+                            fileData.append("file", (<any>document.getElementsByName(that.uploader.getName()).item(0)).files[0]);
+                            fileData.append("name", that.uploader.getName());
+                            that.fireViewEvents(that.importEvent, fileData);
                         }
                     })
                 ]
