@@ -27,9 +27,24 @@ if "%OPTIONS%" neq "" (
   SET COMMOND=start /min !COMMOND! %OPTIONS%
   echo 命令：!COMMOND!
 )
+REM 映射库
+SET IBAS_FOLDER=%IBAS_TS_LIB%
+if "%IBAS_FOLDER%" equ "" (
+REM 没有定义环境变量
+  if exist "%WORK_FOLDER%..\..\..\..\..\ibas-typescript\" (
+    SET IBAS_FOLDER=%WORK_FOLDER%..\..\..\..\..\ibas-typescript\
+  )
+)
+
+REM 检查并映射库
+if "%IBAS_FOLDER%" neq "" (
+  if not exist %WORK_FOLDER%3rdparty\ibas mklink /d .\3rdparty\ibas %IBAS_FOLDER%ibas\
+  if not exist %WORK_FOLDER%3rdparty\openui5 mklink /d .\3rdparty\openui5 %IBAS_FOLDER%openui5\
+)
+
 REM 过滤符号链接目录
 if exist "%WORK_FOLDER%\tomcat\webapps\ROOT" rd /s /q "%WORK_FOLDER%\tomcat\webapps\ROOT"
-for /f %%l in ('dir /s /b "%WORK_FOLDER%tsconfig.json"') DO (
+for /f %%l in ('dir /b "%WORK_FOLDER%tsconfig.json"') DO (
   SET FOLDER=%%~dpl
   echo --开始编译：!FOLDER!
 REM 运行编译命令

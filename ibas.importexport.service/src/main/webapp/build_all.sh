@@ -11,7 +11,7 @@ echo '    4. 参数2，tsc命令的其他参数，如：-w，表示监听文件�
 echo '****************************************************************************'
 # 设置参数变量
 # 启动目录
-STARTUP_FOLDER=`pwd`
+STARTUP_FOLDER=$(cd `dirname $0`; pwd)
 # 工作目录默认第一个参数
 WORK_FOLDER=$1
 # 修正相对目录为启动目录
@@ -24,9 +24,32 @@ if [ "${WORK_FOLDER}" == "" ]
 then
   WORK_FOLDER=${STARTUP_FOLDER}
 fi
+echo --工作的目录：${WORK_FOLDER}
 # 其他参数
 OPTIONS=$2
 COMMOND=tsc
+
+# 映射库
+IBAS_FOLDER=${IBAS_TS_LIB}
+if [ "${IBAS_FOLDER}" == "" ]
+then
+  if [ -e "${WORK_FOLDER}/../../../../../ibas-typescript" ]
+  then
+    IBAS_FOLDER=${WORK_FOLDER}/../../../../../ibas-typescript
+  fi
+fi
+# 检查并映射库
+if [ "${IBAS_FOLDER}" != "" ]
+then
+  if [ ! -e "${WORK_FOLDER}/3rdparty/ibas" ]
+  then
+    ln -s ${IBAS_FOLDER}/ibas ${WORK_FOLDER}/3rdparty/ibas
+  fi
+  if [ ! -e "${WORK_FOLDER}/3rdparty/openui5" ]
+  then
+    ln -s ${IBAS_FOLDER}/openui5 ${WORK_FOLDER}/3rdparty/openui5
+  fi
+fi
 
 # 遍历当前目录存在tsconfig.json则执行tsc
 for folder in `find ${WORK_FOLDER} -type f -name tsconfig.json`
