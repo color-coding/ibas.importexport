@@ -12,7 +12,6 @@ import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.bobas.mapping.DbField;
 import org.colorcoding.ibas.bobas.mapping.DbFieldType;
 import org.colorcoding.ibas.importexport.MyConfiguration;
-import org.colorcoding.ibas.importexport.MyConsts;
 import org.colorcoding.ibas.importexport.data.emAreaType;
 import org.colorcoding.ibas.importexport.data.emDataSourceType;
 import org.colorcoding.ibas.importexport.data.emHorizontalJustification;
@@ -23,7 +22,7 @@ import org.colorcoding.ibas.importexport.data.emVerticalJustification;
  * 
  */
 @XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = DataExportTemplateItem.BUSINESS_OBJECT_NAME, namespace = MyConsts.NAMESPACE_BO)
+@XmlType(name = DataExportTemplateItem.BUSINESS_OBJECT_NAME, namespace = MyConfiguration.NAMESPACE_BO)
 public class DataExportTemplateItem extends BusinessObject<DataExportTemplateItem> implements IDataExportTemplateItem {
 
 	/**

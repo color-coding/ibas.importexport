@@ -7,12 +7,12 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.colorcoding.ibas.bobas.bo.BusinessObjects;
 import org.colorcoding.ibas.bobas.common.ICriteria;
-import org.colorcoding.ibas.importexport.MyConsts;
+import org.colorcoding.ibas.importexport.MyConfiguration;
 
 /**
  * 数据导出模板-项 集合
  */
-@XmlType(name = DataExportTemplateItems.BUSINESS_OBJECT_NAME, namespace = MyConsts.NAMESPACE_BO)
+@XmlType(name = DataExportTemplateItems.BUSINESS_OBJECT_NAME, namespace = MyConfiguration.NAMESPACE_BO)
 @XmlSeeAlso({ DataExportTemplateItem.class })
 public class DataExportTemplateItems extends BusinessObjects<IDataExportTemplateItem, IDataExportTemplate>
 		implements IDataExportTemplateItems {

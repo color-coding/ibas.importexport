@@ -16,7 +16,6 @@ import org.colorcoding.ibas.bobas.mapping.BOCode;
 import org.colorcoding.ibas.bobas.mapping.DbField;
 import org.colorcoding.ibas.bobas.mapping.DbFieldType;
 import org.colorcoding.ibas.importexport.MyConfiguration;
-import org.colorcoding.ibas.importexport.MyConsts;
 import org.colorcoding.ibas.importexport.data.emPaperSize;
 
 /**
@@ -24,8 +23,8 @@ import org.colorcoding.ibas.importexport.data.emPaperSize;
  * 
  */
 @XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = DataExportTemplate.BUSINESS_OBJECT_NAME, namespace = MyConsts.NAMESPACE_BO)
-@XmlRootElement(name = DataExportTemplate.BUSINESS_OBJECT_NAME, namespace = MyConsts.NAMESPACE_BO)
+@XmlType(name = DataExportTemplate.BUSINESS_OBJECT_NAME, namespace = MyConfiguration.NAMESPACE_BO)
+@XmlRootElement(name = DataExportTemplate.BUSINESS_OBJECT_NAME, namespace = MyConfiguration.NAMESPACE_BO)
 @BOCode(DataExportTemplate.BUSINESS_OBJECT_CODE)
 public class DataExportTemplate extends BusinessObject<DataExportTemplate> implements IDataExportTemplate {
 
