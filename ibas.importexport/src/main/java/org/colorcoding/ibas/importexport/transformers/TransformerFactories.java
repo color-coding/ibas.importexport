@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.colorcoding.ibas.bobas.messages.MessageLevel;
-import org.colorcoding.ibas.bobas.messages.RuntimeLog;
+import org.colorcoding.ibas.bobas.messages.Logger;
 import org.colorcoding.ibas.importexport.MyConfiguration;
 
 public final class TransformerFactories {
@@ -41,11 +41,11 @@ public final class TransformerFactories {
 							Object factory = type.newInstance();
 							if (factory instanceof TransformerFactory) {
 								this.getFactories().add((TransformerFactory) factory);
-								RuntimeLog.log(MessageLevel.DEBUG, MSG_REGISTER_TRANSFORMER_FACTORY, type.getName());
+								Logger.log(MessageLevel.DEBUG, MSG_REGISTER_TRANSFORMER_FACTORY, type.getName());
 							}
 						}
 					} catch (Exception e) {
-						RuntimeLog.log(e);
+						Logger.log(e);
 					}
 				}
 			}
@@ -72,10 +72,10 @@ public final class TransformerFactories {
 				}
 			}
 		} catch (Exception e) {
-			RuntimeLog.log(e);
+			Logger.log(e);
 		}
 		if (transformer == null) {
-			RuntimeLog.log(MessageLevel.DEBUG, MSG_NOT_FOUND_TRANSFORMER, type);
+			Logger.log(MessageLevel.DEBUG, MSG_NOT_FOUND_TRANSFORMER, type);
 		}
 		return transformer;
 	}

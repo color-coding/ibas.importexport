@@ -10,9 +10,9 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import org.colorcoding.ibas.bobas.i18n.i18n;
+import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.messages.MessageLevel;
-import org.colorcoding.ibas.bobas.messages.RuntimeLog;
+import org.colorcoding.ibas.bobas.messages.Logger;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
 import org.colorcoding.ibas.importexport.MyConfiguration;
 
@@ -115,12 +115,12 @@ public abstract class FileTransformer extends Transformer {
 		ISerializer<?> serializer = this.createSerializer();
 		if (serializer == null) {
 			throw new TransformException(
-					i18n.prop("msg_importexport_not_found_serializer", this.getClass().getSimpleName()));
+					I18N.prop("msg_importexport_not_found_serializer", this.getClass().getSimpleName()));
 		}
 		try {
 			if (this.getBOs() == null || this.getBOs().length == 0) {
 				Class<?>[] types = this.getKnownTypes().toArray(new Class<?>[] {});
-				RuntimeLog.log(MessageLevel.INFO, "transformer: [%s] to run deserialize.",
+				Logger.log(MessageLevel.INFO, "transformer: [%s] to run deserialize.",
 						this.getClass().getSimpleName());
 				Object object = serializer.deserialize(this.getDataStream(), types);
 				if (object != null) {
@@ -138,10 +138,10 @@ public abstract class FileTransformer extends Transformer {
 						this.addBO(object);
 					}
 				}
-				RuntimeLog.log(MessageLevel.INFO, "transformer: [%s] got bo count [%s].",
+				Logger.log(MessageLevel.INFO, "transformer: [%s] got bo count [%s].",
 						this.getClass().getSimpleName(), this.getBOs().length);
 			} else {
-				RuntimeLog.log(MessageLevel.INFO, "transformer: [%s] to run serialize.",
+				Logger.log(MessageLevel.INFO, "transformer: [%s] to run serialize.",
 						this.getClass().getSimpleName());
 				this.getOutputFiles().clear();
 				for (int i = 0; i < this.getBOs().length; i++) {
@@ -166,11 +166,11 @@ public abstract class FileTransformer extends Transformer {
 					outputStream.close();
 					this.getOutputFiles().add(file.getPath());
 				}
-				RuntimeLog.log(MessageLevel.INFO, "transformer: [%s] output file count [%s].",
+				Logger.log(MessageLevel.INFO, "transformer: [%s] output file count [%s].",
 						this.getClass().getSimpleName(), this.getOutputFiles().size());
 			}
 		} catch (Exception e) {
-			RuntimeLog.log(e);
+			Logger.log(e);
 			throw new TransformException(e);
 		}
 	}

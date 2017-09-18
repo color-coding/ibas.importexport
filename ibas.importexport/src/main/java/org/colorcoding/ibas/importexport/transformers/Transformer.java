@@ -3,7 +3,7 @@ package org.colorcoding.ibas.importexport.transformers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.colorcoding.ibas.bobas.i18n.i18n;
+import org.colorcoding.ibas.bobas.i18n.I18N;
 
 /**
  * 转换者
@@ -77,7 +77,7 @@ public abstract class Transformer implements ITransformer {
 	 * 设置-转换数据
 	 */
 	public void setData(Object data) {
-		throw new RuntimeException(i18n.prop("msg_importexport_invaild_data"));
+		throw new RuntimeException(I18N.prop("msg_importexport_invaild_data"));
 	}
 
 	private List<Class<?>> knownTypes;

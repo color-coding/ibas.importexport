@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.colorcoding.ibas.bobas.core.BOFactory;
 import org.colorcoding.ibas.bobas.messages.MessageLevel;
-import org.colorcoding.ibas.bobas.messages.RuntimeLog;
+import org.colorcoding.ibas.bobas.messages.Logger;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
 import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
 import org.colorcoding.ibas.bobas.util.ArrayList;
@@ -48,16 +48,16 @@ public class JsonTransformer extends FileTransformer {
 				}
 				Class<?> boType = BOFactory.create().getBOClass(boCode);
 				if (boType == null) {
-					RuntimeLog.log(MessageLevel.WARN, "transformer: [%s] not found [%s]'s class.",
+					Logger.log(MessageLevel.WARN, "transformer: [%s] not found [%s]'s class.",
 							this.getClass().getSimpleName(), boCode);
 				} else if (!knownTypes.contains(boType)) {
-					RuntimeLog.log(MessageLevel.INFO, "transformer: [%s] found class [%s|%s].",
+					Logger.log(MessageLevel.INFO, "transformer: [%s] found class [%s|%s].",
 							this.getClass().getSimpleName(), boCode, boType.getName());
 					knownTypes.add(boType);
 				}
 			}
 		} catch (Exception e) {
-			RuntimeLog.log(e);
+			Logger.log(e);
 		}
 		return knownTypes;
 	}

@@ -9,8 +9,7 @@ import org.colorcoding.ibas.bobas.core.BOFactory;
 import org.colorcoding.ibas.bobas.core.IBusinessObjectBase;
 import org.colorcoding.ibas.bobas.core.RepositoryException;
 import org.colorcoding.ibas.bobas.data.FileData;
-import org.colorcoding.ibas.bobas.i18n.i18n;
-import org.colorcoding.ibas.bobas.ownership.PermissionGroup;
+import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.repository.BORepositoryServiceApplication;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
 import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
@@ -22,7 +21,6 @@ import org.colorcoding.ibas.importexport.transformers.TransformerFactory;
 /**
  * ImportExport仓库
  */
-@PermissionGroup("ImportExport")
 public class BORepositoryImportExport extends BORepositoryServiceApplication
 		implements IBORepositoryImportExportSvc, IBORepositoryImportExportApp {
 
@@ -43,13 +41,13 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 		try {
 			this.setUserToken(token);
 			if (data == null || data.getOriginalName().indexOf(".") < 0) {
-				throw new Exception(i18n.prop("msg_importexport_invaild_file_data"));
+				throw new Exception(I18N.prop("msg_importexport_invaild_file_data"));
 			}
 			// 创建转换者
 			String type = data.getOriginalName().substring(data.getOriginalName().indexOf(".") + 1);
 			ITransformer transformer = TransformerFactory.create().create(type);
 			if (transformer == null) {
-				throw new Exception(i18n.prop("msg_importexport_not_found_transformer", type));
+				throw new Exception(I18N.prop("msg_importexport_not_found_transformer", type));
 			}
 			// 转换文件数据到业务对象
 			transformer.setData(data.getLocation());
@@ -162,11 +160,11 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			this.setUserToken(token);
 			Class<?> boType = BOFactory.create().getBOClass(boCode);
 			if (boType == null) {
-				throw new Exception(i18n.prop("msg_importexport_not_found_class", boCode));
+				throw new Exception(I18N.prop("msg_importexport_not_found_class", boCode));
 			}
 			ISerializer<?> serializer = SerializerFactory.create().createManager().create(type);
 			if (serializer == null) {
-				throw new Exception(i18n.prop("msg_importexport_not_found_serializer", type));
+				throw new Exception(I18N.prop("msg_importexport_not_found_serializer", type));
 			}
 			ByteArrayOutputStream writer = new ByteArrayOutputStream();
 			serializer.getSchema(boType, writer);
