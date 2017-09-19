@@ -1,6 +1,6 @@
 #!/bin/bash
 echo '****************************************************************************'
-echo '    compile_and_package.sh                                                  '
+echo '             compile_packages.sh                                            '
 echo '                      by niuren.zhu                                         '
 echo '                           2016.06.17                                       '
 echo '  说明：                                                                    '
@@ -14,27 +14,21 @@ echo '**************************************************************************
 # 设置参数变量
 WORK_FOLDER=`pwd`
 OPNAME=`date '+%Y%m%d_%H%M%S'`
-LOGFILE=${WORK_FOLDER}/compile_and_package_log_${OPNAME}.txt
+LOGFILE=${WORK_FOLDER}/compile_packages_log_${OPNAME}.txt
 
 echo --当前工作的目录是[${WORK_FOLDER}]
-if [ ! -x mvn ]
-then
-  echo --请检查maven是否安装正确。
-  #exit 1
-fi
 echo --检查编译顺序文件[compile_order.txt]
 if [ ! -e ${WORK_FOLDER}/compile_order.txt ]
 then
   ls -l | awk '/^d/{print $NF}' > ${WORK_FOLDER}/compile_order.txt
 fi
 
-echo --清除项目的maven缓存
-if [ ! -e ${WORK_FOLDER}/release ]
+echo --清除项目缓存
+if [ -e ${WORK_FOLDER}/release/ ]
 then
-  mkdir ${WORK_FOLDER}/release
-else
-  rm -rf ${WORK_FOLDER}/release/*
+  rm -rf ${WORK_FOLDER}/release/
 fi
+mkdir -p ${WORK_FOLDER}/release/
 mvn clean install -f ${WORK_FOLDER} >>$LOGFILE
 
 echo --开始编译[compile_order.txt]内容
@@ -42,9 +36,9 @@ while read line
 do
   if [ -e ${WORK_FOLDER}/${line}/pom.xml ]
   then
-    if [[ ${line} = *.service ]]
+    if [ ${line} = *.service ]
     then
-      # 网站，编译war包，拷贝jar包到发布目录并安装到本地
+      # 网站，编译war包
       echo --开始编译[${line}]
       mvn clean package -Dmaven.test.skip=true -f ${WORK_FOLDER}/${line} >>$LOGFILE
 
@@ -52,16 +46,6 @@ do
       then
         cp -r ${WORK_FOLDER}/${line}/target/*.war ${WORK_FOLDER}/release >>$LOGFILE
       fi
-      # 拷贝网站的jar包到发布目录
-      for PACKAGE in `find ${WORK_FOLDER}/${line}/target -name "${line}*.jar"`
-      do
-         cp -r ${PACKAGE} ${WORK_FOLDER}/release >>$LOGFILE
-      done
-      # 处理pom4publish.xml
-      if [ -e ${WORK_FOLDER}/${line}/pom4publish.xml ]
-      then
-         cp -r ${WORK_FOLDER}/${line}/pom4publish.xml ${WORK_FOLDER}/release/pom.xml >>$LOGFILE
-      fi  
     else
       # 非网站，编译jar包并安装到本地
       echo --开始编译[${line}]+安装
@@ -73,7 +57,7 @@ do
       fi    
     fi
     # 检查编译结果
-    if [ -e ${WORK_FOLDER}/release/${line}*.jar ]
+    if [ -e ${WORK_FOLDER}/release/${line}*.* ]
     then
       echo --编译[${line}]成功
     else
@@ -82,4 +66,4 @@ do
   fi
 done < ${WORK_FOLDER}/compile_order.txt | sed 's/\r//g'
 
-echo --编译完成，更多信息请查看[compile_and_package_log_${OPNAME}.txt]
+echo --编译完成，更多信息请查看[compile_packages_log_${OPNAME}.txt]
