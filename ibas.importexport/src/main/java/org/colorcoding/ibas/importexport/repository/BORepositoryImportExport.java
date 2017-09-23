@@ -2,6 +2,7 @@ package org.colorcoding.ibas.importexport.repository;
 
 import java.io.ByteArrayOutputStream;
 
+import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.OperationResult;
@@ -56,8 +57,8 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			opRslt = new OperationResult<String>();
 			// 保存业务对象
 			for (Object object : transformer.getBOs()) {
-				if (object instanceof IBusinessObjectBase) {
-					IOperationResult<IBusinessObjectBase> opRsltSave = this.save((IBusinessObjectBase) object, token);
+				if (object instanceof IBusinessObject) {
+					IOperationResult<IBusinessObject> opRsltSave = this.save((IBusinessObject) object, token);
 					if (opRsltSave.getError() != null) {
 						throw opRsltSave.getError();
 					}
