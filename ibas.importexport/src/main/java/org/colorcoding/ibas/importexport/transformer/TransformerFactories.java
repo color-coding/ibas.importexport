@@ -1,10 +1,10 @@
-package org.colorcoding.ibas.importexport.transformers;
+package org.colorcoding.ibas.importexport.transformer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.colorcoding.ibas.bobas.messages.MessageLevel;
 import org.colorcoding.ibas.bobas.messages.Logger;
+import org.colorcoding.ibas.bobas.messages.MessageLevel;
 import org.colorcoding.ibas.importexport.MyConfiguration;
 
 public final class TransformerFactories {
@@ -62,21 +62,4 @@ public final class TransformerFactories {
 		return factories;
 	}
 
-	public ITransformer create(String type) {
-		ITransformer transformer = null;
-		try {
-			for (TransformerFactory factory : this.getFactories()) {
-				transformer = factory.create(type);
-				if (transformer != null) {
-					return transformer;
-				}
-			}
-		} catch (Exception e) {
-			Logger.log(e);
-		}
-		if (transformer == null) {
-			Logger.log(MessageLevel.DEBUG, MSG_NOT_FOUND_TRANSFORMER, type);
-		}
-		return transformer;
-	}
 }

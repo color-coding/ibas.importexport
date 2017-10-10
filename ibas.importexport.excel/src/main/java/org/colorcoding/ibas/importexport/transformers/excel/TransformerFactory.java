@@ -1,6 +1,6 @@
 package org.colorcoding.ibas.importexport.transformers.excel;
 
-import org.colorcoding.ibas.importexport.transformers.ITransformer;
+import org.colorcoding.ibas.importexport.transformer.ITransformer;
 
 /**
  * 转换者工厂

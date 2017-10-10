@@ -1,4 +1,4 @@
-package org.colorcoding.ibas.importexport.test.transformers;
+package org.colorcoding.ibas.importexport.test.transformer;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -8,10 +8,9 @@ import java.util.UUID;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
 import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
 import org.colorcoding.ibas.importexport.MyConfiguration;
-import org.colorcoding.ibas.importexport.transformers.ITransformer;
-import org.colorcoding.ibas.importexport.transformers.JsonTransformer;
-import org.colorcoding.ibas.importexport.transformers.TransformException;
-import org.colorcoding.ibas.importexport.transformers.XmlTransformer;
+import org.colorcoding.ibas.importexport.transformer.JsonTransformer;
+import org.colorcoding.ibas.importexport.transformer.TransformException;
+import org.colorcoding.ibas.importexport.transformer.XmlTransformer;
 import org.colorcoding.ibas.initialfantasy.bo.organizations.IOrganizationalRole;
 import org.colorcoding.ibas.initialfantasy.bo.organizations.IOrganizationalStructure;
 import org.colorcoding.ibas.initialfantasy.bo.organizations.IRoleMember;
@@ -55,39 +54,27 @@ public class testTransformer extends TestCase {
 	}
 
 	public void testJSON() throws TransformException, IOException {
-		ITransformer transformer = new JsonTransformer();
+		JsonTransformer transformer = new JsonTransformer();
 		transformer.addKnownType(OrganizationalStructure.class);
 		transformer.addKnownType(OrganizationalRole.class);
 		transformer.addKnownType(RoleMember.class);
 		// 测试转换BO
-		transformer.setData(this.createFileData(JsonTransformer.TYPE_NAME));
+		transformer.setInputData(new File(this.createFileData(JsonTransformer.TYPE_NAME)));
 		transformer.transform();
-		for (Object item : transformer.getBOs()) {
-			System.out.println(item.toString());
-		}
-		// 测试转换文件
-		transformer.addBOs(transformer.getBOs());
-		transformer.transform();
-		for (Object item : (String[]) transformer.getData()) {
+		for (Object item : transformer.getOutputData()) {
 			System.out.println(item.toString());
 		}
 	}
 
 	public void testXML() throws TransformException, IOException {
-		ITransformer transformer = new XmlTransformer();
+		XmlTransformer transformer = new XmlTransformer();
 		transformer.addKnownType(OrganizationalStructure.class);
 		transformer.addKnownType(OrganizationalRole.class);
 		transformer.addKnownType(RoleMember.class);
 		// 测试转换BO
-		transformer.setData(this.createFileData(XmlTransformer.TYPE_NAME));
+		transformer.setInputData(new File(this.createFileData(XmlTransformer.TYPE_NAME)));
 		transformer.transform();
-		for (Object item : transformer.getBOs()) {
-			System.out.println(item.toString());
-		}
-		// 测试转换文件
-		transformer.addBOs(transformer.getBOs());
-		transformer.transform();
-		for (Object item : (String[]) transformer.getData()) {
+		for (Object item : transformer.getOutputData()) {
 			System.out.println(item.toString());
 		}
 	}

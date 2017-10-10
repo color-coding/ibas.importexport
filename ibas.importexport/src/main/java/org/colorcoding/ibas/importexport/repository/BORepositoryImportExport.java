@@ -1,6 +1,7 @@
 package org.colorcoding.ibas.importexport.repository;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.common.ICriteria;
@@ -16,8 +17,9 @@ import org.colorcoding.ibas.bobas.serialization.ISerializer;
 import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
 import org.colorcoding.ibas.importexport.bo.dataexporttemplate.DataExportTemplate;
 import org.colorcoding.ibas.importexport.bo.dataexporttemplate.IDataExportTemplate;
-import org.colorcoding.ibas.importexport.transformers.ITransformer;
-import org.colorcoding.ibas.importexport.transformers.TransformerFactory;
+import org.colorcoding.ibas.importexport.transformer.IFileTransformer;
+import org.colorcoding.ibas.importexport.transformer.ITransformer;
+import org.colorcoding.ibas.importexport.transformer.TransformerFactory;
 
 /**
  * ImportExport仓库
@@ -45,30 +47,30 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 				throw new Exception(I18N.prop("msg_importexport_invaild_file_data"));
 			}
 			// 创建转换者
-			String type = data.getOriginalName().substring(data.getOriginalName().indexOf(".") + 1);
-			ITransformer transformer = TransformerFactory.create().create(type);
-			if (transformer == null) {
+			String type = String.format(TransformerFactory.GROUP_FILE_TO,
+					data.getOriginalName().substring(data.getOriginalName().indexOf(".") + 1)).toUpperCase();
+			ITransformer<?, ?> transformer = TransformerFactory.create().create(type);
+			if (!(transformer instanceof IFileTransformer)) {
 				throw new Exception(I18N.prop("msg_importexport_not_found_transformer", type));
 			}
+			IFileTransformer fileTransformer = (IFileTransformer) transformer;
 			// 转换文件数据到业务对象
-			transformer.setData(data.getLocation());
-			transformer.transform();
+			fileTransformer.setInputData(new File(data.getLocation()));
+			fileTransformer.transform();
 			myTrans = this.beginTransaction();
 			opRslt = new OperationResult<String>();
 			// 保存业务对象
-			for (Object object : transformer.getBOs()) {
-				if (object instanceof IBusinessObject) {
-					IOperationResult<IBusinessObject> opRsltSave = this.save((IBusinessObject) object, token);
-					if (opRsltSave.getError() != null) {
-						throw opRsltSave.getError();
-					}
-					if (opRsltSave.getResultCode() != 0) {
-						throw new Exception(opRsltSave.getMessage());
-					}
-					IBusinessObjectBase bo = opRsltSave.getResultObjects().firstOrDefault();
-					if (bo != null) {
-						opRslt.addResultObjects(bo.toString());
-					}
+			for (IBusinessObject object : fileTransformer.getOutputData()) {
+				IOperationResult<IBusinessObject> opRsltSave = this.save((IBusinessObject) object, token);
+				if (opRsltSave.getError() != null) {
+					throw opRsltSave.getError();
+				}
+				if (opRsltSave.getResultCode() != 0) {
+					throw new Exception(opRsltSave.getMessage());
+				}
+				IBusinessObjectBase bo = opRsltSave.getResultObjects().firstOrDefault();
+				if (bo != null) {
+					opRslt.addResultObjects(bo.toString());
 				}
 			}
 			if (myTrans) {

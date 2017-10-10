@@ -1,13 +1,14 @@
-package org.colorcoding.ibas.importexport.transformers;
+package org.colorcoding.ibas.importexport.transformer;
 
+import java.io.FileInputStream;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.colorcoding.ibas.bobas.core.BOFactory;
-import org.colorcoding.ibas.bobas.messages.MessageLevel;
 import org.colorcoding.ibas.bobas.messages.Logger;
+import org.colorcoding.ibas.bobas.messages.MessageLevel;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
 import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
 import org.colorcoding.ibas.bobas.util.ArrayList;
@@ -17,12 +18,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * xml文件转换者
+ * xml文件转换为业务对象
  * 
  * @author Niuren.Zhu
  *
  */
-public class XmlTransformer extends FileTransformer {
+public class XmlTransformer extends FileSerializationTransformer {
 
 	public final static String TYPE_NAME = "xml";
 	public final static String NODE_BO_CODE_NAME = "ObjectCode";
@@ -33,18 +34,13 @@ public class XmlTransformer extends FileTransformer {
 	}
 
 	@Override
-	protected String getExtension() {
-		return TYPE_NAME;
-	}
-
-	@Override
 	public List<Class<?>> getKnownTypes() {
 		List<Class<?>> knownTypes = super.getKnownTypes();
 		knownTypes.add(ArrayList.class);
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document document = builder.parse(this.getDataStream());
+			Document document = builder.parse(new FileInputStream(this.getInputData()));
 			Element root = document.getDocumentElement();
 			NodeList nodeList = root.getElementsByTagName(NODE_BO_CODE_NAME);
 			for (int i = 0; i < nodeList.getLength(); i++) {

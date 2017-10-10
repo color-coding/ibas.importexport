@@ -1,4 +1,4 @@
-package org.colorcoding.ibas.importexport.transformers;
+package org.colorcoding.ibas.importexport.transformer;
 
 public class TransformException extends Exception {
 	private static final long serialVersionUID = 1288116020669439567L;
