@@ -17,6 +17,7 @@ import org.colorcoding.ibas.bobas.serialization.ISerializer;
 import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
 import org.colorcoding.ibas.importexport.bo.dataexporttemplate.DataExportTemplate;
 import org.colorcoding.ibas.importexport.bo.dataexporttemplate.IDataExportTemplate;
+import org.colorcoding.ibas.importexport.transformer.FileTransformer;
 import org.colorcoding.ibas.importexport.transformer.IFileTransformer;
 import org.colorcoding.ibas.importexport.transformer.ITransformer;
 import org.colorcoding.ibas.importexport.transformer.TransformerFactory;
@@ -47,7 +48,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 				throw new Exception(I18N.prop("msg_importexport_invaild_file_data"));
 			}
 			// 创建转换者
-			String type = String.format(TransformerFactory.GROUP_FILE_TO,
+			String type = String.format(FileTransformer.GROUP_TEMPLATE,
 					data.getOriginalName().substring(data.getOriginalName().indexOf(".") + 1)).toUpperCase();
 			ITransformer<?, ?> transformer = TransformerFactory.create().create(type);
 			if (!(transformer instanceof IFileTransformer)) {

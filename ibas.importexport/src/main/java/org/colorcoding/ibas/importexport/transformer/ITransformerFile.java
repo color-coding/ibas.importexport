@@ -10,6 +10,19 @@ import org.colorcoding.ibas.bobas.bo.IBusinessObject;
  * @author Niuren.Zhu
  *
  */
-public interface ITransformerFile extends ITransformer<IBusinessObject, File> {
+public interface ITransformerFile extends ITransformer<IBusinessObject[], File> {
 
+	/**
+	 * 设置-工作目录
+	 * 
+	 * @param folder
+	 */
+	void setWorkFolder(String folder);
+
+	/**
+	 * 获取-工作目录
+	 * 
+	 * @return
+	 */
+	String getWorkFolder();
 }

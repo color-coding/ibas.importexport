@@ -20,12 +20,10 @@ public class TransformerFactory {
 		return instance;
 	}
 
-	public final static String GROUP_FILE_TO = "FILE_%s_TO";
-
 	public ITransformer<?, ?> create(String sign) {
-		if (String.format(GROUP_FILE_TO, JsonTransformer.TYPE_NAME).equalsIgnoreCase(sign)) {
+		if (JsonTransformer.TYPE_NAME.equalsIgnoreCase(sign)) {
 			return new JsonTransformer();
-		} else if (String.format(GROUP_FILE_TO, XmlTransformer.TYPE_NAME).equalsIgnoreCase(sign)) {
+		} else if (XmlTransformer.TYPE_NAME.equalsIgnoreCase(sign)) {
 			return new XmlTransformer();
 		}
 		return null;

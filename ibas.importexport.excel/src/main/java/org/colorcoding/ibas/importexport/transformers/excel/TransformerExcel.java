@@ -12,6 +12,7 @@ import org.colorcoding.ibas.importexport.transformer.TransformerFile;
 public class TransformerExcel extends TransformerFile {
 
 	public final static String TYPE_NAME = "xlsx";
+	public final static String NAME = String.format(GROUP_TEMPLATE, TYPE_NAME).toUpperCase();
 
 	@Override
 	public void transform() throws TransformException {

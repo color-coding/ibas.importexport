@@ -23,6 +23,7 @@ public class JsonTransformer extends FileSerializationTransformer {
 
 	public final static String TYPE_NAME = "json";
 	public final static String NODE_BO_CODE_NAME = "ObjectCode";
+	public final static String NAME = String.format(GROUP_TEMPLATE, TYPE_NAME).toUpperCase();
 
 	protected ISerializer<?> createSerializer() {
 		return SerializerFactory.create().createManager().create(TYPE_NAME);

@@ -22,7 +22,7 @@ public class TransformerFactory {
 		return instance;
 	}
 
-	public ITransformer create(String sign) {
+	public ITransformer<?, ?> create(String sign) {
 		if (ExcelTransformer.TYPE_NAME.equalsIgnoreCase(sign)) {
 			return new ExcelTransformer();
 		}
