@@ -41,7 +41,6 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	 */
 	public OperationResult<String> importData(FileData data, String token) {
 		OperationResult<String> opRslt = null;
-		boolean myTrans = false;
 		try {
 			this.setUserToken(token);
 			if (data == null || data.getOriginalName().indexOf(".") < 0) {
@@ -58,34 +57,37 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			// 转换文件数据到业务对象
 			fileTransformer.setInputData(new File(data.getLocation()));
 			fileTransformer.transform();
-			myTrans = this.beginTransaction();
-			opRslt = new OperationResult<String>();
-			// 保存业务对象
-			for (IBusinessObject object : fileTransformer.getOutputData()) {
-				IOperationResult<IBusinessObject> opRsltSave = this.save((IBusinessObject) object, token);
-				if (opRsltSave.getError() != null) {
-					throw opRsltSave.getError();
+			boolean myTrans = this.beginTransaction();
+			try {
+				opRslt = new OperationResult<String>();
+				// 保存业务对象
+				for (IBusinessObject object : fileTransformer.getOutputData()) {
+					IOperationResult<IBusinessObject> opRsltSave = this.save((IBusinessObject) object, token);
+					if (opRsltSave.getError() != null) {
+						throw opRsltSave.getError();
+					}
+					if (opRsltSave.getResultCode() != 0) {
+						throw new Exception(opRsltSave.getMessage());
+					}
+					IBusinessObjectBase bo = opRsltSave.getResultObjects().firstOrDefault();
+					if (bo != null) {
+						opRslt.addResultObjects(bo.toString());
+					}
 				}
-				if (opRsltSave.getResultCode() != 0) {
-					throw new Exception(opRsltSave.getMessage());
+				if (myTrans) {
+					this.commitTransaction();
 				}
-				IBusinessObjectBase bo = opRsltSave.getResultObjects().firstOrDefault();
-				if (bo != null) {
-					opRslt.addResultObjects(bo.toString());
+			} catch (Exception e) {
+				if (myTrans) {
+					try {
+						this.rollbackTransaction();
+					} catch (RepositoryException e1) {
+						opRslt = new OperationResult<String>(e);
+					}
 				}
-			}
-			if (myTrans) {
-				this.commitTransaction();
 			}
 		} catch (Exception e) {
 			opRslt = new OperationResult<String>(e);
-			if (myTrans) {
-				try {
-					this.rollbackTransaction();
-				} catch (RepositoryException e1) {
-					opRslt.setMessage(opRslt.getMessage() + "&" + e1.getMessage());
-				}
-			}
 		}
 		return opRslt;
 	}
