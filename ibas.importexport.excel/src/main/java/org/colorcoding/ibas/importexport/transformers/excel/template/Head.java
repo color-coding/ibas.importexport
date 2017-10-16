@@ -8,4 +8,10 @@ package org.colorcoding.ibas.importexport.transformers.excel.template;
  */
 public class Head extends Area {
 
+	public Head() {
+		this.setStartingRow(1);
+		this.setEndingRow(1);
+		this.setStartingColumn(1);
+		this.setEndingColumn(-1);
+	}
 }

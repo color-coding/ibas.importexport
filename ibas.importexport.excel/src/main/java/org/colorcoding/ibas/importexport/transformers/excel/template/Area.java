@@ -74,4 +74,14 @@ public abstract class Area implements IArea {
 	public final void setEndingColumn(int endingColumn) {
 		this.endingColumn = endingColumn;
 	}
+
+	private Area parent;
+
+	public final Area getParent() {
+		return parent;
+	}
+
+	public final void setParent(Area parent) {
+		this.parent = parent;
+	}
 }

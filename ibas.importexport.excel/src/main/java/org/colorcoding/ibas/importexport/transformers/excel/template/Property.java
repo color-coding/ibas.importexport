@@ -8,6 +8,13 @@ package org.colorcoding.ibas.importexport.transformers.excel.template;
  */
 public class Property extends Area {
 
+	public Property() {
+		this.setStartingRow(3);
+		this.setEndingRow(3);
+		this.setStartingColumn(1);
+		this.setEndingColumn(-1);
+	}
+
 	private Class<?> bindingClass;
 
 	public final Class<?> getBindingClass() {

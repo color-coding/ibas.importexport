@@ -6,9 +6,8 @@ import java.util.List;
 
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.bo.IBusinessObjects;
-import org.colorcoding.ibas.bobas.core.IPropertyInfo;
-import org.colorcoding.ibas.bobas.core.PropertyInfoList;
-import org.colorcoding.ibas.bobas.core.PropertyInfoManager;
+import org.colorcoding.ibas.bobas.core.fields.IFieldData;
+import org.colorcoding.ibas.bobas.core.fields.IManageFields;
 
 /**
  * 模板（sheet）
@@ -17,6 +16,13 @@ import org.colorcoding.ibas.bobas.core.PropertyInfoManager;
  *
  */
 public class Template extends Area {
+
+	public Template() {
+		this.setStartingRow(-1);
+		this.setEndingRow(-1);
+		this.setStartingColumn(-1);
+		this.setEndingColumn(-1);
+	}
 
 	private Head head;
 
@@ -74,23 +80,10 @@ public class Template extends Area {
 	 */
 	public final void resolving(IBusinessObject bo) throws NotRecognizedException {
 		try {
-			this.resolving(bo.getClass());
+			this.setName(bo.getClass().getSimpleName());
+			this.resolvingObject(bo);
 		} catch (Exception e) {
 			throw new NotRecognizedException(e);
-		}
-	}
-
-	/**
-	 * 解析对象，形成模板
-	 * 
-	 * @param type
-	 *            待解析的类型
-	 * @throws NotRecognizedException
-	 */
-	public final void resolving(Class<?> type) throws NotRecognizedException {
-		this.setName(type.getName());
-		for (Object object : this.resolvingObject(type)) {
-			this.addObject(object);
 		}
 	}
 
@@ -101,20 +94,27 @@ public class Template extends Area {
 	 * @return
 	 * @throws NotRecognizedException
 	 */
-	protected List<Object> resolvingObject(Class<?> type) throws NotRecognizedException {
-		List<Object> objects = new ArrayList<>();
+	protected void resolvingObject(IBusinessObject bo) throws NotRecognizedException {
 		// 根对象
 		Object object = new Object();
-		object.resolving(type);
-		objects.add(object);
-		// 分析属性的对象
-		PropertyInfoList pInfoList = PropertyInfoManager.getPropertyInfoList(type);
-		for (IPropertyInfo<?> pInfo : pInfoList) {
-			if (IBusinessObjects.class.isAssignableFrom(pInfo.getValueType())) {
-				objects.addAll(this.resolvingObject(pInfo.getValueType()));
+		object.resolving(bo);
+		object.setStartingRow(1);
+		object.setEndingRow(object.getStartingRow());
+		object.setStartingColumn(
+				this.getObjects().length > 0 ? this.getObjects()[this.getObjects().length - 1].getEndingColumn() + 1
+						: 1);
+		object.setEndingColumn(object.getStartingColumn() + object.getProperties().length);
+		this.addObject(object);
+		// 集合对象
+		IManageFields fields = (IManageFields) bo;
+		for (IFieldData field : fields.getFields()) {
+			if (IBusinessObjects.class.isInstance(field.getValue())) {
+				IBusinessObject item = ((IBusinessObjects<?, ?>) field.getValue()).create();
+				if (item instanceof IBusinessObject) {
+					this.resolvingObject((IBusinessObject) item);
+				}
 			}
 		}
-		return objects;
 	}
 
 	/**
@@ -129,4 +129,8 @@ public class Template extends Area {
 
 	}
 
+	public Data read(int row, int column) {
+
+		return Data.DATA_NULL;
+	}
 }
