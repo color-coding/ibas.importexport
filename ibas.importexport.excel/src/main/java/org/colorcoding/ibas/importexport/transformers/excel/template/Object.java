@@ -14,7 +14,7 @@ import org.colorcoding.ibas.bobas.core.fields.IManageFields;
  * @author Niuren.Zhu
  *
  */
-public class Object extends Area {
+public class Object extends BindingArea {
 
 	public static final int OBJECT_STARTING_ROW = 1;
 	public static final int OBJECT_STARTING_COLUMN = 0;
@@ -39,25 +39,15 @@ public class Object extends Area {
 		this.properties = properties;
 	}
 
-	private Class<?> bindingClass;
-
-	public final Class<?> getBindingClass() {
-		return bindingClass;
-	}
-
-	private final void setBindingClass(Class<?> bindingClass) {
-		this.bindingClass = bindingClass;
-	}
-
 	/**
 	 * 解析对象，形成模板
 	 * 
 	 * @param bo
 	 *            待解析对象
-	 * @throws NotRecognizedException
+	 * @throws ParsingException
 	 *             无法识别异常
 	 */
-	public final void resolving(IBusinessObject bo) throws NotRecognizedException {
+	public final void resolving(IBusinessObject bo) throws ParsingException {
 		this.setName(bo.getClass().getSimpleName());
 		this.setBindingClass(bo.getClass());
 		// 集合对象

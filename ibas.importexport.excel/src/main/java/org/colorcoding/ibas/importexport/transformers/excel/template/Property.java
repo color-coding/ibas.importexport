@@ -6,7 +6,7 @@ package org.colorcoding.ibas.importexport.transformers.excel.template;
  * @author Niuren.Zhu
  *
  */
-public class Property extends Area {
+public class Property extends BindingArea {
 
 	public static final int OBJECT_STARTING_ROW = 2;
 	public static final int OBJECT_STARTING_COLUMN = 0;
@@ -16,16 +16,6 @@ public class Property extends Area {
 		this.setEndingRow(this.getStartingRow());
 		this.setStartingColumn(OBJECT_STARTING_COLUMN);
 		this.setEndingColumn(AREA_AUTO_REGION);
-	}
-
-	private Class<?> bindingClass;
-
-	public final Class<?> getBindingClass() {
-		return bindingClass;
-	}
-
-	public final void setBindingClass(Class<?> bindingClass) {
-		this.bindingClass = bindingClass;
 	}
 
 	@Override

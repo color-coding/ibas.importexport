@@ -6,17 +6,21 @@ package org.colorcoding.ibas.importexport.transformers.excel.template;
  * @author Niuren.Zhu
  *
  */
-public class Head extends Area {
+public class Head extends BindingArea {
+
+	public static final int HEAD_STARTING_ROW = 0;
+	public static final int HEAD_STARTING_COLUMN = 0;
 
 	public Head() {
-		this.setStartingRow(1);
-		this.setEndingRow(1);
-		this.setStartingColumn(1);
-		this.setEndingColumn(-1);
+		this.setStartingRow(HEAD_STARTING_ROW);
+		this.setEndingRow(this.getStartingRow());
+		this.setStartingColumn(HEAD_STARTING_ROW);
+		this.setEndingColumn(AREA_AUTO_REGION);
 	}
 
 	@Override
 	public String toString() {
 		return String.format("{head: %s}", super.toString());
 	}
+
 }

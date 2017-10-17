@@ -1,6 +1,7 @@
 package org.colorcoding.ibas.importexport.transformers.excel.template;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,9 @@ public class Template extends Area {
 	 * @return
 	 */
 	public final Head getHead() {
+		if (this.head == null) {
+			this.head = new Head();
+		}
 		return head;
 	}
 
@@ -80,23 +84,40 @@ public class Template extends Area {
 	 * 
 	 * @param bo
 	 *            待解析对象
-	 * @throws NotRecognizedException
+	 * @throws ParsingException
 	 *             无法识别异常
 	 */
-	public final void resolving(IBusinessObject bo) throws NotRecognizedException {
+	public final void resolving(IBusinessObject bo) throws ParsingException {
 		try {
-			this.setName(bo.getClass().getSimpleName());
+			this.resolvingHead(bo);
 			this.resolvingObject(bo);
+			// 填充模板信息
 			if (this.getObjects().length > 0) {
 				Object lastObject = this.getObjects()[this.getObjects().length - 1];
 				if (lastObject.getProperties().length > 0) {
 					Property lastProperty = lastObject.getProperties()[lastObject.getProperties().length - 1];
 					this.setEndingColumn(lastProperty.getEndingColumn());
+					this.setEndingRow(lastProperty.getEndingRow());
+					this.getHead().setEndingColumn(this.getEndingColumn());
 				}
 			}
+			this.setName(this.getHead().getName());
+		} catch (ParsingException e) {
+			throw e;
 		} catch (Exception e) {
-			throw new NotRecognizedException(e);
+			throw new ParsingException(e);
 		}
+	}
+
+	/**
+	 * 解析头区域
+	 * 
+	 * @param bo
+	 * @throws ParsingException
+	 */
+	protected void resolvingHead(IBusinessObject bo) throws ParsingException {
+		this.getHead().setBindingClass(bo.getClass());
+		this.getHead().setName(bo.getClass().getSimpleName());
 	}
 
 	/**
@@ -104,9 +125,9 @@ public class Template extends Area {
 	 * 
 	 * @param bo
 	 * @return
-	 * @throws NotRecognizedException
+	 * @throws ParsingException
 	 */
-	protected void resolvingObject(IBusinessObject bo) throws NotRecognizedException {
+	protected void resolvingObject(IBusinessObject bo) throws ParsingException {
 		// 根对象
 		Object object = new Object();
 		object.setStartingRow(Object.OBJECT_STARTING_ROW);
@@ -134,15 +155,36 @@ public class Template extends Area {
 	 * 
 	 * @param file
 	 *            待分析文件
-	 * @throws NotRecognizedException
+	 * @throws ParsingException
 	 *             无法识别异常
 	 */
-	public final void resolving(File file) throws NotRecognizedException {
+	public final void resolving(File file) throws ParsingException {
 
 	}
 
-	public Data read(int row, int column) {
+	private FileWriter writer;
 
-		return Data.DATA_NULL;
+	public final FileWriter getWriter() {
+		if (this.writer == null) {
+			this.writer = new ExcelWriter();
+		}
+		return writer;
 	}
+
+	public final void setWriter(FileWriter writer) {
+		this.writer = writer;
+	}
+
+	/**
+	 * 模板内容输出文件
+	 * 
+	 * @param file
+	 * @throws WriteFileException
+	 * @throws IOException
+	 */
+	public void write(File file) throws WriteFileException, IOException {
+		this.getWriter().setTemplate(this);
+		this.getWriter().write(file);
+	}
+
 }

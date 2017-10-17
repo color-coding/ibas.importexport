@@ -30,6 +30,9 @@ public abstract class Area {
 	private String description;
 
 	public final String getDescription() {
+		if (this.description == null || this.description.isEmpty()) {
+			return this.getName();
+		}
 		return description;
 	}
 
@@ -94,12 +97,6 @@ public abstract class Area {
 			stringBuilder.append(this.getName());
 		} else {
 			stringBuilder.append("UNKNOWN");
-		}
-		if (this.getDescription() != null && !this.getDescription().isEmpty()) {
-			stringBuilder.append(" ");
-			stringBuilder.append("-");
-			stringBuilder.append(" ");
-			stringBuilder.append(this.getDescription());
 		}
 		stringBuilder.append(" ");
 		stringBuilder.append("(");
