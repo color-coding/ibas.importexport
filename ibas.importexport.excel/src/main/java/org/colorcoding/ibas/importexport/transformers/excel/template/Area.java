@@ -6,13 +6,15 @@ package org.colorcoding.ibas.importexport.transformers.excel.template;
  * @author Niuren.Zhu
  *
  */
-public abstract class Area implements IArea {
+public abstract class Area {
+
+	public static final int AREA_AUTO_REGION = -1;
 
 	public Area() {
-		this.setEndingColumn(-1);
-		this.setEndingRow(-1);
-		this.setStartingColumn(-1);
-		this.setStartingRow(-1);
+		this.setEndingColumn(AREA_AUTO_REGION);
+		this.setEndingRow(AREA_AUTO_REGION);
+		this.setStartingColumn(AREA_AUTO_REGION);
+		this.setStartingRow(AREA_AUTO_REGION);
 	}
 
 	private String name;
@@ -83,5 +85,38 @@ public abstract class Area implements IArea {
 
 	public final void setParent(Area parent) {
 		this.parent = parent;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder stringBuilder = new StringBuilder();
+		if (this.getName() != null && !this.getName().isEmpty()) {
+			stringBuilder.append(this.getName());
+		} else {
+			stringBuilder.append("UNKNOWN");
+		}
+		if (this.getDescription() != null && !this.getDescription().isEmpty()) {
+			stringBuilder.append(" ");
+			stringBuilder.append("-");
+			stringBuilder.append(" ");
+			stringBuilder.append(this.getDescription());
+		}
+		stringBuilder.append(" ");
+		stringBuilder.append("(");
+		stringBuilder.append("row=");
+		stringBuilder.append("[");
+		stringBuilder.append(this.getStartingRow());
+		stringBuilder.append(",");
+		stringBuilder.append(this.getEndingRow());
+		stringBuilder.append("]");
+		stringBuilder.append(" ");
+		stringBuilder.append("col=");
+		stringBuilder.append("[");
+		stringBuilder.append(this.getStartingColumn());
+		stringBuilder.append(",");
+		stringBuilder.append(this.getEndingColumn());
+		stringBuilder.append("]");
+		stringBuilder.append(")");
+		return stringBuilder.toString();
 	}
 }

@@ -16,11 +16,14 @@ import org.colorcoding.ibas.bobas.core.fields.IManageFields;
  */
 public class Object extends Area {
 
+	public static final int OBJECT_STARTING_ROW = 1;
+	public static final int OBJECT_STARTING_COLUMN = 0;
+
 	public Object() {
-		this.setStartingRow(2);
-		this.setEndingRow(2);
-		this.setStartingColumn(1);
-		this.setEndingColumn(-1);
+		this.setStartingRow(OBJECT_STARTING_ROW);
+		this.setEndingRow(this.getStartingRow());
+		this.setStartingColumn(OBJECT_STARTING_COLUMN);
+		this.setEndingColumn(AREA_AUTO_REGION);
 	}
 
 	private Property[] properties;
@@ -77,4 +80,8 @@ public class Object extends Area {
 		this.setProperties(properties.toArray(new Property[] {}));
 	}
 
+	@Override
+	public String toString() {
+		return String.format("{object: %s}", super.toString());
+	}
 }

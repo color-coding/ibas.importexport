@@ -18,10 +18,10 @@ import org.colorcoding.ibas.bobas.core.fields.IManageFields;
 public class Template extends Area {
 
 	public Template() {
-		this.setStartingRow(-1);
-		this.setEndingRow(-1);
-		this.setStartingColumn(-1);
-		this.setEndingColumn(-1);
+		this.setStartingRow(AREA_AUTO_REGION);
+		this.setEndingRow(AREA_AUTO_REGION);
+		this.setStartingColumn(AREA_AUTO_REGION);
+		this.setEndingColumn(AREA_AUTO_REGION);
 	}
 
 	private Head head;
@@ -70,6 +70,11 @@ public class Template extends Area {
 		this.objects.add(object);
 	}
 
+	@Override
+	public String toString() {
+		return String.format("{template: %s}", super.toString());
+	}
+
 	/**
 	 * 解析对象，形成模板
 	 * 
@@ -82,6 +87,13 @@ public class Template extends Area {
 		try {
 			this.setName(bo.getClass().getSimpleName());
 			this.resolvingObject(bo);
+			if (this.getObjects().length > 0) {
+				Object lastObject = this.getObjects()[this.getObjects().length - 1];
+				if (lastObject.getProperties().length > 0) {
+					Property lastProperty = lastObject.getProperties()[lastObject.getProperties().length - 1];
+					this.setEndingColumn(lastProperty.getEndingColumn());
+				}
+			}
 		} catch (Exception e) {
 			throw new NotRecognizedException(e);
 		}
@@ -97,13 +109,13 @@ public class Template extends Area {
 	protected void resolvingObject(IBusinessObject bo) throws NotRecognizedException {
 		// 根对象
 		Object object = new Object();
-		object.resolving(bo);
-		object.setStartingRow(1);
+		object.setStartingRow(Object.OBJECT_STARTING_ROW);
 		object.setEndingRow(object.getStartingRow());
 		object.setStartingColumn(
 				this.getObjects().length > 0 ? this.getObjects()[this.getObjects().length - 1].getEndingColumn() + 1
-						: 1);
-		object.setEndingColumn(object.getStartingColumn() + object.getProperties().length);
+						: Object.OBJECT_STARTING_COLUMN);
+		object.resolving(bo);
+		object.setEndingColumn(object.getStartingColumn() + object.getProperties().length - 1);
 		this.addObject(object);
 		// 集合对象
 		IManageFields fields = (IManageFields) bo;

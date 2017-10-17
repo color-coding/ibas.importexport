@@ -17,11 +17,13 @@ public class testTemplate extends TestCase {
 
 		Template template = new Template();
 		template.resolving(new DataExportTemplate());
-		System.out.println(String.format("%s - %s", template.getName(), template.getDescription()));
+		System.out.println(String.format("%s", template.toString()));
 		for (Object object : template.getObjects()) {
-			System.out.println(String.format("  %s - %s", object.getName(), object.getDescription()));
+			System.out.println(String.format("  %s %s", object.toString(),
+					object.getBindingClass() != null ? object.getBindingClass().getSimpleName() : "---"));
 			for (Property property : object.getProperties()) {
-				System.out.println(String.format("    %s - %s", property.getName(), property.getDescription()));
+				System.out.println(String.format("    %s %s", property.toString(),
+						property.getBindingClass() != null ? property.getBindingClass().getSimpleName() : "---"));
 			}
 		}
 	}

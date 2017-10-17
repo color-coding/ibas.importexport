@@ -14,4 +14,9 @@ public class Head extends Area {
 		this.setStartingColumn(1);
 		this.setEndingColumn(-1);
 	}
+
+	@Override
+	public String toString() {
+		return String.format("{head: %s}", super.toString());
+	}
 }
