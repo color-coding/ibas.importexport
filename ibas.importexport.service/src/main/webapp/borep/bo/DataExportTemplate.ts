@@ -1324,14 +1324,14 @@ export class DataExportTemplateItem extends BOSimpleLine<DataExportTemplateItem>
     }
 
     /** 映射的属性名称-显示格式 */
-    static PROPERTY_VALFORMAT_NAME: string = "ValFormat";
+    static PROPERTY_VALUEFORMAT_NAME: string = "ValueFormat";
     /** 获取-显示格式 */
-    get valFormat(): string {
-        return this.getProperty<string>(DataExportTemplateItem.PROPERTY_VALFORMAT_NAME);
+    get valueFormat(): string {
+        return this.getProperty<string>(DataExportTemplateItem.PROPERTY_VALUEFORMAT_NAME);
     }
     /** 设置-显示格式 */
-    set valFormat(value: string) {
-        this.setProperty(DataExportTemplateItem.PROPERTY_VALFORMAT_NAME, value);
+    set valueFormat(value: string) {
+        this.setProperty(DataExportTemplateItem.PROPERTY_VALUEFORMAT_NAME, value);
     }
 
 

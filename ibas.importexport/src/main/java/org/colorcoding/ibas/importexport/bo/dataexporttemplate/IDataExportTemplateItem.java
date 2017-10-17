@@ -750,14 +750,14 @@ public interface IDataExportTemplateItem extends IBOSimpleLine {
     * 
     * @return 值
     */
-    String getValFormat();
+    String getValueFormat();
 
     /**
     * 设置-显示格式
     * 
     * @param value 值
     */
-    void setValFormat(String value);
+    void setValueFormat(String value);
 
 
 

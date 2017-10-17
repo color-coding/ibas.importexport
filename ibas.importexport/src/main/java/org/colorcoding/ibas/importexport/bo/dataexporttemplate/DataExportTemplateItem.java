@@ -1621,13 +1621,13 @@ public class DataExportTemplateItem extends BusinessObject<DataExportTemplateIte
 	/**
 	 * 属性名称-显示格式
 	 */
-	private static final String PROPERTY_VALFORMAT_NAME = "ValFormat";
+	private static final String PROPERTY_VALUEFORMAT_NAME = "ValueFormat";
 
 	/**
 	 * 显示格式 属性
 	 */
 	@DbField(name = "ValFormat", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<String> PROPERTY_VALFORMAT = registerProperty(PROPERTY_VALFORMAT_NAME,
+	public static final IPropertyInfo<String> PROPERTY_VALUEFORMAT = registerProperty(PROPERTY_VALUEFORMAT_NAME,
 			String.class, MY_CLASS);
 
 	/**
@@ -1635,9 +1635,9 @@ public class DataExportTemplateItem extends BusinessObject<DataExportTemplateIte
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_VALFORMAT_NAME)
-	public final String getValFormat() {
-		return this.getProperty(PROPERTY_VALFORMAT);
+	@XmlElement(name = PROPERTY_VALUEFORMAT_NAME)
+	public final String getValueFormat() {
+		return this.getProperty(PROPERTY_VALUEFORMAT);
 	}
 
 	/**
@@ -1646,8 +1646,8 @@ public class DataExportTemplateItem extends BusinessObject<DataExportTemplateIte
 	 * @param value
 	 *            值
 	 */
-	public final void setValFormat(String value) {
-		this.setProperty(PROPERTY_VALFORMAT, value);
+	public final void setValueFormat(String value) {
+		this.setProperty(PROPERTY_VALUEFORMAT, value);
 	}
 
 	/**

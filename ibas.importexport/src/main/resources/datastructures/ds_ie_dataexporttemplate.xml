@@ -118,7 +118,7 @@
     <Property Name="Border_Red" Description="框架色-红" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="BrdrRed"/>
     <Property Name="Border_Green" Description="框架色-绿" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="BrdrGreen"/>
     <Property Name="Border_Blue" Description="框架色-蓝" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="BrdrBlue"/>
-    <Property Name="ValFormat" Description="显示格式" DataType="Alphanumeric" DataSubType="Default" EditSize="50" Mapped="ValFormat"/>
+    <Property Name="ValueFormat" Description="显示格式" DataType="Alphanumeric" DataSubType="Default" EditSize="50" Mapped="ValFormat"/>
   </Model>
   <BusinessObject MappedModel="DataExportTemplate" ShortName="${Company}_IE_EXPORTTEMPLATE">
     <RelatedBO Relation="OneToMany" MappedModel="DataExportTemplateItem"/>

@@ -116,6 +116,6 @@
   "bo_dataexporttemplateitem_border_red": "框架色-红",
   "bo_dataexporttemplateitem_border_green": "框架色-绿",
   "bo_dataexporttemplateitem_border_blue": "框架色-蓝",
-  "bo_dataexporttemplateitem_valformat": "显示格式",
+  "bo_dataexporttemplateitem_valueformat": "显示格式",
   "bo_dataexporttemplate_closing_delimiter": "----结束----"
 }

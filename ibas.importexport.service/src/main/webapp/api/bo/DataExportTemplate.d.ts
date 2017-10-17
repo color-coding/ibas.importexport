@@ -335,7 +335,7 @@ export interface IDataExportTemplateItem extends IBOSimpleLine {
     /** 框架色-蓝 */
     border_Blue: number;
     /** 显示格式 */
-    valFormat: string;
+    valueFormat: string;
 }
 
 /** 数据导出模板-项 集合 */
