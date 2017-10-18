@@ -17,10 +17,10 @@ public abstract class BindingArea extends Area {
 		stringBuilder.append("type: ");
 		stringBuilder.append(this.getClass().getSimpleName());
 		stringBuilder.append(System.getProperty("line.separator"));
-		stringBuilder.append("binding: ");
+		stringBuilder.append("path: ");
 		stringBuilder.append(this.getName());
 		stringBuilder.append(System.getProperty("line.separator"));
-		stringBuilder.append("data: ");
+		stringBuilder.append("class: ");
 		stringBuilder.append(this.getBindingClass().getName());
 		return stringBuilder.toString();
 	}

@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.colorcoding.ibas.bobas.data.DateTime;
 import org.colorcoding.ibas.importexport.MyConfiguration;
 import org.colorcoding.ibas.importexport.bo.dataexporttemplate.DataExportTemplate;
+import org.colorcoding.ibas.importexport.transformers.excel.template.Cell;
 import org.colorcoding.ibas.importexport.transformers.excel.template.Object;
 import org.colorcoding.ibas.importexport.transformers.excel.template.ParsingException;
 import org.colorcoding.ibas.importexport.transformers.excel.template.Property;
@@ -32,6 +33,14 @@ public class testTemplate extends TestCase {
 				System.out.println(String.format("    %s %s", property.toString(),
 						property.getBindingClass() != null ? property.getBindingClass().getSimpleName() : "---"));
 			}
+		}
+		for (int i = 0; i < template.getDatas().getRows().size(); i++) {
+			Cell[] row = template.getDatas().getRows().get(i);
+			for (Cell cell : row) {
+				System.out.print(cell == null ? "" : cell.getValue());
+				System.out.print("    ");
+			}
+			System.out.println();
 		}
 		File file = new File(String.format("%s%soutput_%s.xlsx", MyConfiguration.getWorkFolder(), File.separator,
 				DateTime.getNow().getTime()));

@@ -19,6 +19,17 @@ public class Head extends BindingArea {
 	}
 
 	@Override
+	public int getIndex() {
+		if (this.getParent() instanceof Template) {
+			Template parent = (Template) this.getParent();
+			if (parent.getHead() == this) {
+				return 0;
+			}
+		}
+		return -1;
+	}
+
+	@Override
 	public String toString() {
 		return String.format("{head: %s}", super.toString());
 	}

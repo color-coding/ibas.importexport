@@ -86,9 +86,16 @@ public abstract class Area {
 		return parent;
 	}
 
-	public final void setParent(Area parent) {
+	final void setParent(Area parent) {
 		this.parent = parent;
 	}
+
+	/**
+	 * 父项的索引
+	 * 
+	 * @return
+	 */
+	public abstract int getIndex();
 
 	@Override
 	public String toString() {

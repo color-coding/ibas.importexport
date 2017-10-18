@@ -19,6 +19,19 @@ public class Property extends BindingArea {
 	}
 
 	@Override
+	public int getIndex() {
+		if (this.getParent() instanceof Object) {
+			Object parent = (Object) this.getParent();
+			for (int i = 0; i < parent.getProperties().length; i++) {
+				if (parent.getProperties()[i] == this) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+
+	@Override
 	public String toString() {
 		return String.format("{property: %s}", super.toString());
 	}

@@ -3,6 +3,7 @@ package org.colorcoding.ibas.importexport.transformers.excel.template;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.colorcoding.ibas.bobas.bo.IBOStorageTag;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.bo.IBusinessObjects;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
@@ -24,6 +25,19 @@ public class Object extends BindingArea {
 		this.setEndingRow(this.getStartingRow());
 		this.setStartingColumn(OBJECT_STARTING_COLUMN);
 		this.setEndingColumn(AREA_AUTO_REGION);
+	}
+
+	@Override
+	public int getIndex() {
+		if (this.getParent() instanceof Template) {
+			Template parent = (Template) this.getParent();
+			for (int i = 0; i < parent.getObjects().length; i++) {
+				if (parent.getObjects()[i] == this) {
+					return i;
+				}
+			}
+		}
+		return -1;
 	}
 
 	private Property[] properties;
@@ -48,14 +62,27 @@ public class Object extends BindingArea {
 	 *             无法识别异常
 	 */
 	public final void resolving(IBusinessObject bo) throws ParsingException {
-		this.setName(bo.getClass().getSimpleName());
 		this.setBindingClass(bo.getClass());
-		// 集合对象
 		List<Property> properties = new ArrayList<>();
 		IManageFields fields = (IManageFields) bo;
 		for (IFieldData field : fields.getFields()) {
+			// 对象不再处理
 			if (IBusinessObjects.class.isInstance(field.getValue())) {
 				continue;
+			}
+			// 对象不再处理
+			if (IBusinessObject.class.isInstance(field.getValue())) {
+				continue;
+			}
+			// 过滤属性
+			if (bo.isNew() && bo instanceof IBOStorageTag) {
+				// 新建对象，不处理存储标签
+				try {
+					if (IBOStorageTag.class.getDeclaredMethod("get" + field.getName()) != null) {
+						continue;
+					}
+				} catch (SecurityException | NoSuchMethodException e) {
+				}
 			}
 			Property property = new Property();
 			property.setParent(this);

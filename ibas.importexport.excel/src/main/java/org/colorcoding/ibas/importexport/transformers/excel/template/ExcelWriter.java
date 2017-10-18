@@ -13,8 +13,13 @@ import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationConstraint;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
@@ -29,6 +34,11 @@ import org.colorcoding.ibas.bobas.data.Decimal;
  *
  */
 public class ExcelWriter extends FileWriter {
+
+	public static final short COLORS_HEAD = IndexedColors.LIME.getIndex();
+	public static final short[] COLORS_OBJECT = new short[] { IndexedColors.TAN.getIndex(),
+			IndexedColors.LIGHT_CORNFLOWER_BLUE.getIndex(), IndexedColors.LAVENDER.getIndex() };
+	public static final short COLORS_PROPERTY = IndexedColors.LIGHT_ORANGE.getIndex();
 
 	public ExcelWriter() {
 		this.setCacheRows(60);
@@ -68,8 +78,11 @@ public class ExcelWriter extends FileWriter {
 			this.setWorkbook(workBook);
 			this.writeHead(sheet);
 			this.writeObjects(sheet);
+			// 冻结头信息
+			sheet.createFreezePane(0, this.getTemplate().getDatas().getStartingRow());
 			this.writeDatas(sheet);
-			this.writeDataFormat(sheet);// 带格式空数据
+			// 带格式空数据
+			this.writeDataFormat(sheet);
 			workBook.write(new FileOutputStream(file));
 		} catch (Exception e) {
 			throw new WriteFileException(e);
@@ -80,7 +93,6 @@ public class ExcelWriter extends FileWriter {
 				this.setWorkbook(null);
 			}
 		}
-
 	}
 
 	protected void writeHead(Sheet sheet) {
@@ -100,12 +112,26 @@ public class ExcelWriter extends FileWriter {
 		comment.setString(creationHelper.createRichTextString(head.bindingNotes()));
 		comment.setAuthor(this.getTemplate().getClass().getSimpleName());
 		cell.setCellComment(comment);
+		// 设置单元格样式
+		CellStyle style = this.getWorkbook().createCellStyle();
+		style.setFillForegroundColor(COLORS_HEAD);// 背景色
+		style.setFillPattern(FillPatternType.SOLID_FOREGROUND);// 颜色填充方式
+		style.setAlignment(HorizontalAlignment.LEFT);// 水平居中
+		style.setVerticalAlignment(VerticalAlignment.CENTER);// 垂直居中
+		// 设置字体
+		Font font = this.getWorkbook().createFont();
+		font.setItalic(true);
+		font.setBold(true);
+		style.setFont(font);
+		cell.setCellStyle(style);
 	}
 
 	protected void writeObjects(Sheet sheet) {
 		CellRangeAddress range = null;
 		Cell cell = null;
 		Comment comment = null;
+		CellStyle style = null;
+		Font font = null;
 		CreationHelper creationHelper = this.getWorkbook().getCreationHelper();
 		Drawing<?> drawing = sheet.createDrawingPatriarch();
 		for (Object object : this.getTemplate().getObjects()) {
@@ -114,9 +140,9 @@ public class ExcelWriter extends FileWriter {
 			sheet.addMergedRegion(range);
 		}
 		Row oRow = sheet.createRow(this.getTemplate().getHead().getEndingRow() + 1);
-		oRow.setHeight((short) (oRow.getHeight() * 1.2));
+		oRow.setHeight((short) (oRow.getHeight() * 1.4));
 		Row pRow = sheet.createRow(oRow.getRowNum() + 1);
-		pRow.setHeight((short) (pRow.getHeight() * 1.2));
+		pRow.setHeight((short) (pRow.getHeight() * 1.6));
 		for (Object object : this.getTemplate().getObjects()) {
 			cell = oRow.createCell(object.getStartingColumn());
 			cell.setCellValue(object.getDescription());
@@ -126,6 +152,17 @@ public class ExcelWriter extends FileWriter {
 			comment.setString(creationHelper.createRichTextString(object.bindingNotes()));
 			comment.setAuthor(this.getTemplate().getClass().getSimpleName());
 			cell.setCellComment(comment);
+			// 设置单元格样式
+			style = this.getWorkbook().createCellStyle();
+			style.setFillForegroundColor(COLORS_OBJECT[object.getIndex() % COLORS_OBJECT.length]);// 背景色
+			style.setFillPattern(FillPatternType.SOLID_FOREGROUND);// 颜色填充方式
+			style.setAlignment(HorizontalAlignment.CENTER);// 水平居中
+			style.setVerticalAlignment(VerticalAlignment.CENTER);// 垂直居中
+			// 设置字体
+			font = this.getWorkbook().createFont();
+			font.setBold(true);
+			style.setFont(font);
+			cell.setCellStyle(style);
 			// 输出属性
 			for (Property property : object.getProperties()) {
 				cell = pRow.createCell(property.getStartingColumn());
@@ -136,6 +173,17 @@ public class ExcelWriter extends FileWriter {
 				comment.setString(creationHelper.createRichTextString(property.bindingNotes()));
 				comment.setAuthor(this.getTemplate().getClass().getSimpleName());
 				cell.setCellComment(comment);
+				// 设置单元格样式
+				style = this.getWorkbook().createCellStyle();
+				style.setFillForegroundColor(COLORS_PROPERTY);// 背景色
+				style.setFillPattern(FillPatternType.SOLID_FOREGROUND);// 颜色填充方式
+				style.setAlignment(HorizontalAlignment.CENTER);// 水平居中
+				style.setVerticalAlignment(VerticalAlignment.CENTER);// 垂直居中
+				// 设置字体
+				font = this.getWorkbook().createFont();
+				font.setBold(true);
+				style.setFont(font);
+				cell.setCellStyle(style);
 			}
 		}
 	}
@@ -153,7 +201,7 @@ public class ExcelWriter extends FileWriter {
 				if (property.getBindingClass() == DateTime.class) {
 					CellStyle cellStyle = this.getWorkbook().createCellStyle();
 					DataFormat format = this.getWorkbook().createDataFormat();
-					cellStyle.setDataFormat(format.getFormat("yyyy-MM-dd"));
+					cellStyle.setDataFormat(format.getFormat(DateTime.FORMAT_DATE));
 					// cell.setCellStyle(cellStyle);
 				} else if (property.getBindingClass().isEnum()) {
 					java.lang.Object[] constants = property.getBindingClass().getEnumConstants();
