@@ -2,8 +2,12 @@ package org.colorcoding.ibas.importexport.transformers.excel.template;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import org.colorcoding.ibas.bobas.bo.IBOStorageTag;
+import org.colorcoding.ibas.bobas.bo.IBOTagCanceled;
+import org.colorcoding.ibas.bobas.bo.IBOTagDeleted;
+import org.colorcoding.ibas.bobas.bo.IBOTagReferenced;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.bo.IBusinessObjects;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
@@ -75,13 +79,35 @@ public class Object extends BindingArea<Template> {
 				continue;
 			}
 			// 过滤属性
-			if (bo.isNew() && bo instanceof IBOStorageTag) {
-				// 新建对象，不处理存储标签
-				try {
-					if (IBOStorageTag.class.getDeclaredMethod("get" + field.getName()) != null) {
-						continue;
+			if (bo.isNew()) {
+				// 新建对象
+				Function<Class<?>, Boolean> isSkip = new Function<Class<?>, Boolean>() {
+					@Override
+					public Boolean apply(Class<?> t) {
+						try {
+							if (t.isInstance(bo) && t.getDeclaredMethod("get" + field.getName()) != null) {
+								return true;
+							}
+						} catch (SecurityException | NoSuchMethodException e) {
+						}
+						return false;
 					}
-				} catch (SecurityException | NoSuchMethodException e) {
+				};
+				if (isSkip.apply(IBOStorageTag.class)) {
+					// 存储标记跳过
+					continue;
+				}
+				if (isSkip.apply(IBOTagCanceled.class)) {
+					// 取消标记跳过
+					continue;
+				}
+				if (isSkip.apply(IBOTagDeleted.class)) {
+					// 删除标记跳过
+					continue;
+				}
+				if (isSkip.apply(IBOTagReferenced.class)) {
+					// 删除标记跳过
+					continue;
 				}
 			}
 			Property property = new Property();

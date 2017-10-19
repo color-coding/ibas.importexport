@@ -212,54 +212,56 @@ public class ExcelWriter extends FileWriter {
 					continue;
 				}
 				Cell sheetCell = sheetRow.createCell(dataCell.getStartingColumn());
-				if (dataCell.getParent().getBindingClass() == DateTime.class) {
-					// 日期类型值
-					sheetCell.setCellValue((Date) dataCell.getValue());
-				} else if (dataCell.getParent().getBindingClass() == Decimal.class
-						|| dataCell.getParent().getBindingClass() == Float.class
-						|| dataCell.getParent().getBindingClass() == Double.class
-						|| dataCell.getParent().getBindingClass() == BigDecimal.class) {
-					// 小数类型
-					sheetCell.setCellType(CellType.NUMERIC);
-					sheetCell.setCellValue(Double.valueOf(dataCell.getValue().toString()));
-				} else if (dataCell.getParent().getBindingClass() == Long.class
-						|| dataCell.getParent().getBindingClass() == Integer.class
-						|| dataCell.getParent().getBindingClass() == Short.class
-						|| dataCell.getParent().getBindingClass() == BigInteger.class) {
-					// 数值类型
-					sheetCell.setCellType(CellType.NUMERIC);
-					sheetCell.setCellValue(Double.valueOf(dataCell.getValue().toString()));
-				} else if (dataCell.getParent().getBindingClass().isEnum()) {
-					// 枚举类型
-					if (this.cellStyles == null || !this.cellStyles.containsKey(dataCell.getParent())) {
-						// 此列第一次初始化，设置枚举可选值
-						KeyValue[] values = DataConvert.toKeyValues(dataCell.getParent().getBindingClass());
-						if (values.length > 0) {
-							Function<KeyValue[], String[]> toStrings = new Function<KeyValue[], String[]>() {
+				if (dataCell.getValue() != null) {
+					if (dataCell.getParent().getBindingClass() == DateTime.class) {
+						// 日期类型值
+						sheetCell.setCellValue((Date) dataCell.getValue());
+					} else if (dataCell.getParent().getBindingClass() == Decimal.class
+							|| dataCell.getParent().getBindingClass() == Float.class
+							|| dataCell.getParent().getBindingClass() == Double.class
+							|| dataCell.getParent().getBindingClass() == BigDecimal.class) {
+						// 小数类型
+						sheetCell.setCellType(CellType.NUMERIC);
+						sheetCell.setCellValue(Double.valueOf(dataCell.getValue().toString()));
+					} else if (dataCell.getParent().getBindingClass() == Long.class
+							|| dataCell.getParent().getBindingClass() == Integer.class
+							|| dataCell.getParent().getBindingClass() == Short.class
+							|| dataCell.getParent().getBindingClass() == BigInteger.class) {
+						// 数值类型
+						sheetCell.setCellType(CellType.NUMERIC);
+						sheetCell.setCellValue(Double.valueOf(dataCell.getValue().toString()));
+					} else if (dataCell.getParent().getBindingClass().isEnum()) {
+						// 枚举类型
+						if (this.cellStyles == null || !this.cellStyles.containsKey(dataCell.getParent())) {
+							// 此列第一次初始化，设置枚举可选值
+							KeyValue[] values = DataConvert.toKeyValues(dataCell.getParent().getBindingClass());
+							if (values.length > 0) {
+								Function<KeyValue[], String[]> toStrings = new Function<KeyValue[], String[]>() {
 
-								@Override
-								public String[] apply(KeyValue[] t) {
-									String[] values = new String[t.length];
-									for (int i = 0; i < values.length; i++) {
-										values[i] = t[i].getKey();
+									@Override
+									public String[] apply(KeyValue[] t) {
+										String[] values = new String[t.length];
+										for (int i = 0; i < values.length; i++) {
+											values[i] = t[i].getKey();
+										}
+										return values;
 									}
-									return values;
-								}
-							};
-							DataValidationHelper dvHelper = sheet.getDataValidationHelper();
-							DataValidationConstraint dvConstraint = dvHelper
-									.createExplicitListConstraint(toStrings.apply(values));
-							CellRangeAddressList regions = new CellRangeAddressList(
-									this.getTemplate().getDatas().getStartingRow(),
-									this.getTemplate().getDatas().getEndingRow(),
-									dataCell.getParent().getStartingColumn(), dataCell.getParent().getEndingColumn());
-							DataValidation validation = dvHelper.createValidation(dvConstraint, regions);
-							sheet.addValidationData(validation);
+								};
+								DataValidationHelper dvHelper = sheet.getDataValidationHelper();
+								DataValidationConstraint dvConstraint = dvHelper
+										.createExplicitListConstraint(toStrings.apply(values));
+								CellRangeAddressList regions = new CellRangeAddressList(
+										this.getTemplate().getDatas().getStartingRow(),
+										this.getTemplate().getDatas().getEndingRow(),
+										dataCell.getParent().getStartingColumn(),
+										dataCell.getParent().getEndingColumn());
+								DataValidation validation = dvHelper.createValidation(dvConstraint, regions);
+								sheet.addValidationData(validation);
+							}
 						}
-					}
-				} else {
-					// 字符
-					if (dataCell.getValue() != null) {
+						sheetCell.setCellValue(dataCell.getValue().toString());
+					} else {
+						// 字符
 						sheetCell.setCellValue(dataCell.getValue().toString());
 					}
 				}
