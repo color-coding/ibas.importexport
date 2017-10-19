@@ -6,18 +6,11 @@ package org.colorcoding.ibas.importexport.transformers.excel.template;
  * @author Niuren.Zhu
  *
  */
-public class Cell extends Area {
-
-	/**
-	 * 空值
-	 */
-	public final static Cell VALUE_NULL = new Cell("NULL");
+public class Cell extends Area<Property> {
+	public static final String DEFAULT_NAME = "DATA_CELL";
 
 	public Cell() {
-	}
-
-	public Cell(String name) {
-		this.setName(name);
+		this.setName(DEFAULT_NAME);
 	}
 
 	@Override
@@ -39,5 +32,10 @@ public class Cell extends Area {
 
 	public final void setValue(java.lang.Object value) {
 		this.value = value;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("{cell: %s}", super.toString());
 	}
 }

@@ -9,9 +9,12 @@ import java.util.List;
  * @author Niuren.Zhu
  *
  */
-public class Data extends Area {
+public class Data extends Area<Template> {
+
+	public static final String DEFAULT_NAME = "DATA_AREA";
 
 	public Data() {
+		this.setName(DEFAULT_NAME);
 	}
 
 	@Override
@@ -51,8 +54,12 @@ public class Data extends Area {
 	public Cell[] createRow() {
 		Cell[] row = new Cell[this.getColumnCount()];
 		this.getRows().add(row);
-		this.setEndingRow(this.getEndingRow() + 1);
+		this.setEndingRow(this.getStartingRow() - 1 + this.getRows().size());
 		return row;
 	}
 
+	@Override
+	public String toString() {
+		return String.format("{data: %s}", super.toString());
+	}
 }

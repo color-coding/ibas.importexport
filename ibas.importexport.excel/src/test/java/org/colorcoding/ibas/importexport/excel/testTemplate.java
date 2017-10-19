@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.IOException;
 
 import org.colorcoding.ibas.bobas.data.DateTime;
+import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.importexport.MyConfiguration;
 import org.colorcoding.ibas.importexport.bo.dataexporttemplate.DataExportTemplate;
+import org.colorcoding.ibas.importexport.bo.dataexporttemplate.IDataExportTemplateItem;
 import org.colorcoding.ibas.importexport.transformers.excel.template.Cell;
 import org.colorcoding.ibas.importexport.transformers.excel.template.Object;
 import org.colorcoding.ibas.importexport.transformers.excel.template.ParsingException;
@@ -18,12 +20,24 @@ import junit.framework.TestCase;
 public class testTemplate extends TestCase {
 
 	public void testRresolving() throws ParsingException, WriteFileException, IOException {
-		DataExportTemplate bObject = new DataExportTemplate();
-		System.out.println(bObject.getClass().getName());
-		System.out.println(bObject.getDataExportTemplateItems().create().getClass().getName());
+		DataExportTemplate data = new DataExportTemplate();
+		System.out.println(data.getClass().getName());
+		System.out.println(data.getDataExportTemplateItems().create().getClass().getName());
+		data.setBOCode(DataExportTemplate.BUSINESS_OBJECT_CODE);
+		data.setCopyNumber(100);
+		data.setCreateDate(DateTime.getToday());
+		IDataExportTemplateItem item = data.getDataExportTemplateItems().create();
+		item.setItemUID("0001");
+		item.setItemVisible(emYesNo.NO);
+		item = data.getDataExportTemplateItems().create();
+		item.setItemUID("0002");
+		item.setItemVisible(emYesNo.YES);
+
+		data.markOld(true); // 设置为老数据，测试模板输出内容
+		// data = new DataExportTemplate();// 测试纯模板输出
 
 		Template template = new Template();
-		template.resolving(new DataExportTemplate());
+		template.resolving(data);
 		System.out.println(String.format("%s", template.toString()));
 		System.out.println(String.format("%s", template.getHead().toString()));
 		for (Object object : template.getObjects()) {
@@ -34,11 +48,12 @@ public class testTemplate extends TestCase {
 						property.getBindingClass() != null ? property.getBindingClass().getSimpleName() : "---"));
 			}
 		}
+		System.out.println(String.format("%s: ", template.getDatas().toString()));
 		for (int i = 0; i < template.getDatas().getRows().size(); i++) {
 			Cell[] row = template.getDatas().getRows().get(i);
 			for (Cell cell : row) {
 				System.out.print(cell == null ? "" : cell.getValue());
-				System.out.print("    ");
+				System.out.print(",");
 			}
 			System.out.println();
 		}

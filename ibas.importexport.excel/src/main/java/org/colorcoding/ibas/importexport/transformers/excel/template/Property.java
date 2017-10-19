@@ -6,7 +6,7 @@ package org.colorcoding.ibas.importexport.transformers.excel.template;
  * @author Niuren.Zhu
  *
  */
-public class Property extends BindingArea {
+public class Property extends BindingArea<Object> {
 
 	public static final int OBJECT_STARTING_ROW = 2;
 	public static final int OBJECT_STARTING_COLUMN = 0;

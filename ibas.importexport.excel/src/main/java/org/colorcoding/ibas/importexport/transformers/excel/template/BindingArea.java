@@ -1,6 +1,6 @@
 package org.colorcoding.ibas.importexport.transformers.excel.template;
 
-public abstract class BindingArea extends Area {
+public abstract class BindingArea<P extends Area<?>> extends Area<P> {
 
 	private Class<?> bindingClass;
 

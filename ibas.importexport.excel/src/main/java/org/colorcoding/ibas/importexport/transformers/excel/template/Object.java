@@ -15,7 +15,7 @@ import org.colorcoding.ibas.bobas.core.fields.IManageFields;
  * @author Niuren.Zhu
  *
  */
-public class Object extends BindingArea {
+public class Object extends BindingArea<Template> {
 
 	public static final int OBJECT_STARTING_ROW = 1;
 	public static final int OBJECT_STARTING_COLUMN = 0;

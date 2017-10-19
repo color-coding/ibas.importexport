@@ -17,7 +17,7 @@ import org.colorcoding.ibas.bobas.core.fields.IManageFields;
  * @author Niuren.Zhu
  *
  */
-public class Template extends Area {
+public class Template extends Area<Area<?>> {
 
 	public static final String PROPERTY_PATH_SEPARATOR = ".";
 	public static final String PROPERTY_PATH_LIST_SIGN = "[]";
@@ -121,6 +121,8 @@ public class Template extends Area {
 			this.resolvingHead(bo);
 			this.resolvingObject(bo, this.getHead().getName());
 			// 填充模板信息
+			this.setStartingColumn(this.getHead().getStartingColumn());
+			this.setStartingRow(this.getHead().getStartingRow());
 			if (this.getObjects().length > 0) {
 				Object lastObject = this.getObjects()[this.getObjects().length - 1];
 				if (lastObject.getProperties().length > 0) {
@@ -154,6 +156,7 @@ public class Template extends Area {
 		}
 		// 解析数据
 		this.resolvingDatas(bo);
+		this.setEndingRow(this.getDatas().getEndingRow());
 	}
 
 	/**
@@ -193,7 +196,15 @@ public class Template extends Area {
 		for (IFieldData field : fields.getFields()) {
 			if (IBusinessObjects.class.isInstance(field.getValue())) {
 				// 解析集合属性
-				IBusinessObject subItem = ((IBusinessObjects<?, ?>) field.getValue()).create();
+				IBusinessObjects<?, ?> list = (IBusinessObjects<?, ?>) field.getValue();
+				IBusinessObject subItem = list.firstOrDefault();
+				if (subItem == null) {
+					// 集合中没有对象，创建新的，并删除
+					subItem = ((IBusinessObjects<?, ?>) field.getValue()).create();
+					if (!bo.isNew()) {
+						list.remove(subItem);// 非新建，移出自动添加对象
+					}
+				}
 				if (subItem != null) {
 					this.resolvingObject(subItem, String.format(LIST_PROPERTY_PATH_FORMAT, name, field.getName()));
 				}
@@ -233,22 +244,24 @@ public class Template extends Area {
 				// 当前级别，同对象。如： TP - TP
 				Cell[] row = this.getDatas().createRow();
 				for (Property property : object.getProperties()) {
+					Cell cell = new Cell();
+					cell.setParent(property);
+					cell.setStartingColumn(property.getStartingColumn());
+					cell.setEndingColumn(cell.getStartingColumn());
+					cell.setStartingRow(this.getDatas().getEndingRow());
+					cell.setEndingRow(cell.getStartingRow());
+					// 单元格赋值
 					IFieldData field = boFields.getField(property.getName());
 					if (field != null && field.getValue() != null) {
-						Cell cell = new Cell();
 						cell.setValue(field.getValue());
-						cell.setStartingColumn(property.getStartingColumn());
-						cell.setEndingColumn(cell.getStartingColumn());
-						cell.setStartingRow(this.getDatas().getEndingRow());
-						cell.setEndingRow(cell.getStartingRow());
-						row[property.getStartingColumn()] = cell;
 					}
+					row[property.getStartingColumn()] = cell;
 				}
-			} else if (object.getName().indexOf(PROPERTY_PATH_SEPARATOR, level.length()) < 0) {
+			} else if (object.getName().indexOf(PROPERTY_PATH_SEPARATOR, level.length() + 1) < 0) {
 				// 当前基本，不同对象。如：TP.BB - TP or TP.AA[] - TP
 				if (object.getName().endsWith(PROPERTY_PATH_LIST_SIGN)) {
 					// TP.AA[] - TP
-					String property = object.getName().substring(level.length(), object.getName().length() - 2);
+					String property = object.getName().substring(level.length() + 1, object.getName().length() - 2);
 					IFieldData field = boFields.getField(property);
 					if (field != null && IBusinessObjects.class.isInstance(field.getValue())) {
 						IBusinessObjects<?, ?> list = (IBusinessObjects<?, ?>) field.getValue();

@@ -5,8 +5,10 @@ package org.colorcoding.ibas.importexport.transformers.excel.template;
  * 
  * @author Niuren.Zhu
  *
+ * @param <P>
+ *            父项类型
  */
-public abstract class Area {
+public abstract class Area<P extends Area<?>> {
 
 	public static final int AREA_AUTO_REGION = -1;
 
@@ -80,13 +82,13 @@ public abstract class Area {
 		this.endingColumn = endingColumn;
 	}
 
-	private Area parent;
+	private P parent;
 
-	public final Area getParent() {
+	public final P getParent() {
 		return parent;
 	}
 
-	final void setParent(Area parent) {
+	final void setParent(P parent) {
 		this.parent = parent;
 	}
 

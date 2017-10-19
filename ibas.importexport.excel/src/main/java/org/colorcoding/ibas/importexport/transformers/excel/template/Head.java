@@ -6,7 +6,7 @@ package org.colorcoding.ibas.importexport.transformers.excel.template;
  * @author Niuren.Zhu
  *
  */
-public class Head extends BindingArea {
+public class Head extends BindingArea<Template> {
 
 	public static final int HEAD_STARTING_ROW = 0;
 	public static final int HEAD_STARTING_COLUMN = 0;
