@@ -1,11 +1,5 @@
 package org.colorcoding.ibas.importexport.transformers.excel.template;
 
-/**
- * 解析的异常
- * 
- * @author Niuren.Zhu
- *
- */
 public class WriteFileException extends Exception {
 
 	private static final long serialVersionUID = -3567030339264693945L;

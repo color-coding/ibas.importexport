@@ -53,7 +53,7 @@ public class Object extends BindingArea<Template> {
 		return properties;
 	}
 
-	private final void setProperties(Property[] properties) {
+	final void setProperties(Property[] properties) {
 		this.properties = properties;
 	}
 
@@ -62,10 +62,10 @@ public class Object extends BindingArea<Template> {
 	 * 
 	 * @param bo
 	 *            待解析对象
-	 * @throws ParsingException
+	 * @throws ResolvingException
 	 *             无法识别异常
 	 */
-	public final void resolving(IBusinessObject bo) throws ParsingException {
+	public final void resolving(IBusinessObject bo) throws ResolvingException {
 		this.setBindingClass(bo.getClass());
 		List<Property> properties = new ArrayList<>();
 		IManageFields fields = (IManageFields) bo;

@@ -15,7 +15,7 @@ import org.colorcoding.ibas.bobas.organization.fantasy.User;
 import org.colorcoding.ibas.bobas.repository.InvalidTokenException;
 import org.colorcoding.ibas.importexport.transformer.TransformException;
 import org.colorcoding.ibas.importexport.transformer.TransformerFile;
-import org.colorcoding.ibas.importexport.transformers.excel.template.ParsingException;
+import org.colorcoding.ibas.importexport.transformers.excel.template.ResolvingException;
 import org.colorcoding.ibas.importexport.transformers.excel.template.Property;
 import org.colorcoding.ibas.importexport.transformers.excel.template.Template;
 import org.colorcoding.ibas.importexport.transformers.excel.template.WriteFileException;
@@ -57,7 +57,7 @@ public class TransformerExcel extends TransformerFile {
 			template.write(file);
 			this.setOutputData(new ArrayList<>());
 			this.getOutputData().add(file);
-		} catch (ParsingException | InvalidTokenException | WriteFileException | IOException e) {
+		} catch (ResolvingException | InvalidTokenException | WriteFileException | IOException e) {
 			throw new TransformException(e);
 		}
 	}

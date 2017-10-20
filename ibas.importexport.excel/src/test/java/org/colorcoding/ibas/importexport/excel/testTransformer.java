@@ -16,7 +16,8 @@ public class testTransformer extends TestCase {
 	public void testTransformExcel() throws TransformException {
 		// 测试对象到excel文件
 		TransformerExcel transformer = new TransformerExcel();
-		IBusinessObject[] data = new IBusinessObject[] { new DataExportTemplate() };
+		IBusinessObject[] data = new IBusinessObject[] { new DataExportTemplate(), new DataExportTemplate(),
+				new DataExportTemplate() };
 		transformer.setInputData(data);
 		transformer.setWorkFolder(MyConfiguration.getWorkFolder());
 		transformer.transform();

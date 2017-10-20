@@ -14,7 +14,7 @@ import org.colorcoding.ibas.importexport.bo.dataexporttemplate.DataExportTemplat
 import org.colorcoding.ibas.importexport.bo.dataexporttemplate.IDataExportTemplateItem;
 import org.colorcoding.ibas.importexport.transformers.excel.template.Cell;
 import org.colorcoding.ibas.importexport.transformers.excel.template.Object;
-import org.colorcoding.ibas.importexport.transformers.excel.template.ParsingException;
+import org.colorcoding.ibas.importexport.transformers.excel.template.ResolvingException;
 import org.colorcoding.ibas.importexport.transformers.excel.template.Property;
 import org.colorcoding.ibas.importexport.transformers.excel.template.Template;
 import org.colorcoding.ibas.importexport.transformers.excel.template.WriteFileException;
@@ -29,7 +29,7 @@ public class testTemplate extends TestCase {
 
 	}
 
-	public void testRresolving() throws ParsingException, WriteFileException, IOException {
+	public void testRresolving() throws ResolvingException, WriteFileException, IOException {
 		TestData data = new TestData();
 		IUserField userField01 = data.getUserFields().addUserField("U_0001", DbFieldType.ALPHANUMERIC);
 		IUserField userField02 = data.getUserFields().addUserField("U_0002", DbFieldType.DECIMAL);
@@ -52,8 +52,21 @@ public class testTemplate extends TestCase {
 		// data.markOld(true); // 设置为老数据，测试模板输出内容
 		// data = new TestData();// 测试纯模板输出
 
-		Template template = new Template();
-		template.resolving(data);
+		// 测试对象解析
+		Template template1 = new Template();
+		template1.resolving(data);
+		this.print(template1);
+		File file = new File(String.format("%s%soutput_%s.xlsx", MyConfiguration.getWorkFolder(), File.separator,
+				DateTime.getNow().getTime()));
+		template1.write(file);
+		System.out.println(file.getPath());
+		// 测试文件解析
+		Template template2 = new Template();
+		template2.resolving(file);
+		this.print(template2);
+	}
+
+	private void print(Template template) {
 		System.out.println(String.format("%s", template.toString()));
 		System.out.println(String.format("%s", template.getHead().toString()));
 		for (Object object : template.getObjects()) {
@@ -73,9 +86,5 @@ public class testTemplate extends TestCase {
 			}
 			System.out.println();
 		}
-		File file = new File(String.format("%s%soutput_%s.xlsx", MyConfiguration.getWorkFolder(), File.separator,
-				DateTime.getNow().getTime()));
-		template.write(file);
-		System.out.println(file.getPath());
 	}
 }

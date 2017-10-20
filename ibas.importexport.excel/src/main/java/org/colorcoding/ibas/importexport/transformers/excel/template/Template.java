@@ -54,7 +54,7 @@ public class Template extends Area<Area<?>> {
 	 * 
 	 * @param head
 	 */
-	private final void setHead(Head head) {
+	final void setHead(Head head) {
 		head.setParent(this);
 		this.head = head;
 	}
@@ -78,7 +78,7 @@ public class Template extends Area<Area<?>> {
 	 * 
 	 * @param object
 	 */
-	private final void addObject(Object object) {
+	final void addObject(Object object) {
 		if (this.objects == null) {
 			this.objects = new ArrayList<>();
 		}
@@ -92,7 +92,7 @@ public class Template extends Area<Area<?>> {
 		return datas;
 	}
 
-	private final void setDatas(Data datas) {
+	final void setDatas(Data datas) {
 		datas.setParent(this);
 		this.datas = datas;
 	}
@@ -109,10 +109,10 @@ public class Template extends Area<Area<?>> {
 	 * 
 	 * @param bo
 	 *            待解析对象
-	 * @throws ParsingException
+	 * @throws ResolvingException
 	 *             无法识别异常
 	 */
-	public final void resolving(IBusinessObject bo) throws ParsingException {
+	public final void resolving(IBusinessObject bo) throws ResolvingException {
 		if (bo == null) {
 			// 无效数据
 			return;
@@ -153,7 +153,7 @@ public class Template extends Area<Area<?>> {
 			this.getDatas().setStartingRow(this.getEndingRow() + 1);
 		}
 		if (this.getHead().getBindingClass() != bo.getClass()) {
-			throw new ParsingException("data class not match template binding.");
+			throw new ResolvingException("data class not match template binding.");
 		}
 		// 解析数据
 		this.resolvingDatas(bo);
@@ -164,9 +164,9 @@ public class Template extends Area<Area<?>> {
 	 * 解析头区域
 	 * 
 	 * @param bo
-	 * @throws ParsingException
+	 * @throws ResolvingException
 	 */
-	protected void resolvingHead(IBusinessObject bo) throws ParsingException {
+	protected void resolvingHead(IBusinessObject bo) throws ResolvingException {
 		Head head = new Head();
 		head.setBindingClass(bo.getClass());
 		head.setName(bo.getClass().getSimpleName());
@@ -182,9 +182,9 @@ public class Template extends Area<Area<?>> {
 	 * 
 	 * @param bo
 	 * @return
-	 * @throws ParsingException
+	 * @throws ResolvingException
 	 */
-	protected void resolvingObject(IBusinessObject bo, String name) throws ParsingException {
+	protected void resolvingObject(IBusinessObject bo, String name) throws ResolvingException {
 		// 根对象
 		Object object = new Object();
 		object.setName(name);
@@ -225,9 +225,9 @@ public class Template extends Area<Area<?>> {
 	 * 解析数据区域
 	 * 
 	 * @param bo
-	 * @throws ParsingException
+	 * @throws ResolvingException
 	 */
-	protected void resolvingDatas(IBusinessObject bo) throws ParsingException {
+	protected void resolvingDatas(IBusinessObject bo) throws ResolvingException {
 		if (bo == null || this.head == null || this.objects == null) {
 			// 未初始化，退出
 			return;
@@ -235,7 +235,7 @@ public class Template extends Area<Area<?>> {
 		this.resolvingDatas((IManageFields) bo, this.getHead().getName());
 	}
 
-	private void resolvingDatas(IManageFields boFields, String level) throws ParsingException {
+	private void resolvingDatas(IManageFields boFields, String level) throws ResolvingException {
 		if (boFields == null) {
 			// 未初始化，退出
 			return;
@@ -314,16 +314,34 @@ public class Template extends Area<Area<?>> {
 		this.getWriter().write(file);
 	}
 
+	private FileReader reader;
+
+	protected final FileReader getReader() {
+		if (this.reader == null) {
+			this.reader = new ExcelReader();
+		}
+		return reader;
+	}
+
+	protected final void setReader(FileReader reader) {
+		this.reader = reader;
+	}
+
 	/**
 	 * 解析文件，形成模板
 	 * 
 	 * @param file
 	 *            待分析文件
-	 * @throws ParsingException
+	 * @throws ResolvingException
 	 *             无法识别异常
 	 */
-	public final void resolving(File file) throws ParsingException {
-
+	public final void resolving(File file) throws ResolvingException {
+		try {
+			this.getReader().setTemplate(this);
+			this.getReader().read(file);
+		} catch (Exception e) {
+			throw new ResolvingException(e);
+		}
 	}
 
 }

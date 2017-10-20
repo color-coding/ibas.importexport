@@ -1,5 +1,7 @@
 package org.colorcoding.ibas.importexport.transformers.excel.template;
 
+import org.colorcoding.ibas.bobas.core.BOFactory;
+
 /**
  * 模板-头，整体信息
  * 
@@ -44,4 +46,17 @@ public class Head extends BindingArea<Template> {
 		return String.format("{head: %s}", super.toString());
 	}
 
+	@Override
+	public boolean resolvingNotes(String note) throws ClassNotFoundException {
+		boolean done = super.resolvingNotes(note);
+		if (done) {
+			if (this.getBindingClass() != null) {
+				String boCode = BOFactory.create().getBOCode(this.getBindingClass());
+				if (boCode != null) {
+					this.setCode(boCode);
+				}
+			}
+		}
+		return done;
+	}
 }
