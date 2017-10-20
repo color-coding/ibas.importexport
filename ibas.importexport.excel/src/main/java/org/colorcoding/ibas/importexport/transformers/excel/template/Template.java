@@ -20,6 +20,7 @@ import org.colorcoding.ibas.bobas.core.fields.IManageFields;
  */
 public class Template extends Area<Area<?>> {
 
+	public static String TEMPLATE_NAME = String.format("%s@ibas", Template.class.getSimpleName());
 	public static final String PROPERTY_PATH_SEPARATOR = ".";
 	public static final String PROPERTY_PATH_LIST_SIGN = "[]";
 	public static final String PROPERTY_PATH_FORMAT = "%s" + PROPERTY_PATH_SEPARATOR + "%s";
@@ -287,6 +288,17 @@ public class Template extends Area<Area<?>> {
 				}
 			}
 		}
+	}
+
+	/**
+	 * 解析为对象
+	 * 
+	 * @return
+	 */
+	public IBusinessObject[] resolving() {
+		ArrayList<IBusinessObject> businessObjects = new ArrayList<>();
+
+		return businessObjects.toArray(new IBusinessObject[] {});
 	}
 
 	private FileWriter writer;

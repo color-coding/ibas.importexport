@@ -120,7 +120,7 @@ public class ExcelWriter extends FileWriter {
 		Comment comment = drawing.createCellComment(drawing.createAnchor(0, 0, 0, 0, head.getStartingColumn(),
 				head.getStartingRow(), head.getEndingColumn(), head.getEndingRow()));
 		comment.setString(creationHelper.createRichTextString(head.bindingNotes()));
-		comment.setAuthor(this.getTemplate().getClass().getSimpleName());
+		comment.setAuthor(Template.TEMPLATE_NAME);
 		cell.setCellComment(comment);
 		// 设置单元格样式
 		CellStyle style = this.getWorkbook().createCellStyle();
@@ -171,7 +171,7 @@ public class ExcelWriter extends FileWriter {
 			comment = drawing.createCellComment(drawing.createAnchor(0, 0, 0, 0, object.getStartingColumn(),
 					object.getStartingRow(), object.getEndingColumn(), object.getEndingRow()));
 			comment.setString(creationHelper.createRichTextString(object.bindingNotes()));
-			comment.setAuthor(this.getTemplate().getClass().getSimpleName());
+			comment.setAuthor(Template.TEMPLATE_NAME);
 			cell.setCellComment(comment);
 			// 设置单元格样式
 			style = this.getWorkbook().createCellStyle();
@@ -192,7 +192,7 @@ public class ExcelWriter extends FileWriter {
 				comment = drawing.createCellComment(drawing.createAnchor(0, 0, 0, 0, property.getStartingColumn(),
 						property.getStartingRow(), property.getEndingColumn(), property.getEndingRow()));
 				comment.setString(creationHelper.createRichTextString(property.bindingNotes()));
-				comment.setAuthor(this.getTemplate().getClass().getSimpleName());
+				comment.setAuthor(Template.TEMPLATE_NAME);
 				cell.setCellComment(comment);
 				// 设置单元格样式
 				cell.setCellStyle(styleProperty);

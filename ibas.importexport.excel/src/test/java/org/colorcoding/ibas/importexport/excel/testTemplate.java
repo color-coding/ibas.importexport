@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.colorcoding.ibas.bobas.bo.IBOUserFields;
+import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.bo.IUserField;
 import org.colorcoding.ibas.bobas.data.DateTime;
 import org.colorcoding.ibas.bobas.data.Decimal;
@@ -14,8 +15,8 @@ import org.colorcoding.ibas.importexport.bo.dataexporttemplate.DataExportTemplat
 import org.colorcoding.ibas.importexport.bo.dataexporttemplate.IDataExportTemplateItem;
 import org.colorcoding.ibas.importexport.transformers.excel.template.Cell;
 import org.colorcoding.ibas.importexport.transformers.excel.template.Object;
-import org.colorcoding.ibas.importexport.transformers.excel.template.ResolvingException;
 import org.colorcoding.ibas.importexport.transformers.excel.template.Property;
+import org.colorcoding.ibas.importexport.transformers.excel.template.ResolvingException;
 import org.colorcoding.ibas.importexport.transformers.excel.template.Template;
 import org.colorcoding.ibas.importexport.transformers.excel.template.WriteFileException;
 
@@ -64,6 +65,12 @@ public class testTemplate extends TestCase {
 		Template template2 = new Template();
 		template2.resolving(file);
 		this.print(template2);
+		// 测试对象还原
+		IBusinessObject[] businessObjects = template2.resolving();
+		System.out.println(String.format("bo count %s", businessObjects.length));
+		for (IBusinessObject boItem : businessObjects) {
+			System.out.println(boItem.toString());
+		}
 	}
 
 	private void print(Template template) {

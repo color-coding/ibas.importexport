@@ -25,27 +25,17 @@ import org.colorcoding.ibas.bobas.data.Decimal;
  */
 public class ExcelReader extends FileReader {
 
-	private Workbook workbook;
-
-	protected final Workbook getWorkbook() {
-		return workbook;
-	}
-
-	protected final void setWorkbook(Workbook workbook) {
-		this.workbook = workbook;
-	}
-
 	@Override
 	public void read(File file) throws ReadFileException, IOException {
 		if (this.getTemplate() == null) {
 			return;
 		}
+		Workbook workbook = null;
 		try {
 			OPCPackage pkg = OPCPackage.open(file);
-			Workbook workbook = new XSSFWorkbook(pkg);
+			workbook = new XSSFWorkbook(pkg);
 			if (workbook.getNumberOfSheets() > 0) {
-				this.setWorkbook(workbook);
-				Sheet sheet = this.getWorkbook().getSheetAt(0);
+				Sheet sheet = workbook.getSheetAt(0);
 				this.getTemplate().setDescription(sheet.getSheetName());
 				this.getTemplate().setStartingRow(sheet.getFirstRowNum());
 				this.getTemplate().setEndingRow(sheet.getLastRowNum());
@@ -55,6 +45,10 @@ public class ExcelReader extends FileReader {
 			}
 		} catch (Exception e) {
 			throw new ReadFileException(e);
+		} finally {
+			if (workbook != null) {
+				workbook.close();
+			}
 		}
 	}
 
@@ -74,7 +68,7 @@ public class ExcelReader extends FileReader {
 				if (comment == null) {
 					continue;
 				}
-				if (this.getTemplate().getClass().getSimpleName().equals(comment.getAuthor())) {
+				if (Template.TEMPLATE_NAME.equals(comment.getAuthor())) {
 					// 模板的注释
 					try {
 						if (head.resolvingNotes(comment.getString().getString())) {
@@ -116,31 +110,32 @@ public class ExcelReader extends FileReader {
 				if (comment == null) {
 					continue;
 				}
-				if (this.getTemplate().getClass().getSimpleName().equals(comment.getAuthor())) {
-					// 模板的注释
-					try {
-						if (object == null) {
-							object = new Object();
-						}
-						if (object.resolvingNotes(comment.getString().getString())) {
-							object.setStartingRow(cell.getRowIndex());
-							object.setEndingRow(object.getStartingRow());
-							object.setStartingColumn(cell.getColumnIndex());
-							object.setEndingColumn(row.getLastCellNum());
-							object.setParent(this.getTemplate());
-							if (this.getTemplate().getObjects() != null && this.getTemplate().getObjects().length > 0) {
-								// 设置上一个对象终止信息
-								this.getTemplate().getObjects()[this.getTemplate().getObjects().length - 1]
-										.setEndingColumn(object.getStartingColumn() - 1);
-							}
-							this.getTemplate().addObject(object);
-							object = null;
-							// 已找到对象行，则不再处理对象
-							propertRow = iRow + 1;
-						}
-					} catch (Exception e) {
-						throw new ResolvingException(e);
+				if (!Template.TEMPLATE_NAME.equals(comment.getAuthor())) {
+					continue;
+				}
+				// 模板的注释
+				try {
+					if (object == null) {
+						object = new Object();
 					}
+					if (object.resolvingNotes(comment.getString().getString())) {
+						object.setStartingRow(cell.getRowIndex());
+						object.setEndingRow(object.getStartingRow());
+						object.setStartingColumn(cell.getColumnIndex());
+						object.setEndingColumn(row.getLastCellNum());
+						object.setParent(this.getTemplate());
+						if (this.getTemplate().getObjects() != null && this.getTemplate().getObjects().length > 0) {
+							// 设置上一个对象终止信息
+							this.getTemplate().getObjects()[this.getTemplate().getObjects().length - 1]
+									.setEndingColumn(object.getStartingColumn() - 1);
+						}
+						this.getTemplate().addObject(object);
+						object = null;
+						// 已找到对象行，则不再处理对象
+						propertRow = iRow + 1;
+					}
+				} catch (Exception e) {
+					throw new ResolvingException(e);
 				}
 			}
 			if (propertRow > 0) {
@@ -161,6 +156,9 @@ public class ExcelReader extends FileReader {
 				}
 				Comment comment = cell.getCellComment();
 				if (comment == null) {
+					continue;
+				}
+				if (!Template.TEMPLATE_NAME.equals(comment.getAuthor())) {
 					continue;
 				}
 				object = null;// 当前处理的对象
