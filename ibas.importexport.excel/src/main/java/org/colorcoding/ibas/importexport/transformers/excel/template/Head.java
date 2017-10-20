@@ -18,6 +18,16 @@ public class Head extends BindingArea<Template> {
 		this.setEndingColumn(AREA_AUTO_REGION);
 	}
 
+	private String code;
+
+	public final String getCode() {
+		return code;
+	}
+
+	public final void setCode(String code) {
+		this.code = code;
+	}
+
 	@Override
 	public int getIndex() {
 		if (this.getParent() instanceof Template) {

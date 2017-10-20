@@ -8,6 +8,7 @@ import java.util.function.Function;
 
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.bo.IBusinessObjects;
+import org.colorcoding.ibas.bobas.core.BOFactory;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
 import org.colorcoding.ibas.bobas.core.fields.IManageFields;
 
@@ -132,7 +133,7 @@ public class Template extends Area<Area<?>> {
 					this.getHead().setEndingColumn(this.getEndingColumn());
 				}
 			}
-			this.setName(this.getHead().getName());
+			this.setName(bo.getClass().getSimpleName());
 			// 初始化数据区
 			this.setDatas(new Data());
 			this.getDatas().setColumnCount(new Function<Template, Integer>() {
@@ -169,6 +170,10 @@ public class Template extends Area<Area<?>> {
 		Head head = new Head();
 		head.setBindingClass(bo.getClass());
 		head.setName(bo.getClass().getSimpleName());
+		String boCode = BOFactory.create().getBOCode(bo.getClass());
+		if (boCode != null && !boCode.isEmpty()) {
+			head.setCode(boCode);
+		}
 		this.setHead(head);
 	}
 
