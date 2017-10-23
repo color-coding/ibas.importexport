@@ -37,6 +37,10 @@ public class Data extends Area<Template> {
 		return rows;
 	}
 
+	public Cell[] getRow(int index) {
+		return this.getRows().get(index);
+	}
+
 	final void setRows(List<Cell[]> rows) {
 		this.rows = rows;
 	}

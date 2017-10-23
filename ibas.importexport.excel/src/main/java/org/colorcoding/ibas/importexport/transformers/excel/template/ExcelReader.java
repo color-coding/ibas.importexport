@@ -241,22 +241,23 @@ public class ExcelReader extends FileReader {
 			for (Object object : this.getTemplate().getObjects()) {
 				for (Property property : object.getProperties()) {
 					Cell sheetCell = sheetRow.getCell(property.getStartingColumn());
+					if (sheetCell == null) {
+						continue;
+					}
 					org.colorcoding.ibas.importexport.transformers.excel.template.Cell dataCell = new org.colorcoding.ibas.importexport.transformers.excel.template.Cell();
 					dataCell.setParent(property);
 					dataCell.setStartingRow(sheetRow.getRowNum());
 					dataCell.setEndingRow(dataCell.getStartingRow());
 					dataCell.setStartingColumn(property.getStartingColumn());
 					dataCell.setEndingColumn(dataCell.getStartingColumn());
-					dataRow[dataCell.getStartingColumn()] = dataCell;
-					if (sheetCell == null) {
-						continue;
-					}
+					// 无法解析的值，不记录以提升性能
 					try {
 						if (dataCell.getParent().getBindingClass() == DateTime.class) {
 							// 日期类型值
 							Date value = sheetCell.getDateCellValue();
 							if (value != null) {
 								dataCell.setValue(new DateTime(value.getTime()));
+								dataRow[dataCell.getStartingColumn()] = dataCell;
 							}
 						} else if (dataCell.getParent().getBindingClass() == Decimal.class
 								|| dataCell.getParent().getBindingClass() == Float.class
@@ -264,21 +265,28 @@ public class ExcelReader extends FileReader {
 								|| dataCell.getParent().getBindingClass() == BigDecimal.class) {
 							// 小数类型
 							dataCell.setValue(sheetCell.getNumericCellValue());
+							dataRow[dataCell.getStartingColumn()] = dataCell;
 						} else if (dataCell.getParent().getBindingClass() == Long.class
 								|| dataCell.getParent().getBindingClass() == Integer.class
 								|| dataCell.getParent().getBindingClass() == Short.class
 								|| dataCell.getParent().getBindingClass() == BigInteger.class) {
 							// 数值类型
 							dataCell.setValue(sheetCell.getNumericCellValue());
+							dataRow[dataCell.getStartingColumn()] = dataCell;
 						} else if (dataCell.getParent().getBindingClass().isEnum()) {
 							// 枚举类型
 							String value = sheetCell.getStringCellValue();
 							if (value != null && !value.isEmpty()) {
 								dataCell.setValue(DataConvert.convert(dataCell.getParent().getBindingClass(), value));
+								dataRow[dataCell.getStartingColumn()] = dataCell;
 							}
 						} else {
 							// 字符类型
-							dataCell.setValue(sheetCell.getStringCellValue());
+							String value = sheetCell.getStringCellValue();
+							if (value != null && !value.isEmpty()) {
+								dataCell.setValue(sheetCell.getStringCellValue());
+								dataRow[dataCell.getStartingColumn()] = dataCell;
+							}
 						}
 					} catch (Exception e) {
 						throw new ResolvingException(String.format("get cell [%s,%s]'s data error.",

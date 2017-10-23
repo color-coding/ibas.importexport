@@ -14,7 +14,7 @@ import junit.framework.TestCase;
 public class testTransformer extends TestCase {
 
 	public void testTransformExcel() throws TransformException {
-		// 测试对象到excel文件
+		// 测试对象到excel文件（新建对象不输出IBOTagStorage属性）
 		TransformerExcel transformer = new TransformerExcel();
 		IBusinessObject[] data = new IBusinessObject[] { new DataExportTemplate(), new DataExportTemplate(),
 				new DataExportTemplate() };

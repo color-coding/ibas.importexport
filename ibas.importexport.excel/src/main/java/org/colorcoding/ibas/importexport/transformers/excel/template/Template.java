@@ -167,7 +167,7 @@ public class Template extends Area<Area<?>> {
 	 * @param bo
 	 * @throws ResolvingException
 	 */
-	protected void resolvingHead(IBusinessObject bo) throws ResolvingException {
+	private void resolvingHead(IBusinessObject bo) throws ResolvingException {
 		Head head = new Head();
 		head.setBindingClass(bo.getClass());
 		head.setName(bo.getClass().getSimpleName());
@@ -185,7 +185,7 @@ public class Template extends Area<Area<?>> {
 	 * @return
 	 * @throws ResolvingException
 	 */
-	protected void resolvingObject(IBusinessObject bo, String name) throws ResolvingException {
+	private void resolvingObject(IBusinessObject bo, String name) throws ResolvingException {
 		// 根对象
 		Object object = new Object();
 		object.setName(name);
@@ -228,7 +228,7 @@ public class Template extends Area<Area<?>> {
 	 * @param bo
 	 * @throws ResolvingException
 	 */
-	protected void resolvingDatas(IBusinessObject bo) throws ResolvingException {
+	private void resolvingDatas(IBusinessObject bo) throws ResolvingException {
 		if (bo == null || this.head == null || this.objects == null) {
 			// 未初始化，退出
 			return;
@@ -280,7 +280,7 @@ public class Template extends Area<Area<?>> {
 					}
 				} else {
 					// TP.BB - TP
-					String property = object.getName().substring(level.length());
+					String property = object.getName().substring(level.length() + 1);
 					IFieldData field = boFields.getField(property);
 					if (field != null && field.getValue() instanceof IManageFields) {
 						this.resolvingDatas((IManageFields) field.getValue(), object.getName());
@@ -294,11 +294,27 @@ public class Template extends Area<Area<?>> {
 	 * 解析为对象
 	 * 
 	 * @return
+	 * @throws ResolvingException
 	 */
-	public IBusinessObject[] resolving() {
-		ArrayList<IBusinessObject> businessObjects = new ArrayList<>();
+	public final IBusinessObject[] resolving() throws ResolvingException {
+		if (this.getHead() != null && this.getObjects() != null && this.getDatas() != null) {
+			return this.resolving(this.getHead().getName()).toArray(new IBusinessObject[] {});
+		}
+		return new IBusinessObject[] {};
+	}
 
-		return businessObjects.toArray(new IBusinessObject[] {});
+	private List<IBusinessObject> resolving(String path) throws ResolvingException {
+		try {
+			ArrayList<IBusinessObject> businessObjects = new ArrayList<>();
+			for (Cell[] row : this.getDatas().getRows()) {
+				for (Cell cell : row) {
+
+				}
+			}
+			return businessObjects;
+		} catch (Exception e) {
+			throw new ResolvingException(e);
+		}
 	}
 
 	private FileWriter writer;
@@ -321,7 +337,7 @@ public class Template extends Area<Area<?>> {
 	 * @throws WriteFileException
 	 * @throws IOException
 	 */
-	public void write(File file) throws WriteFileException, IOException {
+	public final void write(File file) throws WriteFileException, IOException {
 		this.getWriter().setTemplate(this);
 		this.getWriter().write(file);
 	}

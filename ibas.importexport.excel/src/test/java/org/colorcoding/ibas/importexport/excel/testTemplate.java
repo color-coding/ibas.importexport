@@ -3,16 +3,16 @@ package org.colorcoding.ibas.importexport.excel;
 import java.io.File;
 import java.io.IOException;
 
-import org.colorcoding.ibas.bobas.bo.IBOUserFields;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.bo.IUserField;
 import org.colorcoding.ibas.bobas.data.DateTime;
 import org.colorcoding.ibas.bobas.data.Decimal;
-import org.colorcoding.ibas.bobas.data.emYesNo;
+import org.colorcoding.ibas.bobas.data.emDocumentStatus;
 import org.colorcoding.ibas.bobas.mapping.DbFieldType;
 import org.colorcoding.ibas.importexport.MyConfiguration;
-import org.colorcoding.ibas.importexport.bo.dataexporttemplate.DataExportTemplate;
-import org.colorcoding.ibas.importexport.bo.dataexporttemplate.IDataExportTemplateItem;
+import org.colorcoding.ibas.importexport.excel.data.BatchItem;
+import org.colorcoding.ibas.importexport.excel.data.Order;
+import org.colorcoding.ibas.importexport.excel.data.OrderLine;
 import org.colorcoding.ibas.importexport.transformers.excel.template.Cell;
 import org.colorcoding.ibas.importexport.transformers.excel.template.Object;
 import org.colorcoding.ibas.importexport.transformers.excel.template.Property;
@@ -24,38 +24,35 @@ import junit.framework.TestCase;
 
 public class testTemplate extends TestCase {
 
-	private class TestData extends DataExportTemplate implements IBOUserFields {
-
-		private static final long serialVersionUID = 1L;
-
-	}
-
 	public void testRresolving() throws ResolvingException, WriteFileException, IOException {
-		TestData data = new TestData();
-		IUserField userField01 = data.getUserFields().addUserField("U_0001", DbFieldType.ALPHANUMERIC);
-		IUserField userField02 = data.getUserFields().addUserField("U_0002", DbFieldType.DECIMAL);
-		IUserField userField03 = data.getUserFields().addUserField("U_0003", DbFieldType.DATE);
-		System.out.println(data.getClass().getName());
-		System.out.println(data.getDataExportTemplateItems().create().getClass().getName());
-		data.setBOCode(TestData.BUSINESS_OBJECT_CODE);
-		data.setCopyNumber(100);
-		data.setCreateDate(DateTime.getToday());
+		Order order = new Order();
+		IUserField userField01 = order.getUserFields().addUserField("U_0001", DbFieldType.ALPHANUMERIC);
+		IUserField userField02 = order.getUserFields().addUserField("U_0002", DbFieldType.DECIMAL);
+		IUserField userField03 = order.getUserFields().addUserField("U_0003", DbFieldType.DATE);
+		order.setDocEntry(916);
+		order.setDocumentStatus(emDocumentStatus.RELEASED);
+		order.setDocumentDate(DateTime.getToday());
 		userField01.setValue("i'm niuren.zhu.");
 		userField02.setValue(new Decimal("999.1999"));
-		userField03.setValue(DateTime.getToday());
-		IDataExportTemplateItem item = data.getDataExportTemplateItems().create();
-		item.setItemUID("0001");
-		item.setItemVisible(emYesNo.NO);
-		item = data.getDataExportTemplateItems().create();
-		item.setItemUID("0002");
-		item.setItemVisible(emYesNo.YES);
+		userField03.setValue(DateTime.getMaxValue());
+		order.getUser().setCode("manager");
+		order.getUser().setName("管理员大叔");
+		OrderLine line = order.getOrderLines().create();
+		line.setItemCode("A00001");
+		line.setQuantity(199);
+		BatchItem batch = line.getBatchItems().create();
+		batch.setBatchCode("20171231");
+		batch.setCount(199);
+		line = order.getOrderLines().create();
+		line.setItemCode("A00002");
+		line.setQuantity("168.99");
 
-		// data.markOld(true); // 设置为老数据，测试模板输出内容
-		// data = new TestData();// 测试纯模板输出
+		// order.markOld(true); // 设置为老数据，测试模板输出内容
+		// order = new Order();// 测试纯模板输出
 
 		// 测试对象解析
 		Template template1 = new Template();
-		template1.resolving(data);
+		template1.resolving(order);
 		this.print(template1);
 		File file = new File(String.format("%s%soutput_%s.xlsx", MyConfiguration.getWorkFolder(), File.separator,
 				DateTime.getNow().getTime()));
