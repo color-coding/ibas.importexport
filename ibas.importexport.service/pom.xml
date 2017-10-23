@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.colorcoding.apps</groupId>
         <artifactId>ibas.importexport.parent</artifactId>
-        <version>0.0.1</version>
+        <version>0.1.0</version>
     </parent>
     <artifactId>ibas.importexport.service</artifactId>
     <packaging>war</packaging>
@@ -23,7 +23,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.6</version>
+                <version>3.2.0</version>
                 <configuration>
                     <archiveClasses>true</archiveClasses>
                     <warSourceExcludes>index.html,config.json,tsconfig.json,**/*.ts,**/*.bat,**/*.sh,3rdparty/*.txt,3rdparty/ibas/**,3rdparty/openui5/**,modules/**,test/**</warSourceExcludes>

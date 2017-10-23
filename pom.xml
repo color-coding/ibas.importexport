@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.colorcoding.apps</groupId>
     <artifactId>ibas.importexport.parent</artifactId>
-    <version>0.0.1</version>
+    <version>0.1.0</version>
     <packaging>pom</packaging>
     <name>ibas.importexport.parent</name>
     <url>http://colorcoding.org/ibas/importexport/</url>
@@ -14,14 +14,14 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <ibas.version>0.1.2</ibas.version>
-        <ibas.if.version>0.0.1</ibas.if.version>
+        <ibas.if.version>0.1.0</ibas.if.version>
     </properties>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5</version>
+                <version>3.7.0</version>
                 <configuration>
                    <source>1.8</source>
                    <target>1.8</target>
@@ -31,11 +31,8 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.6</version>
+                <version>3.0.2</version>
                 <configuration>
-                      <includes>
-                        <include>**/*.*</include>
-                      </includes>
                 </configuration>
             </plugin>
         </plugins>
