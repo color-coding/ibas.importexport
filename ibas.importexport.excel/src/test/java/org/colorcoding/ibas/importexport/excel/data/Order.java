@@ -2,6 +2,8 @@ package org.colorcoding.ibas.importexport.excel.data;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.colorcoding.ibas.bobas.bo.BusinessObject;
 import org.colorcoding.ibas.bobas.bo.IBOUserFields;
@@ -9,6 +11,8 @@ import org.colorcoding.ibas.bobas.core.IPropertyInfo;
 import org.colorcoding.ibas.bobas.data.DateTime;
 import org.colorcoding.ibas.bobas.data.emDocumentStatus;
 
+@XmlType()
+@XmlRootElement()
 public class Order extends BusinessObject<Order> implements IBOUserFields {
 
 	private static final long serialVersionUID = -8288483206699400773L;

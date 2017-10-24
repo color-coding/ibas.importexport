@@ -2,8 +2,13 @@ package org.colorcoding.ibas.importexport.excel.data;
 
 import java.beans.PropertyChangeEvent;
 
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlType;
+
 import org.colorcoding.ibas.bobas.bo.BusinessObjects;
 
+@XmlType()
+@XmlSeeAlso({ OrderLine.class })
 public class OrderLines extends BusinessObjects<OrderLine, Order> {
 
 	private static final long serialVersionUID = 4298331479320992920L;

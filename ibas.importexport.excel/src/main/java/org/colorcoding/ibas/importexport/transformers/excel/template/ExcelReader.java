@@ -286,7 +286,7 @@ public class ExcelReader extends FileReader {
 								}
 							}
 						}
-						dataRow[dataCell.getStartingColumn()] = dataCell;
+						dataRow[property.getStartingColumn()] = dataCell;
 					} catch (Exception e) {
 						throw new ResolvingException(String.format("read cell [%s,%s]'s data error.",
 								sheetCell.getRowIndex(), sheetCell.getColumnIndex()), e);

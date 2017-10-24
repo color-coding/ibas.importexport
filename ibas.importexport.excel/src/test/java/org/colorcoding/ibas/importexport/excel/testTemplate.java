@@ -56,6 +56,7 @@ public class testTemplate extends TestCase {
 		// 测试对象解析
 		Template template1 = new Template();
 		template1.resolving(order);
+		template1.resolving(order.clone());
 		this.print(template1);
 		File file = new File(String.format("%s%soutput_%s.xlsx", MyConfiguration.getWorkFolder(), File.separator,
 				DateTime.getNow().getTime()));

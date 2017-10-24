@@ -1,10 +1,12 @@
 package org.colorcoding.ibas.importexport.excel.data;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.colorcoding.ibas.bobas.bo.BusinessObject;
 import org.colorcoding.ibas.bobas.core.IPropertyInfo;
 
+@XmlType()
 public class BatchItem extends BusinessObject<OrderLine> {
 
 	private static final long serialVersionUID = 8379964688893987198L;
