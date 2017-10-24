@@ -10,7 +10,7 @@ import * as ibas from "ibas/index";
 import { IDataExportMode, DataExportModeJson, IExportResult } from "./modes/DataExportModes";
 
 /** 数据导出服务 */
-export class DataExportService extends ibas.Application<IDataExportView> implements ibas.IService<ibas.IBOServiceContract> {
+export class DataExportService extends ibas.Application<IDataExportServiceView> implements ibas.IService<ibas.IBOServiceContract> {
 
     /** 应用标识 */
     static APPLICATION_ID: string = "34a8ebc2-b105-42ea-ad06-b813fb782f9" + "a";
@@ -90,7 +90,7 @@ export class DataExportService extends ibas.Application<IDataExportView> impleme
     }
 }
 /** 数据导出服务-视图 */
-export interface IDataExportView extends ibas.IView {
+export interface IDataExportServiceView extends ibas.IView {
     /** 显示可用的模板 */
     showModes(modes: IDataExportMode[]): void;
     /** 导出数据，参数1：使用的方式 */

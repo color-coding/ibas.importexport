@@ -24,14 +24,14 @@ export class DataImportView extends ibas.BOView implements IDataImportView {
             content: [
             ]
         });
-        this.form.addContent(new sap.ui.core.Title("", { text: ibas.i18n.prop("importexpor_import_data") }));
+        this.form.addContent(new sap.ui.core.Title("", { text: ibas.i18n.prop("importexport_import_data") }));
         this.uploader = new sap.ui.unified.FileUploader("", {
             name: "file",
             width: "100%",
-            placeholder: ibas.i18n.prop("importexpor_please_choose_file"),
+            placeholder: ibas.i18n.prop("importexport_please_choose_file"),
         });
         this.form.addContent(this.uploader);
-        this.form.addContent(new sap.ui.core.Title("", { text: ibas.i18n.prop("importexpor_import_result") }));
+        this.form.addContent(new sap.ui.core.Title("", { text: ibas.i18n.prop("importexport_import_result") }));
         this.table = new sap.ui.table.Table("", {
             enableSelectAll: false,
             visibleRowCount: 10,
@@ -39,7 +39,7 @@ export class DataImportView extends ibas.BOView implements IDataImportView {
             rows: "{/}",
             columns: [
                 new sap.ui.table.Column("", {
-                    label: ibas.i18n.prop("importexpor_businessobject_key"),
+                    label: ibas.i18n.prop("importexport_businessobject_key"),
                     template: new sap.m.Text("", {
                         wrapping: false
                     }).bindProperty("text", {
@@ -54,7 +54,7 @@ export class DataImportView extends ibas.BOView implements IDataImportView {
             subHeader: new sap.m.Bar("", {
                 contentLeft: [
                     new sap.m.Button("", {
-                        text: ibas.i18n.prop("importexpor_import"),
+                        text: ibas.i18n.prop("importexport_import"),
                         type: sap.m.ButtonType.Transparent,
                         icon: "sap-icon://toaster-up",
                         press: function (): void {

@@ -22,6 +22,15 @@ public interface IBORepositoryImportExportApp extends IBORepositoryApplication {
 	IOperationResult<String> importData(FileData data);
 
 	/**
+	 * 导出数据
+	 * 
+	 * @param criteria
+	 *            查询
+	 * @return 操作结果
+	 */
+	IOperationResult<FileData> exportData(ICriteria criteria);
+
+	/**
 	 * 获取业务对象schema
 	 * 
 	 * @param boCode

@@ -9,8 +9,8 @@
 import * as ibas from "ibas/index";
 import * as bo from "./bo/index";
 import {
-    IBORepositoryImportExport, SchemaMethodsCaller,
-    BO_REPOSITORY_IMPORTEXPORT,
+    IBORepositoryImportExport, SchemaMethodCaller,
+    BO_REPOSITORY_IMPORTEXPORT, ExportMethodCaller,
 } from "../api/index";
 import { DataConverter4ie } from "./DataConverters";
 
@@ -33,6 +33,19 @@ export class BORepositoryImportExport extends ibas.BORepositoryApplication imple
         fileRepository.converter = this.createConverter();
         fileRepository.uploadFile("import", caller);
     }
+    /**
+     * 导入
+     * @param caller 调用者
+     */
+    export(caller: ExportMethodCaller): void {
+        if (!this.address.endsWith("/")) { this.address += "/"; }
+        let boRepository: ibas.BORepositoryAjax = new ibas.BORepositoryAjax();
+        boRepository.address = this.address.replace("/services/rest/data/", "/services/rest/file/");
+        boRepository.token = this.token;
+        boRepository.converter = this.createConverter();
+        let method: string = ibas.strings.format("export?token={0}", this.token);
+        boRepository.callRemoteMethod(method, caller.criteria, caller);
+    }
     /** 创建远程仓库 */
     protected createRemoteRepository(): ibas.IRemoteRepository {
         let boRepository: ibas.BORepositoryAjax = new ibas.BORepositoryAjax();
@@ -45,7 +58,7 @@ export class BORepositoryImportExport extends ibas.BORepositoryApplication imple
      * 获取业务对象架构
      * @param caller 调用者
      */
-    schema(caller: SchemaMethodsCaller<string>): void {
+    schema(caller: SchemaMethodCaller<string>): void {
         let remoteRepository: ibas.IRemoteRepository = this.createRemoteRepository();
         if (ibas.objects.isNull(remoteRepository)) {
             throw new Error(ibas.i18n.prop("sys_invalid_parameter", "remoteRepository"));

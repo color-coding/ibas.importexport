@@ -8,7 +8,7 @@
 
 import {
     FetchCaller, IOperationResult,
-    SaveCaller, MethodCaller
+    SaveCaller, MethodCaller,ICriteria
 } from "ibas/index";
 import * as bo from "./bo/index"
 
@@ -19,7 +19,12 @@ export interface IBORepositoryImportExport {
      * 获取业务对象架构
      * @param caller 调用者
      */
-    schema(caller: SchemaMethodsCaller<string>);
+    schema(caller: SchemaMethodCaller<string>);
+    /**
+     * 数据导出调用者
+     * @param caller 调用者
+     */
+    export(caller: ExportMethodCaller);
     /**
      * 查询 数据导出模板
      * @param fetcher 查询者
@@ -36,7 +41,7 @@ export interface IBORepositoryImportExport {
 /**
  * 业务对象架构相关调用者
  */
-export interface SchemaMethodsCaller<P> extends MethodCaller {
+export interface SchemaMethodCaller<P> extends MethodCaller {
     /** 业务对象编码 */
     boCode: string;
     /** 结构类型 */
@@ -46,4 +51,16 @@ export interface SchemaMethodsCaller<P> extends MethodCaller {
      * @param opRslt 结果
      */
     onCompleted(opRslt: IOperationResult<P>): void;
+}
+/**
+ * 数据导出调用者
+ */
+export interface ExportMethodCaller extends MethodCaller {
+    /** 查询 */
+    criteria: ICriteria;
+    /**
+     * 调用完成
+     * @param opRslt 结果
+     */
+    onCompleted(opRslt: IOperationResult<string>): void;
 }

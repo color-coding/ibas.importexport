@@ -35,6 +35,17 @@ public abstract class Transformer<IN, OUT> implements ITransformer<IN, OUT> {
 		this.setOutputData(tmps);
 	}
 
+	protected void setOutputData(OUT[] data) {
+		if (data == null) {
+			return;
+		}
+		List<OUT> tmps = new ArrayList<>();
+		for (OUT out : data) {
+			tmps.add(out);
+		}
+		this.setOutputData(tmps);
+	}
+
 	protected void setOutputData(List<OUT> data) {
 		if (data == null) {
 			return;

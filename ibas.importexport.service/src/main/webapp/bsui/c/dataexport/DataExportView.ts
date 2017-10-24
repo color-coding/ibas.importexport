@@ -9,89 +9,93 @@
 import * as ibas from "ibas/index";
 import { utils } from "openui5/typings/ibas.utils";
 import * as bo from "../../../borep/bo/index";
-import { IDataExportView, IDataExportMode, IExportResult, DataExportModeJson } from "../../../bsapp/dataexport/index";
+import { IDataExportView } from "../../../bsapp/dataexport/index";
 
 /**
- * 数据服务视图
+ * 视图-数据导出
  */
-export class DataExportView extends ibas.BODialogView implements IDataExportView {
-    /** 导出原始数据 */
-    exportRawDataEvent: Function;
-    /** 导出数据，参数1：使用的模板 */
-    exportDataEvent: Function;
-    /** 绘制工具条 */
-    darwBars(): any {
-        let that: this = this;
-        return [
-            new sap.m.Button("", {
-                text: ibas.i18n.prop("importexpor_export"),
-                type: sap.m.ButtonType.Transparent,
-                press: function (): void {
-                    that.fireViewEvents(that.exportDataEvent,
-                        // 获取表格选中的对象
-                        utils.getTableSelecteds<IDataExportMode>(that.table).firstOrDefault()
-                    );
-                }
-            }),
-            new sap.m.Button("", {
-                text: ibas.i18n.prop("sys_shell_exit"),
-                type: sap.m.ButtonType.Transparent,
-                press: function (): void {
-                    that.fireViewEvents(that.closeEvent);
-                }
-            }),
-        ];
-    }
+export class DataExportView extends ibas.BOView implements IDataExportView {
+    /** 选择业务对象 */
+    chooseBusinessObjectEvent: Function;
+    /** 选择导出模板 */
+    chooseTemplateEvent: Function;
+    /** 导出 */
+    exportEvent: Function;
     /** 绘制视图 */
     darw(): any {
         let that: this = this;
-        this.table = new sap.ui.table.Table("", {
-            enableSelectAll: false,
-            visibleRowCount: 5,
-            rows: "{/}",
-            columns: [
-                new sap.ui.table.Column("", {
-                    label: ibas.i18n.prop("importexpor_export_mode_name"),
-                    template: new sap.m.Text("", {
-                        wrapping: false,
-                    }).bindProperty("text", {
-                        path: "name"
-                    })
+        this.form = new sap.ui.layout.form.SimpleForm("", {
+            content: [
+                new sap.ui.core.Title("", { text: ibas.i18n.prop("importexport_export_criteria") }),
+                new sap.m.Label("", { text: ibas.i18n.prop("importexport_export_bo") }),
+                new sap.m.Input("", {
+                    showValueHelp: true,
+                    valueHelpRequest: function (): void {
+                        that.fireViewEvents(that.chooseBusinessObjectEvent);
+                    }
+                }).bindProperty("value", {
+                    path: "/boCode"
                 }),
-                new sap.ui.table.Column("", {
-                    label: ibas.i18n.prop("importexpor_export_mode_description"),
-                    template: new sap.m.Text("", {
-                        wrapping: false
-                    }).bindProperty("text", {
-                        path: "description"
-                    })
+                new sap.m.Label("", { text: ibas.i18n.prop("importexport_export_template") }),
+                new sap.m.Input("", {
+                    showValueHelp: true,
+                    valueHelpRequest: function (): void {
+                        that.fireViewEvents(that.chooseBusinessObjectEvent);
+                    }
+                }).bindProperty("value", {
+                    path: "/remarks"
                 }),
+                new sap.ui.core.Title("", { text: ibas.i18n.prop("importexport_export_result") }),
+                new sap.ui.table.Table("", {
+                    enableSelectAll: false,
+                    visibleRowCount: 10,
+                    visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Interactive,
+                    rows: "{/}",
+                    columns: [
+                        new sap.ui.table.Column("", {
+                            label: ibas.i18n.prop("importexport_businessobject_key"),
+                            template: new sap.m.Text("", {
+                                wrapping: false
+                            }).bindProperty("text", {
+                                path: ""
+                            })
+                        }),
+                    ]
+                })
             ]
         });
-        this.id = this.table.getId();
-        return this.table;
+        this.page = new sap.m.Page("", {
+            showHeader: false,
+            subHeader: new sap.m.Bar("", {
+                contentLeft: [
+                    new sap.m.Button("", {
+                        text: ibas.i18n.prop("importexport_export"),
+                        type: sap.m.ButtonType.Transparent,
+                        icon: "sap-icon://toaster-up",
+                        press: function (): void {
+                            let fileData: FormData = new FormData();
+                            fileData.append("file", (<any>document.getElementsByName(that.uploader.getName()).item(0)).files[0]);
+                            fileData.append("name", that.uploader.getName());
+                            that.fireViewEvents(that.exportEvent, fileData);
+                        }
+                    })
+                ]
+            }),
+            content: [this.form]
+        });
+        this.id = this.page.getId();
+        return this.page;
     }
+    private page: sap.m.Page;
+    private form: sap.ui.layout.form.SimpleForm;
+    private uploader: sap.ui.unified.FileUploader;
     private table: sap.ui.table.Table;
-    /** 显示可用的模板 */
-    showModes(modes: IDataExportMode[]): void {
-        this.table.setModel(new sap.ui.model.json.JSONModel(modes));
-    }
     /** 显示结果 */
-    showReslut(result: IExportResult): void {
-        if (result.mode === DataExportModeJson.MODE_SIGN) {
-            jQuery.sap.require("sap.ui.core.util.File");
-            let content: any = result.content,
-                fileName: string = result.address.substring(0, result.address.lastIndexOf(".")),
-                extension: string = result.address.substring(result.address.lastIndexOf(".") + 1),
-                mimeType: string = extension;
-            sap.ui.core.util.File.save(
-                content,
-                fileName,
-                extension,
-                mimeType,
-                "");
-        } else {
-            throw new Error(ibas.i18n.prop("importexport_export_result_can_not_showed", result.mode));
-        }
+    showResults(results: any[]): void {
+        // 显示结果
+    }
+    /** 显示查询 */
+    showCriteria(criteria: ibas.ICriteria): void {
+        // 显示查询
     }
 }

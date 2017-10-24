@@ -46,6 +46,9 @@ public class testTemplate extends TestCase {
 		BatchItem batch = line.getBatchItems().create();
 		batch.setBatchCode("20171231");
 		batch.setCount(199);
+		batch = line.getBatchItems().create();
+		batch.setBatchCode("20180315");
+		batch.setCount(66);
 		line = order.getOrderLines().create();
 		line.setItemCode("A00002");
 		line.setQuantity("168.99");

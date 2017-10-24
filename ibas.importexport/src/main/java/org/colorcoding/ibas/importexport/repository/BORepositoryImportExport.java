@@ -3,15 +3,18 @@ package org.colorcoding.ibas.importexport.repository;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
+import org.colorcoding.ibas.bobas.MyConfiguration;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
+import org.colorcoding.ibas.bobas.common.OperationInformation;
 import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.core.BOFactory;
 import org.colorcoding.ibas.bobas.core.IBusinessObjectBase;
 import org.colorcoding.ibas.bobas.core.RepositoryException;
 import org.colorcoding.ibas.bobas.data.FileData;
 import org.colorcoding.ibas.bobas.i18n.I18N;
+import org.colorcoding.ibas.bobas.messages.Logger;
 import org.colorcoding.ibas.bobas.repository.BORepositoryServiceApplication;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
 import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
@@ -20,6 +23,7 @@ import org.colorcoding.ibas.importexport.bo.dataexporttemplate.IDataExportTempla
 import org.colorcoding.ibas.importexport.transformer.FileTransformer;
 import org.colorcoding.ibas.importexport.transformer.IFileTransformer;
 import org.colorcoding.ibas.importexport.transformer.ITransformer;
+import org.colorcoding.ibas.importexport.transformer.ITransformerFile;
 import org.colorcoding.ibas.importexport.transformer.TransformerFactory;
 
 /**
@@ -60,6 +64,12 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			boolean myTrans = this.beginTransaction();
 			try {
 				opRslt = new OperationResult<String>();
+				// 返回存储事务标记
+				OperationInformation opInfo = new OperationInformation();
+				opInfo.setTag("DATA_IMPORT");
+				opInfo.setName("REPOSITORY_TRANSACTION_ID");
+				opInfo.setContents(this.getRepository().getTransactionId());
+				opRslt.addInformations(opInfo);
 				// 保存业务对象
 				for (IBusinessObject object : fileTransformer.getOutputData()) {
 					IOperationResult<IBusinessObject> opRsltSave = this.save((IBusinessObject) object, token);
@@ -82,9 +92,10 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 					try {
 						this.rollbackTransaction();
 					} catch (RepositoryException e1) {
-						opRslt = new OperationResult<String>(e);
+						Logger.log(e1);
 					}
 				}
+				throw e;
 			}
 		} catch (Exception e) {
 			opRslt = new OperationResult<String>(e);
@@ -177,6 +188,69 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			opRslt.addResultObjects(writer.toString());
 		} catch (Exception e) {
 			opRslt = new OperationResult<String>(e);
+		}
+		return opRslt;
+	}
+
+	// --------------------------------------------------------------------------------------------//
+	@Override
+	public IOperationResult<FileData> exportData(ICriteria criteria) {
+		return this.exportData(criteria, this.getUserToken());
+	}
+
+	@Override
+	public IOperationResult<FileData> exportData(ICriteria criteria, String token) {
+		OperationResult<FileData> opRslt = new OperationResult<FileData>();
+		try {
+			this.setUserToken(token);
+			if (criteria == null || criteria.getBOCode() == null || criteria.getRemarks() == null) {
+				throw new Exception(I18N.prop("msg_importexport_invaild_data"));
+			}
+			// 获取导出的对象类型
+			Class<?> boType = BOFactory.create().getBOClass(criteria.getBOCode());
+			if (boType == null) {
+				throw new Exception(I18N.prop("msg_importexport_not_found_class", criteria.getBOCode()));
+			}
+			// 获取导出的模板
+			ITransformer<?, ?> transformer = TransformerFactory.create().create(criteria.getRemarks());
+			if (!(transformer instanceof ITransformerFile)) {
+				throw new Exception(I18N.prop("msg_importexport_not_found_transformer", criteria.getRemarks()));
+			}
+			// 导出数据
+			ITransformerFile fileTransformer = (ITransformerFile) transformer;
+			fileTransformer.setWorkFolder(MyConfiguration.getTempFolder());
+			if (criteria.getConditions().size() == 0) {
+				// 没有条件，认为是只要模板
+				Object object = boType.newInstance();
+				if (object instanceof IBusinessObject) {
+					fileTransformer.setInputData(new IBusinessObject[] { (IBusinessObject) object });
+				}
+			} else {
+				// 查询并返回数据
+				@SuppressWarnings("unchecked")
+				IOperationResult<IBusinessObject> opRsltFetch = this.fetch(criteria, token,
+						(Class<IBusinessObject>) boType);
+				if (opRsltFetch.getError() != null) {
+					throw opRsltFetch.getError();
+				}
+				if (opRsltFetch.getResultCode() != 0) {
+					throw new Exception(opRsltFetch.getMessage());
+				}
+				fileTransformer.setInputData(opRsltFetch.getResultObjects().toArray(new IBusinessObject[] {}));
+				fileTransformer.transform();
+			}
+			fileTransformer.transform();
+			File file = fileTransformer.getOutputData().firstOrDefault();
+			if (file != null) {
+				FileData fileData = new FileData();
+				fileData.setFileName(file.getName());
+				fileData.setLocation(file.getPath());
+				opRslt.addResultObjects(fileData);
+			} else {
+				throw new Exception(I18N.prop("msg_importexport_invaild_data"));
+			}
+		} catch (Exception e) {
+			opRslt = new OperationResult<FileData>(e);
 		}
 		return opRslt;
 	}

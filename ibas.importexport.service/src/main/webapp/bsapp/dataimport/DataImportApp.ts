@@ -9,7 +9,7 @@
 import * as ibas from "ibas/index";
 import { BORepositoryImportExport } from "../../borep/BORepositories";
 
-/** 数据导入服务 */
+/** 数据导入 */
 export class DataImportApp extends ibas.Application<IDataImportView>  {
 
     /** 应用标识 */
@@ -61,7 +61,7 @@ export class DataImportApp extends ibas.Application<IDataImportView>  {
         this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("sys_shell_uploading_file"));
     }
 }
-/** 数据导出服务-视图 */
+/** 数据导入-视图 */
 export interface IDataImportView extends ibas.IView {
     /** 导入 */
     importEvent: Function;

@@ -19,7 +19,7 @@ import * as dataimportViews from "./dataimport/index";
  */
 export default class Navigation extends ibas.ViewNavigation {
 
-    /** 
+    /**
      * 创建实例
      * @param id 应用id
      */
@@ -39,6 +39,9 @@ export default class Navigation extends ibas.ViewNavigation {
                 view = new dataexporttemplateViews.DataExportTemplateEditView();
                 break;
             case dataexportApps.DataExportService.APPLICATION_ID:
+                view = new dataexportViews.DataExportServiceView();
+                break;
+            case dataexportApps.DataExportApp.APPLICATION_ID:
                 view = new dataexportViews.DataExportView();
                 break;
             case dataimportApps.DataImportApp.APPLICATION_ID:
