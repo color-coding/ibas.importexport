@@ -2,12 +2,11 @@ package org.colorcoding.ibas.importexport.transformers.excel.template;
 
 import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Date;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -15,7 +14,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.colorcoding.ibas.bobas.data.DataConvert;
 import org.colorcoding.ibas.bobas.data.DateTime;
-import org.colorcoding.ibas.bobas.data.Decimal;
 
 /**
  * Excel文件读取者
@@ -229,6 +227,18 @@ public class ExcelReader extends FileReader {
 				- this.getTemplate().getDatas().getStartingColumn() + 1);
 	}
 
+	private org.colorcoding.ibas.importexport.transformers.excel.template.Cell createCell(Property property, int row,
+			java.lang.Object value) {
+		org.colorcoding.ibas.importexport.transformers.excel.template.Cell dataCell = new org.colorcoding.ibas.importexport.transformers.excel.template.Cell();
+		dataCell.setParent(property);
+		dataCell.setStartingRow(row);
+		dataCell.setEndingRow(dataCell.getStartingRow());
+		dataCell.setStartingColumn(property.getStartingColumn());
+		dataCell.setEndingColumn(dataCell.getStartingColumn());
+		dataCell.setValue(value);
+		return dataCell;
+	}
+
 	protected void resolvingDatas(Sheet sheet) throws ResolvingException {
 		for (int iRow = this.getTemplate().getDatas().getStartingRow(); iRow <= this.getTemplate()
 				.getEndingRow(); iRow++) {
@@ -244,52 +254,41 @@ public class ExcelReader extends FileReader {
 					if (sheetCell == null) {
 						continue;
 					}
-					org.colorcoding.ibas.importexport.transformers.excel.template.Cell dataCell = new org.colorcoding.ibas.importexport.transformers.excel.template.Cell();
-					dataCell.setParent(property);
-					dataCell.setStartingRow(sheetRow.getRowNum());
-					dataCell.setEndingRow(dataCell.getStartingRow());
-					dataCell.setStartingColumn(property.getStartingColumn());
-					dataCell.setEndingColumn(dataCell.getStartingColumn());
-					// 无法解析的值，不记录以提升性能
+					org.colorcoding.ibas.importexport.transformers.excel.template.Cell dataCell = null;
 					try {
-						if (dataCell.getParent().getBindingClass() == DateTime.class) {
-							// 日期类型值
-							Date value = sheetCell.getDateCellValue();
-							if (value != null) {
-								dataCell.setValue(new DateTime(value.getTime()));
-								dataRow[dataCell.getStartingColumn()] = dataCell;
+						if (sheetCell.getCellTypeEnum() == CellType.BOOLEAN) {
+							if (property.getBindingClass() == Boolean.class) {
+								dataCell = this.createCell(property, sheetRow.getRowNum(),
+										sheetCell.getBooleanCellValue());
 							}
-						} else if (dataCell.getParent().getBindingClass() == Decimal.class
-								|| dataCell.getParent().getBindingClass() == Float.class
-								|| dataCell.getParent().getBindingClass() == Double.class
-								|| dataCell.getParent().getBindingClass() == BigDecimal.class) {
-							// 小数类型
-							dataCell.setValue(sheetCell.getNumericCellValue());
-							dataRow[dataCell.getStartingColumn()] = dataCell;
-						} else if (dataCell.getParent().getBindingClass() == Long.class
-								|| dataCell.getParent().getBindingClass() == Integer.class
-								|| dataCell.getParent().getBindingClass() == Short.class
-								|| dataCell.getParent().getBindingClass() == BigInteger.class) {
-							// 数值类型
-							dataCell.setValue(sheetCell.getNumericCellValue());
-							dataRow[dataCell.getStartingColumn()] = dataCell;
-						} else if (dataCell.getParent().getBindingClass().isEnum()) {
-							// 枚举类型
+						} else if (sheetCell.getCellTypeEnum() == CellType.NUMERIC) {
+							if (property.getBindingClass() == Integer.class || property.getBindingClass() == Short.class
+									|| property.getBindingClass() == Long.class
+									|| property.getBindingClass() == BigInteger.class) {
+								// 整型，去除小数位
+								dataCell = this.createCell(property, sheetRow.getRowNum(), DataConvert.convert(
+										property.getBindingClass(), Math.round(sheetCell.getNumericCellValue())));
+							} else if (property.getBindingClass() == DateTime.class) {
+								dataCell = this.createCell(property, sheetRow.getRowNum(),
+										DataConvert.convert(property.getBindingClass(), sheetCell.getDateCellValue()));
+							} else {
+								dataCell = this.createCell(property, sheetRow.getRowNum(), DataConvert
+										.convert(property.getBindingClass(), sheetCell.getNumericCellValue()));
+							}
+						} else if (sheetCell.getCellTypeEnum() == CellType.STRING) {
 							String value = sheetCell.getStringCellValue();
 							if (value != null && !value.isEmpty()) {
-								dataCell.setValue(DataConvert.convert(dataCell.getParent().getBindingClass(), value));
-								dataRow[dataCell.getStartingColumn()] = dataCell;
-							}
-						} else {
-							// 字符类型
-							String value = sheetCell.getStringCellValue();
-							if (value != null && !value.isEmpty()) {
-								dataCell.setValue(sheetCell.getStringCellValue());
-								dataRow[dataCell.getStartingColumn()] = dataCell;
+								if (property.getBindingClass() == DateTime.class) {
+									dataCell = this.createCell(property, sheetRow.getRowNum(), DateTime.valueOf(value));
+								} else {
+									dataCell = this.createCell(property, sheetRow.getRowNum(),
+											DataConvert.convert(property.getBindingClass(), value));
+								}
 							}
 						}
+						dataRow[dataCell.getStartingColumn()] = dataCell;
 					} catch (Exception e) {
-						throw new ResolvingException(String.format("get cell [%s,%s]'s data error.",
+						throw new ResolvingException(String.format("read cell [%s,%s]'s data error.",
 								sheetCell.getRowIndex(), sheetCell.getColumnIndex()), e);
 					}
 				}

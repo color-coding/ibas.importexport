@@ -3,6 +3,7 @@ package org.colorcoding.ibas.importexport.transformers.excel.template;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 
@@ -291,30 +292,104 @@ public class Template extends Area<Area<?>> {
 	}
 
 	/**
-	 * 解析为对象
+	 * 当前数据解析为对象
 	 * 
 	 * @return
 	 * @throws ResolvingException
 	 */
 	public final IBusinessObject[] resolving() throws ResolvingException {
 		if (this.getHead() != null && this.getObjects() != null && this.getDatas() != null) {
-			return this.resolving(this.getHead().getName()).toArray(new IBusinessObject[] {});
+			try {
+				ArrayList<IBusinessObject> businessObjects = new ArrayList<>();
+				Iterator<Cell[]> rows = this.getDatas().getRows().iterator();
+				while (rows.hasNext()) {
+					IBusinessObject bo = (IBusinessObject) this.getHead().getBindingClass().newInstance();
+					if (!(bo instanceof IManageFields)) {
+						throw new ResolvingException(String.format("not supported %s", bo.getClass().getName()));
+					}
+					if (this.resolving((IManageFields) bo, this.getHead().getName(), rows)) {
+						// 成功获取数据
+						businessObjects.add(bo);
+					} else {
+						// 此行无解析，继续
+						rows.next();
+					}
+				}
+				return businessObjects.toArray(new IBusinessObject[] {});
+			} catch (ResolvingException e) {
+				throw e;
+			} catch (Exception e) {
+				throw new ResolvingException(e);
+			}
 		}
 		return new IBusinessObject[] {};
 	}
 
-	private List<IBusinessObject> resolving(String path) throws ResolvingException {
-		try {
-			ArrayList<IBusinessObject> businessObjects = new ArrayList<>();
-			for (Cell[] row : this.getDatas().getRows()) {
-				for (Cell cell : row) {
-
+	private boolean resolving(IManageFields boFields, String level, Iterator<Cell[]> rows) {
+		boolean done = false;
+		for (Object object : this.getObjects()) {
+			if (!object.getName().startsWith(level)) {
+				// 非此类，不做处理
+				continue;
+			}
+			if (object.getName().equals(level)) {
+				// 当前级别，同对象。如： TP - TP
+				if (rows.hasNext()) {
+					Cell[] row = rows.next();
+					for (Property property : object.getProperties()) {
+						IFieldData field = boFields.getField(property.getName());
+						if (field != null) {
+							Cell cell = row[property.getStartingColumn()];
+							if (cell != null && cell.getValue() != null) {
+								field.setValue(cell.getValue());
+								if (!done) {
+									done = true;
+								}
+							}
+						}
+					}
+				}
+			} else if (object.getName().indexOf(PROPERTY_PATH_SEPARATOR, level.length() + 1) < 0) {
+				// 当前基本，不同对象。如：TP.BB - TP or TP.AA[] - TP
+				if (object.getName().endsWith(PROPERTY_PATH_LIST_SIGN)) {
+					// TP.AA[] - TP
+					String property = object.getName().substring(level.length() + 1, object.getName().length() - 2);
+					IFieldData field = boFields.getField(property);
+					if (field != null && IBusinessObjects.class.isInstance(field.getValue())) {
+						while (rows.hasNext()) {
+							IBusinessObjects<?, ?> list = (IBusinessObjects<?, ?>) field.getValue();
+							boolean doneItem = false;
+							IBusinessObject boItem = list.create();
+							if (boItem instanceof IManageFields) {
+								doneItem = this.resolving((IManageFields) boItem, object.getName(), rows);
+							}
+							if (!doneItem) {
+								// 未处理，移出
+								list.remove(boItem);
+							} else {
+								if (!done) {
+									done = true;
+								}
+							}
+						}
+					}
+				} else {
+					// TP.BB - TP
+					String property = object.getName().substring(level.length() + 1);
+					IFieldData field = boFields.getField(property);
+					if (field != null && field.getValue() instanceof IManageFields) {
+						boolean doneItem = false;
+						doneItem = this.resolving((IManageFields) field.getValue(), object.getName(), rows);
+						if (doneItem) {
+							if (!done) {
+								done = true;
+							}
+						}
+					}
 				}
 			}
-			return businessObjects;
-		} catch (Exception e) {
-			throw new ResolvingException(e);
 		}
+		return done;
 	}
 
 	private FileWriter writer;
