@@ -1,6 +1,6 @@
 package org.colorcoding.ibas.importexport.transformer;
 
-import org.colorcoding.ibas.bobas.util.Collection;
+import org.colorcoding.ibas.bobas.data.List;
 
 /**
  * 转换者
@@ -23,7 +23,7 @@ public interface ITransformer<IN, OUT> {
 	 * @return
 	 * @throws TransformException
 	 */
-	Collection<OUT> getOutputData() throws TransformException;
+	List<OUT> getOutputData() throws TransformException;
 
 	/**
 	 * 转换

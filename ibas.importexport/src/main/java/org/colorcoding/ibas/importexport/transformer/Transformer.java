@@ -1,10 +1,8 @@
 package org.colorcoding.ibas.importexport.transformer;
 
-import java.util.List;
-
+import org.colorcoding.ibas.bobas.data.ArrayList;
+import org.colorcoding.ibas.bobas.data.List;
 import org.colorcoding.ibas.bobas.i18n.I18N;
-import org.colorcoding.ibas.bobas.util.ArrayList;
-import org.colorcoding.ibas.bobas.util.Collection;
 
 /**
  * 转换者
@@ -26,18 +24,18 @@ public abstract class Transformer<IN, OUT> implements ITransformer<IN, OUT> {
 		this.outputData = null;
 	}
 
-	private Collection<OUT> outputData;
+	private List<OUT> outputData;
 
-	protected void setOutputData(List<OUT> data) {
+	protected void setOutputData(java.util.List<OUT> data) {
 		if (data == null) {
 			return;
 		}
-		Collection<OUT> tmps = new ArrayList<>();
+		List<OUT> tmps = new ArrayList<>();
 		tmps.addAll(data);
 		this.setOutputData(tmps);
 	}
 
-	protected void setOutputData(Collection<OUT> data) {
+	protected void setOutputData(List<OUT> data) {
 		if (data == null) {
 			return;
 		}
@@ -45,7 +43,7 @@ public abstract class Transformer<IN, OUT> implements ITransformer<IN, OUT> {
 	}
 
 	@Override
-	public Collection<OUT> getOutputData() throws TransformException {
+	public List<OUT> getOutputData() throws TransformException {
 		if (this.outputData == null) {
 			throw new TransformException(I18N.prop("msg_importexport_invaild_data"));
 		}

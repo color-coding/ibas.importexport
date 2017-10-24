@@ -11,7 +11,7 @@ import org.colorcoding.ibas.bobas.messages.Logger;
 import org.colorcoding.ibas.bobas.messages.MessageLevel;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
 import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
-import org.colorcoding.ibas.bobas.util.ArrayList;
+import org.colorcoding.ibas.bobas.data.ArrayList;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

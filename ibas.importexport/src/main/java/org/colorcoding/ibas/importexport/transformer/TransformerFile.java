@@ -1,12 +1,11 @@
 package org.colorcoding.ibas.importexport.transformer;
 
 import java.io.File;
-import java.util.List;
 
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
+import org.colorcoding.ibas.bobas.data.ArrayList;
+import org.colorcoding.ibas.bobas.data.List;
 import org.colorcoding.ibas.bobas.i18n.I18N;
-import org.colorcoding.ibas.bobas.util.ArrayList;
-import org.colorcoding.ibas.bobas.util.Collection;
 
 /**
  * 业务对象转换为文件
@@ -32,18 +31,18 @@ public abstract class TransformerFile implements ITransformerFile {
 		this.inputData = data;
 	}
 
-	private Collection<File> outputData;
+	private List<File> outputData;
 
-	protected void setOutputData(List<File> data) {
+	protected void setOutputData(java.util.List<File> data) {
 		if (data == null) {
 			return;
 		}
-		Collection<File> tmps = new ArrayList<>();
+		List<File> tmps = new ArrayList<>();
 		tmps.addAll(data);
 		this.setOutputData(tmps);
 	}
 
-	protected void setOutputData(Collection<File> data) {
+	protected void setOutputData(List<File> data) {
 		if (data == null) {
 			return;
 		}
@@ -51,7 +50,7 @@ public abstract class TransformerFile implements ITransformerFile {
 	}
 
 	@Override
-	public Collection<File> getOutputData() throws TransformException {
+	public List<File> getOutputData() throws TransformException {
 		if (this.outputData == null) {
 			throw new TransformException(I18N.prop("msg_importexport_invaild_data"));
 		}
