@@ -3,7 +3,6 @@ package org.colorcoding.ibas.importexport.transformers.excel.template;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 
@@ -301,7 +300,7 @@ public class Template extends Area<Area<?>> {
 		if (this.getHead() != null && this.getObjects() != null && this.getDatas() != null) {
 			try {
 				ArrayList<IBusinessObject> businessObjects = new ArrayList<>();
-				Iterator<Cell[]> rows = this.getDatas().getRows().iterator();
+				Iterator<Cell[]> rows = this.getDatas().getRowIterator();
 				while (rows.hasNext()) {
 					IBusinessObject bo = (IBusinessObject) this.getHead().getBindingClass().newInstance();
 					if (!(bo instanceof IManageFields)) {
@@ -335,6 +334,7 @@ public class Template extends Area<Area<?>> {
 			if (object.getName().equals(level)) {
 				// 当前级别，同对象。如： TP - TP
 				if (rows.hasNext()) {
+					boolean matched = false;
 					Cell[] row = rows.next();
 					for (Property property : object.getProperties()) {
 						IFieldData field = boFields.getField(property.getName());
@@ -342,11 +342,19 @@ public class Template extends Area<Area<?>> {
 							Cell cell = row[property.getStartingColumn()];
 							if (cell != null && cell.getValue() != null) {
 								field.setValue(cell.getValue());
-								if (!done) {
-									done = true;
+								if (!matched) {
+									matched = true;
 								}
 							}
 						}
+					}
+					if (matched) {
+						if (!done) {
+							done = true;
+						}
+					} else {
+						// 此行数据没有被识别，游标回滚
+						rows.back();
 					}
 				}
 			} else if (object.getName().indexOf(PROPERTY_PATH_SEPARATOR, level.length() + 1) < 0) {
@@ -366,6 +374,7 @@ public class Template extends Area<Area<?>> {
 							if (!doneItem) {
 								// 未处理，移出
 								list.remove(boItem);
+								break;
 							} else {
 								if (!done) {
 									done = true;
@@ -439,6 +448,9 @@ public class Template extends Area<Area<?>> {
 	 *             无法识别异常
 	 */
 	public final void resolving(File file) throws ResolvingException {
+		if (this.head != null) {
+			throw new ResolvingException("the template has been used.");
+		}
 		try {
 			this.getReader().setTemplate(this);
 			this.getReader().read(file);

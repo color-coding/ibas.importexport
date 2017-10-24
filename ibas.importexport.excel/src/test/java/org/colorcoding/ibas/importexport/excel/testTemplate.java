@@ -64,6 +64,8 @@ public class testTemplate extends TestCase {
 		// 测试文件解析
 		Template template2 = new Template();
 		template2.resolving(file);
+		order.setDocEntry(861);
+		template2.resolving(order);
 		this.print(template2);
 		// 测试对象还原
 		IBusinessObject[] businessObjects = template2.resolving();

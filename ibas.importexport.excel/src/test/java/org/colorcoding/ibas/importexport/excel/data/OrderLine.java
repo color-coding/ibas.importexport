@@ -101,7 +101,7 @@ public class OrderLine extends BusinessObject<OrderLine> {
 	@Override
 	protected void initialize() {
 		super.initialize();
-		this.setBatchItems(new BatchItems());
+		this.setBatchItems(new BatchItems(this));
 
 	}
 }

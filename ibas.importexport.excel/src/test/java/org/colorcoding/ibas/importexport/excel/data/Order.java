@@ -92,7 +92,7 @@ public class Order extends BusinessObject<Order> implements IBOUserFields {
 	protected void initialize() {
 		super.initialize();
 		this.setUser(new User());
-		this.setOrderLines(new OrderLines());
+		this.setOrderLines(new OrderLines(this));
 
 	}
 }

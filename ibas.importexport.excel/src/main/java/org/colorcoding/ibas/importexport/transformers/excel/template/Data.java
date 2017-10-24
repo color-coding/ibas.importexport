@@ -41,6 +41,36 @@ public class Data extends Area<Template> {
 		return this.getRows().get(index);
 	}
 
+	public Iterator<Cell[]> getRowIterator() {
+		return new Iterator<Cell[]>() {
+
+			int index = 0;
+
+			@Override
+			public boolean hasNext() {
+				if (this.index >= 0 && this.index < Data.this.getRows().size()) {
+					return true;
+				}
+				return false;
+			}
+
+			@Override
+			public Cell[] next() {
+				Cell[] row = Data.this.getRows().get(this.index);
+				this.index += 1;
+				return row;
+			}
+
+			@Override
+			public void back() {
+				if (this.index > 0) {
+					this.index -= 1;
+				}
+			}
+
+		};
+	}
+
 	final void setRows(List<Cell[]> rows) {
 		this.rows = rows;
 	}
