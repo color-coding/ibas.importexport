@@ -12,11 +12,7 @@ public final class TransformerFactories {
 	public static final String MSG_REGISTER_TRANSFORMER_FACTORY = "transformer: register report factory [%s].";
 	public static final String MSG_NOT_FOUND_TRANSFORMER = "transformer: not found [%s]'s transformer.";
 
-	private static TransformerFactories instance;
-
-	private TransformerFactories() {
-
-	}
+	private volatile static TransformerFactories instance;
 
 	public static TransformerFactories create() {
 		if (instance == null) {
@@ -28,6 +24,10 @@ public final class TransformerFactories {
 			}
 		}
 		return instance;
+	}
+
+	private TransformerFactories() {
+
 	}
 
 	protected void init() {

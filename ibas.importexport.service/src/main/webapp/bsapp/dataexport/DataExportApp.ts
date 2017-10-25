@@ -7,7 +7,7 @@
  */
 
 import * as ibas from "ibas/index";
-import { BO_CODE_BOINFORMATION, IBOPropertyInformation } from "../../3rdparty/initialfantasy/index";
+import { BO_CODE_BOINFORMATION, IBOInformation } from "../../3rdparty/initialfantasy/index";
 import { BORepositoryImportExport } from "../../borep/BORepositories";
 
 /** 数据导出 */
@@ -30,6 +30,8 @@ export class DataExportApp extends ibas.Application<IDataExportView>  {
         this.view.exportEvent = this.export;
         this.view.chooseBusinessObjectEvent = this.chooseBusinessObject;
         this.view.chooseTemplateEvent = this.chooseTemplate;
+        this.view.addConditionEvent = this.addQueryCondition;
+        this.view.removeConditionEvent = this.removeQueryCondition;
     }
     /** 视图显示后 */
     protected viewShowed(): void {
@@ -58,7 +60,6 @@ export class DataExportApp extends ibas.Application<IDataExportView>  {
                     }
                     that.messages(ibas.emMessageType.SUCCESS,
                         ibas.i18n.prop("sys_shell_upload") + ibas.i18n.prop("sys_shell_sucessful"));
-                    that.view.showResults(opRslt.resultObjects);
                 } catch (error) {
                     that.messages(error);
                 }
@@ -72,12 +73,18 @@ export class DataExportApp extends ibas.Application<IDataExportView>  {
         let that: this = this;
         let criteria: ibas.ICriteria = new ibas.Criteria();
         criteria.noChilds = true;
-        ibas.servicesManager.runChooseService<IBOPropertyInformation>({
+        let condition: ibas.ICondition = criteria.conditions.create();
+        condition.alias = "code";
+        condition.value = ".";
+        condition.operation = ibas.emConditionOperation.NOT_CONTAIN;
+        ibas.servicesManager.runChooseService<IBOInformation>({
             boCode: BO_CODE_BOINFORMATION,
             chooseType: ibas.emChooseType.SINGLE,
             criteria: criteria,
-            onCompleted(selecteds: ibas.List<IBOPropertyInformation>): void {
+            onCompleted(selecteds: ibas.List<IBOInformation>): void {
                 that.criteria.boCode = selecteds.firstOrDefault().code;
+                that.view.showConditions(null);
+                that.view.showConditions(that.criteria.conditions);
             }
         });
     }
@@ -86,6 +93,14 @@ export class DataExportApp extends ibas.Application<IDataExportView>  {
         let that: this = this;
         // 导出模板设置
         that.criteria.remarks = "TO_FILE_XLSX";// 目前只支持这种
+    }
+    private addQueryCondition(): void {
+        this.criteria.conditions.create();
+        this.view.showConditions(this.criteria.conditions);
+    }
+    private removeQueryCondition(condition: ibas.ICondition): void {
+        this.criteria.conditions.remove(condition);
+        this.view.showConditions(this.criteria.conditions);
     }
 }
 /** 数据导出-视图 */
@@ -98,6 +113,10 @@ export interface IDataExportView extends ibas.IView {
     chooseTemplateEvent: Function;
     /** 导出 */
     exportEvent: Function;
+    /** 添加条件 */
+    addConditionEvent: Function;
+    /** 移出条件 */
+    removeConditionEvent: Function;
     /** 显示结果 */
-    showResults(results: any[]): void;
+    showConditions(conditions: ibas.ICondition[]): void;
 }

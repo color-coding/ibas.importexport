@@ -7,7 +7,7 @@ package org.colorcoding.ibas.importexport.transformer;
  *
  */
 public class TransformerFactory {
-	private static TransformerFactory instance;
+	private volatile static TransformerFactory instance;
 
 	public static TransformerFactory create() {
 		if (instance == null) {

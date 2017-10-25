@@ -10,6 +10,10 @@ import * as ibas from "ibas/index";
 import { utils } from "openui5/typings/ibas.utils";
 import * as bo from "../../../borep/bo/index";
 import { IDataExportView } from "../../../bsapp/dataexport/index";
+import {
+    BO_CODE_BOINFORMATION, BO_REPOSITORY_INITIALFANTASY,
+    IBOInformation, IBOPropertyInformation, IBORepositoryInitialFantasy
+} from "../../../3rdparty/initialfantasy/index";
 
 /**
  * 视图-数据导出
@@ -21,12 +25,25 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
     chooseTemplateEvent: Function;
     /** 导出 */
     exportEvent: Function;
+    /** 添加条件 */
+    addConditionEvent: Function;
+    /** 移出条件 */
+    removeConditionEvent: Function;
     /** 绘制视图 */
     darw(): any {
         let that: this = this;
         this.form = new sap.ui.layout.form.SimpleForm("", {
             content: [
                 new sap.ui.core.Title("", { text: ibas.i18n.prop("importexport_export_criteria") }),
+                new sap.m.Label("", { text: ibas.i18n.prop("importexport_export_template") }),
+                new sap.m.Input("", {
+                    showValueHelp: true,
+                    valueHelpRequest: function (): void {
+                        that.fireViewEvents(that.chooseTemplateEvent);
+                    }
+                }).bindProperty("value", {
+                    path: "/remarks"
+                }),
                 new sap.m.Label("", { text: ibas.i18n.prop("importexport_export_bo") }),
                 new sap.m.Input("", {
                     showValueHelp: true,
@@ -36,32 +53,8 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
                 }).bindProperty("value", {
                     path: "/boCode"
                 }),
-                new sap.m.Label("", { text: ibas.i18n.prop("importexport_export_template") }),
-                new sap.m.Input("", {
-                    showValueHelp: true,
-                    valueHelpRequest: function (): void {
-                        that.fireViewEvents(that.chooseBusinessObjectEvent);
-                    }
-                }).bindProperty("value", {
-                    path: "/remarks"
-                }),
-                new sap.ui.core.Title("", { text: ibas.i18n.prop("importexport_export_result") }),
-                new sap.ui.table.Table("", {
-                    enableSelectAll: false,
-                    visibleRowCount: 10,
-                    visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Interactive,
-                    rows: "{/}",
-                    columns: [
-                        new sap.ui.table.Column("", {
-                            label: ibas.i18n.prop("importexport_businessobject_key"),
-                            template: new sap.m.Text("", {
-                                wrapping: false
-                            }).bindProperty("text", {
-                                path: ""
-                            })
-                        }),
-                    ]
-                })
+                new sap.ui.core.Title("", { text: ibas.i18n.prop("importexport_export_conditions") }),
+
             ]
         });
         this.page = new sap.m.Page("", {
@@ -90,12 +83,175 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
     private form: sap.ui.layout.form.SimpleForm;
     private uploader: sap.ui.unified.FileUploader;
     private table: sap.ui.table.Table;
-    /** 显示结果 */
-    showResults(results: any[]): void {
-        // 显示结果
-    }
     /** 显示查询 */
     showCriteria(criteria: ibas.ICriteria): void {
         // 显示查询
+        this.form.setModel(new sap.ui.model.json.JSONModel(criteria));
+        this.criteria = criteria;
+    }
+    private criteria: ibas.ICriteria;
+    /** 显示结果 */
+    showConditions(conditions: ibas.ICondition[]): void {
+        if (ibas.objects.isNull(this.criteria) || ibas.strings.isEmpty(this.criteria.boCode)) {
+            return;
+        }
+        if (ibas.objects.isNull(conditions)) {
+            if (!ibas.objects.isNull(this.table)) {
+                this.table.destroy(true);
+                this.table = null;
+            }
+            return;
+        }
+        if (ibas.objects.isNull(this.table)) {
+            // 初始化表格
+            let that: this = this;
+            let boRepository: IBORepositoryInitialFantasy = ibas.boFactory.create(BO_REPOSITORY_INITIALFANTASY);
+            boRepository.fetchBOInformation({
+                criteria: [
+                    new ibas.Condition("code", ibas.emConditionOperation.EQUAL, this.criteria.boCode)
+                ],
+                onCompleted(opRslt: ibas.IOperationResult<IBOInformation>): void {
+                    let boInfo: IBOInformation = opRslt.resultObjects.firstOrDefault();
+                    if (ibas.objects.isNull(boInfo)) {
+                        that.table = that.createTable([]);
+                        that.form.addContent(that.table);
+                    } else {
+                        that.table = that.createTable(boInfo.boPropertyInformations);
+                        that.form.addContent(that.table);
+                    }
+                    that.table.setModel(new sap.ui.model.json.JSONModel({ rows: conditions }));
+                }
+            });
+        } else {
+            this.table.setModel(new sap.ui.model.json.JSONModel({ rows: conditions }));
+        }
+    }
+    private createTable(properies: IBOPropertyInformation[]): sap.ui.table.Table {
+        let that: this = this;
+        let table: sap.ui.table.Table = new sap.ui.table.Table("", {
+            extension: new sap.m.Toolbar("", {
+                content: [
+                    new sap.m.Button("", {
+                        text: ibas.i18n.prop("sys_shell_data_add"),
+                        type: sap.m.ButtonType.Transparent,
+                        icon: "sap-icon://add",
+                        press: function (): void {
+                            that.fireViewEvents(that.addConditionEvent);
+                        }
+                    }),
+                    new sap.m.Button("", {
+                        text: ibas.i18n.prop("sys_shell_data_remove"),
+                        type: sap.m.ButtonType.Transparent,
+                        icon: "sap-icon://less",
+                        press: function (): void {
+                            let selected: any = utils.getTableSelecteds(that.table).firstOrDefault();
+                            that.fireViewEvents(that.removeConditionEvent, selected);
+                        }
+                    })
+                ]
+            }),
+            visibleRowCount: 5,
+            enableSelectAll: false,
+            rows: "{/rows}",
+            columns: [
+                new sap.ui.table.Column("", {
+                    label: ibas.i18n.prop("sys_shell_query_condition_relationship"),
+                    width: "100px",
+                    template: new sap.m.Select("", {
+                        width: "100%",
+                        items: utils.createComboBoxItems(ibas.emConditionRelationship)
+                    }).bindProperty("selectedKey", {
+                        path: "relationship",
+                        type: "sap.ui.model.type.Integer"
+                    })
+                }),
+                new sap.ui.table.Column("", {
+                    label: ibas.i18n.prop("sys_shell_query_condition_bracketopen"),
+                    width: "100px",
+                    template: new sap.m.Select("", {
+                        width: "100%",
+                        items: this.getCharListItem("(")
+                    }).bindProperty("selectedKey", {
+                        path: "bracketOpen",
+                        type: "sap.ui.model.type.Integer"
+                    })
+                }),
+                new sap.ui.table.Column("", {
+                    label: ibas.i18n.prop("sys_shell_query_condition_alias"),
+                    width: "200px",
+                    template: new sap.m.Select("", {
+                        width: "100%",
+                        items: this.getPropertyListItem(properies)
+                    }).bindProperty("selectedKey", {
+                        path: "alias",
+                    })
+                }),
+                new sap.ui.table.Column("", {
+                    label: ibas.i18n.prop("sys_shell_query_condition_operation"),
+                    width: "140px",
+                    template: new sap.m.Select("", {
+                        width: "100%",
+                        items: utils.createComboBoxItems(ibas.emConditionOperation)
+                    }).bindProperty("selectedKey", {
+                        path: "operation",
+                        type: "sap.ui.model.type.Integer"
+                    })
+                }),
+                new sap.ui.table.Column("", {
+                    label: ibas.i18n.prop("sys_shell_query_condition_value"),
+                    width: "120px",
+                    template: new sap.m.Input("", {
+                    }).bindProperty("value", {
+                        path: "value"
+                    }),
+                }),
+                new sap.ui.table.Column("", {
+                    label: ibas.i18n.prop("sys_shell_query_condition_bracketclose"),
+                    width: "100px",
+                    template: new sap.m.Select("", {
+                        width: "100%",
+                        items: this.getCharListItem(")")
+                    }).bindProperty("selectedKey", {
+                        path: "bracketClose",
+                        type: "sap.ui.model.type.Integer"
+                    })
+                })
+            ]
+        });
+        return table;
+    }
+    private getPropertyListItem(properies: IBOPropertyInformation[]): sap.ui.core.ListItem[] {
+        let items: Array<sap.ui.core.ListItem> = [];
+        items.push(new sap.ui.core.ListItem("", {
+            key: "",
+            text: ibas.i18n.prop("sys_shell_please_chooose_data", ""),
+        }));
+        if (!ibas.objects.isNull(properies)) {
+            for (let property of properies) {
+                items.push(new sap.ui.core.ListItem("", {
+                    key: property.property,
+                    text: property.description,
+                }));
+            }
+        }
+        return items;
+    }
+    private getCharListItem(char: string): sap.ui.core.ListItem[] {
+        // 获取重复的字符
+        let count: number = 4;
+        let items: Array<sap.ui.core.ListItem> = [];
+        items.push(new sap.ui.core.ListItem("", {
+            key: 0,
+            text: "",
+        }));
+        let vChar: string = char;
+        for (let i: number = 1; i < count; i++) {
+            items.push(new sap.ui.core.ListItem("", {
+                key: i,
+                text: vChar,
+            }));
+            vChar = vChar + char;
+        }
+        return items;
     }
 }
