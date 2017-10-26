@@ -11,12 +11,12 @@ import org.colorcoding.ibas.bobas.common.ICondition;
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.data.DateTime;
-import org.colorcoding.ibas.bobas.organization.fantasy.User;
+import org.colorcoding.ibas.bobas.organization.OrganizationFactory;
 import org.colorcoding.ibas.bobas.repository.InvalidTokenException;
 import org.colorcoding.ibas.importexport.transformer.TransformException;
 import org.colorcoding.ibas.importexport.transformer.TransformerFile;
-import org.colorcoding.ibas.importexport.transformers.excel.template.ResolvingException;
 import org.colorcoding.ibas.importexport.transformers.excel.template.Property;
+import org.colorcoding.ibas.importexport.transformers.excel.template.ResolvingException;
 import org.colorcoding.ibas.importexport.transformers.excel.template.Template;
 import org.colorcoding.ibas.importexport.transformers.excel.template.WriteFileException;
 import org.colorcoding.ibas.initialfantasy.bo.boinformation.BOInformation;
@@ -76,7 +76,7 @@ public class TransformerExcel extends TransformerFile {
 		ICriteria criteria = null;
 		IOperationResult<IBOInformation> opRslt = null;
 		BORepositoryInitialFantasyShell boRepository = new BORepositoryInitialFantasyShell();
-		boRepository.setUserToken(User.SYSTEM_USER.getToken());
+		boRepository.setUserToken(OrganizationFactory.SYSTEM_USER.getToken());
 		// 描述表头
 		criteria = new Criteria();
 		ICondition condition = criteria.getConditions().create();
