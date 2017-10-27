@@ -2,13 +2,13 @@
 <!DOCTYPE configuration>
 <ns2:configuration xmlns:ns2="http://colorcoding.org/ibas/bobas/configuration">
     <appSettings>
-        <!--配置项目-公司标记-->
+        <!-- 配置项目-公司标记 -->
         <add key="Company" value="CC" />
-        <!--配置项目-是否开启调试模式-->
+        <!-- 配置项目-是否开启调试模式 -->
         <add key="DebugMode" value="true" />
         <!-- 配置项目-数据库类型 -->
         <add key="MasterDbType" value="MSSQL" />
-        <!-- 配置项目-数据库地址-->
+        <!-- 配置项目-数据库地址 -->
         <add key="MasterDbServer" value="ibas-db-mssql" />
         <!-- 配置项目-数据库名称 -->
         <add key="MasterDbName" value="ibas_demo" />
@@ -16,15 +16,15 @@
         <add key="MasterDbUserID" value="sa" />
         <!-- 配置项目-数据库用户密码 -->
         <add key="MasterDbUserPassword" value="1q2w3e" />
-        <!--配置项目-序列化管理方式-->
+        <!-- 配置项目-序列化管理方式 -->
         <add key="SerializationWay" value="jersey" />
-        <!--配置项目-对象删除前重新加载 -->
+        <!-- 配置项目-对象删除前重新加载 -->
         <add key="RefetchBeforeDelete" value="true" />
         <!-- 配置项目-审批方法 -->
-        <add key="ApprovalWay" value="fantasy" />
+        <add key="ApprovalWay" value="" />
         <!-- 配置项目-组织方式 -->
-        <add key="OrganizationWay" value="fantasy" />
+        <add key="OrganizationWay" value="" />
         <!-- 配置项目-权限判断方式 -->
-        <add key="OwnershipWay" value="fantasy" />
+        <add key="OwnershipWay" value="" />
     </appSettings>
 </ns2:configuration>
