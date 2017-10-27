@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.UUID;
 
+import org.colorcoding.ibas.bobas.core.BOFactory;
 import org.colorcoding.ibas.bobas.data.DateTime;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
 import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
@@ -21,6 +22,11 @@ import junit.framework.TestCase;
 public class testTransformer extends TestCase {
 
 	private String createFileData(String type) throws IOException {
+		// 加载命名空间
+		for (Class<?> item : BOFactory.create().loadClasses("org.colorcoding.ibas")) {
+			BOFactory.create().register(item);
+		}
+		// 创建测试数据
 		DataExportTemplate template = new DataExportTemplate();
 		template.setBOCode(DataExportTemplate.BUSINESS_OBJECT_CODE);
 		IDataExportTemplateItem item = template.getDataExportTemplateItems().create();

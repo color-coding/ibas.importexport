@@ -2,21 +2,24 @@ package org.colorcoding.ibas.importexport.repository;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.function.Consumer;
 
-import org.colorcoding.ibas.bobas.MyConfiguration;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.core.BOFactory;
+import org.colorcoding.ibas.bobas.core.IBOFactory;
 import org.colorcoding.ibas.bobas.core.IBusinessObjectBase;
 import org.colorcoding.ibas.bobas.core.RepositoryException;
 import org.colorcoding.ibas.bobas.data.FileData;
 import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
+import org.colorcoding.ibas.bobas.message.MessageLevel;
 import org.colorcoding.ibas.bobas.repository.BORepositoryServiceApplication;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
 import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
+import org.colorcoding.ibas.importexport.MyConfiguration;
 import org.colorcoding.ibas.importexport.bo.dataexporttemplate.DataExportTemplate;
 import org.colorcoding.ibas.importexport.bo.dataexporttemplate.IDataExportTemplate;
 import org.colorcoding.ibas.importexport.transformer.FileTransformer;
@@ -30,6 +33,50 @@ import org.colorcoding.ibas.importexport.transformer.TransformerFactory;
  */
 public class BORepositoryImportExport extends BORepositoryServiceApplication
 		implements IBORepositoryImportExportSvc, IBORepositoryImportExportApp {
+
+	private static IBOFactory boFactory;
+
+	/**
+	 * 业务对象工厂
+	 * 
+	 * @return
+	 */
+	protected static IBOFactory getBOFactory() {
+		if (boFactory == null) {
+			synchronized (BORepositoryImportExport.class) {
+				if (boFactory == null) {
+					boFactory = BOFactory.create();
+					// 加载可识别命名空间类型
+					Consumer<String> classLoader = new Consumer<String>() {
+
+						@Override
+						public void accept(String t) {
+							if (t == null || t.isEmpty()) {
+								return;
+							}
+							String[] namespaces = null;
+							if (t.indexOf(";") > 0) {
+								namespaces = t.split(";");
+							} else {
+								namespaces = new String[] { t };
+							}
+							for (String namesapce : namespaces) {
+								if (namesapce != null && !namesapce.isEmpty()) {
+									Logger.log(MessageLevel.INFO, "import export: load [%s]'s classes.", namesapce);
+									for (Class<?> item : boFactory.loadClasses(namesapce)) {
+										boFactory.register(item);
+									}
+								}
+							}
+						}
+					};
+					classLoader.accept("org.colorcoding.ibas");
+					classLoader.accept(MyConfiguration.getConfigValue(MyConfiguration.CONFIG_ITEM_SCAN_NAMESPACE));
+				}
+			}
+		}
+		return boFactory;
+	}
 
 	// --------------------------------------------------------------------------------------------//
 
@@ -171,7 +218,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 		OperationResult<String> opRslt = new OperationResult<String>();
 		try {
 			this.setUserToken(token);
-			Class<?> boType = BOFactory.create().getBOClass(boCode);
+			Class<?> boType = BOFactory.create().getClass(boCode);
 			if (boType == null) {
 				throw new Exception(I18N.prop("msg_importexport_not_found_class", boCode));
 			}
@@ -199,13 +246,13 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 		OperationResult<FileData> opRslt = new OperationResult<FileData>();
 		try {
 			this.setUserToken(token);
-			if (criteria == null || criteria.getBOCode() == null || criteria.getRemarks() == null) {
+			if (criteria == null || criteria.getBusinessObject() == null || criteria.getRemarks() == null) {
 				throw new Exception(I18N.prop("msg_importexport_invaild_data"));
 			}
 			// 获取导出的对象类型
-			Class<?> boType = BOFactory.create().getBOClass(criteria.getBOCode());
+			Class<?> boType = BOFactory.create().getClass(criteria.getBusinessObject());
 			if (boType == null) {
-				throw new Exception(I18N.prop("msg_importexport_not_found_class", criteria.getBOCode()));
+				throw new Exception(I18N.prop("msg_importexport_not_found_class", criteria.getBusinessObject()));
 			}
 			// 获取导出的模板
 			ITransformer<?, ?> transformer = TransformerFactory.create().create(criteria.getRemarks());

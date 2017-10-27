@@ -7,11 +7,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.colorcoding.ibas.bobas.core.BOFactory;
+import org.colorcoding.ibas.bobas.data.ArrayList;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.message.MessageLevel;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
 import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
-import org.colorcoding.ibas.bobas.data.ArrayList;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -50,7 +50,7 @@ public class XmlTransformer extends FileSerializationTransformer {
 				if (boCode == null || boCode.isEmpty()) {
 					continue;
 				}
-				Class<?> boType = BOFactory.create().getBOClass(boCode);
+				Class<?> boType = BOFactory.create().getClass(boCode);
 				if (boType == null) {
 					Logger.log(MessageLevel.WARN, "transformer: [%s] not found [%s]'s class.",
 							this.getClass().getSimpleName(), boCode);

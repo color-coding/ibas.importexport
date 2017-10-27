@@ -4,11 +4,11 @@ import java.io.FileInputStream;
 import java.util.List;
 
 import org.colorcoding.ibas.bobas.core.BOFactory;
+import org.colorcoding.ibas.bobas.data.ArrayList;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.message.MessageLevel;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
 import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
-import org.colorcoding.ibas.bobas.data.ArrayList;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,7 +41,7 @@ public class JsonTransformer extends FileSerializationTransformer {
 				if (boCode == null || boCode.isEmpty()) {
 					continue;
 				}
-				Class<?> boType = BOFactory.create().getBOClass(boCode);
+				Class<?> boType = BOFactory.create().getClass(boCode);
 				if (boType == null) {
 					Logger.log(MessageLevel.WARN, "transformer: [%s] not found [%s]'s class.",
 							this.getClass().getSimpleName(), boCode);

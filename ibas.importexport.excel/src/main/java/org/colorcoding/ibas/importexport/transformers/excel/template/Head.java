@@ -51,7 +51,7 @@ public class Head extends BindingArea<Template> {
 		boolean done = super.resolvingNotes(note);
 		if (done) {
 			if (this.getBindingClass() != null) {
-				String boCode = BOFactory.create().getBOCode(this.getBindingClass());
+				String boCode = BOFactory.create().getCode(this.getBindingClass());
 				if (boCode != null) {
 					this.setCode(boCode);
 				}

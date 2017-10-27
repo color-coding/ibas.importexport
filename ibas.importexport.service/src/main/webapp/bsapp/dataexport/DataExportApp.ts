@@ -82,7 +82,7 @@ export class DataExportApp extends ibas.Application<IDataExportView>  {
             chooseType: ibas.emChooseType.SINGLE,
             criteria: criteria,
             onCompleted(selecteds: ibas.List<IBOInformation>): void {
-                that.criteria.boCode = selecteds.firstOrDefault().code;
+                that.criteria.businessObject = selecteds.firstOrDefault().code;
                 that.view.showConditions(null);
                 that.view.showConditions(that.criteria.conditions);
             }

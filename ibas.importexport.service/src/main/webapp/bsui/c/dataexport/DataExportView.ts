@@ -92,7 +92,7 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
     private criteria: ibas.ICriteria;
     /** 显示结果 */
     showConditions(conditions: ibas.ICondition[]): void {
-        if (ibas.objects.isNull(this.criteria) || ibas.strings.isEmpty(this.criteria.boCode)) {
+        if (ibas.objects.isNull(this.criteria) || ibas.strings.isEmpty(this.criteria.businessObject)) {
             return;
         }
         if (ibas.objects.isNull(conditions)) {
@@ -108,7 +108,7 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
             let boRepository: IBORepositoryInitialFantasy = ibas.boFactory.create(BO_REPOSITORY_INITIALFANTASY);
             boRepository.fetchBOInformation({
                 criteria: [
-                    new ibas.Condition("code", ibas.emConditionOperation.EQUAL, this.criteria.boCode)
+                    new ibas.Condition("code", ibas.emConditionOperation.EQUAL, this.criteria.businessObject)
                 ],
                 onCompleted(opRslt: ibas.IOperationResult<IBOInformation>): void {
                     let boInfo: IBOInformation = opRslt.resultObjects.firstOrDefault();

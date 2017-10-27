@@ -171,7 +171,7 @@ public class Template extends Area<Area<?>> {
 		Head head = new Head();
 		head.setBindingClass(bo.getClass());
 		head.setName(bo.getClass().getSimpleName());
-		String boCode = BOFactory.create().getBOCode(bo.getClass());
+		String boCode = BOFactory.create().getCode(bo.getClass());
 		if (boCode != null && !boCode.isEmpty()) {
 			head.setCode(boCode);
 		}

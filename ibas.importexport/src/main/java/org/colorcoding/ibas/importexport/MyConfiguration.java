@@ -33,5 +33,9 @@ public class MyConfiguration extends org.colorcoding.ibas.bobas.MyConfiguration 
 	 * 配置项目-转换者工厂，多个时“;”分隔
 	 */
 	public final static String CONFIG_ITEM_TRANSFORMER_FACTORIES = "TransformerFactories";
+	/**
+	 * 配置项目-扫描的命名空间，多个时“;”分隔
+	 */
+	public final static String CONFIG_ITEM_SCAN_NAMESPACE = "ScanNamespaces";
 
 }

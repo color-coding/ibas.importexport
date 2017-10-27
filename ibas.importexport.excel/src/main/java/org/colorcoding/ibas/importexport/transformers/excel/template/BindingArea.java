@@ -48,7 +48,7 @@ public abstract class BindingArea<P extends Area<?>> extends Area<P> {
 		if (bind == null || bind.isEmpty()) {
 			return false;
 		}
-		Class<?> bindType = BOFactory.create().getClass(bind);
+		Class<?> bindType = BOFactory.create().loadClass(bind);
 		if (type == null) {
 			return false;
 		}
