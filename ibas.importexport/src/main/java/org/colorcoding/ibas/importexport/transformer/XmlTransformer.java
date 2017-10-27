@@ -7,8 +7,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.colorcoding.ibas.bobas.core.BOFactory;
-import org.colorcoding.ibas.bobas.messages.Logger;
-import org.colorcoding.ibas.bobas.messages.MessageLevel;
+import org.colorcoding.ibas.bobas.message.Logger;
+import org.colorcoding.ibas.bobas.message.MessageLevel;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
 import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
 import org.colorcoding.ibas.bobas.data.ArrayList;

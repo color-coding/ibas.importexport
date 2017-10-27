@@ -7,8 +7,8 @@ import java.util.List;
 
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.i18n.I18N;
-import org.colorcoding.ibas.bobas.messages.Logger;
-import org.colorcoding.ibas.bobas.messages.MessageLevel;
+import org.colorcoding.ibas.bobas.message.Logger;
+import org.colorcoding.ibas.bobas.message.MessageLevel;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
 
 /**

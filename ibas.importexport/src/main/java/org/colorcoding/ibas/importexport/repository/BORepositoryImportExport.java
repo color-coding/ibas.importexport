@@ -7,14 +7,13 @@ import org.colorcoding.ibas.bobas.MyConfiguration;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
-import org.colorcoding.ibas.bobas.common.OperationInformation;
 import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.core.BOFactory;
 import org.colorcoding.ibas.bobas.core.IBusinessObjectBase;
 import org.colorcoding.ibas.bobas.core.RepositoryException;
 import org.colorcoding.ibas.bobas.data.FileData;
 import org.colorcoding.ibas.bobas.i18n.I18N;
-import org.colorcoding.ibas.bobas.messages.Logger;
+import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.repository.BORepositoryServiceApplication;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
 import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
@@ -65,11 +64,8 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			try {
 				opRslt = new OperationResult<String>();
 				// 返回存储事务标记
-				OperationInformation opInfo = new OperationInformation();
-				opInfo.setTag("DATA_IMPORT");
-				opInfo.setName("REPOSITORY_TRANSACTION_ID");
-				opInfo.setContents(this.getRepository().getTransactionId());
-				opRslt.addInformations(opInfo);
+				opRslt.addInformations("REPOSITORY_TRANSACTION_ID", this.getRepository().getTransactionId(),
+						"DATA_IMPORT");
 				// 保存业务对象
 				for (IBusinessObject object : fileTransformer.getOutputData()) {
 					IOperationResult<IBusinessObject> opRsltSave = this.save((IBusinessObject) object, token);

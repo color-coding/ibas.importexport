@@ -3,8 +3,8 @@ package org.colorcoding.ibas.importexport.transformer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.colorcoding.ibas.bobas.messages.Logger;
-import org.colorcoding.ibas.bobas.messages.MessageLevel;
+import org.colorcoding.ibas.bobas.message.Logger;
+import org.colorcoding.ibas.bobas.message.MessageLevel;
 import org.colorcoding.ibas.importexport.MyConfiguration;
 
 public final class TransformerFactories {
