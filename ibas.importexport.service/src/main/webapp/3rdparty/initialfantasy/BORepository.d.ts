@@ -47,29 +47,7 @@ export interface IBORepositoryInitialFantasy {
      * @param saver 保存者
      */
     saveApplicationPlatform(saver: SaveCaller<bo.IApplicationPlatform>);
-
-    /**
-     * 查询 审批请求
-     * @param fetcher 查询者
-     */
-    fetchApprovalRequest(fetcher: FetchCaller<bo.IApprovalRequest>);
-    /**
-     * 保存 审批请求
-     * @param saver 保存者
-     */
-    saveApprovalRequest(saver: SaveCaller<bo.IApprovalRequest>);
-
-    /**
-     * 查询 审批模板
-     * @param fetcher 查询者
-     */
-    fetchApprovalTemplate(fetcher: FetchCaller<bo.IApprovalTemplate>);
-    /**
-     * 保存 审批模板
-     * @param saver 保存者
-     */
-    saveApprovalTemplate(saver: SaveCaller<bo.IApprovalTemplate>);
-
+ 
     /**
      * 查询 业务对象检索条件
      * @param fetcher 查询者
@@ -104,28 +82,6 @@ export interface IBORepositoryInitialFantasy {
     saveOrganization(saver: SaveCaller<bo.IOrganization>);
 
     /**
-     * 查询 组织-结构
-     * @param fetcher 查询者
-     */
-    fetchOrganizationalStructure(fetcher: FetchCaller<bo.IOrganizationalStructure>);
-    /**
-     * 保存 组织-结构
-     * @param saver 保存者
-     */
-    saveOrganizationalStructure(saver: SaveCaller<bo.IOrganizationalStructure>);
-
-    /**
-     * 查询 数据权限
-     * @param fetcher 查询者
-     */
-    fetchOwnership(fetcher: FetchCaller<bo.IOwnership>);
-    /**
-     * 保存 数据权限
-     * @param saver 保存者
-     */
-    saveOwnership(saver: SaveCaller<bo.IOwnership>);
-
-    /**
      * 查询 系统权限
      * @param fetcher 查询者
      */
@@ -135,17 +91,6 @@ export interface IBORepositoryInitialFantasy {
      * @param saver 保存者
      */
     savePrivilege(saver: SaveCaller<bo.IPrivilege>);
-
-    /**
-     * 查询 角色
-     * @param fetcher 查询者
-     */
-    fetchRole(fetcher: FetchCaller<bo.IRole>);
-    /**
-     * 保存 角色
-     * @param saver 保存者
-     */
-    saveRole(saver: SaveCaller<bo.IRole>);
 
     /**
      * 查询 用户
