@@ -85,6 +85,7 @@ public class FileService extends FileRepositoryService {
 
 	@POST
 	@Path("export")
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public byte[] exportData(Criteria criteria, @QueryParam("token") String token,
 			@Context HttpServletResponse response) {
@@ -118,17 +119,17 @@ public class FileService extends FileRepositoryService {
 				inputStream.close();
 				response.setHeader("content-disposition",
 						String.format("attachment;filename=%s", fileData.getFileName()));// 为文件命名
-				response.addHeader("content-type", "application/xml");
+				// response.addHeader("content-type", "application/xml");
 				return buffer;
 			} else {
 				// 无效的导出数据
 				response.setHeader("content-disposition", "attachment;filename=INVALID_DATA");// 为文件命名
-				response.addHeader("content-type", "application/xml");
+				// response.addHeader("content-type", "application/xml");
 				return new byte[] {};
 			}
 		} catch (Exception e) {
 			Logger.log(e);
-			throw new WebApplicationException(502);
+			throw new WebApplicationException(500);
 		}
 	}
 }

@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.colorcoding.ibas.bobas.common.Criteria;
 import org.colorcoding.ibas.bobas.common.OperationResult;
+import org.colorcoding.ibas.bobas.data.KeyText;
 import org.colorcoding.ibas.importexport.bo.dataexporttemplate.DataExportTemplate;
 import org.colorcoding.ibas.importexport.repository.BORepositoryImportExport;
 
@@ -36,6 +37,22 @@ public class DataService extends BORepositoryImportExport {
 	public OperationResult<String> schema(@QueryParam("boCode") String boCode, @QueryParam("type") String type,
 			@QueryParam("token") String token) {
 		return super.schema(boCode, type, token);
+	}
+
+	// --------------------------------------------------------------------------------------------//
+	/**
+	 * 获取转换者名称
+	 * 
+	 * @param criteria
+	 *            查询
+	 * @return 操作结果
+	 */
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("fetchTransformer")
+	public OperationResult<KeyText> fetchTransformer(Criteria criteria, @QueryParam("token") String token) {
+		return super.fetchTransformer(criteria, token);
 	}
 
 	// --------------------------------------------------------------------------------------------//

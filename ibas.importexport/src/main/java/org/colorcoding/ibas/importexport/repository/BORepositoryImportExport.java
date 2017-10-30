@@ -4,7 +4,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.function.Consumer;
 
+import org.colorcoding.ibas.bobas.bo.IBOMasterData;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
+import org.colorcoding.ibas.bobas.common.ConditionOperation;
+import org.colorcoding.ibas.bobas.common.Criteria;
+import org.colorcoding.ibas.bobas.common.ICondition;
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.OperationResult;
@@ -12,7 +16,9 @@ import org.colorcoding.ibas.bobas.core.BOFactory;
 import org.colorcoding.ibas.bobas.core.IBOFactory;
 import org.colorcoding.ibas.bobas.core.IBusinessObjectBase;
 import org.colorcoding.ibas.bobas.core.RepositoryException;
+import org.colorcoding.ibas.bobas.data.ArrayList;
 import org.colorcoding.ibas.bobas.data.FileData;
+import org.colorcoding.ibas.bobas.data.KeyText;
 import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.message.MessageLevel;
@@ -26,6 +32,7 @@ import org.colorcoding.ibas.importexport.transformer.FileTransformer;
 import org.colorcoding.ibas.importexport.transformer.IFileTransformer;
 import org.colorcoding.ibas.importexport.transformer.ITransformer;
 import org.colorcoding.ibas.importexport.transformer.ITransformerFile;
+import org.colorcoding.ibas.importexport.transformer.TransformerFactories;
 import org.colorcoding.ibas.importexport.transformer.TransformerFactory;
 
 /**
@@ -34,7 +41,7 @@ import org.colorcoding.ibas.importexport.transformer.TransformerFactory;
 public class BORepositoryImportExport extends BORepositoryServiceApplication
 		implements IBORepositoryImportExportSvc, IBORepositoryImportExportApp {
 
-	private static IBOFactory boFactory;
+	private volatile static IBOFactory boFactory;
 
 	/**
 	 * 业务对象工厂
@@ -71,90 +78,21 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 						}
 					};
 					classLoader.accept("org.colorcoding.ibas");
-					classLoader.accept(MyConfiguration.getConfigValue(MyConfiguration.CONFIG_ITEM_SCAN_NAMESPACE));
+					classLoader.accept(MyConfiguration.getConfigValue(MyConfiguration.CONFIG_ITEM_SCANING_PACKAGES));
 				}
 			}
 		}
 		return boFactory;
 	}
 
-	// --------------------------------------------------------------------------------------------//
+	private boolean isUpdateExisting;
 
-	/**
-	 * 导入数据
-	 * 
-	 * @param data
-	 *            数据
-	 * @param token
-	 *            口令
-	 * @return 操作结果
-	 */
-	public OperationResult<String> importData(FileData data, String token) {
-		OperationResult<String> opRslt = null;
-		try {
-			this.setUserToken(token);
-			if (data == null || data.getOriginalName().indexOf(".") < 0) {
-				throw new Exception(I18N.prop("msg_importexport_invaild_file_data"));
-			}
-			// 创建转换者
-			String type = String.format(FileTransformer.GROUP_TEMPLATE,
-					data.getOriginalName().substring(data.getOriginalName().indexOf(".") + 1)).toUpperCase();
-			ITransformer<?, ?> transformer = TransformerFactory.create().create(type);
-			if (!(transformer instanceof IFileTransformer)) {
-				throw new Exception(I18N.prop("msg_importexport_not_found_transformer", type));
-			}
-			IFileTransformer fileTransformer = (IFileTransformer) transformer;
-			// 转换文件数据到业务对象
-			fileTransformer.setInputData(new File(data.getLocation()));
-			fileTransformer.transform();
-			boolean myTrans = this.beginTransaction();
-			try {
-				opRslt = new OperationResult<String>();
-				// 返回存储事务标记
-				opRslt.addInformations("REPOSITORY_TRANSACTION_ID", this.getRepository().getTransactionId(),
-						"DATA_IMPORT");
-				// 保存业务对象
-				for (IBusinessObject object : fileTransformer.getOutputData()) {
-					IOperationResult<IBusinessObject> opRsltSave = this.save((IBusinessObject) object, token);
-					if (opRsltSave.getError() != null) {
-						throw opRsltSave.getError();
-					}
-					if (opRsltSave.getResultCode() != 0) {
-						throw new Exception(opRsltSave.getMessage());
-					}
-					IBusinessObjectBase bo = opRsltSave.getResultObjects().firstOrDefault();
-					if (bo != null) {
-						opRslt.addResultObjects(bo.toString());
-					}
-				}
-				if (myTrans) {
-					this.commitTransaction();
-				}
-			} catch (Exception e) {
-				if (myTrans) {
-					try {
-						this.rollbackTransaction();
-					} catch (RepositoryException e1) {
-						Logger.log(e1);
-					}
-				}
-				throw e;
-			}
-		} catch (Exception e) {
-			opRslt = new OperationResult<String>(e);
-		}
-		return opRslt;
+	protected final boolean isUpdateExisting() {
+		return isUpdateExisting;
 	}
 
-	/**
-	 * 导入数据
-	 * 
-	 * @param data
-	 *            数据
-	 * @return 操作结果
-	 */
-	public IOperationResult<String> importData(FileData data) {
-		return this.importData(data, this.getUserToken());
+	protected final void setUpdateExisting(boolean isUpdateExisting) {
+		this.isUpdateExisting = isUpdateExisting;
 	}
 
 	// --------------------------------------------------------------------------------------------//
@@ -218,7 +156,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 		OperationResult<String> opRslt = new OperationResult<String>();
 		try {
 			this.setUserToken(token);
-			Class<?> boType = BOFactory.create().getClass(boCode);
+			Class<?> boType = getBOFactory().getClass(boCode);
 			if (boType == null) {
 				throw new Exception(I18N.prop("msg_importexport_not_found_class", boCode));
 			}
@@ -236,6 +174,119 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	}
 
 	// --------------------------------------------------------------------------------------------//
+
+	/**
+	 * 导入数据
+	 * 
+	 * @param data
+	 *            数据
+	 * @param token
+	 *            口令
+	 * @return 操作结果
+	 */
+	public OperationResult<String> importData(FileData data, String token) {
+		OperationResult<String> opRslt = null;
+		try {
+			this.setUserToken(token);
+			if (data == null || data.getOriginalName().indexOf(".") < 0) {
+				throw new Exception(I18N.prop("msg_importexport_invaild_file_data"));
+			}
+			// 创建转换者
+			String type = String.format(FileTransformer.GROUP_TEMPLATE,
+					data.getOriginalName().substring(data.getOriginalName().indexOf(".") + 1)).toUpperCase();
+			ITransformer<?, ?> transformer = TransformerFactories.create().create(type);
+			if (!(transformer instanceof IFileTransformer)) {
+				throw new Exception(I18N.prop("msg_importexport_not_found_transformer", type));
+			}
+			IFileTransformer fileTransformer = (IFileTransformer) transformer;
+			// 转换文件数据到业务对象
+			fileTransformer.setInputData(new File(data.getLocation()));
+			fileTransformer.transform();
+			boolean myTrans = this.beginTransaction();
+			try {
+				opRslt = new OperationResult<String>();
+				// 返回存储事务标记
+				opRslt.addInformations("REPOSITORY_TRANSACTION_ID", this.getRepository().getTransactionId(),
+						"DATA_IMPORT");
+				// 保存业务对象
+				for (IBusinessObject object : fileTransformer.getOutputData()) {
+					if (this.isUpdateExisting()) {
+						// 更新已存在的数据
+						object = this.checkExists(object);
+					}
+					IOperationResult<IBusinessObject> opRsltSave = this.save((IBusinessObject) object, token);
+					if (opRsltSave.getError() != null) {
+						throw opRsltSave.getError();
+					}
+					IBusinessObjectBase bo = opRsltSave.getResultObjects().firstOrDefault();
+					if (bo != null) {
+						opRslt.addResultObjects(bo.toString());
+					}
+				}
+				if (myTrans) {
+					this.commitTransaction();
+				}
+			} catch (Exception e) {
+				if (myTrans) {
+					try {
+						this.rollbackTransaction();
+					} catch (RepositoryException e1) {
+						Logger.log(e1);
+					}
+				}
+				throw e;
+			}
+		} catch (Exception e) {
+			opRslt = new OperationResult<String>(e);
+		}
+		return opRslt;
+	}
+
+	/**
+	 * 检查数据是否存在，存在则返回更新的
+	 * 
+	 * @param object
+	 * @return
+	 * @throws Exception
+	 */
+	protected IBusinessObject checkExists(IBusinessObject object) throws Exception {
+		if (object instanceof IBOMasterData) {
+			// 主数据类型
+			ICriteria criteria = new Criteria();
+			ICondition condition = criteria.getConditions().create();
+			condition.setAlias(IBOMasterData.MASTER_PRIMARY_KEY_NAME);
+			condition.setValue(((IBOMasterData) object).getCode());
+			condition.setOperation(ConditionOperation.EQUAL);
+			IOperationResult<?> opRslt = this.fetch(criteria, this.getUserToken(), object.getClass());
+			if (opRslt.getError() != null) {
+				throw opRslt.getError();
+			}
+			// 删除已存在的
+			for (Object item : opRslt.getResultObjects()) {
+				IBusinessObject old = (IBusinessObject) item;
+				old.delete();
+				opRslt = this.save(old, this.getUserToken());
+				if (opRslt.getError() != null) {
+					throw opRslt.getError();
+				}
+			}
+			return object;
+		}
+		return object;
+	}
+
+	/**
+	 * 导入数据
+	 * 
+	 * @param data
+	 *            数据
+	 * @return 操作结果
+	 */
+	public IOperationResult<String> importData(FileData data) {
+		return this.importData(data, this.getUserToken());
+	}
+
+	// --------------------------------------------------------------------------------------------//
 	@Override
 	public IOperationResult<FileData> exportData(ICriteria criteria) {
 		return this.exportData(criteria, this.getUserToken());
@@ -250,12 +301,12 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 				throw new Exception(I18N.prop("msg_importexport_invaild_data"));
 			}
 			// 获取导出的对象类型
-			Class<?> boType = BOFactory.create().getClass(criteria.getBusinessObject());
+			Class<?> boType = getBOFactory().getClass(criteria.getBusinessObject());
 			if (boType == null) {
 				throw new Exception(I18N.prop("msg_importexport_not_found_class", criteria.getBusinessObject()));
 			}
 			// 获取导出的模板
-			ITransformer<?, ?> transformer = TransformerFactory.create().create(criteria.getRemarks());
+			ITransformer<?, ?> transformer = TransformerFactories.create().create(criteria.getRemarks());
 			if (!(transformer instanceof ITransformerFile)) {
 				throw new Exception(I18N.prop("msg_importexport_not_found_transformer", criteria.getRemarks()));
 			}
@@ -276,11 +327,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 				if (opRsltFetch.getError() != null) {
 					throw opRsltFetch.getError();
 				}
-				if (opRsltFetch.getResultCode() != 0) {
-					throw new Exception(opRsltFetch.getMessage());
-				}
 				fileTransformer.setInputData(opRsltFetch.getResultObjects().toArray(new IBusinessObject[] {}));
-				fileTransformer.transform();
 			}
 			fileTransformer.transform();
 			File file = fileTransformer.getOutputData().firstOrDefault();
@@ -294,6 +341,47 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			}
 		} catch (Exception e) {
 			opRslt = new OperationResult<FileData>(e);
+		}
+		return opRslt;
+	}
+
+	// --------------------------------------------------------------------------------------------//
+	@Override
+	public IOperationResult<KeyText> fetchTransformer(ICriteria criteria) {
+		return this.fetchTransformer(criteria, this.getUserToken());
+	}
+
+	@Override
+	public OperationResult<KeyText> fetchTransformer(ICriteria criteria, String token) {
+		OperationResult<KeyText> opRslt = new OperationResult<KeyText>();
+		try {
+			this.setUserToken(token);
+			ICondition condition = null;
+			if (criteria != null) {
+				condition = criteria.getConditions().firstOrDefault(c -> c.getAlias().equalsIgnoreCase("NAME"));
+			}
+			ArrayList<KeyText> transformers = new ArrayList<>();
+			for (TransformerFactory factory : TransformerFactories.create().getFactories()) {
+				KeyText[] keyTexts = factory.getTransformers();
+				if (keyTexts == null) {
+					continue;
+				}
+				for (KeyText keyText : keyTexts) {
+					if (transformers.firstOrDefault(c -> c.getKey().equals(keyText.getKey())) == null) {
+						transformers.add(keyText);
+					}
+				}
+			}
+			for (KeyText keyText : transformers) {
+				if (condition != null) {
+					if (!keyText.getKey().startsWith(condition.getValue())) {
+						continue;
+					}
+				}
+				opRslt.addResultObjects(keyText);
+			}
+		} catch (Exception e) {
+			opRslt = new OperationResult<KeyText>(e);
 		}
 		return opRslt;
 	}

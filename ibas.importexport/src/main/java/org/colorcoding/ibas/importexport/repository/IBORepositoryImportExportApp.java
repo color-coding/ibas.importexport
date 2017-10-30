@@ -3,6 +3,7 @@ package org.colorcoding.ibas.importexport.repository;
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.data.FileData;
+import org.colorcoding.ibas.bobas.data.KeyText;
 import org.colorcoding.ibas.bobas.repository.IBORepositoryApplication;
 import org.colorcoding.ibas.importexport.bo.dataexporttemplate.IDataExportTemplate;
 
@@ -40,6 +41,15 @@ public interface IBORepositoryImportExportApp extends IBORepositoryApplication {
 	 * @return 操作结果
 	 */
 	IOperationResult<String> schema(String boCode, String type);
+
+	/**
+	 * 获取转换者名称
+	 * 
+	 * @param criteria
+	 *            查询
+	 * @return 操作结果
+	 */
+	IOperationResult<KeyText> fetchTransformer(ICriteria criteria);
 
 	// --------------------------------------------------------------------------------------------//
 	/**

@@ -4,6 +4,7 @@ import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.data.FileData;
+import org.colorcoding.ibas.bobas.data.KeyText;
 import org.colorcoding.ibas.bobas.repository.IBORepositorySmartService;
 import org.colorcoding.ibas.importexport.bo.dataexporttemplate.DataExportTemplate;
 
@@ -36,7 +37,6 @@ public interface IBORepositoryImportExportSvc extends IBORepositorySmartService 
 	 */
 	IOperationResult<FileData> exportData(ICriteria criteria, String token);
 
-	// --------------------------------------------------------------------------------------------//
 	/**
 	 * 获取业务对象schema
 	 * 
@@ -49,6 +49,15 @@ public interface IBORepositoryImportExportSvc extends IBORepositorySmartService 
 	 * @return 操作结果
 	 */
 	OperationResult<String> schema(String boCode, String type, String token);
+
+	/**
+	 * 获取转换者名称
+	 * 
+	 * @param criteria
+	 *            查询
+	 * @return 操作结果
+	 */
+	OperationResult<KeyText> fetchTransformer(ICriteria criteria, String token);
 
 	// --------------------------------------------------------------------------------------------//
 	/**

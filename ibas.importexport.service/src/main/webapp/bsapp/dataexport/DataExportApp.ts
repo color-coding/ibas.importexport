@@ -32,6 +32,7 @@ export class DataExportApp extends ibas.Application<IDataExportView>  {
         this.view.chooseTemplateEvent = this.chooseTemplate;
         this.view.addConditionEvent = this.addQueryCondition;
         this.view.removeConditionEvent = this.removeQueryCondition;
+        this.view.schemaEvent = this.schema;
     }
     /** 视图显示后 */
     protected viewShowed(): void {
@@ -40,13 +41,46 @@ export class DataExportApp extends ibas.Application<IDataExportView>  {
             this.criteria = new ibas.Criteria();
         }
         this.view.showCriteria(this.criteria);
+        let that: this = this;
+        let boRepository: BORepositoryImportExport = new BORepositoryImportExport();
+        boRepository.fetchTransformer({
+            criteria: [
+                new ibas.Condition("NAME", ibas.emConditionOperation.START, "TO_FILE_")
+            ],
+            onCompleted(opRslt: ibas.IOperationResult<ibas.KeyText>): void {
+                that.view.showTemplates(opRslt.resultObjects);
+                that.busy(false);
+            }
+        });
+        this.busy(true);
     }
     /** 运行,覆盖原方法 */
     run(...args: any[]): void {
         super.run();
     }
     private criteria: ibas.ICriteria;
-    /** 导入 */
+    /** 获取Schema */
+    schema(type: string): void {
+        let that: this = this;
+        let boRepository: BORepositoryImportExport = new BORepositoryImportExport();
+        boRepository.schema({
+            boCode: this.criteria.businessObject,
+            type: type,
+            onCompleted(opRslt: ibas.IOperationResult<string>): void {
+                try {
+                    that.busy(false);
+                    if (opRslt.resultCode !== 0) {
+                        throw new Error(opRslt.message);
+                    }
+                    that.messages(ibas.emMessageType.SUCCESS, opRslt.resultObjects.firstOrDefault());
+                } catch (error) {
+                    that.messages(error);
+                }
+            }
+        });
+        this.busy(true);
+    }
+    /** 导出 */
     export(data: FormData): void {
         let that: this = this;
         let boRepository: BORepositoryImportExport = new BORepositoryImportExport();
@@ -83,6 +117,7 @@ export class DataExportApp extends ibas.Application<IDataExportView>  {
             criteria: criteria,
             onCompleted(selecteds: ibas.List<IBOInformation>): void {
                 that.criteria.businessObject = selecteds.firstOrDefault().code;
+                that.view.showCriteria(that.criteria);
                 that.view.showConditions(null);
                 that.view.showConditions(that.criteria.conditions);
             }
@@ -93,6 +128,7 @@ export class DataExportApp extends ibas.Application<IDataExportView>  {
         let that: this = this;
         // 导出模板设置
         that.criteria.remarks = "TO_FILE_XLSX";// 目前只支持这种
+        that.view.showCriteria(that.criteria);
     }
     private addQueryCondition(): void {
         this.criteria.conditions.create();
@@ -105,8 +141,12 @@ export class DataExportApp extends ibas.Application<IDataExportView>  {
 }
 /** 数据导出-视图 */
 export interface IDataExportView extends ibas.IView {
+    /** 获取Schema，参数1，类型（xml,json） */
+    schemaEvent: Function;
     /** 显示查询 */
     showCriteria(criteria: ibas.ICriteria): void;
+    /** 显示可用模板 */
+    showTemplates(templates: ibas.KeyText[]): void;
     /** 选择业务对象 */
     chooseBusinessObjectEvent: Function;
     /** 选择导出模板 */

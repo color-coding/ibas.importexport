@@ -1,5 +1,6 @@
 package org.colorcoding.ibas.importexport.transformers.excel;
 
+import org.colorcoding.ibas.bobas.data.KeyText;
 import org.colorcoding.ibas.importexport.transformer.ITransformer;
 
 /**
@@ -8,23 +9,20 @@ import org.colorcoding.ibas.importexport.transformer.ITransformer;
  * @author Niuren.Zhu
  *
  */
-public class TransformerFactory {
-	private volatile static TransformerFactory instance;
+public class TransformerFactory implements org.colorcoding.ibas.importexport.transformer.TransformerFactory {
 
-	public static TransformerFactory create() {
-		if (instance == null) {
-			synchronized (TransformerFactory.class) {
-				if (instance == null) {
-					instance = new TransformerFactory();
-				}
-			}
-		}
-		return instance;
+	@Override
+	public KeyText[] getTransformers() {
+		return new KeyText[] { new KeyText(ExcelTransformer.NAME, ExcelTransformer.NAME),
+				new KeyText(TransformerExcel.NAME, TransformerExcel.NAME) };
 	}
 
+	@Override
 	public ITransformer<?, ?> create(String sign) {
-		if (ExcelTransformer.TYPE_NAME.equalsIgnoreCase(sign)) {
+		if (ExcelTransformer.NAME.equalsIgnoreCase(sign)) {
 			return new ExcelTransformer();
+		} else if (TransformerExcel.NAME.equalsIgnoreCase(sign)) {
+			return new TransformerExcel();
 		}
 		return null;
 	}

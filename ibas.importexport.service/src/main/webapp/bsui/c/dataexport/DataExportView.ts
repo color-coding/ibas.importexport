@@ -9,6 +9,7 @@
 import * as ibas from "ibas/index";
 import { utils } from "openui5/typings/ibas.utils";
 import * as bo from "../../../borep/bo/index";
+import { BORepositoryImportExport } from "../../../borep/BORepositories";
 import { IDataExportView } from "../../../bsapp/dataexport/index";
 import {
     BO_CODE_BOINFORMATION, BO_REPOSITORY_INITIALFANTASY,
@@ -19,6 +20,8 @@ import {
  * 视图-数据导出
  */
 export class DataExportView extends ibas.BOView implements IDataExportView {
+    /** 获取Schema，参数1，类型（xml,json） */
+    schemaEvent: Function;
     /** 选择业务对象 */
     chooseBusinessObjectEvent: Function;
     /** 选择导出模板 */
@@ -32,10 +35,15 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
     /** 绘制视图 */
     darw(): any {
         let that: this = this;
+        this.sltTempalte = new sap.m.Select("", {});
+        this.sltTempalte.bindProperty("selectedKey", {
+            path: "/remarks"
+        });
         this.form = new sap.ui.layout.form.SimpleForm("", {
             content: [
                 new sap.ui.core.Title("", { text: ibas.i18n.prop("importexport_export_criteria") }),
                 new sap.m.Label("", { text: ibas.i18n.prop("importexport_export_template") }),
+                /*
                 new sap.m.Input("", {
                     showValueHelp: true,
                     valueHelpRequest: function (): void {
@@ -44,6 +52,8 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
                 }).bindProperty("value", {
                     path: "/remarks"
                 }),
+                */
+                this.sltTempalte,
                 new sap.m.Label("", { text: ibas.i18n.prop("importexport_export_bo") }),
                 new sap.m.Input("", {
                     showValueHelp: true,
@@ -51,7 +61,7 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
                         that.fireViewEvents(that.chooseBusinessObjectEvent);
                     }
                 }).bindProperty("value", {
-                    path: "/boCode"
+                    path: "/businessObject"
                 }),
                 new sap.ui.core.Title("", { text: ibas.i18n.prop("importexport_export_conditions") }),
 
@@ -59,18 +69,47 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
         });
         this.page = new sap.m.Page("", {
             showHeader: false,
-            subHeader: new sap.m.Bar("", {
-                contentLeft: [
+            subHeader: new sap.m.Toolbar("", {
+                content: [
                     new sap.m.Button("", {
                         text: ibas.i18n.prop("importexport_export"),
                         type: sap.m.ButtonType.Transparent,
                         icon: "sap-icon://toaster-up",
                         press: function (): void {
-                            let fileData: FormData = new FormData();
-                            fileData.append("file", (<any>document.getElementsByName(that.uploader.getName()).item(0)).files[0]);
-                            fileData.append("name", that.uploader.getName());
-                            that.fireViewEvents(that.exportEvent, fileData);
+                            that.fireViewEvents(that.exportEvent);
                         }
+                    }),
+                    new sap.m.ToolbarSeparator(""),
+                    new sap.m.MenuButton("", {
+                        text: "schema json",
+                        type: sap.m.ButtonType.Transparent,
+                        icon: "sap-icon://attachment-e-pub",
+                        buttonMode: sap.m.MenuButtonMode.Split,
+                        defaultAction: function (): void {
+                            that.fireViewEvents(that.schemaEvent, "json");
+                        },
+                        menu: new sap.m.Menu("", {
+                            items: [
+                                new sap.m.MenuItem("", {
+                                    text: "schema json",
+                                    icon: "sap-icon://attachment-e-pub"
+                                }),
+                                new sap.m.MenuItem("", {
+                                    text: "schema xml",
+                                    icon: "sap-icon://attachment-html"
+                                }),
+                            ],
+                            itemSelected: function (event: any): void {
+                                let item: any = event.getParameter("item");
+                                if (item instanceof sap.m.MenuItem) {
+                                    if (item.getText().endsWith("json")) {
+                                        that.fireViewEvents(that.schemaEvent, "json");
+                                    } else if (item.getText().endsWith("xml")) {
+                                        that.fireViewEvents(that.schemaEvent, "xml");
+                                    }
+                                }
+                            }
+                        })
                     })
                 ]
             }),
@@ -83,11 +122,21 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
     private form: sap.ui.layout.form.SimpleForm;
     private uploader: sap.ui.unified.FileUploader;
     private table: sap.ui.table.Table;
+    private sltTempalte: sap.m.Select;
     /** 显示查询 */
     showCriteria(criteria: ibas.ICriteria): void {
         // 显示查询
         this.form.setModel(new sap.ui.model.json.JSONModel(criteria));
         this.criteria = criteria;
+    }
+    /** 显示可用模板 */
+    showTemplates(templates: ibas.KeyText[]): void {
+        for (let item of templates) {
+            this.sltTempalte.addItem(new sap.ui.core.Item("", {
+                key: item.key,
+                text: item.text,
+            }));
+        }
     }
     private criteria: ibas.ICriteria;
     /** 显示结果 */

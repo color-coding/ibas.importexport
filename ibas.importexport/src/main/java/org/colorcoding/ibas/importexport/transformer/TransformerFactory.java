@@ -1,31 +1,29 @@
 package org.colorcoding.ibas.importexport.transformer;
 
+import org.colorcoding.ibas.bobas.data.KeyText;
+
 /**
  * 转换者工厂
  * 
  * @author Niuren.Zhu
  *
  */
-public class TransformerFactory {
-	private volatile static TransformerFactory instance;
+public interface TransformerFactory {
 
-	public static TransformerFactory create() {
-		if (instance == null) {
-			synchronized (TransformerFactory.class) {
-				if (instance == null) {
-					instance = new TransformerFactory();
-				}
-			}
-		}
-		return instance;
-	}
+	/**
+	 * 获取-支持的转换者
+	 * 
+	 * @return
+	 */
 
-	public ITransformer<?, ?> create(String sign) {
-		if (JsonTransformer.TYPE_NAME.equalsIgnoreCase(sign)) {
-			return new JsonTransformer();
-		} else if (XmlTransformer.TYPE_NAME.equalsIgnoreCase(sign)) {
-			return new XmlTransformer();
-		}
-		return null;
-	}
+	KeyText[] getTransformers();
+
+	/**
+	 * 创建转换者
+	 * 
+	 * @param sign
+	 *            转换者标识
+	 * @return
+	 */
+	ITransformer<?, ?> create(String sign);
 }

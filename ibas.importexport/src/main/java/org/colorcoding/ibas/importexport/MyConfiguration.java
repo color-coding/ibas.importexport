@@ -36,6 +36,10 @@ public class MyConfiguration extends org.colorcoding.ibas.bobas.MyConfiguration 
 	/**
 	 * 配置项目-扫描的命名空间，多个时“;”分隔
 	 */
-	public final static String CONFIG_ITEM_SCAN_NAMESPACE = "ScanNamespaces";
+	public final static String CONFIG_ITEM_SCANING_PACKAGES = "ScaningPackages";
+	/**
+	 * 配置项目-导入更新已存在的数据
+	 */
+	public final static String CONFIG_ITEM_IMPORT_UPDATE_EXISTING = "ImportUpdateExisting";
 
 }

@@ -3,13 +3,14 @@ package org.colorcoding.ibas.importexport.transformer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.colorcoding.ibas.bobas.data.KeyText;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.message.MessageLevel;
 import org.colorcoding.ibas.importexport.MyConfiguration;
 
 public final class TransformerFactories {
 
-	public static final String MSG_REGISTER_TRANSFORMER_FACTORY = "transformer: register report factory [%s].";
+	public static final String MSG_REGISTER_TRANSFORMER_FACTORY = "transformer: register factory [%s].";
 	public static final String MSG_NOT_FOUND_TRANSFORMER = "transformer: not found [%s]'s transformer.";
 
 	private volatile static TransformerFactories instance;
@@ -27,7 +28,6 @@ public final class TransformerFactories {
 	}
 
 	private TransformerFactories() {
-
 	}
 
 	protected void init() {
@@ -50,7 +50,24 @@ public final class TransformerFactories {
 				}
 			}
 		}
-		this.getFactories().add(new TransformerFactory());
+		// 添加默认转换者
+		this.getFactories().add(new TransformerFactory() {
+			@Override
+			public KeyText[] getTransformers() {
+				return new KeyText[] { new KeyText(JsonTransformer.NAME, JsonTransformer.NAME),
+						new KeyText(XmlTransformer.NAME, XmlTransformer.NAME) };
+			}
+
+			@Override
+			public ITransformer<?, ?> create(String sign) {
+				if (JsonTransformer.NAME.equalsIgnoreCase(sign)) {
+					return new JsonTransformer();
+				} else if (XmlTransformer.NAME.equalsIgnoreCase(sign)) {
+					return new XmlTransformer();
+				}
+				return null;
+			}
+		});
 	}
 
 	private List<TransformerFactory> factories;
@@ -62,4 +79,13 @@ public final class TransformerFactories {
 		return factories;
 	}
 
+	public final ITransformer<?, ?> create(String sign) {
+		for (TransformerFactory factory : this.getFactories()) {
+			ITransformer<?, ?> transformer = factory.create(sign);
+			if (transformer != null) {
+				return transformer;
+			}
+		}
+		return null;
+	}
 }

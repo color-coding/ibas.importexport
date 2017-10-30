@@ -21,6 +21,14 @@ export class BORepositoryImportExport extends ibas.BORepositoryApplication imple
     protected createConverter(): ibas.IDataConverter {
         return new DataConverter4ie();
     }
+    /** 创建远程仓库 */
+    protected createRemoteRepository(): ibas.IRemoteRepository {
+        let boRepository: ibas.BORepositoryAjax = new ibas.BORepositoryAjax();
+        boRepository.address = this.address;
+        boRepository.token = this.token;
+        boRepository.converter = this.createConverter();
+        return boRepository;
+    }
     /**
      * 导入
      * @param caller 调用者
@@ -43,16 +51,9 @@ export class BORepositoryImportExport extends ibas.BORepositoryApplication imple
         boRepository.address = this.address.replace("/services/rest/data/", "/services/rest/file/");
         boRepository.token = this.token;
         boRepository.converter = this.createConverter();
-        let method: string = ibas.strings.format("export?token={0}", this.token);
-        boRepository.callRemoteMethod(method, caller.criteria, caller);
-    }
-    /** 创建远程仓库 */
-    protected createRemoteRepository(): ibas.IRemoteRepository {
-        let boRepository: ibas.BORepositoryAjax = new ibas.BORepositoryAjax();
-        boRepository.address = this.address;
-        boRepository.token = this.token;
-        boRepository.converter = this.createConverter();
-        return boRepository;
+        let method: string = "export";
+        let data: string = JSON.stringify(boRepository.converter.convert(caller.criteria, method));
+        boRepository.callRemoteMethod(method, data, caller);
     }
     /**
      * 获取业务对象架构
@@ -67,6 +68,13 @@ export class BORepositoryImportExport extends ibas.BORepositoryApplication imple
             ibas.strings.format("schema?boCode={0}&type={1}&token={2}",
                 caller.boCode, caller.type, this.token);
         remoteRepository.callRemoteMethod(method, undefined, caller);
+    }
+    /**
+     * 查询 获取转换者名称
+     * @param fetcher 查询者
+     */
+    fetchTransformer(fetcher: ibas.FetchCaller<ibas.KeyText>): void {
+        super.fetch("Transformer", fetcher);
     }
     /**
      * 查询 数据导出模板

@@ -26,7 +26,7 @@ import org.w3c.dom.NodeList;
 public class XmlTransformer extends FileSerializationTransformer {
 
 	public final static String TYPE_NAME = "xml";
-	public final static String NODE_BO_CODE_NAME = "ObjectCode";
+	protected final static String NODE_BO_CODE_NAME = "ObjectCode";
 	public final static String NAME = String.format(GROUP_TEMPLATE, TYPE_NAME).toUpperCase();
 
 	@Override
