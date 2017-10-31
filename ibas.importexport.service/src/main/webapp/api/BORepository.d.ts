@@ -7,8 +7,8 @@
  */
 
 import {
-    FetchCaller, IOperationResult,
-    SaveCaller, MethodCaller,ICriteria,KeyText
+    FetchCaller, IOperationResult, ICriteria, KeyText,
+    SaveCaller, MethodCaller, DownloadFileCaller
 } from "ibas/index";
 import * as bo from "./bo/index"
 
@@ -24,7 +24,7 @@ export interface IBORepositoryImportExport {
      * 数据导出调用者
      * @param caller 调用者
      */
-    export(caller: ExportMethodCaller);
+    export(caller: DownloadFileCaller);
     /**
      * 查询 获取转换者名称
      * @param fetcher 查询者
@@ -54,16 +54,4 @@ export interface SchemaMethodCaller<P> extends MethodCaller {
      * @param opRslt 结果
      */
     onCompleted(opRslt: IOperationResult<P>): void;
-}
-/**
- * 数据导出调用者
- */
-export interface ExportMethodCaller extends MethodCaller {
-    /** 查询 */
-    criteria: ICriteria;
-    /**
-     * 调用完成
-     * @param opRslt 结果
-     */
-    onCompleted(opRslt: IOperationResult<string>): void;
 }

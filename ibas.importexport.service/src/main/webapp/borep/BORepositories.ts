@@ -10,7 +10,7 @@ import * as ibas from "ibas/index";
 import * as bo from "./bo/index";
 import {
     IBORepositoryImportExport, SchemaMethodCaller,
-    BO_REPOSITORY_IMPORTEXPORT, ExportMethodCaller,
+    BO_REPOSITORY_IMPORTEXPORT,
 } from "../api/index";
 import { DataConverter4ie } from "./DataConverters";
 
@@ -21,14 +21,6 @@ export class BORepositoryImportExport extends ibas.BORepositoryApplication imple
     protected createConverter(): ibas.IDataConverter {
         return new DataConverter4ie();
     }
-    /** 创建远程仓库 */
-    protected createRemoteRepository(): ibas.IRemoteRepository {
-        let boRepository: ibas.BORepositoryAjax = new ibas.BORepositoryAjax();
-        boRepository.address = this.address;
-        boRepository.token = this.token;
-        boRepository.converter = this.createConverter();
-        return boRepository;
-    }
     /**
      * 导入
      * @param caller 调用者
@@ -36,38 +28,36 @@ export class BORepositoryImportExport extends ibas.BORepositoryApplication imple
     import(caller: ibas.UploadFileCaller): void {
         if (!this.address.endsWith("/")) { this.address += "/"; }
         let fileRepository: ibas.FileRepositoryUploadAjax = new ibas.FileRepositoryUploadAjax();
-        fileRepository.token = this.token;
         fileRepository.address = this.address.replace("/services/rest/data/", "/services/rest/file/");
+        fileRepository.token = this.token;
         fileRepository.converter = this.createConverter();
-        fileRepository.uploadFile("import", caller);
+        fileRepository.upload("import", caller);
     }
     /**
      * 导入
      * @param caller 调用者
      */
-    export(caller: ExportMethodCaller): void {
+    export(caller: ibas.DownloadFileCaller): void {
         if (!this.address.endsWith("/")) { this.address += "/"; }
-        let boRepository: ibas.BORepositoryAjax = new ibas.BORepositoryAjax();
-        boRepository.address = this.address.replace("/services/rest/data/", "/services/rest/file/");
-        boRepository.token = this.token;
-        boRepository.converter = this.createConverter();
-        let method: string = "export";
-        let data: string = JSON.stringify(boRepository.converter.convert(caller.criteria, method));
-        boRepository.callRemoteMethod(method, data, caller);
+        let fileRepository: ibas.FileRepositoryDownloadAjax = new ibas.FileRepositoryDownloadAjax();
+        fileRepository.address = this.address.replace("/services/rest/data/", "/services/rest/file/");
+        fileRepository.token = this.token;
+        fileRepository.converter = this.createConverter();
+        fileRepository.download("export", caller);
     }
     /**
      * 获取业务对象架构
      * @param caller 调用者
      */
     schema(caller: SchemaMethodCaller<string>): void {
-        let remoteRepository: ibas.IRemoteRepository = this.createRemoteRepository();
-        if (ibas.objects.isNull(remoteRepository)) {
-            throw new Error(ibas.i18n.prop("sys_invalid_parameter", "remoteRepository"));
-        }
+        let boRepository: ibas.BORepositoryAjax = new ibas.BORepositoryAjax();
+        boRepository.address = this.address;
+        boRepository.token = this.token;
+        boRepository.converter = this.createConverter();
         let method: string =
             ibas.strings.format("schema?boCode={0}&type={1}&token={2}",
                 caller.boCode, caller.type, this.token);
-        remoteRepository.callRemoteMethod(method, undefined, caller);
+        boRepository.callRemoteMethod(method, undefined, caller);
     }
     /**
      * 查询 获取转换者名称

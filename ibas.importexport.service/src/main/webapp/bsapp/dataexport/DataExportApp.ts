@@ -86,14 +86,23 @@ export class DataExportApp extends ibas.Application<IDataExportView>  {
         let boRepository: BORepositoryImportExport = new BORepositoryImportExport();
         boRepository.export({
             criteria: this.criteria,
-            onCompleted(opRslt: ibas.IOperationResult<string>): void {
+            onCompleted(opRslt: ibas.IOperationResult<any>): void {
                 try {
                     that.busy(false);
                     if (opRslt.resultCode !== 0) {
                         throw new Error(opRslt.message);
                     }
-                    that.messages(ibas.emMessageType.SUCCESS,
-                        ibas.i18n.prop("sys_shell_upload") + ibas.i18n.prop("sys_shell_sucessful"));
+                    let data: any = opRslt.resultObjects.firstOrDefault();
+                    if (!ibas.objects.isNull(data)) {
+                        let url: string = URL.createObjectURL(data);
+                        let save_link: any = document.createElementNS("http://www.w3.org/1999/xhtml", "a");
+                        save_link.href = url;
+                        save_link.download = "demo.xlsx";
+                        let event: any = document.createEvent("MouseEvents");
+                        event.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                        save_link.dispatchEvent(event);
+                        URL.revokeObjectURL(url);
+                    }
                 } catch (error) {
                     that.messages(error);
                 }
