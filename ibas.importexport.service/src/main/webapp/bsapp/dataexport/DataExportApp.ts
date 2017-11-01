@@ -81,7 +81,13 @@ export class DataExportApp extends ibas.Application<IDataExportView>  {
         this.busy(true);
     }
     /** 导出 */
-    export(data: FormData): void {
+    export(): void {
+        if (ibas.strings.isEmpty(this.criteria.businessObject)) {
+            throw new Error(ibas.i18n.prop("sys_invalid_parameter", "BusinessObject"));
+        }
+        if (ibas.strings.isEmpty(this.criteria.remarks)) {
+            throw new Error(ibas.i18n.prop("sys_invalid_parameter", "Template"));
+        }
         let that: this = this;
         let boRepository: BORepositoryImportExport = new BORepositoryImportExport();
         boRepository.export({
@@ -94,10 +100,13 @@ export class DataExportApp extends ibas.Application<IDataExportView>  {
                     }
                     let data: any = opRslt.resultObjects.firstOrDefault();
                     if (!ibas.objects.isNull(data)) {
+                        let extName: string = that.criteria.remarks;
+                        extName = extName.substring(extName.lastIndexOf("_") + 1);
                         let url: string = URL.createObjectURL(data);
                         let save_link: any = document.createElementNS("http://www.w3.org/1999/xhtml", "a");
                         save_link.href = url;
-                        save_link.download = "demo.xlsx";
+                        save_link.download = ibas.strings.format("{0}_{1}.{2}",
+                            that.criteria.businessObject, ibas.dates.toString(ibas.dates.now(), "yyyyMMddhhss"), extName);
                         let event: any = document.createEvent("MouseEvents");
                         event.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
                         save_link.dispatchEvent(event);

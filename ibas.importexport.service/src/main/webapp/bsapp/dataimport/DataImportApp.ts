@@ -45,7 +45,6 @@ export class DataImportApp extends ibas.Application<IDataImportView>  {
             fileData: data,
             onCompleted(opRslt: ibas.IOperationResult<string>): void {
                 try {
-                    that.busy(false);
                     if (opRslt.resultCode !== 0) {
                         throw new Error(opRslt.message);
                     }
@@ -55,6 +54,7 @@ export class DataImportApp extends ibas.Application<IDataImportView>  {
                 } catch (error) {
                     that.messages(error);
                 }
+                that.busy(false);
             }
         });
         this.busy(true);
