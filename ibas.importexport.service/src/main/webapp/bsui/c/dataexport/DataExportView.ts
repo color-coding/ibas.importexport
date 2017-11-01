@@ -146,7 +146,7 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
         }
         if (ibas.objects.isNull(conditions)) {
             if (!ibas.objects.isNull(this.table)) {
-                this.table.destroy(true);
+                this.table.destroy(false);
                 this.table = null;
             }
             return;

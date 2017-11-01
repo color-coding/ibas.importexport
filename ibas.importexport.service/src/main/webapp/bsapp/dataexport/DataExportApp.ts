@@ -29,7 +29,6 @@ export class DataExportApp extends ibas.Application<IDataExportView>  {
         super.registerView();
         this.view.exportEvent = this.export;
         this.view.chooseBusinessObjectEvent = this.chooseBusinessObject;
-        this.view.chooseTemplateEvent = this.chooseTemplate;
         this.view.addConditionEvent = this.addQueryCondition;
         this.view.removeConditionEvent = this.removeQueryCondition;
         this.view.schemaEvent = this.schema;
@@ -88,6 +87,7 @@ export class DataExportApp extends ibas.Application<IDataExportView>  {
         if (ibas.strings.isEmpty(this.criteria.remarks)) {
             throw new Error(ibas.i18n.prop("sys_invalid_parameter", "Template"));
         }
+        this.busy(true);
         let that: this = this;
         let boRepository: BORepositoryImportExport = new BORepositoryImportExport();
         boRepository.export({
@@ -102,22 +102,14 @@ export class DataExportApp extends ibas.Application<IDataExportView>  {
                     if (!ibas.objects.isNull(data)) {
                         let extName: string = that.criteria.remarks;
                         extName = extName.substring(extName.lastIndexOf("_") + 1);
-                        let url: string = URL.createObjectURL(data);
-                        let save_link: any = document.createElementNS("http://www.w3.org/1999/xhtml", "a");
-                        save_link.href = url;
-                        save_link.download = ibas.strings.format("{0}_{1}.{2}",
-                            that.criteria.businessObject, ibas.dates.toString(ibas.dates.now(), "yyyyMMddhhss"), extName);
-                        let event: any = document.createEvent("MouseEvents");
-                        event.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-                        save_link.dispatchEvent(event);
-                        URL.revokeObjectURL(url);
+                        ibas.files.save(data, ibas.strings.format("{0}_{1}.{2}",
+                            that.criteria.businessObject, ibas.dates.toString(ibas.dates.now(), "yyyyMMddhhss"), extName));
                     }
                 } catch (error) {
                     that.messages(error);
                 }
             }
         });
-        this.busy(true);
         this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("importexport_exporting"));
     }
     /** 选择业务对象事件 */
@@ -135,18 +127,12 @@ export class DataExportApp extends ibas.Application<IDataExportView>  {
             criteria: criteria,
             onCompleted(selecteds: ibas.List<IBOInformation>): void {
                 that.criteria.businessObject = selecteds.firstOrDefault().code;
-                that.view.showCriteria(that.criteria);
                 that.view.showConditions(null);
+                that.criteria.conditions.clear();
+                that.view.showCriteria(that.criteria);
                 that.view.showConditions(that.criteria.conditions);
             }
         });
-    }
-    /** 选择导出模板 */
-    chooseTemplate(): void {
-        let that: this = this;
-        // 导出模板设置
-        that.criteria.remarks = "TO_FILE_XLSX";// 目前只支持这种
-        that.view.showCriteria(that.criteria);
     }
     private addQueryCondition(): void {
         this.criteria.conditions.create();
@@ -167,8 +153,6 @@ export interface IDataExportView extends ibas.IView {
     showTemplates(templates: ibas.KeyText[]): void;
     /** 选择业务对象 */
     chooseBusinessObjectEvent: Function;
-    /** 选择导出模板 */
-    chooseTemplateEvent: Function;
     /** 导出 */
     exportEvent: Function;
     /** 添加条件 */

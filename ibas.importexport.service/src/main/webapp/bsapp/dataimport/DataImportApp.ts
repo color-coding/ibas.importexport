@@ -38,6 +38,7 @@ export class DataImportApp extends ibas.Application<IDataImportView>  {
     }
     /** 导入 */
     import(data: FormData): void {
+        this.busy(true);
         this.view.showResults([]);
         let that: this = this;
         let boRepository: BORepositoryImportExport = new BORepositoryImportExport();
@@ -45,6 +46,7 @@ export class DataImportApp extends ibas.Application<IDataImportView>  {
             fileData: data,
             onCompleted(opRslt: ibas.IOperationResult<string>): void {
                 try {
+                    that.busy(false);
                     if (opRslt.resultCode !== 0) {
                         throw new Error(opRslt.message);
                     }
@@ -54,10 +56,8 @@ export class DataImportApp extends ibas.Application<IDataImportView>  {
                 } catch (error) {
                     that.messages(error);
                 }
-                that.busy(false);
             }
         });
-        this.busy(true);
         this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("sys_shell_uploading_file"));
     }
 }
