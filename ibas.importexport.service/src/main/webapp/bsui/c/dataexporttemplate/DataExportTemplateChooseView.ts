@@ -78,7 +78,7 @@ export class DataExportTemplateChooseView extends ibas.BOChooseView implements I
                 that.fireViewEvents(that.fetchDataEvent, criteria);
             }
         });
-        return this.table;
+        return new sap.m.Dialog("", {            title: this.title,            type: sap.m.DialogType.Standard,            state: sap.ui.core.ValueState.None,            stretchOnPhone: true,            horizontalScrolling: true,            verticalScrolling: true,            content: [this.table],            buttons: [this.darwBars()]        });
     }
     private table: sap.ui.table.Table;
     /** 显示数据 */
