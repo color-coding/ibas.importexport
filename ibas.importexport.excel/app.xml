@@ -25,6 +25,6 @@
         <!-- 配置项目-组织方式 -->
         <add key="OrganizationWay" value="initial" />
         <!-- 配置项目-权限判断方式 -->
-        <add key="OwnershipWay" value="" />
+        <add key="OwnershipWay" value="initial" />
     </appSettings>
 </ns2:configuration>

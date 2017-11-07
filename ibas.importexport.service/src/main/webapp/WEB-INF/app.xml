@@ -25,7 +25,7 @@
         <!-- 配置项目-组织方式 -->
         <add key="OrganizationWay" value="initial" />
         <!-- 配置项目-权限判断方式 -->
-        <add key="OwnershipWay" value="" />
+        <add key="OwnershipWay" value="initial" />
         <!-- 配置项目-转换者工厂，多个时“;”分隔 -->
         <add key="TransformerFactories" value="org.colorcoding.ibas.importexport.transformers.excel.TransformerFactory;" />
         <!-- 配置项目-加载的业务对象命名空间，多个时“;”分隔 -->
