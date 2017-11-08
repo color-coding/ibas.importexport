@@ -26,6 +26,10 @@
         <add key="OrganizationWay" value="initial" />
         <!-- 配置项目-权限判断方式 -->
         <add key="OwnershipWay" value="initial" />
+        <!-- 配置项目-组织过期时间（建议600） -->
+        <add key="OrgManagerExpiry" value="-1" />
+        <!-- 配置项目-权限过期时间（建议120） -->
+        <add key="OwnJudgerExpiry" value="-1" />
         <!-- 配置项目-转换者工厂，多个时“;”分隔 -->
         <add key="TransformerFactories" value="org.colorcoding.ibas.importexport.transformers.excel.TransformerFactory;" />
         <!-- 配置项目-加载的业务对象命名空间，多个时“;”分隔 -->

@@ -26,5 +26,9 @@
         <add key="OrganizationWay" value="initial" />
         <!-- 配置项目-权限判断方式 -->
         <add key="OwnershipWay" value="initial" />
+        <!-- 配置项目-组织过期时间（建议600） -->
+        <add key="OrgManagerExpiry" value="-1" />
+        <!-- 配置项目-权限过期时间（建议120） -->
+        <add key="OwnJudgerExpiry" value="-1" />
     </appSettings>
 </ns2:configuration>
