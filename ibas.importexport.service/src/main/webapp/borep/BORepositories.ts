@@ -34,7 +34,7 @@ export class BORepositoryImportExport extends ibas.BORepositoryApplication imple
         fileRepository.upload("import", caller);
     }
     /**
-     * 导入
+     * 导出
      * @param caller 调用者
      */
     export(caller: ibas.DownloadFileCaller): void {
