@@ -7,7 +7,7 @@
  */
 
 import * as ibas from "ibas/index";
-import { utils } from "openui5/typings/ibas.utils";
+import * as openui5 from "openui5/index";
 import * as bo from "../../../borep/bo/index";
 import { IDataExportServiceView, IDataExportMode, IExportResult, DataExportModeJson } from "../../../bsapp/dataexport/index";
 
@@ -29,7 +29,7 @@ export class DataExportServiceView extends ibas.BODialogView implements IDataExp
                 press: function (): void {
                     that.fireViewEvents(that.exportDataEvent,
                         // 获取表格选中的对象
-                        utils.getTableSelecteds<IDataExportMode>(that.table).firstOrDefault()
+                        openui5.utils.getTableSelecteds<IDataExportMode>(that.table).firstOrDefault()
                     );
                 }
             }),

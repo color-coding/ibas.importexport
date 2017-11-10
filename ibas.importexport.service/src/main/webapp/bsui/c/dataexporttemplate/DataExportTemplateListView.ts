@@ -7,7 +7,7 @@
  */
 
 import * as ibas from "ibas/index";
-import { utils } from "openui5/typings/ibas.utils";
+import * as openui5 from "openui5/index";
 import * as bo from "../../../borep/bo/index";
 import { IDataExportTemplateListView } from "../../../bsapp/dataexporttemplate/index";
 
@@ -55,7 +55,7 @@ export class DataExportTemplateListView extends ibas.BOListView implements IData
                         press: function (): void {
                             that.fireViewEvents(that.viewDataEvent,
                                 // 获取表格选中的对象
-                                utils.getTableSelecteds<bo.DataExportTemplate>(that.table).firstOrDefault()
+                                openui5.utils.getTableSelecteds<bo.DataExportTemplate>(that.table).firstOrDefault()
                             );
                         }
                     }),
@@ -66,7 +66,7 @@ export class DataExportTemplateListView extends ibas.BOListView implements IData
                         press: function (): void {
                             that.fireViewEvents(that.editDataEvent,
                                 // 获取表格选中的对象
-                                utils.getTableSelecteds<bo.DataExportTemplate>(that.table).firstOrDefault()
+                                openui5.utils.getTableSelecteds<bo.DataExportTemplate>(that.table).firstOrDefault()
                             );
                         }
                     }),
@@ -78,7 +78,7 @@ export class DataExportTemplateListView extends ibas.BOListView implements IData
                         press: function (): void {
                             that.fireViewEvents(that.deleteDataEvent,
                                 // 获取表格选中的对象
-                                utils.getTableSelecteds<bo.DataExportTemplate>(that.table)
+                                openui5.utils.getTableSelecteds<bo.DataExportTemplate>(that.table)
                             );
                         }
                     }),
@@ -116,7 +116,7 @@ export class DataExportTemplateListView extends ibas.BOListView implements IData
         });
         this.id = this.page.getId();
         // 添加列表自动查询事件
-        utils.triggerNextResults({
+        openui5.utils.triggerNextResults({
             listener: this.table,
             next(data: any): void {
                 if (ibas.objects.isNull(that.lastCriteria)) {
@@ -173,6 +173,6 @@ export class DataExportTemplateListView extends ibas.BOListView implements IData
     }
     /** 获取选择的数据 */
     getSelecteds(): bo.DataExportTemplate[] {
-        return utils.getTableSelecteds<bo.DataExportTemplate>(this.table);
+        return openui5.utils.getTableSelecteds<bo.DataExportTemplate>(this.table);
     }
 }

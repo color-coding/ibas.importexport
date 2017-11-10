@@ -7,7 +7,7 @@
  */
 
 import * as ibas from "ibas/index";
-import { utils } from "openui5/typings/ibas.utils";
+import * as openui5 from "openui5/index";
 import * as bo from "../../../borep/bo/index";
 import { IDataExportTemplateChooseView } from "../../../bsapp/dataexporttemplate/index";
 
@@ -38,7 +38,7 @@ export class DataExportTemplateChooseView extends ibas.BOChooseView implements I
                 press: function (): void {
                     that.fireViewEvents(that.chooseDataEvent,
                         // 获取表格选中的对象
-                        utils.getTableSelecteds<bo.DataExportTemplate>(that.table)
+                        openui5.utils.getTableSelecteds<bo.DataExportTemplate>(that.table)
                     );
                 }
             }),
@@ -64,7 +64,7 @@ export class DataExportTemplateChooseView extends ibas.BOChooseView implements I
         });
         this.id = this.table.getId();
         // 添加列表自动查询事件
-        utils.triggerNextResults({
+        openui5.utils.triggerNextResults({
             listener: this.table,
             next(data: any): void {
                 if (ibas.objects.isNull(that.lastCriteria)) {

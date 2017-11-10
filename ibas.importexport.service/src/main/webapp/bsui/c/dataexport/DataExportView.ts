@@ -7,7 +7,7 @@
  */
 
 import * as ibas from "ibas/index";
-import { utils } from "openui5/typings/ibas.utils";
+import * as openui5 from "openui5/index";
 import * as bo from "../../../borep/bo/index";
 import { BORepositoryImportExport } from "../../../borep/BORepositories";
 import { IDataExportView } from "../../../bsapp/dataexport/index";
@@ -193,7 +193,7 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
                         type: sap.m.ButtonType.Transparent,
                         icon: "sap-icon://less",
                         press: function (): void {
-                            let selected: any = utils.getTableSelecteds(that.table).firstOrDefault();
+                            let selected: any = openui5.utils.getTableSelecteds(that.table).firstOrDefault();
                             that.fireViewEvents(that.removeConditionEvent, selected);
                         }
                     })
@@ -208,7 +208,7 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
                     width: "100px",
                     template: new sap.m.Select("", {
                         width: "100%",
-                        items: utils.createComboBoxItems(ibas.emConditionRelationship)
+                        items: openui5.utils.createComboBoxItems(ibas.emConditionRelationship)
                     }).bindProperty("selectedKey", {
                         path: "relationship",
                         type: "sap.ui.model.type.Integer"
@@ -240,7 +240,7 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
                     width: "140px",
                     template: new sap.m.Select("", {
                         width: "100%",
-                        items: utils.createComboBoxItems(ibas.emConditionOperation)
+                        items: openui5.utils.createComboBoxItems(ibas.emConditionOperation)
                     }).bindProperty("selectedKey", {
                         path: "operation",
                         type: "sap.ui.model.type.Integer"

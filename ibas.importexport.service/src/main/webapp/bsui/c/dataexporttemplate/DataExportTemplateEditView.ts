@@ -7,7 +7,7 @@
  */
 
 import * as ibas from "ibas/index";
-import { utils } from "openui5/typings/ibas.utils";
+import * as openui5 from "openui5/index";
 import * as bo from "../../../borep/bo/index";
 import { IDataExportTemplateEditView } from "../../../bsapp/dataexporttemplate/index";
 
@@ -50,14 +50,14 @@ export class DataExportTemplateEditView extends ibas.BOEditView implements IData
                         press: function (): void {
                             that.fireViewEvents(that.removeDataExportTemplateItemEvent,
                                 // 获取表格选中的对象
-                                utils.getTableSelecteds<bo.DataExportTemplateItem>(that.tableDataExportTemplateItem)
+                                openui5.utils.getTableSelecteds<bo.DataExportTemplateItem>(that.tableDataExportTemplateItem)
                             );
                         }
                     })
                 ]
             }),
             enableSelectAll: false,
-            visibleRowCount: ibas.config.get(utils.CONFIG_ITEM_LIST_TABLE_VISIBLE_ROW_COUNT, 10),
+            visibleRowCount: ibas.config.get(openui5.utils.CONFIG_ITEM_LIST_TABLE_VISIBLE_ROW_COUNT, 10),
             rows: "{/rows}",
             columns: [
             ]
@@ -135,16 +135,16 @@ export class DataExportTemplateEditView extends ibas.BOEditView implements IData
         // 新建时：禁用删除，
         if (data.isNew) {
             if (this.page.getSubHeader() instanceof sap.m.Toolbar) {
-                utils.changeToolbarDeletable(<sap.m.Toolbar>this.page.getSubHeader(), false);
+                openui5.utils.changeToolbarDeletable(<sap.m.Toolbar>this.page.getSubHeader(), false);
             }
         }
         // 不可编辑：已批准，
         if (data.approvalStatus === ibas.emApprovalStatus.APPROVED) {
             if (this.page.getSubHeader() instanceof sap.m.Toolbar) {
-                utils.changeToolbarSavable(<sap.m.Toolbar>this.page.getSubHeader(), false);
-                utils.changeToolbarDeletable(<sap.m.Toolbar>this.page.getSubHeader(), false);
+                openui5.utils.changeToolbarSavable(<sap.m.Toolbar>this.page.getSubHeader(), false);
+                openui5.utils.changeToolbarDeletable(<sap.m.Toolbar>this.page.getSubHeader(), false);
             }
-            utils.changeFormEditable(this.form, false);
+            openui5.utils.changeFormEditable(this.form, false);
         }
     }
     private tableDataExportTemplateItem: sap.ui.table.Table;
@@ -153,7 +153,7 @@ export class DataExportTemplateEditView extends ibas.BOEditView implements IData
     showDataExportTemplate(data: bo.DataExportTemplate): void {
         this.form.setModel(new sap.ui.model.json.JSONModel(data));
         // 监听属性改变，并更新控件
-        utils.refreshModelChanged(this.form, data);
+        openui5.utils.refreshModelChanged(this.form, data);
         // 改变视图状态
         this.changeViewStatus(data);
     }
@@ -161,6 +161,6 @@ export class DataExportTemplateEditView extends ibas.BOEditView implements IData
     showDataExportTemplateItems(datas: bo.DataExportTemplateItem[]): void {
         this.tableDataExportTemplateItem.setModel(new sap.ui.model.json.JSONModel({rows: datas}));
         // 监听属性改变，并更新控件
-        utils.refreshModelChanged(this.tableDataExportTemplateItem, datas);
+        openui5.utils.refreshModelChanged(this.tableDataExportTemplateItem, datas);
     }
 }
