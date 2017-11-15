@@ -92,13 +92,13 @@ export class DataExportApp extends ibas.Application<IDataExportView>  {
         let boRepository: BORepositoryImportExport = new BORepositoryImportExport();
         boRepository.export({
             criteria: this.criteria,
-            onCompleted(opRslt: ibas.IOperationResult<any>): void {
+            onCompleted(opRslt: ibas.IOperationResult<Blob>): void {
                 try {
                     that.busy(false);
                     if (opRslt.resultCode !== 0) {
                         throw new Error(opRslt.message);
                     }
-                    let data: any = opRslt.resultObjects.firstOrDefault();
+                    let data: Blob = opRslt.resultObjects.firstOrDefault();
                     if (!ibas.objects.isNull(data)) {
                         let extName: string = that.criteria.remarks;
                         extName = extName.substring(extName.lastIndexOf("_") + 1);

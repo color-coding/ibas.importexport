@@ -29,7 +29,7 @@ export interface IBORepositoryImportExport {
      * 数据导出调用者
      * @param caller 调用者
      */
-    export(caller: DownloadFileCaller);
+    export(caller: DownloadFileCaller<Blob>);
     /**
      * 查询 获取转换者名称
      * @param fetcher 查询者

@@ -37,7 +37,7 @@ export class BORepositoryImportExport extends ibas.BORepositoryApplication imple
      * 导出
      * @param caller 调用者
      */
-    export(caller: ibas.DownloadFileCaller): void {
+    export(caller: ibas.DownloadFileCaller<Blob>): void {
         if (!this.address.endsWith("/")) { this.address += "/"; }
         let fileRepository: ibas.FileRepositoryDownloadAjax = new ibas.FileRepositoryDownloadAjax();
         fileRepository.address = this.address.replace("/services/rest/data/", "/services/rest/file/");
