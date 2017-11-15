@@ -10,7 +10,7 @@ import * as ibas from "ibas/index";
 import * as bo from "./bo/index";
 import {
     IBORepositoryImportExport, SchemaMethodCaller,
-    BO_REPOSITORY_IMPORTEXPORT,
+    BO_REPOSITORY_IMPORTEXPORT, ImportFileCaller
 } from "../api/index";
 import { DataConverter4ie } from "./DataConverters";
 
@@ -25,7 +25,7 @@ export class BORepositoryImportExport extends ibas.BORepositoryApplication imple
      * 导入
      * @param caller 调用者
      */
-    import(caller: ibas.UploadFileCaller): void {
+    import(caller: ImportFileCaller): void {
         if (!this.address.endsWith("/")) { this.address += "/"; }
         let fileRepository: ibas.FileRepositoryUploadAjax = new ibas.FileRepositoryUploadAjax();
         fileRepository.address = this.address.replace("/services/rest/data/", "/services/rest/file/");
