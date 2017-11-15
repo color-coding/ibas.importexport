@@ -68,8 +68,16 @@ export class DataExportServiceView extends ibas.BODialogView implements IDataExp
                 }),
             ]
         });
-        this.id = this.table.getId();
-        return this.table;
+        return new sap.m.Dialog("", {
+            title: this.title,
+            type: sap.m.DialogType.Standard,
+            state: sap.ui.core.ValueState.None,
+            stretchOnPhone: true,
+            horizontalScrolling: true,
+            verticalScrolling: true,
+            content: [this.table],
+            buttons: [this.darwBars()],
+        });
     }
     private table: sap.ui.table.Table;
     /** 显示可用的模板 */
