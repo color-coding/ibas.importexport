@@ -58,8 +58,16 @@ export class DataImportView extends ibas.BOView implements IDataImportView {
                         type: sap.m.ButtonType.Transparent,
                         icon: "sap-icon://toaster-up",
                         press: function (): void {
+                            let elements: NodeListOf<HTMLElement> = document.getElementsByName(that.uploader.getName());
+                            if (ibas.objects.isNull(elements) || elements.length === 0) {
+                                return;
+                            }
+                            let element: any = elements[0];
+                            if (ibas.objects.isNull(element.files) || element.files.length === 0) {
+                                return;
+                            }
                             let fileData: FormData = new FormData();
-                            fileData.append("file", (<any>document.getElementsByName(that.uploader.getName()).item(0)).files[0]);
+                            fileData.append("file", element.files[0]);
                             fileData.append("name", that.uploader.getName());
                             that.fireViewEvents(that.importEvent, fileData);
                         }
