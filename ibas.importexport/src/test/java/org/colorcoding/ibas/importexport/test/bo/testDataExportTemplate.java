@@ -32,6 +32,7 @@ public class testDataExportTemplate extends TestCase {
 
 		// 测试数据导出模板-项
 		IDataExportTemplateItem dataexporttemplateitem = bo.getDataExportTemplateItems().create();
+		System.out.println(String.format("new item: %s", dataexporttemplateitem.toString()));
 		// 测试属性赋值
 
 		// 测试对象的保存和查询
