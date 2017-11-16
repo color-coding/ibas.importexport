@@ -101,8 +101,8 @@ export class DataExportTemplateChooseView extends ibas.BOChooseView implements I
                 for (let item of datas) {
                     hDatas.push(item);
                 }
-                model.refresh(false);                done = true;
-
+                model.refresh(false);
+                done = true;
             }
         }
         if (!done) {
