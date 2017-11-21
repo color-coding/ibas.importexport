@@ -15,12 +15,12 @@ STARTUP_FOLDER=$(cd `dirname $0`; pwd)
 # 工作目录默认第一个参数
 WORK_FOLDER=$1
 # 修正相对目录为启动目录
-if [ "${WORK_FOLDER}" == "./" ]
+if [ "${WORK_FOLDER}" = "./" ]
 then
   WORK_FOLDER=${STARTUP_FOLDER}
 fi
 # 未提供工作目录，则取启动目录
-if [ "${WORK_FOLDER}" == "" ]
+if [ "${WORK_FOLDER}" = "" ]
 then
   WORK_FOLDER=${STARTUP_FOLDER}
 fi
@@ -31,7 +31,7 @@ COMMOND=tsc
 
 # 映射库
 IBAS_FOLDER=${IBAS_TS_LIB}
-if [ "${IBAS_FOLDER}" == "" ]
+if [ "${IBAS_FOLDER}" = "" ]
 then
   if [ -e "${WORK_FOLDER}/../../../../../ibas-typescript" ]
   then
@@ -61,7 +61,7 @@ do
   then
 # 包括监听参数，后台运行命令
     ${COMMOND} ${OPTIONS} -p ${folder} &
-  else 
+  else
     ${COMMOND} -p ${folder}
   fi
 done
