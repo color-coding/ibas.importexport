@@ -56,7 +56,7 @@ public abstract class Transformer<IN, OUT> implements ITransformer<IN, OUT> {
 	@Override
 	public List<OUT> getOutputData() throws TransformException {
 		if (this.outputData == null) {
-			throw new TransformException(I18N.prop("msg_importexport_invaild_data"));
+			throw new TransformException(I18N.prop("msg_ie_invaild_data"));
 		}
 		return this.outputData;
 	}

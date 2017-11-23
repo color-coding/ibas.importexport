@@ -52,7 +52,7 @@ public abstract class FileSerializationTransformer extends FileTransformer {
 		ISerializer<?> serializer = this.createSerializer();
 		if (serializer == null) {
 			throw new TransformException(
-					I18N.prop("msg_importexport_not_found_serializer", this.getClass().getSimpleName()));
+					I18N.prop("msg_ie_not_found_serializer", this.getClass().getSimpleName()));
 		}
 		Logger.log(MessageLevel.INFO, "transformer: [%s] is running.", this.getClass().getSimpleName());
 		try {

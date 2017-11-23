@@ -158,11 +158,11 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			this.setUserToken(token);
 			Class<?> boType = getBOFactory().getClass(boCode);
 			if (boType == null) {
-				throw new Exception(I18N.prop("msg_importexport_not_found_class", boCode));
+				throw new Exception(I18N.prop("msg_ie_not_found_class", boCode));
 			}
 			ISerializer<?> serializer = SerializerFactory.create().createManager().create(type);
 			if (serializer == null) {
-				throw new Exception(I18N.prop("msg_importexport_not_found_serializer", type));
+				throw new Exception(I18N.prop("msg_ie_not_found_serializer", type));
 			}
 			ByteArrayOutputStream writer = new ByteArrayOutputStream();
 			serializer.getSchema(boType, writer);
@@ -189,14 +189,14 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 		try {
 			this.setUserToken(token);
 			if (data == null || data.getOriginalName().indexOf(".") < 0) {
-				throw new Exception(I18N.prop("msg_importexport_invaild_file_data"));
+				throw new Exception(I18N.prop("msg_bobas_invalid_data"));
 			}
 			// 创建转换者
 			String type = String.format(FileTransformer.GROUP_TEMPLATE,
 					data.getOriginalName().substring(data.getOriginalName().indexOf(".") + 1)).toUpperCase();
 			ITransformer<?, ?> transformer = TransformerFactories.create().create(type);
 			if (!(transformer instanceof IFileTransformer)) {
-				throw new Exception(I18N.prop("msg_importexport_not_found_transformer", type));
+				throw new Exception(I18N.prop("msg_ie_not_found_transformer", type));
 			}
 			IFileTransformer fileTransformer = (IFileTransformer) transformer;
 			// 转换文件数据到业务对象
@@ -298,17 +298,17 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 		try {
 			this.setUserToken(token);
 			if (criteria == null || criteria.getBusinessObject() == null || criteria.getRemarks() == null) {
-				throw new Exception(I18N.prop("msg_importexport_invaild_data"));
+				throw new Exception(I18N.prop("msg_ie_invaild_data"));
 			}
 			// 获取导出的对象类型
 			Class<?> boType = getBOFactory().getClass(criteria.getBusinessObject());
 			if (boType == null) {
-				throw new Exception(I18N.prop("msg_importexport_not_found_class", criteria.getBusinessObject()));
+				throw new Exception(I18N.prop("msg_ie_not_found_class", criteria.getBusinessObject()));
 			}
 			// 获取导出的模板
 			ITransformer<?, ?> transformer = TransformerFactories.create().create(criteria.getRemarks());
 			if (!(transformer instanceof ITransformerFile)) {
-				throw new Exception(I18N.prop("msg_importexport_not_found_transformer", criteria.getRemarks()));
+				throw new Exception(I18N.prop("msg_ie_not_found_transformer", criteria.getRemarks()));
 			}
 			// 导出数据
 			ITransformerFile fileTransformer = (ITransformerFile) transformer;
@@ -337,7 +337,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 				fileData.setLocation(file.getPath());
 				opRslt.addResultObjects(fileData);
 			} else {
-				throw new Exception(I18N.prop("msg_importexport_invaild_data"));
+				throw new Exception(I18N.prop("msg_ie_invaild_data"));
 			}
 		} catch (Exception e) {
 			opRslt = new OperationResult<FileData>(e);
