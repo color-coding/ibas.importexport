@@ -181,7 +181,7 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
             extension: new sap.m.Toolbar("", {
                 content: [
                     new sap.m.Button("", {
-                        text: ibas.i18n.prop("sys_shell_data_add"),
+                        text: ibas.i18n.prop("shell_data_add"),
                         type: sap.m.ButtonType.Transparent,
                         icon: "sap-icon://add",
                         press: function (): void {
@@ -189,7 +189,7 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
                         }
                     }),
                     new sap.m.Button("", {
-                        text: ibas.i18n.prop("sys_shell_data_remove"),
+                        text: ibas.i18n.prop("shell_data_remove"),
                         type: sap.m.ButtonType.Transparent,
                         icon: "sap-icon://less",
                         press: function (): void {
@@ -204,7 +204,7 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
             rows: "{/rows}",
             columns: [
                 new sap.ui.table.Column("", {
-                    label: ibas.i18n.prop("sys_shell_query_condition_relationship"),
+                    label: ibas.i18n.prop("shell_query_condition_relationship"),
                     width: "100px",
                     template: new sap.m.Select("", {
                         width: "100%",
@@ -215,7 +215,7 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
                     })
                 }),
                 new sap.ui.table.Column("", {
-                    label: ibas.i18n.prop("sys_shell_query_condition_bracketopen"),
+                    label: ibas.i18n.prop("shell_query_condition_bracketopen"),
                     width: "100px",
                     template: new sap.m.Select("", {
                         width: "100%",
@@ -226,7 +226,7 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
                     })
                 }),
                 new sap.ui.table.Column("", {
-                    label: ibas.i18n.prop("sys_shell_query_condition_alias"),
+                    label: ibas.i18n.prop("shell_query_condition_alias"),
                     width: "200px",
                     template: new sap.m.Select("", {
                         width: "100%",
@@ -236,7 +236,7 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
                     })
                 }),
                 new sap.ui.table.Column("", {
-                    label: ibas.i18n.prop("sys_shell_query_condition_operation"),
+                    label: ibas.i18n.prop("shell_query_condition_operation"),
                     width: "140px",
                     template: new sap.m.Select("", {
                         width: "100%",
@@ -247,7 +247,7 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
                     })
                 }),
                 new sap.ui.table.Column("", {
-                    label: ibas.i18n.prop("sys_shell_query_condition_value"),
+                    label: ibas.i18n.prop("shell_query_condition_value"),
                     width: "120px",
                     template: new sap.m.Input("", {
                     }).bindProperty("value", {
@@ -255,7 +255,7 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
                     }),
                 }),
                 new sap.ui.table.Column("", {
-                    label: ibas.i18n.prop("sys_shell_query_condition_bracketclose"),
+                    label: ibas.i18n.prop("shell_query_condition_bracketclose"),
                     width: "100px",
                     template: new sap.m.Select("", {
                         width: "100%",
@@ -273,7 +273,7 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
         let items: Array<sap.ui.core.ListItem> = [];
         items.push(new sap.ui.core.ListItem("", {
             key: "",
-            text: ibas.i18n.prop("sys_shell_please_chooose_data", ""),
+            text: ibas.i18n.prop("shell_please_chooose_data", ""),
         }));
         if (!ibas.objects.isNull(properies)) {
             for (let property of properies) {

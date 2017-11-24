@@ -51,14 +51,14 @@ export class DataImportApp extends ibas.Application<IDataImportView>  {
                         throw new Error(opRslt.message);
                     }
                     that.messages(ibas.emMessageType.SUCCESS,
-                        ibas.i18n.prop("sys_shell_upload") + ibas.i18n.prop("sys_shell_sucessful"));
+                        ibas.i18n.prop("shell_upload") + ibas.i18n.prop("shell_sucessful"));
                     that.view.showResults(opRslt.resultObjects);
                 } catch (error) {
                     that.messages(error);
                 }
             }
         });
-        this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("sys_shell_uploading_file"));
+        this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("shell_uploading_file"));
     }
 }
 /** 数据导入-视图 */
