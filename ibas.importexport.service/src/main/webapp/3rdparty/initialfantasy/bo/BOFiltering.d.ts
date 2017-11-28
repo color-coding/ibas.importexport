@@ -23,7 +23,7 @@ import {
     IBOSimpleLine
 } from "ibas/index";
 import {
-
+    emFilteringType
 } from "../Datas";
 
 /** 业务对象筛选 */
@@ -37,6 +37,9 @@ export interface IBOFiltering extends IBOSimple {
 
     /** 激活的 */
     activated: emYesNo;
+
+    /** 筛选类型 */
+    filteringType: emFilteringType;
 
     /** 名称 */
     name: string;

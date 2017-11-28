@@ -16,3 +16,4 @@ export * from "./Organization.d";
 export * from "./Privilege.d";
 export * from "./User.d";
 export * from "./BOInformation.d";
+export * from "./Project.d";
