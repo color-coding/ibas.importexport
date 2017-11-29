@@ -4,17 +4,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.function.Consumer;
 
-import org.colorcoding.ibas.bobas.bo.IBOMasterData;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
-import org.colorcoding.ibas.bobas.common.ConditionOperation;
-import org.colorcoding.ibas.bobas.common.Criteria;
 import org.colorcoding.ibas.bobas.common.ICondition;
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.core.BOFactory;
 import org.colorcoding.ibas.bobas.core.IBOFactory;
-import org.colorcoding.ibas.bobas.core.IBusinessObjectBase;
 import org.colorcoding.ibas.bobas.core.RepositoryException;
 import org.colorcoding.ibas.bobas.data.ArrayList;
 import org.colorcoding.ibas.bobas.data.FileData;
@@ -83,16 +79,6 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			}
 		}
 		return boFactory;
-	}
-
-	private boolean isUpdateExisting;
-
-	protected final boolean isUpdateExisting() {
-		return isUpdateExisting;
-	}
-
-	protected final void setUpdateExisting(boolean isUpdateExisting) {
-		this.isUpdateExisting = isUpdateExisting;
 	}
 
 	// --------------------------------------------------------------------------------------------//
@@ -180,11 +166,13 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	 * 
 	 * @param data
 	 *            数据
+	 * @param update
+	 *            更新数据
 	 * @param token
 	 *            口令
 	 * @return 操作结果
 	 */
-	public OperationResult<String> importData(FileData data, String token) {
+	public OperationResult<String> importData(FileData data, boolean update, String token) {
 		OperationResult<String> opRslt = null;
 		try {
 			this.setUserToken(token);
@@ -210,17 +198,37 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 						"DATA_IMPORT");
 				// 保存业务对象
 				for (IBusinessObject object : fileTransformer.getOutputData()) {
-					if (this.isUpdateExisting()) {
-						// 更新已存在的数据
-						object = this.checkExists(object);
+					// 判断对象是否存在
+					ICriteria criteria = object.getCriteria();
+					if (criteria != null && !criteria.getConditions().isEmpty()) {
+						IOperationResult<?> opRsltExists = this.fetch(criteria, token, object.getClass());
+						if (!opRsltExists.getResultObjects().isEmpty()) {
+							// 已存在数据
+							if (update) {
+								// 强制保存，删除旧数据
+								for (Object item : opRsltExists.getResultObjects()) {
+									if (item instanceof IBusinessObject) {
+										IBusinessObject boItem = (IBusinessObject) item;
+										boItem.delete();
+										IOperationResult<?> opRsltDelete = this.save(boItem, token);
+										if (opRsltDelete.getError() != null) {
+											throw opRsltDelete.getError();
+										}
+										opRslt.addInformations("DELETED_EXISTS_DATA", boItem.toString(), "DATA_IMPORT");
+									}
+								}
+							} else {
+								// 非强制保存，跳过
+								continue;
+							}
+						}
 					}
-					IOperationResult<IBusinessObject> opRsltSave = this.save((IBusinessObject) object, token);
+					IOperationResult<IBusinessObject> opRsltSave = this.save(object, token);
 					if (opRsltSave.getError() != null) {
 						throw opRsltSave.getError();
 					}
-					IBusinessObjectBase bo = opRsltSave.getResultObjects().firstOrDefault();
-					if (bo != null) {
-						opRslt.addResultObjects(bo.toString());
+					for (IBusinessObject item : opRsltSave.getResultObjects()) {
+						opRslt.addResultObjects(item.toString());
 					}
 				}
 				if (myTrans) {
@@ -243,39 +251,6 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	}
 
 	/**
-	 * 检查数据是否存在，存在则返回更新的
-	 * 
-	 * @param object
-	 * @return
-	 * @throws Exception
-	 */
-	protected IBusinessObject checkExists(IBusinessObject object) throws Exception {
-		if (object instanceof IBOMasterData) {
-			// 主数据类型
-			ICriteria criteria = new Criteria();
-			ICondition condition = criteria.getConditions().create();
-			condition.setAlias(IBOMasterData.MASTER_PRIMARY_KEY_NAME);
-			condition.setValue(((IBOMasterData) object).getCode());
-			condition.setOperation(ConditionOperation.EQUAL);
-			IOperationResult<?> opRslt = this.fetch(criteria, this.getUserToken(), object.getClass());
-			if (opRslt.getError() != null) {
-				throw opRslt.getError();
-			}
-			// 删除已存在的
-			for (Object item : opRslt.getResultObjects()) {
-				IBusinessObject old = (IBusinessObject) item;
-				old.delete();
-				opRslt = this.save(old, this.getUserToken());
-				if (opRslt.getError() != null) {
-					throw opRslt.getError();
-				}
-			}
-			return object;
-		}
-		return object;
-	}
-
-	/**
 	 * 导入数据
 	 * 
 	 * @param data
@@ -283,7 +258,11 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	 * @return 操作结果
 	 */
 	public IOperationResult<String> importData(FileData data) {
-		return this.importData(data, this.getUserToken());
+		return this.importData(data, false);
+	}
+
+	public IOperationResult<String> importData(FileData data, boolean update) {
+		return this.importData(data, update, this.getUserToken());
 	}
 
 	// --------------------------------------------------------------------------------------------//
@@ -293,7 +272,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	}
 
 	@Override
-	public IOperationResult<FileData> exportData(ICriteria criteria, String token) {
+	public OperationResult<FileData> exportData(ICriteria criteria, String token) {
 		OperationResult<FileData> opRslt = new OperationResult<FileData>();
 		try {
 			this.setUserToken(token);

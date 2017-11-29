@@ -32,7 +32,8 @@ public abstract class BindingArea<P extends Area<?>> extends Area<P> {
 	}
 
 	public boolean resolvingNotes(String note) throws ClassNotFoundException {
-		String[] lines = note.split(System.getProperty("line.separator"));
+		// 处理linux，windows，mac换行符
+		String[] lines = note.replace("\r", "\n").replace("\n\n", "\n").split("\n");
 		if (lines == null || lines.length != 3) {
 			return false;
 		}

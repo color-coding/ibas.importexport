@@ -50,7 +50,8 @@ public class FileService extends FileRepositoryService {
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	public OperationResult<String> importData(@FormDataParam("file") InputStream fileStream,
-			@FormDataParam("file") FormDataContentDisposition fileDisposition, @QueryParam("token") String token) {
+			@FormDataParam("file") FormDataContentDisposition fileDisposition, @FormDataParam("update") String sUpdate,
+			@QueryParam("token") String token) {
 		OperationResult<String> opRslt = null;
 		try {
 			opRslt = new OperationResult<String>();
@@ -62,11 +63,13 @@ public class FileService extends FileRepositoryService {
 			if (opRsltFile.getResultCode() != 0) {
 				throw new Error(opRsltFile.getMessage());
 			}
+			// 是否更新数据
+			boolean update = Boolean.parseBoolean(sUpdate);
 			// 导入文件
 			BORepositoryImportExport boRepository = new BORepositoryImportExport();
 			boRepository.setUserToken(token);
 			for (FileData data : opRsltFile.getResultObjects()) {
-				IOperationResult<String> opRsltImport = boRepository.importData(data);
+				IOperationResult<String> opRsltImport = boRepository.importData(data, update);
 				if (opRsltImport.getError() != null) {
 					throw opRsltImport.getError();
 				}

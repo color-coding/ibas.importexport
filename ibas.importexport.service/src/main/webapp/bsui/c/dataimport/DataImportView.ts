@@ -31,6 +31,13 @@ export class DataImportView extends ibas.BOView implements IDataImportView {
             placeholder: ibas.i18n.prop("importexport_please_choose_file"),
         });
         this.form.addContent(this.uploader);
+        this.check = new sap.m.CheckBox("", {
+            width: "100%",
+            selected: false,
+            text: ibas.i18n.prop("importexport_update_exists_data"),
+            textAlign: sap.ui.core.TextAlign.Right,
+        });
+        this.form.addContent(this.check);
         this.form.addContent(new sap.ui.core.Title("", { text: ibas.i18n.prop("importexport_import_result") }));
         this.table = new sap.ui.table.Table("", {
             enableSelectAll: false,
@@ -68,7 +75,7 @@ export class DataImportView extends ibas.BOView implements IDataImportView {
                             }
                             let fileData: FormData = new FormData();
                             fileData.append("file", element.files[0]);
-                            fileData.append("name", that.uploader.getName());
+                            fileData.append("update", that.check.getSelected().toString());
                             that.fireViewEvents(that.importEvent, fileData);
                         }
                     })
@@ -83,6 +90,7 @@ export class DataImportView extends ibas.BOView implements IDataImportView {
     private form: sap.ui.layout.form.SimpleForm;
     private uploader: sap.ui.unified.FileUploader;
     private table: sap.ui.table.Table;
+    private check: sap.m.CheckBox;
     /** 显示结果 */
     showResults(results: any[]): void {
         this.table.setModel(new sap.ui.model.json.JSONModel(results));

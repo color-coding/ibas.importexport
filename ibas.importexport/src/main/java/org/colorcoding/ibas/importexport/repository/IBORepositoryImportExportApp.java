@@ -23,6 +23,17 @@ public interface IBORepositoryImportExportApp extends IBORepositoryApplication {
 	IOperationResult<String> importData(FileData data);
 
 	/**
+	 * 导入数据
+	 * 
+	 * @param data
+	 *            数据
+	 * @param update
+	 *            是否更新
+	 * @return
+	 */
+	IOperationResult<String> importData(FileData data, boolean update);
+
+	/**
 	 * 导出数据
 	 * 
 	 * @param criteria
