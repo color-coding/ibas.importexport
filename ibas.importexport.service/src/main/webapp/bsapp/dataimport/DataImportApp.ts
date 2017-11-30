@@ -34,7 +34,7 @@ export class DataImportApp extends ibas.Application<IDataImportView>  {
     }
     /** 运行,覆盖原方法 */
     run(...args: any[]): void {
-        super.run();
+        super.run.apply(this, args);
     }
     /** 导入 */
     import(data: FormData): void {

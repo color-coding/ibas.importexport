@@ -55,7 +55,7 @@ export class DataExportApp extends ibas.Application<IDataExportView>  {
     }
     /** 运行,覆盖原方法 */
     run(...args: any[]): void {
-        super.run();
+        super.run.apply(this, args);
     }
     private criteria: ibas.ICriteria;
     /** 获取Schema */
