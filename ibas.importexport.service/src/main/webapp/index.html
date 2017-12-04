@@ -16,16 +16,21 @@
             var onError = function () {
                 window.location.href = root + "./3rdparty/ibas/diagnosis.html";
             };
+            // 没有成功获取加载器
+            if (uiLoader === undefined || ibasLoader === undefined) {
+                onError();
+                return;
+            }
             var uiLoder = new uiLoader.default();
             // 加载UI库
             uiLoder.load({
                 url: root + "./3rdparty/openui5/",
-                onSuccess() {
+                onSuccess: function () {
                     // 加载UI库扩展
                     var ibasLoder = new ibasLoader.default();
                     ibasLoder.load({
                         url: root + "./3rdparty/",
-                        onSuccess() {
+                        onSuccess: function () {
                             uiLoder.extends({
                                 url: root + "./3rdparty/openui5/",
                                 onError: onError
