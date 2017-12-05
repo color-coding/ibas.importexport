@@ -8,12 +8,13 @@
 
 import {
     FetchCaller, IOperationResult, ICriteria, KeyText,
-    SaveCaller, MethodCaller, DownloadFileCaller, UploadFileCaller
+    SaveCaller, MethodCaller, DownloadFileCaller, UploadFileCaller,
+    IBORepositoryApplication
 } from "ibas/index";
 import * as bo from "./bo/index"
 
 /** ImportExport 业务仓库 */
-export interface IBORepositoryImportExport {
+export interface IBORepositoryImportExport extends IBORepositoryApplication {
 
     /**
      * 获取业务对象架构

@@ -19,6 +19,10 @@ export const CONSOLE_ID: string = "c2b31c06-20d8-44a2-bb34-17f47ed01859";
 export const CONSOLE_NAME: string = "InitialFantasy";
 /** 模块-版本 */
 export const CONSOLE_VERSION: string = "0.1.0";
+/** 配置值-组织方式 */
+export const CONFIG_VALUE_ORGANIZATION_WAY: string = "initial";
+/** 配置值-数据权限方式 */
+export const CONFIG_VALUE_OWNERSHIP_WAY: string = "initial";
 /** 业务仓库名称 */
 export const BO_REPOSITORY_INITIALFANTASY: string = strings.format(MODULE_REPOSITORY_NAME_TEMPLATE, CONSOLE_NAME);
 /** 业务对象编码-应用程序功能 */
@@ -41,6 +45,8 @@ export const BO_CODE_USER: string = "${Company}_SYS_USER";
 export const BO_CODE_BOINFORMATION: string = "${Company}_SYS_BOINFO";
 /** 业务对象编码-系统变量 */
 export const BO_CODE_SYSTEM_VARIABLE: string = "${Company}_SYS_VARIABLE";
+/** 业务对象编码-系统配置 */
+export const BO_CODE_SYSTEM_CONFIG: string = "${Company}_SYS_CONFIG";
 /** 业务对象编码-用户角色（默认与组织相同） */
 export const BO_CODE_ROLE: string = "${Company}_SYS_ROLE";
 /** 业务对象编码-项目 */
