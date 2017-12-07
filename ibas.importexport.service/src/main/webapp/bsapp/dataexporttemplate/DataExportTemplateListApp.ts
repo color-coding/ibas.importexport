@@ -99,7 +99,7 @@ export class DataExportTemplateListApp extends ibas.BOListApplication<IDataExpor
         app.run(data);
     }
     /** 删除数据，参数：目标数据集合 */
-    protected deleteData(data: bo.DataExportTemplate): void {
+    protected deleteData(data: bo.DataExportTemplate | bo.DataExportTemplate[]): void {
         // 检查目标数据
         if (ibas.objects.isNull(data)) {
             this.messages(ibas.emMessageType.WARNING, ibas.i18n.prop("shell_please_chooose_data",
@@ -110,11 +110,12 @@ export class DataExportTemplateListApp extends ibas.BOListApplication<IDataExpor
         let beDeleteds: ibas.ArrayList<bo.DataExportTemplate> = new ibas.ArrayList<bo.DataExportTemplate>();
         if (data instanceof Array) {
             for (let item of data) {
-                if (ibas.objects.instanceOf(item, bo.DataExportTemplate)) {
-                    item.delete();
-                    beDeleteds.add(item);
-                }
+                item.delete();
+                beDeleteds.add(item);
             }
+        } else {
+            data.delete();
+            beDeleteds.add(data);
         }
         // 没有选择删除的对象
         if (beDeleteds.length === 0) {
