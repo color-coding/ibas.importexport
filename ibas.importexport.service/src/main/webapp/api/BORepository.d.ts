@@ -50,16 +50,11 @@ export interface IBORepositoryImportExport extends IBORepositoryApplication {
 /**
  * 业务对象架构相关调用者
  */
-export interface SchemaMethodCaller<P> extends MethodCaller {
+export interface SchemaMethodCaller<P> extends MethodCaller<P> {
     /** 业务对象编码 */
     boCode: string;
     /** 结构类型 */
     type: string;
-    /**
-     * 调用完成
-     * @param opRslt 结果
-     */
-    onCompleted(opRslt: IOperationResult<P>): void;
 }
 /**
  * 文件导入调用者
