@@ -41,6 +41,7 @@ export class DataImportView extends ibas.BOView implements IDataImportView {
         this.form.addContent(new sap.ui.core.Title("", { text: ibas.i18n.prop("importexport_import_result") }));
         this.table = new sap.ui.table.Table("", {
             enableSelectAll: false,
+            selectionBehavior: sap.ui.table.SelectionBehavior.Row,
             visibleRowCount: 10,
             visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Interactive,
             rows: "{/}",

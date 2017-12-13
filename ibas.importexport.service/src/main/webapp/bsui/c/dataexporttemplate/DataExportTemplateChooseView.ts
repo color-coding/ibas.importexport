@@ -57,6 +57,7 @@ export class DataExportTemplateChooseView extends ibas.BOChooseView implements I
         let that: this = this;
         this.table = new sap.ui.table.Table("", {
             enableSelectAll: false,
+            selectionBehavior: sap.ui.table.SelectionBehavior.Row,
             visibleRowCount: 15,
             rows: "{/}",
             columns: [

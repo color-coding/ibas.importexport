@@ -26,6 +26,7 @@ export class DataExportTemplateViewView extends ibas.BOViewView implements IData
         this.form.addContent(new sap.ui.core.Title("", { text: ibas.i18n.prop("bo_dataexporttemplateitem") }));
         this.tableDataExportTemplateItem = new sap.ui.table.Table("", {
             enableSelectAll: false,
+            selectionBehavior: sap.ui.table.SelectionBehavior.Row,
             visibleRowCount: 6,
             rows: "{/}",
             columns: [

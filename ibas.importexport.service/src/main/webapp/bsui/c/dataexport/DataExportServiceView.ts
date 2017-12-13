@@ -47,6 +47,7 @@ export class DataExportServiceView extends ibas.BODialogView implements IDataExp
         let that: this = this;
         this.table = new sap.ui.table.Table("", {
             enableSelectAll: false,
+            selectionBehavior: sap.ui.table.SelectionBehavior.Row,
             visibleRowCount: 5,
             rows: "{/}",
             columns: [

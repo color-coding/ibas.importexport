@@ -13,7 +13,7 @@ import { IDataExportMode, DataExportModeJson, IExportResult } from "./modes/Data
 export class DataExportService extends ibas.Application<IDataExportServiceView> implements ibas.IService<ibas.IBOServiceContract> {
 
     /** 应用标识 */
-    static APPLICATION_ID: string = "34a8ebc2-b105-42ea-ad06-b813fb782f9" + "a";
+    static APPLICATION_ID: string = "34a8ebc2-b105-42ea-ad06-b813fb782f9a";
     /** 应用名称 */
     static APPLICATION_NAME: string = "importexport_service_dataexport";
 
@@ -119,7 +119,7 @@ export class DataListExportServiceMapping extends ibas.ServiceMapping {
 
     constructor() {
         super();
-        this.id = DataExportService.APPLICATION_ID + "b";
+        this.id = DataExportService.APPLICATION_ID + "-";
         this.name = DataExportService.APPLICATION_NAME;
         this.description = ibas.i18n.prop(this.name);
         this.proxy = ibas.BOListServiceProxy;
