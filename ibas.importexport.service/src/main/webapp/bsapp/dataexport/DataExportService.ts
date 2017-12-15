@@ -10,7 +10,7 @@ import * as ibas from "ibas/index";
 import { IDataExportMode, DataExportModeJson, IExportResult } from "./modes/DataExportModes";
 
 /** 数据导出服务 */
-export class DataExportService extends ibas.Application<IDataExportServiceView> implements ibas.IService<ibas.IServiceCaller> {
+export class DataExportService extends ibas.ServiceApplication<IDataExportServiceView, ibas.IBOServiceContract | ibas.IBOListServiceContract>  {
 
     /** 应用标识 */
     static APPLICATION_ID: string = "34a8ebc2-b105-42ea-ad06-b813fb782f9a";
@@ -35,32 +35,28 @@ export class DataExportService extends ibas.Application<IDataExportServiceView> 
         modes.add(new DataExportModeJson());
         this.view.showModes(modes);
     }
-    /** 运行,覆盖原方法 */
-    run(): void {
-        if (arguments.length === 1) {
-            let contract: ibas.IBOServiceContract = <ibas.IBOServiceContract>arguments[0];
-            if (!ibas.objects.isNull(contract.data)) {
-                this.exportDatas = new ibas.ArrayList<any>();
-                if (!ibas.objects.isNull(contract.converter)) {
-                    // 存在数据转换者，转换数据
-                    if (Array.isArray(contract.data)) {
-                        for (let item of contract.data) {
-                            this.exportDatas.add(contract.converter.convert(item, this.name));
-                        }
-                    } else {
-                        this.exportDatas.add(contract.converter.convert(contract.data, this.name));
+    /** 运行服务 */
+    runService(contract: ibas.IBOServiceContract | ibas.IBOListServiceContract): void {
+        if (!ibas.objects.isNull(contract) && !ibas.objects.isNull(contract.data)) {
+            this.exportDatas = new ibas.ArrayList<any>();
+            if (!ibas.objects.isNull(contract.converter)) {
+                // 存在数据转换者，转换数据
+                if (Array.isArray(contract.data)) {
+                    for (let item of contract.data) {
+                        this.exportDatas.add(contract.converter.convert(item, this.name));
                     }
                 } else {
-                    this.exportDatas.add(contract.data);
+                    this.exportDatas.add(contract.converter.convert(contract.data, this.name));
                 }
-                super.run();
-                return;
+            } else {
+                this.exportDatas.add(contract.data);
             }
+            super.show();
+        } else {
+            // 输入数据无效，服务不运行
+            this.proceeding(ibas.emMessageType.WARNING,
+                ibas.i18n.prop("importexport_service_dataexport") + ibas.i18n.prop("sys_invalid_parameter", "data"));
         }
-        // 输入数据无效，服务不运行
-        this.proceeding(ibas.emMessageType.WARNING,
-            ibas.i18n.prop("importexport_service_dataexport") + ibas.i18n.prop("sys_invalid_parameter", "data"));
-
     }
     /** 导出的数据 */
     private exportDatas: ibas.List<any>;
@@ -109,7 +105,7 @@ export class DataExportServiceMapping extends ibas.ServiceMapping {
         this.proxy = ibas.BOServiceProxy;
         this.icon = ibas.i18n.prop("importexport_export_icon");
     }
-    /** 创建服务并运行 */
+    /** 创建服务实例 */
     create(): ibas.IService<ibas.IServiceContract> {
         return new DataExportService();
     }
@@ -125,7 +121,7 @@ export class DataListExportServiceMapping extends ibas.ServiceMapping {
         this.proxy = ibas.BOListServiceProxy;
         this.icon = ibas.i18n.prop("importexport_export_icon");
     }
-    /** 创建服务并运行 */
+    /** 创建服务实例 */
     create(): ibas.IService<ibas.IServiceContract> {
         return new DataExportService();
     }
