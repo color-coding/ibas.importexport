@@ -46,12 +46,14 @@ export class DataExportTemplateViewApp extends ibas.BOViewService<IDataExportTem
         app.run(this.viewData);
     }
     /** 运行,覆盖原方法 */
-    run(...args: any[]): void {
-        if (!ibas.objects.isNull(args) && args.length === 1 && args[0] instanceof bo.DataExportTemplate) {
-            this.viewData = args[0];
+    run(): void;
+    run(data: bo.DataExportTemplate): void;
+    run(): void {
+        if (!(arguments[0] instanceof bo.DataExportTemplate)) {
+            this.viewData = arguments[0];
             this.show();
         } else {
-            super.run(args);
+            super.run.apply(this, arguments);
         }
     }
     private viewData: bo.DataExportTemplate;
@@ -101,7 +103,7 @@ export class DataExportTemplateLinkServiceMapping extends ibas.BOLinkServiceMapp
         this.description = ibas.i18n.prop(this.name);
     }
     /** 创建服务并运行 */
-    create(): ibas.IService<ibas.IServiceContract> {
+    create(): ibas.IService<ibas.IBOLinkServiceCaller> {
         return new DataExportTemplateViewApp();
     }
 }

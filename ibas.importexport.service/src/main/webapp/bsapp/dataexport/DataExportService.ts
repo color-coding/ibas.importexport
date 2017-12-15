@@ -10,7 +10,7 @@ import * as ibas from "ibas/index";
 import { IDataExportMode, DataExportModeJson, IExportResult } from "./modes/DataExportModes";
 
 /** 数据导出服务 */
-export class DataExportService extends ibas.Application<IDataExportServiceView> implements ibas.IService<ibas.IBOServiceContract> {
+export class DataExportService extends ibas.Application<IDataExportServiceView> implements ibas.IService<ibas.IServiceCaller> {
 
     /** 应用标识 */
     static APPLICATION_ID: string = "34a8ebc2-b105-42ea-ad06-b813fb782f9a";
@@ -36,9 +36,9 @@ export class DataExportService extends ibas.Application<IDataExportServiceView> 
         this.view.showModes(modes);
     }
     /** 运行,覆盖原方法 */
-    run(...args: any[]): void {
-        if (!ibas.objects.isNull(args) && args.length === 1) {
-            let contract: ibas.IBOServiceContract = <ibas.IBOServiceContract>args[0];
+    run(): void {
+        if (arguments.length === 1) {
+            let contract: ibas.IBOServiceContract = <ibas.IBOServiceContract>arguments[0];
             if (!ibas.objects.isNull(contract.data)) {
                 this.exportDatas = new ibas.ArrayList<any>();
                 if (!ibas.objects.isNull(contract.converter)) {
