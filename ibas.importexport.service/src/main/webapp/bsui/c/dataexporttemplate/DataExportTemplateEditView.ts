@@ -28,6 +28,7 @@ export class DataExportTemplateEditView extends ibas.BOEditView implements IData
     darw(): any {
         let that: this = this;
         this.form = new sap.ui.layout.form.SimpleForm("", {
+            editable: true,
             content: [
             ]
         });
@@ -160,7 +161,7 @@ export class DataExportTemplateEditView extends ibas.BOEditView implements IData
     }
     /** 显示数据 */
     showDataExportTemplateItems(datas: bo.DataExportTemplateItem[]): void {
-        this.tableDataExportTemplateItem.setModel(new sap.ui.model.json.JSONModel({rows: datas}));
+        this.tableDataExportTemplateItem.setModel(new sap.ui.model.json.JSONModel({ rows: datas }));
         // 监听属性改变，并更新控件
         openui5.utils.refreshModelChanged(this.tableDataExportTemplateItem, datas);
     }
