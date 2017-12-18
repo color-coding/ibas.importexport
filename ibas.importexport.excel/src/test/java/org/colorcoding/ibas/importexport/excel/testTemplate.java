@@ -29,9 +29,9 @@ public class testTemplate extends TestCase {
 
 	public void testRresolving() throws ResolvingException, WriteFileException, IOException {
 		Order order = new Order();
-		IUserField userField01 = order.getUserFields().addUserField("U_0001", DbFieldType.ALPHANUMERIC);
-		IUserField userField02 = order.getUserFields().addUserField("U_0002", DbFieldType.DECIMAL);
-		IUserField userField03 = order.getUserFields().addUserField("U_0003", DbFieldType.DATE);
+		IUserField userField01 = order.getUserFields().register("U_0001", DbFieldType.ALPHANUMERIC);
+		IUserField userField02 = order.getUserFields().register("U_0002", DbFieldType.DECIMAL);
+		IUserField userField03 = order.getUserFields().register("U_0003", DbFieldType.DATE);
 		order.setDocEntry(916);
 		order.setDocumentStatus(emDocumentStatus.RELEASED);
 		order.setDocumentDate(DateTime.getToday());
