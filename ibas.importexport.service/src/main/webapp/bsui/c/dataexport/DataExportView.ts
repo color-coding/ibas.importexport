@@ -14,7 +14,7 @@ import { IDataExportView } from "../../../bsapp/dataexport/index";
 import {
     BO_CODE_BOINFORMATION, BO_REPOSITORY_INITIALFANTASY,
     IBOInformation, IBOPropertyInformation, IBORepositoryInitialFantasy
-} from "../../../3rdparty/initialfantasy/index";
+} from "3rdparty/initialfantasy/index";
 
 /**
  * 视图-数据导出

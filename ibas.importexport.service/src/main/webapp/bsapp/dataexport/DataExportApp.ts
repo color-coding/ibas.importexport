@@ -7,7 +7,7 @@
  */
 
 import * as ibas from "ibas/index";
-import { BO_CODE_BOINFORMATION, IBOInformation } from "../../3rdparty/initialfantasy/index";
+import { BO_CODE_BOINFORMATION, IBOInformation } from "3rdparty/initialfantasy/index";
 import { BORepositoryImportExport } from "../../borep/BORepositories";
 
 /** 数据导出 */
