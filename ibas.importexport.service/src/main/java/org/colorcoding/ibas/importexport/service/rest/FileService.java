@@ -100,7 +100,7 @@ public class FileService extends FileRepositoryService {
 			FileData fileData = opRsltExport.getResultObjects().firstOrDefault();
 			if (fileData != null) {
 				// 数据存在，尝试转为字节数组
-				response.setHeader("content-disposition",
+				response.setHeader("Content-Disposition",
 						String.format("attachment;filename=%s", fileData.getFileName()));// 为文件命名
 				return fileData.getFileBytes();
 			} else {
