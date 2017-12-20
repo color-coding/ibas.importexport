@@ -40,6 +40,7 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
             path: "/remarks"
         });
         this.form = new sap.ui.layout.form.SimpleForm("", {
+            editable: true,
             content: [
                 new sap.ui.core.Title("", { text: ibas.i18n.prop("importexport_export_criteria") }),
                 new sap.m.Label("", { text: ibas.i18n.prop("importexport_export_template") }),

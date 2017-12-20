@@ -21,6 +21,7 @@ export class DataImportView extends ibas.BOView implements IDataImportView {
     darw(): any {
         let that: this = this;
         this.form = new sap.ui.layout.form.SimpleForm("", {
+            editable: true,
             content: [
             ]
         });

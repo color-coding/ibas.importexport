@@ -7,6 +7,7 @@
  */
 
 // 模块索引文件，此文件集中导出类
+export * from "../../api/Datas";
 export * from "./DataExportTemplate";
 
 // 注册业务对象到工厂
