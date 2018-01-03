@@ -29,7 +29,7 @@ export class DataExportServiceView extends ibas.BODialogView implements IDataExp
                 press: function (): void {
                     that.fireViewEvents(that.exportDataEvent,
                         // 获取表格选中的对象
-                        openui5.utils.getTableSelecteds<IDataExportMode>(that.table).firstOrDefault()
+                        openui5.utils.getSelecteds<IDataExportMode>(that.table).firstOrDefault()
                     );
                 }
             }),

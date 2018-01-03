@@ -56,7 +56,7 @@ export class DataExportTemplateListView extends ibas.BOListView implements IData
                         press: function (): void {
                             that.fireViewEvents(that.viewDataEvent,
                                 // 获取表格选中的对象
-                                openui5.utils.getTableSelecteds<bo.DataExportTemplate>(that.table).firstOrDefault()
+                                openui5.utils.getSelecteds<bo.DataExportTemplate>(that.table).firstOrDefault()
                             );
                         }
                     }),
@@ -67,7 +67,7 @@ export class DataExportTemplateListView extends ibas.BOListView implements IData
                         press: function (): void {
                             that.fireViewEvents(that.editDataEvent,
                                 // 获取表格选中的对象
-                                openui5.utils.getTableSelecteds<bo.DataExportTemplate>(that.table).firstOrDefault()
+                                openui5.utils.getSelecteds<bo.DataExportTemplate>(that.table).firstOrDefault()
                             );
                         }
                     }),
@@ -79,7 +79,7 @@ export class DataExportTemplateListView extends ibas.BOListView implements IData
                         press: function (): void {
                             that.fireViewEvents(that.deleteDataEvent,
                                 // 获取表格选中的对象
-                                openui5.utils.getTableSelecteds<bo.DataExportTemplate>(that.table)
+                                openui5.utils.getSelecteds<bo.DataExportTemplate>(that.table)
                             );
                         }
                     }),
@@ -172,6 +172,6 @@ export class DataExportTemplateListView extends ibas.BOListView implements IData
     }
     /** 获取选择的数据 */
     getSelecteds(): bo.DataExportTemplate[] {
-        return openui5.utils.getTableSelecteds<bo.DataExportTemplate>(this.table);
+        return openui5.utils.getSelecteds<bo.DataExportTemplate>(this.table);
     }
 }

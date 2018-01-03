@@ -51,7 +51,7 @@ export class DataExportTemplateEditView extends ibas.BOEditView implements IData
                         press: function (): void {
                             that.fireViewEvents(that.removeDataExportTemplateItemEvent,
                                 // 获取表格选中的对象
-                                openui5.utils.getTableSelecteds<bo.DataExportTemplateItem>(that.tableDataExportTemplateItem)
+                                openui5.utils.getSelecteds<bo.DataExportTemplateItem>(that.tableDataExportTemplateItem)
                             );
                         }
                     })
