@@ -82,34 +82,26 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
                     }),
                     new sap.m.ToolbarSeparator(""),
                     new sap.m.MenuButton("", {
-                        text: "schema json",
+                        text: "schema",
                         type: sap.m.ButtonType.Transparent,
-                        icon: "sap-icon://attachment-e-pub",
-                        buttonMode: sap.m.MenuButtonMode.Split,
-                        defaultAction: function (): void {
-                            that.fireViewEvents(that.schemaEvent, "json");
-                        },
+                        icon: "sap-icon://document-text",
                         menu: new sap.m.Menu("", {
                             items: [
                                 new sap.m.MenuItem("", {
-                                    text: "schema json",
-                                    icon: "sap-icon://attachment-e-pub"
+                                    text: "json",
+                                    icon: "sap-icon://attachment-e-pub",
+                                    press: function (event: any): void {
+                                        that.fireViewEvents(that.schemaEvent, "json");
+                                    }
                                 }),
                                 new sap.m.MenuItem("", {
-                                    text: "schema xml",
-                                    icon: "sap-icon://attachment-html"
-                                }),
-                            ],
-                            itemSelected: function (event: any): void {
-                                let item: any = event.getParameter("item");
-                                if (item instanceof sap.m.MenuItem) {
-                                    if (item.getText().endsWith("json")) {
-                                        that.fireViewEvents(that.schemaEvent, "json");
-                                    } else if (item.getText().endsWith("xml")) {
+                                    text: "xml",
+                                    icon: "sap-icon://attachment-html",
+                                    press: function (event: any): void {
                                         that.fireViewEvents(that.schemaEvent, "xml");
                                     }
-                                }
-                            }
+                                }),
+                            ],
                         })
                     })
                 ]

@@ -155,6 +155,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			opRslt.addResultObjects(writer.toString());
 		} catch (Exception e) {
 			opRslt = new OperationResult<String>(e);
+			Logger.log(e);
 		}
 		return opRslt;
 	}
@@ -246,6 +247,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			}
 		} catch (Exception e) {
 			opRslt = new OperationResult<String>(e);
+			Logger.log(e);
 		}
 		return opRslt;
 	}
@@ -320,6 +322,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			}
 		} catch (Exception e) {
 			opRslt = new OperationResult<FileData>(e);
+			Logger.log(e);
 		}
 		return opRslt;
 	}
@@ -361,6 +364,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			}
 		} catch (Exception e) {
 			opRslt = new OperationResult<KeyText>(e);
+			Logger.log(e);
 		}
 		return opRslt;
 	}

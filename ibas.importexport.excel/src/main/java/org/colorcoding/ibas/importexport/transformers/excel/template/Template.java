@@ -211,10 +211,12 @@ public class Template extends Area<Area<?>> {
 						list.remove(subItem);// 非新建，移出自动添加对象
 					}
 				}
-				if (subItem != null) {
+				if (subItem != null && !bo.getClass().isInstance(subItem)) {
+					// 非本身类型，不做处理，防止嵌套
 					this.resolvingObject(subItem, String.format(LIST_PROPERTY_PATH_FORMAT, name, field.getName()));
 				}
-			} else if (IBusinessObject.class.isInstance(field.getValue())) {
+			} else if (IBusinessObject.class.isInstance(field.getValue())
+					&& !bo.getClass().isInstance(field.getValue())) {
 				// 解析对象属性
 				this.resolvingObject((IBusinessObject) field.getValue(),
 						String.format(PROPERTY_PATH_FORMAT, name, field.getName()));
