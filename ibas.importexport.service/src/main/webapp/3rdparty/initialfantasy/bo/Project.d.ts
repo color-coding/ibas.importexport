@@ -33,7 +33,7 @@ export interface IProject extends IBOMasterData {
     /** 名称 */
     name: string;
 
-    /** 是否启用 */
+    /** 激活 */
     activated: emYesNo;
 
     /** 项目经理 */

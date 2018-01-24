@@ -76,6 +76,6 @@ export interface IRole {
     code: string;
     /** 名称 */
     name: string;
-    /** 是否启用 */
+    /** 激活 */
     activated: emYesNo;
 }
