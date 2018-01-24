@@ -32,9 +32,6 @@ export default class Navigation extends ibas.ViewNavigation {
             case dataexporttemplateApps.DataExportTemplateChooseApp.APPLICATION_ID:
                 view = new dataexporttemplateViews.DataExportTemplateChooseView();
                 break;
-            case dataexporttemplateApps.DataExportTemplateViewApp.APPLICATION_ID:
-                view = new dataexporttemplateViews.DataExportTemplateViewView();
-                break;
             case dataexporttemplateApps.DataExportTemplateEditApp.APPLICATION_ID:
                 view = new dataexporttemplateViews.DataExportTemplateEditView();
                 break;

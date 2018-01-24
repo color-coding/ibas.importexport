@@ -10,5 +10,4 @@
 export * from "./DataExportTemplateFunc";
 export * from "./DataExportTemplateListApp";
 export * from "./DataExportTemplateChooseApp";
-export * from "./DataExportTemplateViewApp";
 export * from "./DataExportTemplateEditApp";

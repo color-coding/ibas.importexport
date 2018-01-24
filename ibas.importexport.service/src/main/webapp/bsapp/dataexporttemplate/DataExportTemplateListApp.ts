@@ -10,7 +10,6 @@ import * as ibas from "ibas/index";
 import * as bo from "../../borep/bo/index";
 import { BORepositoryImportExport } from "../../borep/BORepositories";
 import { DataConverter4ie } from "../../borep/DataConverters";
-import { DataExportTemplateViewApp } from "./DataExportTemplateViewApp";
 import { DataExportTemplateEditApp } from "./DataExportTemplateEditApp";
 
 /** 列表应用-数据导出模板 */
@@ -81,11 +80,6 @@ export class DataExportTemplateListApp extends ibas.BOListApplication<IDataExpor
             ));
             return;
         }
-        let app: DataExportTemplateViewApp = new DataExportTemplateViewApp();
-        app.navigation = this.navigation;
-        app.viewShower = this.viewShower;
-        app.run(data);
-
     }
     /** 编辑数据，参数：目标数据 */
     protected editData(data: bo.DataExportTemplate): void {

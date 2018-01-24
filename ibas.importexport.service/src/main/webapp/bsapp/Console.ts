@@ -11,7 +11,6 @@ import { CONSOLE_ID, CONSOLE_NAME, CONSOLE_VERSION } from "../api/index";
 import {
     DataExportTemplateFunc,
     DataExportTemplateChooseServiceMapping,
-    DataExportTemplateLinkServiceMapping
 } from "./dataexporttemplate/index";
 import {
     DataExportServiceMapping,
@@ -47,7 +46,6 @@ export class Console extends ibas.ModuleConsole {
         if (ibas.config.get(ibas.CONFIG_ITEM_DEBUG_MODE)) {
             this.register(new DataExportTemplateFunc());
             this.register(new DataExportTemplateChooseServiceMapping());
-            this.register(new DataExportTemplateLinkServiceMapping());
         }
         // 注册服务应用
         this.register(new DataExportServiceMapping());
