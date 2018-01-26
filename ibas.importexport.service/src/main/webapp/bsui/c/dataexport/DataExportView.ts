@@ -33,7 +33,7 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
     /** 移出条件 */
     removeConditionEvent: Function;
     /** 绘制视图 */
-    darw(): any {
+    draw(): any {
         let that: this = this;
         this.sltTempalte = new sap.m.Select("", {});
         this.sltTempalte.bindProperty("selectedKey", {

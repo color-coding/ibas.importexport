@@ -9,7 +9,7 @@
 import * as ibas from "ibas/index";
 import * as bo from "../../borep/bo/index";
 import { BORepositoryImportExport } from "../../borep/BORepositories";
-import { DataConverter4ie } from "../../borep/DataConverters";
+import { DataConverter4IE } from "../../borep/DataConverters";
 import { DataExportTemplateEditApp } from "./DataExportTemplateEditApp";
 
 /** 列表应用-数据导出模板 */
@@ -173,7 +173,7 @@ export class DataExportTemplateListApp extends ibas.BOListApplication<IDataExpor
         return [
             new ibas.BOListServiceProxy({
                 data: this.view.getSelecteds(),
-                converter: new DataConverter4ie(),
+                converter: new DataConverter4IE(),
             })
         ];
     }

@@ -12,14 +12,14 @@ import {
     IBORepositoryImportExport, SchemaMethodCaller,
     BO_REPOSITORY_IMPORTEXPORT, ImportFileCaller
 } from "../api/index";
-import { DataConverter4ie } from "./DataConverters";
+import { DataConverter4IE } from "./DataConverters";
 
 /** 数据导入&导出 业务仓库 */
 export class BORepositoryImportExport extends ibas.BORepositoryApplication implements IBORepositoryImportExport {
 
     /** 创建此模块的后端与前端数据的转换者 */
     protected createConverter(): ibas.IDataConverter {
-        return new DataConverter4ie();
+        return new DataConverter4IE();
     }
     /**
      * 导入
