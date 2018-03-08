@@ -1,13 +1,11 @@
 /**
  * @license
- * Copyright color-coding studio. All Rights Reserved.
+ * Copyright Color-Coding Studio. All Rights Reserved.
  *
  * Use of this source code is governed by an Apache License, Version 2.0
  * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
  */
-
-// 模块索引文件，此文件集中导出类
-export * from "./DataExportTemplateFunc";
-export * from "./DataExportTemplateListApp";
-export * from "./DataExportTemplateChooseApp";
-export * from "./DataExportTemplateEditApp";
+/// <reference path="./DataExportTemplateChooseApp.ts" />
+/// <reference path="./DataExportTemplateEditApp.ts" />
+/// <reference path="./DataExportTemplateFunc.ts" />
+/// <reference path="./DataExportTemplateListApp.ts" />

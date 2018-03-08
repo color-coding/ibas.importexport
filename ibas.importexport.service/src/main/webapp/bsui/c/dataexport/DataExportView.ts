@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright color-coding studio. All Rights Reserved.
+ * Copyright Color-Coding Studio. All Rights Reserved.
  *
  * Use of this source code is governed by an Apache License, Version 2.0
  * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
@@ -13,7 +13,7 @@ import { BORepositoryImportExport } from "../../../borep/BORepositories";
 import { IDataExportView } from "../../../bsapp/dataexport/index";
 import {
     BO_CODE_BOINFORMATION, BO_REPOSITORY_INITIALFANTASY,
-    IBOInformation, IBOPropertyInformation, IBORepositoryInitialFantasy
+    ibas.IBOInformation, ibas.IBOPropertyInformation, ibas.IBORepositoryInitialFantasy
 } from "3rdparty/initialfantasy/index";
 
 /**
@@ -147,13 +147,13 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
         if (ibas.objects.isNull(this.table)) {
             // 初始化表格
             let that: this = this;
-            let boRepository: IBORepositoryInitialFantasy = ibas.boFactory.create(BO_REPOSITORY_INITIALFANTASY);
+            let boRepository: ibas.IBORepositoryInitialFantasy = ibas.boFactory.create(BO_REPOSITORY_INITIALFANTASY);
             boRepository.fetchBOInformation({
                 criteria: [
                     new ibas.Condition("code", ibas.emConditionOperation.EQUAL, this.criteria.businessObject)
                 ],
                 onCompleted(opRslt: ibas.IOperationResult<IBOInformation>): void {
-                    let boInfo: IBOInformation = opRslt.resultObjects.firstOrDefault();
+                    let boInfo: ibas.IBOInformation = opRslt.resultObjects.firstOrDefault();
                     if (ibas.objects.isNull(boInfo)) {
                         that.table = that.createTable([]);
                         that.form.addContent(that.table);
@@ -168,7 +168,7 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
             this.table.setModel(new sap.ui.model.json.JSONModel({ rows: conditions }));
         }
     }
-    private createTable(properies: IBOPropertyInformation[]): sap.ui.table.Table {
+    private createTable(properies: ibas.IBOPropertyInformation[]): sap.ui.table.Table {
         let that: this = this;
         let table: sap.ui.table.Table = new sap.ui.table.Table("", {
             toolbar: new sap.m.Toolbar("", {
@@ -263,7 +263,7 @@ export class DataExportView extends ibas.BOView implements IDataExportView {
         });
         return table;
     }
-    private getPropertyListItem(properies: IBOPropertyInformation[]): sap.ui.core.ListItem[] {
+    private getPropertyListItem(properies: ibas.IBOPropertyInformation[]): sap.ui.core.ListItem[] {
         let items: Array<sap.ui.core.ListItem> = [];
         items.push(new sap.ui.core.ListItem("", {
             key: "",

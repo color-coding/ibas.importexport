@@ -10,10 +10,10 @@
     <artifactId>ibas.importexport.service</artifactId>
     <packaging>war</packaging>
     <name>ibas.importexport.service</name>
-    <url>http://colorcoding.org/ibas/importexport/</url>
+    <url>https://colorcoding.org/ibas/importexport/</url>
     <organization>
-        <name>colorcoding</name>
-        <url>http://colorcoding.org</url>
+        <name>Color-Coding Studio</name>
+        <url>https://colorcoding.org</url>
     </organization>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -26,7 +26,7 @@
                 <version>3.2.0</version>
                 <configuration>
                     <archiveClasses>true</archiveClasses>
-                    <warSourceExcludes>index.html,config.json,tsconfig.json,**/*.ts,**/*.bat,**/*.sh,3rdparty/*.txt,3rdparty/ibas/**,3rdparty/openui5/**,modules/**,test/**</warSourceExcludes>
+                    <warSourceExcludes>index.html,config.json,tsconfig*.json,**/*.map,**/*.ts,**/*.bat,**/*.sh,3rdparty/*.txt,3rdparty/ibas/**,3rdparty/openui5/**,3rdparty/shell/**,modules/**,test/**</warSourceExcludes>
                 </configuration>
             </plugin>
         </plugins>

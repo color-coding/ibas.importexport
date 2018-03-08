@@ -6,10 +6,10 @@
     <version>0.1.0</version>
     <packaging>pom</packaging>
     <name>ibas.importexport.parent</name>
-    <url>http://colorcoding.org/ibas/importexport/</url>
+    <url>https://colorcoding.org/ibas/importexport/</url>
     <organization>
-        <name>colorcoding</name>
-        <url>http://colorcoding.org</url>
+        <name>Color-Coding Studio</name>
+        <url>https://colorcoding.org</url>
     </organization>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

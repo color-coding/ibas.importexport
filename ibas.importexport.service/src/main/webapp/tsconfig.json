@@ -1,20 +1,14 @@
 {
-    "compilerOptions": {
-        "module": "amd",
-        "target": "es6",
-        "noImplicitAny": false,
-        "removeComments": true,
-        "baseUrl": "./",
-        "paths": {
-            "ibas/index": [
-                "./3rdparty/ibas/index"
-            ],
-            "openui5/index": [
-                "./3rdparty/openui5/index"
-            ],
-            "3rdparty/initialfantasy/index": [
-                "./3rdparty/initialfantasy/index"
-            ]
-        }
-    }
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "removeComments": true,
+    "target": "es6",
+    "preserveConstEnums": true,
+    "outFile": "./index.js",
+    "declaration": true,
+    "sourceMap": true
+  },
+  "files": [
+    "./bsapp/Console.ts"
+  ]
 }

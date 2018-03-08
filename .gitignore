@@ -1,9 +1,3 @@
-*.class
-*.js
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
 # Package Files #
 *.jar
 *.war
@@ -15,14 +9,23 @@ hs_err_pid*
 # ibas packages
 */src/main/webapp/3rdparty/ibas
 */src/main/webapp/3rdparty/openui5
+*/src/main/webapp/3rdparty/shell
 */src/main/webapp/modules/
 
-# log file
+# files
 *_log_*.txt
+*.tmp
+*.class
+*.js
+*.glf
+*.map
+*.d.ts
 
-# release folder
+# work folder
+/target/
 /release/
 /.vs/
+/.vscode/
 /.metadata/
 /.recommenders/
 /RemoteSystemsTempFiles/

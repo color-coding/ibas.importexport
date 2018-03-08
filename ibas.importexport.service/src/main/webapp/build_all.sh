@@ -4,29 +4,16 @@ echo '              build_all.sh                                                
 echo '                      by niuren.zhu                                         '
 echo '                           2016.06.17                                       '
 echo '  说明：                                                                    '
-echo '    1. 此脚本需要在Node.js下运行。                                          '
-echo '    2. 遍历当前目录下所有子目录，存在tsconfig.json则编译。                  '
-echo '    3. 参数1，编译的目录，“./”表示当前。                                    '
-echo '    4. 参数2，tsc命令的其他参数，如：-w，表示监听文件变化。                 '
+echo '    1. 此脚本需要在Node.js下运行。                                           '
+echo '    2. 遍历当前目录下所有子目录，存在tsconfig.json则编译。                     '
+echo '    3. 参数1，tsc命令的其他参数，如：-w，表示监听文件变化。                    '
 echo '****************************************************************************'
 # 设置参数变量
-# 启动目录
-STARTUP_FOLDER=$(cd `dirname $0`; pwd)
-# 工作目录默认第一个参数
-WORK_FOLDER=$1
-# 修正相对目录为启动目录
-if [ "${WORK_FOLDER}" = "./" ]
-then
-  WORK_FOLDER=${STARTUP_FOLDER}
-fi
-# 未提供工作目录，则取启动目录
-if [ "${WORK_FOLDER}" = "" ]
-then
-  WORK_FOLDER=${STARTUP_FOLDER}
-fi
-echo --工作的目录：${WORK_FOLDER}
+# 工作目录
+WORK_FOLDER=$(cd `dirname $0`; pwd)
+echo --工作目录：${WORK_FOLDER}
 # 其他参数
-OPTIONS=$2
+OPTIONS=$1
 COMMOND=tsc
 
 # 映射库
@@ -49,19 +36,22 @@ then
   then
     ln -s ${IBAS_FOLDER}/openui5 ${WORK_FOLDER}/3rdparty/openui5
   fi
+  if [ ! -e "${WORK_FOLDER}/3rdparty/shell" ]
+  then
+    ln -s ${IBAS_FOLDER}/shell ${WORK_FOLDER}/3rdparty/shell
+  fi
 fi
 
-# 遍历当前目录存在tsconfig.json则执行tsc
-for folder in `find ${WORK_FOLDER} -type f -name tsconfig.json`
+# 查询当前目录的tsconfig文件
+for TS_CONFIG in `find ${WORK_FOLDER} -maxdepth 1 -type f -name tsconfig*.json`
 do
-  folder=${folder%\/*}
-  echo --开始编译：${folder}
+  echo --开始编译：${TS_CONFIG}
 # 运行编译命令
   if [ "${OPTIONS}" != "" ]
   then
 # 包括监听参数，后台运行命令
-    ${COMMOND} ${OPTIONS} -p ${folder} &
+    ${COMMOND} ${OPTIONS} -p ${TS_CONFIG} &
   else
-    ${COMMOND} -p ${folder}
+    ${COMMOND} -p ${TS_CONFIG}
   fi
 done

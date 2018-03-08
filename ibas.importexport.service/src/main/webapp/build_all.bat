@@ -7,20 +7,16 @@ echo                           2017.01.13
 echo  说明：
 echo     1. 此脚本需要在Node.js command prompt下运行。
 echo     2. 遍历当前目录下所有子目录，存在tsconfig.json则编译。
-echo     3. 参数1，编译的目录，“.\”表示当前。
-echo     4. 参数2，tsc命令的其他参数，如：-w，表示监听文件变化。
+echo     3. 参数1，tsc命令的其他参数，如：-w，表示监听文件变化。
 echo ****************************************************************************
 REM 设置参数变量
-REM 启动目录
-SET STARTUP_FOLDER=%~dp0
-REM 传入的工作目录
-SET WORK_FOLDER=%~1
-REM 判断是否传工作目录，没有则是启动目录
-if "%WORK_FOLDER%"=="" SET WORK_FOLDER=%STARTUP_FOLDER%
+REM 工作目录
+SET WORK_FOLDER=%~dp0
 REM 若工作目录最后字符不是“\”则补齐
 if "%WORK_FOLDER:~-1%" neq "\" SET WORK_FOLDER=%WORK_FOLDER%\
+echo --工作的目录：%WORK_FOLDER%
 REM 其他参数
-SET OPTIONS=%~2
+SET OPTIONS=%~1
 REM 构建命令
 SET COMMOND=tsc
 if "%OPTIONS%" neq "" (
@@ -40,13 +36,12 @@ REM 检查并映射库
 if "%IBAS_FOLDER%" neq "" (
   if not exist %WORK_FOLDER%3rdparty\ibas mklink /d .\3rdparty\ibas %IBAS_FOLDER%ibas\
   if not exist %WORK_FOLDER%3rdparty\openui5 mklink /d .\3rdparty\openui5 %IBAS_FOLDER%openui5\
+  if not exist %WORK_FOLDER%3rdparty\shell mklink /d .\3rdparty\shell %IBAS_FOLDER%shell\
 )
 
-REM 过滤符号链接目录
-if exist "%WORK_FOLDER%\tomcat\webapps\ROOT" rd /s /q "%WORK_FOLDER%\tomcat\webapps\ROOT"
-for /f %%l in ('dir /b "%WORK_FOLDER%tsconfig.json"') DO (
-  SET FOLDER=%%~dpl
-  echo --开始编译：!FOLDER!
-REM 运行编译命令
-  call !COMMOND! -p !FOLDER!
+REM 查询当前目录的tsconfig文件
+for /f %%l in ('dir /b tsconfig*.json') DO (
+  SET TS_CONFIG=%%l
+  echo --开始编译：!TS_CONFIG!
+  call !COMMOND! -p !TS_CONFIG!
 )
