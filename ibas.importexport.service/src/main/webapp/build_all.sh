@@ -43,7 +43,7 @@ then
 fi
 
 # 查询当前目录的tsconfig文件
-for TS_CONFIG in `find ${WORK_FOLDER} -maxdepth 1 -type f -name tsconfig*.json`
+for TS_CONFIG in `find ${WORK_FOLDER}/ -maxdepth 1 -type f -name "tsconfig*.json"`
 do
   echo --开始编译：${TS_CONFIG}
 # 运行编译命令
