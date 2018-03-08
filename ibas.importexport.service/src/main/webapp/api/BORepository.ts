@@ -15,7 +15,7 @@ namespace importexport {
              * 获取业务对象架构
              * @param caller 调用者
              */
-            schema(caller: SchemaMethodCaller<string>): void;
+            schema(caller: ISchemaMethodCaller<string>): void;
             /**
              * 导入
              * @param caller 调用者
@@ -45,7 +45,7 @@ namespace importexport {
         /**
          * 业务对象架构相关调用者
          */
-        export interface SchemaMethodCaller<P> extends ibas.IMethodCaller<P> {
+        export interface ISchemaMethodCaller<P> extends ibas.IMethodCaller<P> {
             /** 业务对象编码 */
             boCode: string;
             /** 结构类型 */

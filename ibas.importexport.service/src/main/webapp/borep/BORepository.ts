@@ -43,7 +43,7 @@ namespace importexport {
              * 获取业务对象架构
              * @param caller 调用者
              */
-            schema(caller: SchemaMethodCaller<string>): void {
+            schema(caller: ISchemaMethodCaller<string>): void {
                 let boRepository: ibas.BORepositoryAjax = new ibas.BORepositoryAjax();
                 boRepository.address = this.address;
                 boRepository.token = this.token;
