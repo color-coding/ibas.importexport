@@ -15,6 +15,6 @@
         </dependent-module>
     <property name="java-output-path" value="/ibas.importexport.service/target/classes"/>
         <property name="context-root" value="ibas.importexport.service"/>
-        <property name="component.exclusion.patterns" value="index.html,config.json,tsconfig.json,**/*.ts,**/*.bat,**/*.sh,3rdparty/*.txt,3rdparty/ibas/**,3rdparty/openui5/**,modules/**,test/**"/>
+        <property name="component.exclusion.patterns" value="index.html,config.json,tsconfig*.json,**/*.map,**/*.ts,**/*.bat,**/*.sh,3rdparty/*.txt,3rdparty/ibas/**,3rdparty/openui5/**,3rdparty/shell/**,modules/**,test/**"/>
   </wb-module>
 </project-modules>
