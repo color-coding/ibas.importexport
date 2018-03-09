@@ -40,8 +40,12 @@ echo --检查库符号链接
   if not exist %WORK_FOLDER%3rdparty\shell mklink /d .\3rdparty\shell %IBAS_FOLDER%shell\ > nul
 )
 
-REM 查询当前目录的tsconfig文件
-for /f %%l in ('dir /b tsconfig*.json') DO (
+REM 编译项目配置
+SET TS_CONFIGS=tsconfig.json
+SET TS_CONFIGS=%TS_CONFIGS% bsui\c\tsconfig.json
+SET TS_CONFIGS=%TS_CONFIGS% bsui\m\tsconfig.json
+
+FOR %%l IN (%TS_CONFIGS%) DO (
   SET TS_CONFIG=%%l
   echo --开始编译：!TS_CONFIG!
   call !COMMOND! -p !TS_CONFIG!

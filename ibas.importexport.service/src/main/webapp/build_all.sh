@@ -43,8 +43,13 @@ echo --检查库符号链接
   fi
 fi
 
-# 查询当前目录的tsconfig文件
-for TS_CONFIG in `find ${WORK_FOLDER}/ -maxdepth 1 -type f -name "tsconfig*.json"`
+# 编译项目配置
+TS_CONFIGS="${WORK_FOLDER}/tsconfig.json"
+TS_CONFIGS="${TS_CONFIGS} ${WORK_FOLDER}/bsui/c/tsconfig.json"
+TS_CONFIGS="${TS_CONFIGS} ${WORK_FOLDER}/bsui/m/tsconfig.json"
+
+# 执行编译指令
+for TS_CONFIG in `echo ${TS_CONFIGS}`
 do
   echo --开始编译：${TS_CONFIG}
 # 运行编译命令
