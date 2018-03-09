@@ -26,7 +26,7 @@
                 <version>3.2.0</version>
                 <configuration>
                     <archiveClasses>true</archiveClasses>
-                    <warSourceExcludes>index.html,config.json,tsconfig*.json,**/*.map,**/*.ts,**/*.bat,**/*.sh,3rdparty/*.txt,3rdparty/ibas/**,3rdparty/openui5/**,3rdparty/shell/**,modules/**,test/**</warSourceExcludes>
+                    <warSourceExcludes>index.html,config.json,**/tsconfig*.json,**/*.map,**/*.ts,**/*.bat,**/*.sh,3rdparty/*.txt,3rdparty/ibas/**,3rdparty/openui5/**,3rdparty/shell/**,modules/**,test/**</warSourceExcludes>
                 </configuration>
             </plugin>
         </plugins>
