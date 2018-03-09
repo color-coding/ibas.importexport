@@ -28,17 +28,18 @@ fi
 # 检查并映射库
 if [ "${IBAS_FOLDER}" != "" ]
 then
+echo --检查库符号链接
   if [ ! -e "${WORK_FOLDER}/3rdparty/ibas" ]
   then
-    ln -s ${IBAS_FOLDER}/ibas ${WORK_FOLDER}/3rdparty/ibas
+    ln -s ${IBAS_FOLDER}/ibas ${WORK_FOLDER}/3rdparty/ibas > /dev/null
   fi
   if [ ! -e "${WORK_FOLDER}/3rdparty/openui5" ]
   then
-    ln -s ${IBAS_FOLDER}/openui5 ${WORK_FOLDER}/3rdparty/openui5
+    ln -s ${IBAS_FOLDER}/openui5 ${WORK_FOLDER}/3rdparty/openui5 > /dev/null
   fi
   if [ ! -e "${WORK_FOLDER}/3rdparty/shell" ]
   then
-    ln -s ${IBAS_FOLDER}/shell ${WORK_FOLDER}/3rdparty/shell
+    ln -s ${IBAS_FOLDER}/shell ${WORK_FOLDER}/3rdparty/shell > /dev/null
   fi
 fi
 
