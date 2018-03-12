@@ -15,10 +15,10 @@
 namespace importexport {
     export namespace bo {
         // 注册业务对象仓库到工厂
-        ibas.boFactory.register(BO_REPOSITORY_IMPORTEXPORT, BORepositoryImportExport);
+        boFactory.register(BO_REPOSITORY_IMPORTEXPORT, BORepositoryImportExport);
         // 注册业务对象到工厂
-        ibas.boFactory.register(DataExportTemplate.BUSINESS_OBJECT_CODE, DataExportTemplate);
+        boFactory.register(DataExportTemplate.BUSINESS_OBJECT_CODE, DataExportTemplate);
         // 注册其他
-        ibas.boFactory.register(ibas.FileData);
+        boFactory.register(ibas.FileData);
     }
 }
