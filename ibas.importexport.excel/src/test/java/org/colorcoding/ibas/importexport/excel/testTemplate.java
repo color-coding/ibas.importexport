@@ -37,7 +37,7 @@ public class testTemplate extends TestCase {
 		order.setDocumentDate(DateTime.getToday());
 		userField01.setValue("i'm niuren.zhu.");
 		userField02.setValue(new Decimal("999.1999"));
-		userField03.setValue(DateTime.getMaxValue());
+		userField03.setValue(DateTime.MAX_VALUE);
 		order.getUser().setCode("manager");
 		order.getUser().setName("管理员大叔");
 		OrderLine line = order.getOrderLines().create();
