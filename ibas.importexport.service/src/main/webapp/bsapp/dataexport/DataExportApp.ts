@@ -101,7 +101,7 @@ namespace importexport {
                                 let extName: string = that.criteria.remarks;
                                 extName = extName.substring(extName.lastIndexOf("_") + 1);
                                 ibas.files.save(data, ibas.strings.format("{0}_{1}.{2}",
-                                    that.criteria.businessObject, ibas.dates.toString(ibas.dates.now(), "yyyyMMddhhss"), extName));
+                                    that.criteria.businessObject, ibas.dates.toString(ibas.dates.now(), "MMddHHmmss"), extName));
                             }
                         } catch (error) {
                             that.messages(error);

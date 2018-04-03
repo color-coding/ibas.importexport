@@ -65,7 +65,7 @@ namespace importexport {
                 if (name === "Object" && !ibas.objects.isNull(data[ibas.REMOTE_OBJECT_TYPE_PROPERTY_NAME])) {
                     name = data[ibas.REMOTE_OBJECT_TYPE_PROPERTY_NAME];
                 }
-                name = ibas.strings.format("{0}_{1}.json", name, ibas.dates.toString(new Date(), "yyyyMMdd_hhmmss"));
+                name = ibas.strings.format("{0}_{1}.json", name, ibas.dates.toString(new Date(), "yyyyMMdd_HHmmss"));
                 let result: IExportResult = {
                     mode: this.name,
                     address: name,
