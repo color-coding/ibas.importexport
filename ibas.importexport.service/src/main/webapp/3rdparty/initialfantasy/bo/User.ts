@@ -28,6 +28,9 @@ namespace initialfantasy {
             /** 电子邮件地址 */
             mail: string;
 
+            /** 电话号码 */
+            phone: string;
+
             /** 对象编号 */
             docEntry: number;
 
