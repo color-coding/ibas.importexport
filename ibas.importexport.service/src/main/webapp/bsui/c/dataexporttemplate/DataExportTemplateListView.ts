@@ -85,7 +85,11 @@ namespace importexport {
                                     type: sap.m.ButtonType.Transparent,
                                     icon: "sap-icon://action",
                                     press: function (event: any): void {
-                                        that.fireViewEvents(that.callServicesEvent, {
+                                        ibas.servicesManager.showServices({
+                                            proxy: new ibas.BOListServiceProxy({
+                                                data: openui5.utils.getSelecteds(that.table),
+                                                converter: new bo.DataConverter(),
+                                            }),
                                             displayServices(services: ibas.IServiceAgent[]): void {
                                                 let popover: sap.m.Popover = new sap.m.Popover("", {
                                                     showHeader: false,
@@ -161,10 +165,6 @@ namespace importexport {
                     this.table.setBusy(true);
                     this.table.setFirstVisibleRow(0);
                     this.table.setModel(null);
-                }
-                /** 获取选择的数据 */
-                getSelecteds(): bo.DataExportTemplate[] {
-                    return openui5.utils.getSelecteds<bo.DataExportTemplate>(this.table);
                 }
             }
         }

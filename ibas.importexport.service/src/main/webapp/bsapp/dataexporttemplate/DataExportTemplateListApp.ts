@@ -164,15 +164,6 @@ namespace importexport {
                     }
                 });
             }
-            /** 获取服务的契约 */
-            protected getServiceProxies(): ibas.IServiceProxy<ibas.IServiceContract>[] {
-                return [
-                    new ibas.BOListServiceProxy({
-                        data: this.view.getSelecteds(),
-                        converter: new bo.DataConverter(),
-                    })
-                ];
-            }
         }
         /** 视图-数据导出模板 */
         export interface IDataExportTemplateListView extends ibas.IBOListView {
@@ -182,8 +173,6 @@ namespace importexport {
             deleteDataEvent: Function;
             /** 显示数据 */
             showData(datas: bo.DataExportTemplate[]): void;
-            /** 获取选择的数据 */
-            getSelecteds(): bo.DataExportTemplate[];
         }
     }
 }
