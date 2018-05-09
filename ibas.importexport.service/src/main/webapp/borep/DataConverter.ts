@@ -43,9 +43,17 @@ namespace importexport {
              * @returns 转换的值
              */
             protected convertData(boName: string, property: string, value: any): any {
-                if (boName === bo.DataExportTemplate.name) {
-                    if (property === bo.DataExportTemplate.PROPERTY_PAPERSIZE_NAME) {
-                        return ibas.enums.toString(emPaperSize, value);
+                if (boName === bo.ExportTemplateItem.name) {
+                    if (property === bo.ExportTemplateItem.PROPERTY_AREA_NAME) {
+                        return ibas.enums.toString(emAreaType, value);
+                    } else if (property === bo.ExportTemplateItem.PROPERTY_TEXTSTYLE_NAME) {
+                        return ibas.enums.toString(emTextStyle, value);
+                    } else if (property === bo.ExportTemplateItem.PROPERTY_SOURCETYPE_NAME) {
+                        return ibas.enums.toString(emDataSourceType, value);
+                    } else if (property === bo.ExportTemplateItem.PROPERTY_JUSTIFICATIONHORIZONTAL_NAME) {
+                        return ibas.enums.toString(emJustificationHorizontal, value);
+                    } else if (property === bo.ExportTemplateItem.PROPERTY_JUSTIFICATIONVERTICAL_NAME) {
+                        return ibas.enums.toString(emJustificationVertical, value);
                     }
                 }
                 return super.convertData(boName, property, value);
@@ -59,9 +67,17 @@ namespace importexport {
              * @returns 解析的值
              */
             protected parsingData(boName: string, property: string, value: any): any {
-                if (boName === bo.DataExportTemplate.name) {
-                    if (property === bo.DataExportTemplate.PROPERTY_PAPERSIZE_NAME) {
-                        return ibas.enums.valueOf(emPaperSize, value);
+                if (boName === bo.ExportTemplateItem.name) {
+                    if (property === bo.ExportTemplateItem.PROPERTY_AREA_NAME) {
+                        return ibas.enums.valueOf(emAreaType, value);
+                    } else if (property === bo.ExportTemplateItem.PROPERTY_TEXTSTYLE_NAME) {
+                        return ibas.enums.valueOf(emTextStyle, value);
+                    } else if (property === bo.ExportTemplateItem.PROPERTY_SOURCETYPE_NAME) {
+                        return ibas.enums.valueOf(emDataSourceType, value);
+                    } else if (property === bo.ExportTemplateItem.PROPERTY_JUSTIFICATIONHORIZONTAL_NAME) {
+                        return ibas.enums.valueOf(emJustificationHorizontal, value);
+                    } else if (property === bo.ExportTemplateItem.PROPERTY_JUSTIFICATIONVERTICAL_NAME) {
+                        return ibas.enums.valueOf(emJustificationVertical, value);
                     }
                 }
                 return super.parsingData(boName, property, value);

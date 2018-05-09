@@ -7,7 +7,7 @@ import javax.jws.WebService;
 import org.colorcoding.ibas.bobas.common.Criteria;
 import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.cxf.WebServicePath;
-import org.colorcoding.ibas.importexport.bo.dataexporttemplate.DataExportTemplate;
+import org.colorcoding.ibas.importexport.bo.exporttemplate.ExportTemplate;
 import org.colorcoding.ibas.importexport.repository.BORepositoryImportExport;
 
 /**
@@ -45,9 +45,9 @@ public class DataService extends BORepositoryImportExport {
 	 * @return 操作结果
 	 */
 	@WebMethod
-	public OperationResult<DataExportTemplate> fetchDataExportTemplate(@WebParam(name = "criteria") Criteria criteria,
+	public OperationResult<ExportTemplate> fetchExportTemplate(@WebParam(name = "criteria") Criteria criteria,
 			@WebParam(name = "token") String token) {
-		return super.fetchDataExportTemplate(criteria, token);
+		return super.fetchExportTemplate(criteria, token);
 	}
 
 	/**
@@ -60,9 +60,9 @@ public class DataService extends BORepositoryImportExport {
 	 * @return 操作结果
 	 */
 	@WebMethod
-	public OperationResult<DataExportTemplate> saveDataExportTemplate(@WebParam(name = "bo") DataExportTemplate bo,
+	public OperationResult<ExportTemplate> saveExportTemplate(@WebParam(name = "bo") ExportTemplate bo,
 			@WebParam(name = "token") String token) {
-		return super.saveDataExportTemplate(bo, token);
+		return super.saveExportTemplate(bo, token);
 	}
 
 	// --------------------------------------------------------------------------------------------//

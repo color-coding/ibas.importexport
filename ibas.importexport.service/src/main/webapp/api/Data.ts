@@ -19,20 +19,92 @@ namespace importexport {
         /** 业务对象编码-数据导出模板 */
         export const BO_CODE_EXPORTTEMPLATE: string = "${Company}_IE_EXPORTTEMPLATE";
 
-        export enum emPaperSize {
-            A4,
-        }
         export enum emAreaType {
-
+            /**
+             * 页眉
+             */
+            PAGE_HEADER,
+            /**
+             * 开始区
+             */
+            START_SECTION,
+            /**
+             * 重复区头
+             */
+            REPETITION_HEADER,
+            /**
+             * 重复区
+             */
+            REPETITION,
+            /**
+             * 重复区脚
+             */
+            REPETITION_FOOTER,
+            /**
+             * 结束区
+             */
+            END_SECTION,
+            /**
+             * 页脚区
+             */
+            PAGE_FOOTER,
         }
         export enum emDataSourceType {
+            /**
+             * 文本
+             */
+            TEXT,
+            /**
+             * 路径
+             */
+            PATH,
 
         }
-        export enum emHorizontalJustification {
-
+        export enum emJustificationHorizontal {
+            /**
+             * 靠右
+             */
+            RIGHT,
+            /**
+             * 靠左
+             */
+            LEFT,
+            /**
+             * 中间
+             */
+            CENTER,
         }
-        export enum emVerticalJustification {
-
+        export enum emJustificationVertical {
+            /**
+             * 靠上
+             */
+            TOP,
+            /**
+             * 靠下
+             */
+            BOTTOM,
+            /**
+             * 中间
+             */
+            CENTER,
+        }
+        export enum emTextStyle {
+            /**
+             * 常规
+             */
+            REGULAR,
+            /**
+             * 粗体
+             */
+            BOLD,
+            /**
+             * 斜体
+             */
+            ITALIC,
+            /**
+             * 粗斜体
+             */
+            BOLD_ITALIC
         }
     }
 }

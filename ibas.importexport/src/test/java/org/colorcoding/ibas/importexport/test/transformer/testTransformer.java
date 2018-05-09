@@ -10,9 +10,9 @@ import org.colorcoding.ibas.bobas.data.DateTime;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
 import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
 import org.colorcoding.ibas.importexport.MyConfiguration;
-import org.colorcoding.ibas.importexport.bo.dataexporttemplate.DataExportTemplate;
-import org.colorcoding.ibas.importexport.bo.dataexporttemplate.DataExportTemplateItem;
-import org.colorcoding.ibas.importexport.bo.dataexporttemplate.IDataExportTemplateItem;
+import org.colorcoding.ibas.importexport.bo.exporttemplate.ExportTemplate;
+import org.colorcoding.ibas.importexport.bo.exporttemplate.ExportTemplateItem;
+import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplateItem;
 import org.colorcoding.ibas.importexport.transformer.JsonTransformer;
 import org.colorcoding.ibas.importexport.transformer.TransformException;
 import org.colorcoding.ibas.importexport.transformer.XmlTransformer;
@@ -27,14 +27,14 @@ public class testTransformer extends TestCase {
 			BOFactory.create().register(item);
 		}
 		// 创建测试数据
-		DataExportTemplate template = new DataExportTemplate();
-		template.setBOCode(DataExportTemplate.BUSINESS_OBJECT_CODE);
-		IDataExportTemplateItem item = template.getDataExportTemplateItems().create();
-		item.setItemUID(DateTime.getNow().toString());
-		item = template.getDataExportTemplateItems().create();
-		item.setItemUID(DateTime.getNow().toString());
-		item = template.getDataExportTemplateItems().create();
-		item.setItemUID(DateTime.getNow().toString());
+		ExportTemplate template = new ExportTemplate();
+		template.setBOCode(ExportTemplate.BUSINESS_OBJECT_CODE);
+		IExportTemplateItem item = template.getRepetitions().create();
+		item.setItemID(DateTime.getNow().toString());
+		item = template.getRepetitions().create();
+		item.setItemID(DateTime.getNow().toString());
+		item = template.getRepetitions().create();
+		item.setItemID(DateTime.getNow().toString());
 
 		ISerializer<?> serializer = SerializerFactory.create().createManager().create(type);
 		String filePath = String.format("%s%s~%s.%s", MyConfiguration.getDataFolder(), File.separator,
@@ -53,8 +53,8 @@ public class testTransformer extends TestCase {
 
 	public void testJSON() throws TransformException, IOException {
 		JsonTransformer transformer = new JsonTransformer();
-		transformer.addKnownType(DataExportTemplate.class);
-		transformer.addKnownType(DataExportTemplateItem.class);
+		transformer.addKnownType(ExportTemplate.class);
+		transformer.addKnownType(ExportTemplateItem.class);
 		// 测试转换BO
 		transformer.setInputData(new File(this.createFileData(JsonTransformer.TYPE_NAME)));
 		transformer.transform();
@@ -65,8 +65,8 @@ public class testTransformer extends TestCase {
 
 	public void testXML() throws TransformException, IOException {
 		XmlTransformer transformer = new XmlTransformer();
-		transformer.addKnownType(DataExportTemplate.class);
-		transformer.addKnownType(DataExportTemplateItem.class);
+		transformer.addKnownType(ExportTemplate.class);
+		transformer.addKnownType(ExportTemplateItem.class);
 		// 测试转换BO
 		transformer.setInputData(new File(this.createFileData(XmlTransformer.TYPE_NAME)));
 		transformer.transform();

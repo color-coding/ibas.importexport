@@ -8,7 +8,7 @@
 /// <reference path="../3rdparty/ibas/index.d.ts" />
 /// <reference path="../borep/index.ts" />
 /// <reference path="./dataexport/index.ts" />
-/// <reference path="./dataexporttemplate/index.ts" />
+/// <reference path="./exporttemplate/index.ts" />
 /// <reference path="./dataimport/index.ts" />
 
 namespace importexport {
@@ -35,8 +35,8 @@ namespace importexport {
                 this.register(new DataImportFunc());
                 this.register(new DataExportFunc());
                 if (ibas.config.get(ibas.CONFIG_ITEM_DEBUG_MODE)) {
-                    this.register(new DataExportTemplateFunc());
-                    this.register(new DataExportTemplateChooseServiceMapping());
+                    this.register(new ExportTemplateFunc());
+                    this.register(new ExportTemplateChooseServiceMapping());
                 }
                 // 注册服务应用
                 this.register(new DataExportServiceMapping());

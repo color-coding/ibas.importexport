@@ -8,60 +8,63 @@
 namespace importexport {
     export namespace ui {
         export namespace c {
-            /**
-             * 视图-DataExportTemplate
-             */
-            export class DataExportTemplateEditView extends ibas.BOEditView implements app.IDataExportTemplateEditView {
+            /** 编辑视图-导出模板 */
+            export class ExportTemplateEditView extends ibas.BOEditView implements app.IExportTemplateEditView {
                 /** 删除数据事件 */
                 deleteDataEvent: Function;
                 /** 新建数据事件，参数1：是否克隆 */
                 createDataEvent: Function;
-                /** 添加数据导出模板-项事件 */
-                addDataExportTemplateItemEvent: Function;
-                /** 删除数据导出模板-项事件 */
-                removeDataExportTemplateItemEvent: Function;
+                /** 添加导出模板-项事件 */
+                addPageHeaderEvent: Function;
+                /** 删除导出模板-项事件 */
+                removePageHeaderEvent: Function;
+                /** 添加导出模板-项事件 */
+                addStartSectionEvent: Function;
+                /** 删除导出模板-项事件 */
+                removeStartSectionEvent: Function;
+                /** 添加导出模板-项事件 */
+                addRepetitionHeaderEvent: Function;
+                /** 删除导出模板-项事件 */
+                removeRepetitionHeaderEvent: Function;
+                /** 添加导出模板-项事件 */
+                addRepetitionEvent: Function;
+                /** 删除导出模板-项事件 */
+                removeRepetitionEvent: Function;
+                /** 添加导出模板-项事件 */
+                addRepetitionFooterEvent: Function;
+                /** 删除导出模板-项事件 */
+                removeRepetitionFooterEvent: Function;
+                /** 添加导出模板-项事件 */
+                addEndSectionEvent: Function;
+                /** 删除导出模板-项事件 */
+                removeEndSectionEvent: Function;
+                /** 添加导出模板-项事件 */
+                addPageFooterEvent: Function;
+                /** 删除导出模板-项事件 */
+                removePageFooterEvent: Function;
 
                 /** 绘制视图 */
                 draw(): any {
                     let that: this = this;
-                    this.form = new sap.ui.layout.form.SimpleForm("", {
+                    let formTop: sap.ui.layout.form.SimpleForm = new sap.ui.layout.form.SimpleForm("", {
                         editable: true,
                         content: [
                         ]
                     });
-                    this.form.addContent(new sap.ui.core.Title("", { text: ibas.i18n.prop("bo_dataexporttemplateitem") }));
-                    this.tableDataExportTemplateItem = new sap.ui.table.Table("", {
-                        toolbar: new sap.m.Toolbar("", {
-                            content: [
-                                new sap.m.Button("", {
-                                    text: ibas.i18n.prop("shell_data_add"),
-                                    type: sap.m.ButtonType.Transparent,
-                                    icon: "sap-icon://add",
-                                    press: function (): void {
-                                        that.fireViewEvents(that.addDataExportTemplateItemEvent);
-                                    }
-                                }),
-                                new sap.m.Button("", {
-                                    text: ibas.i18n.prop("shell_data_remove"),
-                                    type: sap.m.ButtonType.Transparent,
-                                    icon: "sap-icon://less",
-                                    press: function (): void {
-                                        that.fireViewEvents(that.removeDataExportTemplateItemEvent,
-                                            // 获取表格选中的对象
-                                            openui5.utils.getSelecteds<bo.DataExportTemplateItem>(that.tableDataExportTemplateItem)
-                                        );
-                                    }
-                                })
-                            ]
-                        }),
-                        enableSelectAll: false,
-                        selectionBehavior: sap.ui.table.SelectionBehavior.Row,
-                        visibleRowCount: ibas.config.get(openui5.utils.CONFIG_ITEM_LIST_TABLE_VISIBLE_ROW_COUNT, 10),
-                        rows: "{/rows}",
-                        columns: [
+                    let formExportTemplateItem: sap.ui.layout.form.SimpleForm = new sap.ui.layout.form.SimpleForm("", {
+                        editable: true,
+                        content: [
+                            new sap.ui.core.Title("", { text: ibas.i18n.prop("bo_exporttemplateitem") }),
                         ]
                     });
-                    this.form.addContent(this.tableDataExportTemplateItem);
+                    this.layoutMain = new sap.ui.layout.VerticalLayout("", {
+                        width: "100%",
+                        height: "100%",
+                        content: [
+                            formTop,
+                            formExportTemplateItem,
+                        ]
+                    });
                     this.page = new sap.m.Page("", {
                         showHeader: false,
                         subHeader: new sap.m.Toolbar("", {
@@ -111,15 +114,17 @@ namespace importexport {
                                 }),
                             ]
                         }),
-                        content: [this.form]
+                        content: [this.layoutMain]
                     });
-                    this.id = this.page.getId();
                     return this.page;
                 }
+
                 private page: sap.m.Page;
-                private form: sap.ui.layout.form.SimpleForm;
+                private layoutMain: sap.ui.layout.VerticalLayout;
+                private tableExportTemplateItem: sap.ui.table.Table;
+
                 /** 改变视图状态 */
-                private changeViewStatus(data: bo.DataExportTemplate): void {
+                private changeViewStatus(data: bo.ExportTemplate): void {
                     if (ibas.objects.isNull(data)) {
                         return;
                     }
@@ -129,30 +134,44 @@ namespace importexport {
                             openui5.utils.changeToolbarDeletable(<sap.m.Toolbar>this.page.getSubHeader(), false);
                         }
                     }
-                    // 不可编辑：已批准，
-                    if (data.approvalStatus === ibas.emApprovalStatus.APPROVED) {
-                        if (this.page.getSubHeader() instanceof sap.m.Toolbar) {
-                            openui5.utils.changeToolbarSavable(<sap.m.Toolbar>this.page.getSubHeader(), false);
-                            openui5.utils.changeToolbarDeletable(<sap.m.Toolbar>this.page.getSubHeader(), false);
-                        }
-                        openui5.utils.changeFormEditable(this.form, false);
-                    }
                 }
-                private tableDataExportTemplateItem: sap.ui.table.Table;
 
                 /** 显示数据 */
-                showDataExportTemplate(data: bo.DataExportTemplate): void {
-                    this.form.setModel(new sap.ui.model.json.JSONModel(data));
+                showExportTemplate(data: bo.ExportTemplate): void {
+                    this.layoutMain.setModel(new sap.ui.model.json.JSONModel(data));
+                    this.layoutMain.bindObject("/");
                     // 监听属性改变，并更新控件
-                    openui5.utils.refreshModelChanged(this.form, data);
+                    openui5.utils.refreshModelChanged(this.layoutMain, data);
                     // 改变视图状态
                     this.changeViewStatus(data);
                 }
-                /** 显示数据 */
-                showDataExportTemplateItems(datas: bo.DataExportTemplateItem[]): void {
-                    this.tableDataExportTemplateItem.setModel(new sap.ui.model.json.JSONModel({ rows: datas }));
-                    // 监听属性改变，并更新控件
-                    openui5.utils.refreshModelChanged(this.tableDataExportTemplateItem, datas);
+                /** 显示数据-页眉 */
+                showPageHeaders(datas: bo.ExportTemplateItem[]): void {
+
+                }
+                /** 显示数据-开始区域 */
+                showStartSections(datas: bo.ExportTemplateItem[]): void {
+
+                }
+                /** 显示数据-重复区头 */
+                showRepetitionHeaders(datas: bo.ExportTemplateItem[]): void {
+
+                }
+                /** 显示数据-重复区 */
+                showRepetitions(datas: bo.ExportTemplateItem[]): void {
+
+                }
+                /** 显示数据-重复区脚 */
+                showRepetitionFooters(datas: bo.ExportTemplateItem[]): void {
+
+                }
+                /** 显示数据-结束区域 */
+                showEndSections(datas: bo.ExportTemplateItem[]): void {
+
+                }
+                /** 显示数据-页脚 */
+                showPageFooters(datas: bo.ExportTemplateItem[]): void {
+
                 }
             }
         }

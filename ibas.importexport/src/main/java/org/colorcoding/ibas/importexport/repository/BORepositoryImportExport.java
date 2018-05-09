@@ -22,8 +22,8 @@ import org.colorcoding.ibas.bobas.repository.BORepositoryServiceApplication;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
 import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
 import org.colorcoding.ibas.importexport.MyConfiguration;
-import org.colorcoding.ibas.importexport.bo.dataexporttemplate.DataExportTemplate;
-import org.colorcoding.ibas.importexport.bo.dataexporttemplate.IDataExportTemplate;
+import org.colorcoding.ibas.importexport.bo.exporttemplate.ExportTemplate;
+import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplate;
 import org.colorcoding.ibas.importexport.transformer.FileTransformer;
 import org.colorcoding.ibas.importexport.transformer.IFileTransformer;
 import org.colorcoding.ibas.importexport.transformer.ITransformer;
@@ -91,8 +91,8 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	 *            口令
 	 * @return 操作结果
 	 */
-	public OperationResult<DataExportTemplate> fetchDataExportTemplate(ICriteria criteria, String token) {
-		return super.fetch(criteria, token, DataExportTemplate.class);
+	public OperationResult<ExportTemplate> fetchExportTemplate(ICriteria criteria, String token) {
+		return super.fetch(criteria, token, ExportTemplate.class);
 	}
 
 	/**
@@ -102,8 +102,8 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	 *            查询
 	 * @return 操作结果
 	 */
-	public IOperationResult<IDataExportTemplate> fetchDataExportTemplate(ICriteria criteria) {
-		return new OperationResult<IDataExportTemplate>(this.fetchDataExportTemplate(criteria, this.getUserToken()));
+	public IOperationResult<IExportTemplate> fetchExportTemplate(ICriteria criteria) {
+		return new OperationResult<IExportTemplate>(this.fetchExportTemplate(criteria, this.getUserToken()));
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	 *            口令
 	 * @return 操作结果
 	 */
-	public OperationResult<DataExportTemplate> saveDataExportTemplate(DataExportTemplate bo, String token) {
+	public OperationResult<ExportTemplate> saveExportTemplate(ExportTemplate bo, String token) {
 		return super.save(bo, token);
 	}
 
@@ -126,9 +126,8 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	 *            对象实例
 	 * @return 操作结果
 	 */
-	public IOperationResult<IDataExportTemplate> saveDataExportTemplate(IDataExportTemplate bo) {
-		return new OperationResult<IDataExportTemplate>(
-				this.saveDataExportTemplate((DataExportTemplate) bo, this.getUserToken()));
+	public IOperationResult<IExportTemplate> saveExportTemplate(IExportTemplate bo) {
+		return new OperationResult<IExportTemplate>(this.saveExportTemplate((ExportTemplate) bo, this.getUserToken()));
 	}
 
 	// --------------------------------------------------------------------------------------------//

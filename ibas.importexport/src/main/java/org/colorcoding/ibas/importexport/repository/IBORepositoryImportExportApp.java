@@ -5,7 +5,7 @@ import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.data.FileData;
 import org.colorcoding.ibas.bobas.data.KeyText;
 import org.colorcoding.ibas.bobas.repository.IBORepositoryApplication;
-import org.colorcoding.ibas.importexport.bo.dataexporttemplate.IDataExportTemplate;
+import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplate;
 
 /**
  * ImportExport仓库应用
@@ -70,7 +70,7 @@ public interface IBORepositoryImportExportApp extends IBORepositoryApplication {
 	 *            查询
 	 * @return 操作结果
 	 */
-	IOperationResult<IDataExportTemplate> fetchDataExportTemplate(ICriteria criteria);
+	IOperationResult<IExportTemplate> fetchExportTemplate(ICriteria criteria);
 
 	/**
 	 * 保存-数据导出模板
@@ -79,7 +79,7 @@ public interface IBORepositoryImportExportApp extends IBORepositoryApplication {
 	 *            对象实例
 	 * @return 操作结果
 	 */
-	IOperationResult<IDataExportTemplate> saveDataExportTemplate(IDataExportTemplate bo);
+	IOperationResult<IExportTemplate> saveExportTemplate(IExportTemplate bo);
 
 	// --------------------------------------------------------------------------------------------//
 

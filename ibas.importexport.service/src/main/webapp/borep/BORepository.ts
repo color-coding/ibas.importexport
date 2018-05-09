@@ -64,15 +64,15 @@ namespace importexport {
              * 查询 数据导出模板
              * @param fetcher 查询者
              */
-            fetchDataExportTemplate(fetcher: ibas.IFetchCaller<bo.DataExportTemplate>): void {
-                super.fetch(bo.DataExportTemplate.name, fetcher);
+            fetchExportTemplate(fetcher: ibas.IFetchCaller<bo.ExportTemplate>): void {
+                super.fetch(bo.ExportTemplate.name, fetcher);
             }
             /**
              * 保存 数据导出模板
              * @param saver 保存者
              */
-            saveDataExportTemplate(saver: ibas.ISaveCaller<bo.DataExportTemplate>): void {
-                super.save(bo.DataExportTemplate.name, saver);
+            saveExportTemplate(saver: ibas.ISaveCaller<bo.ExportTemplate>): void {
+                super.save(bo.ExportTemplate.name, saver);
             }
 
         }

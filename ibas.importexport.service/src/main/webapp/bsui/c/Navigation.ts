@@ -8,8 +8,8 @@
 /// <reference path="../../3rdparty/ibas/index.d.ts" />
 /// <reference path="../../3rdparty/openui5/index.d.ts" />
 /// <reference path="../../index.d.ts" />
+/// <reference path="./exporttemplate/index.ts" />
 /// <reference path="./dataexport/index.ts" />
-/// <reference path="./dataexporttemplate/index.ts" />
 /// <reference path="./dataimport/index.ts" />
 namespace importexport {
     export namespace ui {
@@ -25,14 +25,14 @@ namespace importexport {
             protected newView(id: string): ibas.IView {
                 let view: ibas.IView = null;
                 switch (id) {
-                    case app.DataExportTemplateListApp.APPLICATION_ID:
-                        view = new c.DataExportTemplateListView();
+                    case app.ExportTemplateListApp.APPLICATION_ID:
+                        view = new c.ExportTemplateListView();
                         break;
-                    case app.DataExportTemplateChooseApp.APPLICATION_ID:
-                        view = new c.DataExportTemplateChooseView();
+                    case app.ExportTemplateChooseApp.APPLICATION_ID:
+                        view = new c.ExportTemplateChooseView();
                         break;
-                    case app.DataExportTemplateEditApp.APPLICATION_ID:
-                        view = new c.DataExportTemplateEditView();
+                    case app.ExportTemplateEditApp.APPLICATION_ID:
+                        view = new c.ExportTemplateEditView();
                         break;
                     case app.DataExportService.APPLICATION_ID:
                         view = new c.DataExportServiceView();

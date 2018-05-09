@@ -1,4 +1,4 @@
-package org.colorcoding.ibas.importexport.bo.dataexporttemplate;
+package org.colorcoding.ibas.importexport.bo.exporttemplate;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -10,48 +10,47 @@ import javax.xml.bind.annotation.XmlType;
 import org.colorcoding.ibas.bobas.bo.BusinessObject;
 import org.colorcoding.ibas.bobas.core.IPropertyInfo;
 import org.colorcoding.ibas.bobas.data.DateTime;
-import org.colorcoding.ibas.bobas.data.emApprovalStatus;
 import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.bobas.mapping.BOCode;
 import org.colorcoding.ibas.bobas.mapping.DbField;
 import org.colorcoding.ibas.bobas.mapping.DbFieldType;
 import org.colorcoding.ibas.importexport.MyConfiguration;
-import org.colorcoding.ibas.importexport.data.emPaperSize;
+import org.colorcoding.ibas.importexport.data.emAreaType;
 
 /**
- * 获取-数据导出模板
+ * 导出模板
  * 
  */
 @XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = DataExportTemplate.BUSINESS_OBJECT_NAME, namespace = MyConfiguration.NAMESPACE_BO)
-@XmlRootElement(name = DataExportTemplate.BUSINESS_OBJECT_NAME, namespace = MyConfiguration.NAMESPACE_BO)
-@BOCode(DataExportTemplate.BUSINESS_OBJECT_CODE)
-public class DataExportTemplate extends BusinessObject<DataExportTemplate> implements IDataExportTemplate {
+@XmlType(name = ExportTemplate.BUSINESS_OBJECT_NAME, namespace = MyConfiguration.NAMESPACE_BO)
+@XmlRootElement(name = ExportTemplate.BUSINESS_OBJECT_NAME, namespace = MyConfiguration.NAMESPACE_BO)
+@BOCode(ExportTemplate.BUSINESS_OBJECT_CODE)
+public class ExportTemplate extends BusinessObject<ExportTemplate> implements IExportTemplate {
 
 	/**
 	 * 序列化版本标记
 	 */
-	private static final long serialVersionUID = -6055737609031073385L;
+	private static final long serialVersionUID = 2449909921787074345L;
 
 	/**
 	 * 当前类型
 	 */
-	private static final Class<?> MY_CLASS = DataExportTemplate.class;
+	private static final Class<?> MY_CLASS = ExportTemplate.class;
 
 	/**
 	 * 数据库表
 	 */
-	public static final String DB_TABLE_NAME = "${Company}_IE_ODET";
+	public static final String DB_TABLE_NAME = "CC_IE_OEXT";
 
 	/**
 	 * 业务对象编码
 	 */
-	public static final String BUSINESS_OBJECT_CODE = "${Company}_IE_EXPORTTEMPLATE";
+	public static final String BUSINESS_OBJECT_CODE = "CC_IE_EXPORTTEMPLATE";
 
 	/**
 	 * 业务对象名称
 	 */
-	public static final String BUSINESS_OBJECT_NAME = "DataExportTemplate";
+	public static final String BUSINESS_OBJECT_NAME = "ExportTemplate";
 
 	/**
 	 * 属性名称-编号
@@ -566,166 +565,6 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	}
 
 	/**
-	 * 属性名称-审批状态
-	 */
-	private static final String PROPERTY_APPROVALSTATUS_NAME = "ApprovalStatus";
-
-	/**
-	 * 审批状态 属性
-	 */
-	@DbField(name = "ApvlStatus", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<emApprovalStatus> PROPERTY_APPROVALSTATUS = registerProperty(
-			PROPERTY_APPROVALSTATUS_NAME, emApprovalStatus.class, MY_CLASS);
-
-	/**
-	 * 获取-审批状态
-	 * 
-	 * @return 值
-	 */
-	@XmlElement(name = PROPERTY_APPROVALSTATUS_NAME)
-	public final emApprovalStatus getApprovalStatus() {
-		return this.getProperty(PROPERTY_APPROVALSTATUS);
-	}
-
-	/**
-	 * 设置-审批状态
-	 * 
-	 * @param value
-	 *            值
-	 */
-	public final void setApprovalStatus(emApprovalStatus value) {
-		this.setProperty(PROPERTY_APPROVALSTATUS, value);
-	}
-
-	/**
-	 * 属性名称-参考1
-	 */
-	private static final String PROPERTY_REFERENCE1_NAME = "Reference1";
-
-	/**
-	 * 参考1 属性
-	 */
-	@DbField(name = "Ref1", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<String> PROPERTY_REFERENCE1 = registerProperty(PROPERTY_REFERENCE1_NAME,
-			String.class, MY_CLASS);
-
-	/**
-	 * 获取-参考1
-	 * 
-	 * @return 值
-	 */
-	@XmlElement(name = PROPERTY_REFERENCE1_NAME)
-	public final String getReference1() {
-		return this.getProperty(PROPERTY_REFERENCE1);
-	}
-
-	/**
-	 * 设置-参考1
-	 * 
-	 * @param value
-	 *            值
-	 */
-	public final void setReference1(String value) {
-		this.setProperty(PROPERTY_REFERENCE1, value);
-	}
-
-	/**
-	 * 属性名称-参考2
-	 */
-	private static final String PROPERTY_REFERENCE2_NAME = "Reference2";
-
-	/**
-	 * 参考2 属性
-	 */
-	@DbField(name = "Ref2", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<String> PROPERTY_REFERENCE2 = registerProperty(PROPERTY_REFERENCE2_NAME,
-			String.class, MY_CLASS);
-
-	/**
-	 * 获取-参考2
-	 * 
-	 * @return 值
-	 */
-	@XmlElement(name = PROPERTY_REFERENCE2_NAME)
-	public final String getReference2() {
-		return this.getProperty(PROPERTY_REFERENCE2);
-	}
-
-	/**
-	 * 设置-参考2
-	 * 
-	 * @param value
-	 *            值
-	 */
-	public final void setReference2(String value) {
-		this.setProperty(PROPERTY_REFERENCE2, value);
-	}
-
-	/**
-	 * 属性名称-备注
-	 */
-	private static final String PROPERTY_REMARKS_NAME = "Remarks";
-
-	/**
-	 * 备注 属性
-	 */
-	@DbField(name = "Remarks", type = DbFieldType.MEMO, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<String> PROPERTY_REMARKS = registerProperty(PROPERTY_REMARKS_NAME, String.class,
-			MY_CLASS);
-
-	/**
-	 * 获取-备注
-	 * 
-	 * @return 值
-	 */
-	@XmlElement(name = PROPERTY_REMARKS_NAME)
-	public final String getRemarks() {
-		return this.getProperty(PROPERTY_REMARKS);
-	}
-
-	/**
-	 * 设置-备注
-	 * 
-	 * @param value
-	 *            值
-	 */
-	public final void setRemarks(String value) {
-		this.setProperty(PROPERTY_REMARKS, value);
-	}
-
-	/**
-	 * 属性名称-编码
-	 */
-	private static final String PROPERTY_CODE_NAME = "Code";
-
-	/**
-	 * 编码 属性
-	 */
-	@DbField(name = "Code", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<String> PROPERTY_CODE = registerProperty(PROPERTY_CODE_NAME, String.class,
-			MY_CLASS);
-
-	/**
-	 * 获取-编码
-	 * 
-	 * @return 值
-	 */
-	@XmlElement(name = PROPERTY_CODE_NAME)
-	public final String getCode() {
-		return this.getProperty(PROPERTY_CODE);
-	}
-
-	/**
-	 * 设置-编码
-	 * 
-	 * @param value
-	 *            值
-	 */
-	public final void setCode(String value) {
-		this.setProperty(PROPERTY_CODE, value);
-	}
-
-	/**
 	 * 属性名称-名称
 	 */
 	private static final String PROPERTY_NAME_NAME = "Name";
@@ -755,6 +594,166 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 */
 	public final void setName(String value) {
 		this.setProperty(PROPERTY_NAME, value);
+	}
+
+	/**
+	 * 属性名称-已激活的
+	 */
+	private static final String PROPERTY_ACTIVATED_NAME = "Activated";
+
+	/**
+	 * 已激活的 属性
+	 */
+	@DbField(name = "Activated", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	public static final IPropertyInfo<emYesNo> PROPERTY_ACTIVATED = registerProperty(PROPERTY_ACTIVATED_NAME,
+			emYesNo.class, MY_CLASS);
+
+	/**
+	 * 获取-已激活的
+	 * 
+	 * @return 值
+	 */
+	@XmlElement(name = PROPERTY_ACTIVATED_NAME)
+	public final emYesNo getActivated() {
+		return this.getProperty(PROPERTY_ACTIVATED);
+	}
+
+	/**
+	 * 设置-已激活的
+	 * 
+	 * @param value
+	 *            值
+	 */
+	public final void setActivated(emYesNo value) {
+		this.setProperty(PROPERTY_ACTIVATED, value);
+	}
+
+	/**
+	 * 属性名称-语言
+	 */
+	private static final String PROPERTY_LANGUAGE_NAME = "Language";
+
+	/**
+	 * 语言 属性
+	 */
+	@DbField(name = "Language", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	public static final IPropertyInfo<String> PROPERTY_LANGUAGE = registerProperty(PROPERTY_LANGUAGE_NAME, String.class,
+			MY_CLASS);
+
+	/**
+	 * 获取-语言
+	 * 
+	 * @return 值
+	 */
+	@XmlElement(name = PROPERTY_LANGUAGE_NAME)
+	public final String getLanguage() {
+		return this.getProperty(PROPERTY_LANGUAGE);
+	}
+
+	/**
+	 * 设置-语言
+	 * 
+	 * @param value
+	 *            值
+	 */
+	public final void setLanguage(String value) {
+		this.setProperty(PROPERTY_LANGUAGE, value);
+	}
+
+	/**
+	 * 属性名称-类型
+	 */
+	private static final String PROPERTY_CATEGORY_NAME = "Category";
+
+	/**
+	 * 类型 属性
+	 */
+	@DbField(name = "Category", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	public static final IPropertyInfo<String> PROPERTY_CATEGORY = registerProperty(PROPERTY_CATEGORY_NAME, String.class,
+			MY_CLASS);
+
+	/**
+	 * 获取-类型
+	 * 
+	 * @return 值
+	 */
+	@XmlElement(name = PROPERTY_CATEGORY_NAME)
+	public final String getCategory() {
+		return this.getProperty(PROPERTY_CATEGORY);
+	}
+
+	/**
+	 * 设置-类型
+	 * 
+	 * @param value
+	 *            值
+	 */
+	public final void setCategory(String value) {
+		this.setProperty(PROPERTY_CATEGORY, value);
+	}
+
+	/**
+	 * 属性名称-关联的业务对象
+	 */
+	private static final String PROPERTY_BOCODE_NAME = "BOCode";
+
+	/**
+	 * 关联的业务对象 属性
+	 */
+	@DbField(name = "BOCode", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	public static final IPropertyInfo<String> PROPERTY_BOCODE = registerProperty(PROPERTY_BOCODE_NAME, String.class,
+			MY_CLASS);
+
+	/**
+	 * 获取-关联的业务对象
+	 * 
+	 * @return 值
+	 */
+	@XmlElement(name = PROPERTY_BOCODE_NAME)
+	public final String getBOCode() {
+		return this.getProperty(PROPERTY_BOCODE);
+	}
+
+	/**
+	 * 设置-关联的业务对象
+	 * 
+	 * @param value
+	 *            值
+	 */
+	public final void setBOCode(String value) {
+		this.setProperty(PROPERTY_BOCODE, value);
+	}
+
+	/**
+	 * 属性名称-关联的应用
+	 */
+	private static final String PROPERTY_APPLICATIONID_NAME = "ApplicationId";
+
+	/**
+	 * 关联的应用 属性
+	 */
+	@DbField(name = "AppId", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	public static final IPropertyInfo<String> PROPERTY_APPLICATIONID = registerProperty(PROPERTY_APPLICATIONID_NAME,
+			String.class, MY_CLASS);
+
+	/**
+	 * 获取-关联的应用
+	 * 
+	 * @return 值
+	 */
+	@XmlElement(name = PROPERTY_APPLICATIONID_NAME)
+	public final String getApplicationId() {
+		return this.getProperty(PROPERTY_APPLICATIONID);
+	}
+
+	/**
+	 * 设置-关联的应用
+	 * 
+	 * @param value
+	 *            值
+	 */
+	public final void setApplicationId(String value) {
+		this.setProperty(PROPERTY_APPLICATIONID, value);
 	}
 
 	/**
@@ -856,13 +855,13 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	/**
 	 * 属性名称-左边距
 	 */
-	private static final String PROPERTY_LEFTMARGIN_NAME = "LeftMargin";
+	private static final String PROPERTY_MARGINLEFT_NAME = "MarginLeft";
 
 	/**
 	 * 左边距 属性
 	 */
 	@DbField(name = "LMargin", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_LEFTMARGIN = registerProperty(PROPERTY_LEFTMARGIN_NAME,
+	public static final IPropertyInfo<Integer> PROPERTY_MARGINLEFT = registerProperty(PROPERTY_MARGINLEFT_NAME,
 			Integer.class, MY_CLASS);
 
 	/**
@@ -870,9 +869,9 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_LEFTMARGIN_NAME)
-	public final Integer getLeftMargin() {
-		return this.getProperty(PROPERTY_LEFTMARGIN);
+	@XmlElement(name = PROPERTY_MARGINLEFT_NAME)
+	public final Integer getMarginLeft() {
+		return this.getProperty(PROPERTY_MARGINLEFT);
 	}
 
 	/**
@@ -881,20 +880,20 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setLeftMargin(Integer value) {
-		this.setProperty(PROPERTY_LEFTMARGIN, value);
+	public final void setMarginLeft(Integer value) {
+		this.setProperty(PROPERTY_MARGINLEFT, value);
 	}
 
 	/**
 	 * 属性名称-右边距
 	 */
-	private static final String PROPERTY_RIGHTMARGIN_NAME = "RightMargin";
+	private static final String PROPERTY_MARGINRIGHT_NAME = "MarginRight";
 
 	/**
 	 * 右边距 属性
 	 */
 	@DbField(name = "RMargin", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_RIGHTMARGIN = registerProperty(PROPERTY_RIGHTMARGIN_NAME,
+	public static final IPropertyInfo<Integer> PROPERTY_MARGINRIGHT = registerProperty(PROPERTY_MARGINRIGHT_NAME,
 			Integer.class, MY_CLASS);
 
 	/**
@@ -902,9 +901,9 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_RIGHTMARGIN_NAME)
-	public final Integer getRightMargin() {
-		return this.getProperty(PROPERTY_RIGHTMARGIN);
+	@XmlElement(name = PROPERTY_MARGINRIGHT_NAME)
+	public final Integer getMarginRight() {
+		return this.getProperty(PROPERTY_MARGINRIGHT);
 	}
 
 	/**
@@ -913,20 +912,20 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setRightMargin(Integer value) {
-		this.setProperty(PROPERTY_RIGHTMARGIN, value);
+	public final void setMarginRight(Integer value) {
+		this.setProperty(PROPERTY_MARGINRIGHT, value);
 	}
 
 	/**
 	 * 属性名称-上边距
 	 */
-	private static final String PROPERTY_TOPMARGIN_NAME = "TopMargin";
+	private static final String PROPERTY_MARGINTOP_NAME = "MarginTop";
 
 	/**
 	 * 上边距 属性
 	 */
 	@DbField(name = "TMargin", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_TOPMARGIN = registerProperty(PROPERTY_TOPMARGIN_NAME,
+	public static final IPropertyInfo<Integer> PROPERTY_MARGINTOP = registerProperty(PROPERTY_MARGINTOP_NAME,
 			Integer.class, MY_CLASS);
 
 	/**
@@ -934,9 +933,9 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_TOPMARGIN_NAME)
-	public final Integer getTopMargin() {
-		return this.getProperty(PROPERTY_TOPMARGIN);
+	@XmlElement(name = PROPERTY_MARGINTOP_NAME)
+	public final Integer getMarginTop() {
+		return this.getProperty(PROPERTY_MARGINTOP);
 	}
 
 	/**
@@ -945,20 +944,20 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setTopMargin(Integer value) {
-		this.setProperty(PROPERTY_TOPMARGIN, value);
+	public final void setMarginTop(Integer value) {
+		this.setProperty(PROPERTY_MARGINTOP, value);
 	}
 
 	/**
 	 * 属性名称-下边距
 	 */
-	private static final String PROPERTY_BOTTOMMARGIN_NAME = "BottomMargin";
+	private static final String PROPERTY_MARGINBOTTOM_NAME = "MarginBottom";
 
 	/**
 	 * 下边距 属性
 	 */
 	@DbField(name = "BMargin", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_BOTTOMMARGIN = registerProperty(PROPERTY_BOTTOMMARGIN_NAME,
+	public static final IPropertyInfo<Integer> PROPERTY_MARGINBOTTOM = registerProperty(PROPERTY_MARGINBOTTOM_NAME,
 			Integer.class, MY_CLASS);
 
 	/**
@@ -966,9 +965,9 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_BOTTOMMARGIN_NAME)
-	public final Integer getBottomMargin() {
-		return this.getProperty(PROPERTY_BOTTOMMARGIN);
+	@XmlElement(name = PROPERTY_MARGINBOTTOM_NAME)
+	public final Integer getMarginBottom() {
+		return this.getProperty(PROPERTY_MARGINBOTTOM);
 	}
 
 	/**
@@ -977,136 +976,40 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setBottomMargin(Integer value) {
-		this.setProperty(PROPERTY_BOTTOMMARGIN, value);
+	public final void setMarginBottom(Integer value) {
+		this.setProperty(PROPERTY_MARGINBOTTOM, value);
 	}
 
 	/**
-	 * 属性名称-是否可以修改
+	 * 属性名称-区域间隔
 	 */
-	private static final String PROPERTY_CANCHANGE_NAME = "CanChange";
+	private static final String PROPERTY_MARGINAREA_NAME = "MarginArea";
 
 	/**
-	 * 是否可以修改 属性
+	 * 区域间隔 属性
 	 */
-	@DbField(name = "CanChange", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<emYesNo> PROPERTY_CANCHANGE = registerProperty(PROPERTY_CANCHANGE_NAME,
-			emYesNo.class, MY_CLASS);
+	@DbField(name = "AMargin", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	public static final IPropertyInfo<Integer> PROPERTY_MARGINAREA = registerProperty(PROPERTY_MARGINAREA_NAME,
+			Integer.class, MY_CLASS);
 
 	/**
-	 * 获取-是否可以修改
+	 * 获取-区域间隔
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_CANCHANGE_NAME)
-	public final emYesNo getCanChange() {
-		return this.getProperty(PROPERTY_CANCHANGE);
+	@XmlElement(name = PROPERTY_MARGINAREA_NAME)
+	public final Integer getMarginArea() {
+		return this.getProperty(PROPERTY_MARGINAREA);
 	}
 
 	/**
-	 * 设置-是否可以修改
+	 * 设置-区域间隔
 	 * 
 	 * @param value
 	 *            值
 	 */
-	public final void setCanChange(emYesNo value) {
-		this.setProperty(PROPERTY_CANCHANGE, value);
-	}
-
-	/**
-	 * 属性名称-纸张大小
-	 */
-	private static final String PROPERTY_PAPERSIZE_NAME = "PaperSize";
-
-	/**
-	 * 纸张大小 属性
-	 */
-	@DbField(name = "PaperSize", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<emPaperSize> PROPERTY_PAPERSIZE = registerProperty(PROPERTY_PAPERSIZE_NAME,
-			emPaperSize.class, MY_CLASS);
-
-	/**
-	 * 获取-纸张大小
-	 * 
-	 * @return 值
-	 */
-	@XmlElement(name = PROPERTY_PAPERSIZE_NAME)
-	public final emPaperSize getPaperSize() {
-		return this.getProperty(PROPERTY_PAPERSIZE);
-	}
-
-	/**
-	 * 设置-纸张大小
-	 * 
-	 * @param value
-	 *            值
-	 */
-	public final void setPaperSize(emPaperSize value) {
-		this.setProperty(PROPERTY_PAPERSIZE, value);
-	}
-
-	/**
-	 * 属性名称-语言编码
-	 */
-	private static final String PROPERTY_LANGUAGECODE_NAME = "LanguageCode";
-
-	/**
-	 * 语言编码 属性
-	 */
-	@DbField(name = "Language", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<String> PROPERTY_LANGUAGECODE = registerProperty(PROPERTY_LANGUAGECODE_NAME,
-			String.class, MY_CLASS);
-
-	/**
-	 * 获取-语言编码
-	 * 
-	 * @return 值
-	 */
-	@XmlElement(name = PROPERTY_LANGUAGECODE_NAME)
-	public final String getLanguageCode() {
-		return this.getProperty(PROPERTY_LANGUAGECODE);
-	}
-
-	/**
-	 * 设置-语言编码
-	 * 
-	 * @param value
-	 *            值
-	 */
-	public final void setLanguageCode(String value) {
-		this.setProperty(PROPERTY_LANGUAGECODE, value);
-	}
-
-	/**
-	 * 属性名称-类型
-	 */
-	private static final String PROPERTY_CATEGORY_NAME = "Category";
-
-	/**
-	 * 类型 属性
-	 */
-	@DbField(name = "Category", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<String> PROPERTY_CATEGORY = registerProperty(PROPERTY_CATEGORY_NAME, String.class,
-			MY_CLASS);
-
-	/**
-	 * 获取-类型
-	 * 
-	 * @return 值
-	 */
-	@XmlElement(name = PROPERTY_CATEGORY_NAME)
-	public final String getCategory() {
-		return this.getProperty(PROPERTY_CATEGORY);
-	}
-
-	/**
-	 * 设置-类型
-	 * 
-	 * @param value
-	 *            值
-	 */
-	public final void setCategory(String value) {
-		this.setProperty(PROPERTY_CATEGORY, value);
+	public final void setMarginArea(Integer value) {
+		this.setProperty(PROPERTY_MARGINAREA, value);
 	}
 
 	/**
@@ -1240,23 +1143,23 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	/**
 	 * 属性名称-开始部分-左坐标
 	 */
-	private static final String PROPERTY_STARTOFSECTIONLEFT_NAME = "StartOfSectionLeft";
+	private static final String PROPERTY_STARTSECTIONLEFT_NAME = "StartSectionLeft";
 
 	/**
 	 * 开始部分-左坐标 属性
 	 */
 	@DbField(name = "SSLeft", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_STARTOFSECTIONLEFT = registerProperty(
-			PROPERTY_STARTOFSECTIONLEFT_NAME, Integer.class, MY_CLASS);
+	public static final IPropertyInfo<Integer> PROPERTY_STARTSECTIONLEFT = registerProperty(
+			PROPERTY_STARTSECTIONLEFT_NAME, Integer.class, MY_CLASS);
 
 	/**
 	 * 获取-开始部分-左坐标
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_STARTOFSECTIONLEFT_NAME)
-	public final Integer getStartOfSectionLeft() {
-		return this.getProperty(PROPERTY_STARTOFSECTIONLEFT);
+	@XmlElement(name = PROPERTY_STARTSECTIONLEFT_NAME)
+	public final Integer getStartSectionLeft() {
+		return this.getProperty(PROPERTY_STARTSECTIONLEFT);
 	}
 
 	/**
@@ -1265,30 +1168,30 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setStartOfSectionLeft(Integer value) {
-		this.setProperty(PROPERTY_STARTOFSECTIONLEFT, value);
+	public final void setStartSectionLeft(Integer value) {
+		this.setProperty(PROPERTY_STARTSECTIONLEFT, value);
 	}
 
 	/**
 	 * 属性名称-开始部分-上坐标
 	 */
-	private static final String PROPERTY_STARTOFSECTIONTOP_NAME = "StartOfSectionTop";
+	private static final String PROPERTY_STARTSECTIONTOP_NAME = "StartSectionTop";
 
 	/**
 	 * 开始部分-上坐标 属性
 	 */
 	@DbField(name = "SSTop", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_STARTOFSECTIONTOP = registerProperty(
-			PROPERTY_STARTOFSECTIONTOP_NAME, Integer.class, MY_CLASS);
+	public static final IPropertyInfo<Integer> PROPERTY_STARTSECTIONTOP = registerProperty(
+			PROPERTY_STARTSECTIONTOP_NAME, Integer.class, MY_CLASS);
 
 	/**
 	 * 获取-开始部分-上坐标
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_STARTOFSECTIONTOP_NAME)
-	public final Integer getStartOfSectionTop() {
-		return this.getProperty(PROPERTY_STARTOFSECTIONTOP);
+	@XmlElement(name = PROPERTY_STARTSECTIONTOP_NAME)
+	public final Integer getStartSectionTop() {
+		return this.getProperty(PROPERTY_STARTSECTIONTOP);
 	}
 
 	/**
@@ -1297,30 +1200,30 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setStartOfSectionTop(Integer value) {
-		this.setProperty(PROPERTY_STARTOFSECTIONTOP, value);
+	public final void setStartSectionTop(Integer value) {
+		this.setProperty(PROPERTY_STARTSECTIONTOP, value);
 	}
 
 	/**
 	 * 属性名称-开始部分-宽度
 	 */
-	private static final String PROPERTY_STARTOFSECTIONWIDTH_NAME = "StartOfSectionWidth";
+	private static final String PROPERTY_STARTSECTIONWIDTH_NAME = "StartSectionWidth";
 
 	/**
 	 * 开始部分-宽度 属性
 	 */
 	@DbField(name = "SSWidth", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_STARTOFSECTIONWIDTH = registerProperty(
-			PROPERTY_STARTOFSECTIONWIDTH_NAME, Integer.class, MY_CLASS);
+	public static final IPropertyInfo<Integer> PROPERTY_STARTSECTIONWIDTH = registerProperty(
+			PROPERTY_STARTSECTIONWIDTH_NAME, Integer.class, MY_CLASS);
 
 	/**
 	 * 获取-开始部分-宽度
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_STARTOFSECTIONWIDTH_NAME)
-	public final Integer getStartOfSectionWidth() {
-		return this.getProperty(PROPERTY_STARTOFSECTIONWIDTH);
+	@XmlElement(name = PROPERTY_STARTSECTIONWIDTH_NAME)
+	public final Integer getStartSectionWidth() {
+		return this.getProperty(PROPERTY_STARTSECTIONWIDTH);
 	}
 
 	/**
@@ -1329,30 +1232,30 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setStartOfSectionWidth(Integer value) {
-		this.setProperty(PROPERTY_STARTOFSECTIONWIDTH, value);
+	public final void setStartSectionWidth(Integer value) {
+		this.setProperty(PROPERTY_STARTSECTIONWIDTH, value);
 	}
 
 	/**
 	 * 属性名称-开始部分-高度
 	 */
-	private static final String PROPERTY_STARTOFSECTIONHEIGHT_NAME = "StartOfSectionHeight";
+	private static final String PROPERTY_STARTSECTIONHEIGHT_NAME = "StartSectionHeight";
 
 	/**
 	 * 开始部分-高度 属性
 	 */
 	@DbField(name = "SSHeight", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_STARTOFSECTIONHEIGHT = registerProperty(
-			PROPERTY_STARTOFSECTIONHEIGHT_NAME, Integer.class, MY_CLASS);
+	public static final IPropertyInfo<Integer> PROPERTY_STARTSECTIONHEIGHT = registerProperty(
+			PROPERTY_STARTSECTIONHEIGHT_NAME, Integer.class, MY_CLASS);
 
 	/**
 	 * 获取-开始部分-高度
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_STARTOFSECTIONHEIGHT_NAME)
-	public final Integer getStartOfSectionHeight() {
-		return this.getProperty(PROPERTY_STARTOFSECTIONHEIGHT);
+	@XmlElement(name = PROPERTY_STARTSECTIONHEIGHT_NAME)
+	public final Integer getStartSectionHeight() {
+		return this.getProperty(PROPERTY_STARTSECTIONHEIGHT);
 	}
 
 	/**
@@ -1361,30 +1264,30 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setStartOfSectionHeight(Integer value) {
-		this.setProperty(PROPERTY_STARTOFSECTIONHEIGHT, value);
+	public final void setStartSectionHeight(Integer value) {
+		this.setProperty(PROPERTY_STARTSECTIONHEIGHT, value);
 	}
 
 	/**
 	 * 属性名称-重复区域头-左坐标
 	 */
-	private static final String PROPERTY_REPETITIVEAREAHEADERLEFT_NAME = "RepetitiveAreaHeaderLeft";
+	private static final String PROPERTY_REPETITIONHEADERLEFT_NAME = "RepetitionHeaderLeft";
 
 	/**
 	 * 重复区域头-左坐标 属性
 	 */
 	@DbField(name = "RAHLeft", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_REPETITIVEAREAHEADERLEFT = registerProperty(
-			PROPERTY_REPETITIVEAREAHEADERLEFT_NAME, Integer.class, MY_CLASS);
+	public static final IPropertyInfo<Integer> PROPERTY_REPETITIONHEADERLEFT = registerProperty(
+			PROPERTY_REPETITIONHEADERLEFT_NAME, Integer.class, MY_CLASS);
 
 	/**
 	 * 获取-重复区域头-左坐标
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_REPETITIVEAREAHEADERLEFT_NAME)
-	public final Integer getRepetitiveAreaHeaderLeft() {
-		return this.getProperty(PROPERTY_REPETITIVEAREAHEADERLEFT);
+	@XmlElement(name = PROPERTY_REPETITIONHEADERLEFT_NAME)
+	public final Integer getRepetitionHeaderLeft() {
+		return this.getProperty(PROPERTY_REPETITIONHEADERLEFT);
 	}
 
 	/**
@@ -1393,30 +1296,30 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setRepetitiveAreaHeaderLeft(Integer value) {
-		this.setProperty(PROPERTY_REPETITIVEAREAHEADERLEFT, value);
+	public final void setRepetitionHeaderLeft(Integer value) {
+		this.setProperty(PROPERTY_REPETITIONHEADERLEFT, value);
 	}
 
 	/**
 	 * 属性名称-重复区域头-上坐标
 	 */
-	private static final String PROPERTY_REPETITIVEAREAHEADERTOP_NAME = "RepetitiveAreaHeaderTop";
+	private static final String PROPERTY_REPETITIONHEADERTOP_NAME = "RepetitionHeaderTop";
 
 	/**
 	 * 重复区域头-上坐标 属性
 	 */
 	@DbField(name = "RAHTop", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_REPETITIVEAREAHEADERTOP = registerProperty(
-			PROPERTY_REPETITIVEAREAHEADERTOP_NAME, Integer.class, MY_CLASS);
+	public static final IPropertyInfo<Integer> PROPERTY_REPETITIONHEADERTOP = registerProperty(
+			PROPERTY_REPETITIONHEADERTOP_NAME, Integer.class, MY_CLASS);
 
 	/**
 	 * 获取-重复区域头-上坐标
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_REPETITIVEAREAHEADERTOP_NAME)
-	public final Integer getRepetitiveAreaHeaderTop() {
-		return this.getProperty(PROPERTY_REPETITIVEAREAHEADERTOP);
+	@XmlElement(name = PROPERTY_REPETITIONHEADERTOP_NAME)
+	public final Integer getRepetitionHeaderTop() {
+		return this.getProperty(PROPERTY_REPETITIONHEADERTOP);
 	}
 
 	/**
@@ -1425,30 +1328,30 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setRepetitiveAreaHeaderTop(Integer value) {
-		this.setProperty(PROPERTY_REPETITIVEAREAHEADERTOP, value);
+	public final void setRepetitionHeaderTop(Integer value) {
+		this.setProperty(PROPERTY_REPETITIONHEADERTOP, value);
 	}
 
 	/**
 	 * 属性名称-重复区域头-宽度
 	 */
-	private static final String PROPERTY_REPETITIVEAREAHEADERWIDTH_NAME = "RepetitiveAreaHeaderWidth";
+	private static final String PROPERTY_REPETITIONHEADERWIDTH_NAME = "RepetitionHeaderWidth";
 
 	/**
 	 * 重复区域头-宽度 属性
 	 */
 	@DbField(name = "RAHWidth", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_REPETITIVEAREAHEADERWIDTH = registerProperty(
-			PROPERTY_REPETITIVEAREAHEADERWIDTH_NAME, Integer.class, MY_CLASS);
+	public static final IPropertyInfo<Integer> PROPERTY_REPETITIONHEADERWIDTH = registerProperty(
+			PROPERTY_REPETITIONHEADERWIDTH_NAME, Integer.class, MY_CLASS);
 
 	/**
 	 * 获取-重复区域头-宽度
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_REPETITIVEAREAHEADERWIDTH_NAME)
-	public final Integer getRepetitiveAreaHeaderWidth() {
-		return this.getProperty(PROPERTY_REPETITIVEAREAHEADERWIDTH);
+	@XmlElement(name = PROPERTY_REPETITIONHEADERWIDTH_NAME)
+	public final Integer getRepetitionHeaderWidth() {
+		return this.getProperty(PROPERTY_REPETITIONHEADERWIDTH);
 	}
 
 	/**
@@ -1457,30 +1360,30 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setRepetitiveAreaHeaderWidth(Integer value) {
-		this.setProperty(PROPERTY_REPETITIVEAREAHEADERWIDTH, value);
+	public final void setRepetitionHeaderWidth(Integer value) {
+		this.setProperty(PROPERTY_REPETITIONHEADERWIDTH, value);
 	}
 
 	/**
 	 * 属性名称-重复区域头-高度
 	 */
-	private static final String PROPERTY_REPETITIVEAREAHEADERHEIGHT_NAME = "RepetitiveAreaHeaderHeight";
+	private static final String PROPERTY_REPETITIONHEADERHEIGHT_NAME = "RepetitionHeaderHeight";
 
 	/**
 	 * 重复区域头-高度 属性
 	 */
 	@DbField(name = "RAHHeight", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_REPETITIVEAREAHEADERHEIGHT = registerProperty(
-			PROPERTY_REPETITIVEAREAHEADERHEIGHT_NAME, Integer.class, MY_CLASS);
+	public static final IPropertyInfo<Integer> PROPERTY_REPETITIONHEADERHEIGHT = registerProperty(
+			PROPERTY_REPETITIONHEADERHEIGHT_NAME, Integer.class, MY_CLASS);
 
 	/**
 	 * 获取-重复区域头-高度
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_REPETITIVEAREAHEADERHEIGHT_NAME)
-	public final Integer getRepetitiveAreaHeaderHeight() {
-		return this.getProperty(PROPERTY_REPETITIVEAREAHEADERHEIGHT);
+	@XmlElement(name = PROPERTY_REPETITIONHEADERHEIGHT_NAME)
+	public final Integer getRepetitionHeaderHeight() {
+		return this.getProperty(PROPERTY_REPETITIONHEADERHEIGHT);
 	}
 
 	/**
@@ -1489,30 +1392,30 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setRepetitiveAreaHeaderHeight(Integer value) {
-		this.setProperty(PROPERTY_REPETITIVEAREAHEADERHEIGHT, value);
+	public final void setRepetitionHeaderHeight(Integer value) {
+		this.setProperty(PROPERTY_REPETITIONHEADERHEIGHT, value);
 	}
 
 	/**
 	 * 属性名称-重复区域-左坐标
 	 */
-	private static final String PROPERTY_REPETITIVEAREALEFT_NAME = "RepetitiveAreaLeft";
+	private static final String PROPERTY_REPETITIONLEFT_NAME = "RepetitionLeft";
 
 	/**
 	 * 重复区域-左坐标 属性
 	 */
 	@DbField(name = "RALeft", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_REPETITIVEAREALEFT = registerProperty(
-			PROPERTY_REPETITIVEAREALEFT_NAME, Integer.class, MY_CLASS);
+	public static final IPropertyInfo<Integer> PROPERTY_REPETITIONLEFT = registerProperty(PROPERTY_REPETITIONLEFT_NAME,
+			Integer.class, MY_CLASS);
 
 	/**
 	 * 获取-重复区域-左坐标
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_REPETITIVEAREALEFT_NAME)
-	public final Integer getRepetitiveAreaLeft() {
-		return this.getProperty(PROPERTY_REPETITIVEAREALEFT);
+	@XmlElement(name = PROPERTY_REPETITIONLEFT_NAME)
+	public final Integer getRepetitionLeft() {
+		return this.getProperty(PROPERTY_REPETITIONLEFT);
 	}
 
 	/**
@@ -1521,30 +1424,30 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setRepetitiveAreaLeft(Integer value) {
-		this.setProperty(PROPERTY_REPETITIVEAREALEFT, value);
+	public final void setRepetitionLeft(Integer value) {
+		this.setProperty(PROPERTY_REPETITIONLEFT, value);
 	}
 
 	/**
 	 * 属性名称-重复区域-上坐标
 	 */
-	private static final String PROPERTY_REPETITIVEAREATOP_NAME = "RepetitiveAreaTop";
+	private static final String PROPERTY_REPETITIONTOP_NAME = "RepetitionTop";
 
 	/**
 	 * 重复区域-上坐标 属性
 	 */
 	@DbField(name = "RATop", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_REPETITIVEAREATOP = registerProperty(
-			PROPERTY_REPETITIVEAREATOP_NAME, Integer.class, MY_CLASS);
+	public static final IPropertyInfo<Integer> PROPERTY_REPETITIONTOP = registerProperty(PROPERTY_REPETITIONTOP_NAME,
+			Integer.class, MY_CLASS);
 
 	/**
 	 * 获取-重复区域-上坐标
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_REPETITIVEAREATOP_NAME)
-	public final Integer getRepetitiveAreaTop() {
-		return this.getProperty(PROPERTY_REPETITIVEAREATOP);
+	@XmlElement(name = PROPERTY_REPETITIONTOP_NAME)
+	public final Integer getRepetitionTop() {
+		return this.getProperty(PROPERTY_REPETITIONTOP);
 	}
 
 	/**
@@ -1553,30 +1456,30 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setRepetitiveAreaTop(Integer value) {
-		this.setProperty(PROPERTY_REPETITIVEAREATOP, value);
+	public final void setRepetitionTop(Integer value) {
+		this.setProperty(PROPERTY_REPETITIONTOP, value);
 	}
 
 	/**
 	 * 属性名称-重复区域-宽度
 	 */
-	private static final String PROPERTY_REPETITIVEAREAWIDTH_NAME = "RepetitiveAreaWidth";
+	private static final String PROPERTY_REPETITIONWIDTH_NAME = "RepetitionWidth";
 
 	/**
 	 * 重复区域-宽度 属性
 	 */
 	@DbField(name = "RAWidth", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_REPETITIVEAREAWIDTH = registerProperty(
-			PROPERTY_REPETITIVEAREAWIDTH_NAME, Integer.class, MY_CLASS);
+	public static final IPropertyInfo<Integer> PROPERTY_REPETITIONWIDTH = registerProperty(
+			PROPERTY_REPETITIONWIDTH_NAME, Integer.class, MY_CLASS);
 
 	/**
 	 * 获取-重复区域-宽度
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_REPETITIVEAREAWIDTH_NAME)
-	public final Integer getRepetitiveAreaWidth() {
-		return this.getProperty(PROPERTY_REPETITIVEAREAWIDTH);
+	@XmlElement(name = PROPERTY_REPETITIONWIDTH_NAME)
+	public final Integer getRepetitionWidth() {
+		return this.getProperty(PROPERTY_REPETITIONWIDTH);
 	}
 
 	/**
@@ -1585,30 +1488,30 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setRepetitiveAreaWidth(Integer value) {
-		this.setProperty(PROPERTY_REPETITIVEAREAWIDTH, value);
+	public final void setRepetitionWidth(Integer value) {
+		this.setProperty(PROPERTY_REPETITIONWIDTH, value);
 	}
 
 	/**
 	 * 属性名称-重复区域-高度
 	 */
-	private static final String PROPERTY_REPETITIVEAREAHEIGHT_NAME = "RepetitiveAreaHeight";
+	private static final String PROPERTY_REPETITIONHEIGHT_NAME = "RepetitionHeight";
 
 	/**
 	 * 重复区域-高度 属性
 	 */
 	@DbField(name = "RAHeight", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_REPETITIVEAREAHEIGHT = registerProperty(
-			PROPERTY_REPETITIVEAREAHEIGHT_NAME, Integer.class, MY_CLASS);
+	public static final IPropertyInfo<Integer> PROPERTY_REPETITIONHEIGHT = registerProperty(
+			PROPERTY_REPETITIONHEIGHT_NAME, Integer.class, MY_CLASS);
 
 	/**
 	 * 获取-重复区域-高度
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_REPETITIVEAREAHEIGHT_NAME)
-	public final Integer getRepetitiveAreaHeight() {
-		return this.getProperty(PROPERTY_REPETITIVEAREAHEIGHT);
+	@XmlElement(name = PROPERTY_REPETITIONHEIGHT_NAME)
+	public final Integer getRepetitionHeight() {
+		return this.getProperty(PROPERTY_REPETITIONHEIGHT);
 	}
 
 	/**
@@ -1617,30 +1520,30 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setRepetitiveAreaHeight(Integer value) {
-		this.setProperty(PROPERTY_REPETITIVEAREAHEIGHT, value);
+	public final void setRepetitionHeight(Integer value) {
+		this.setProperty(PROPERTY_REPETITIONHEIGHT, value);
 	}
 
 	/**
 	 * 属性名称-重复区域脚-左坐标
 	 */
-	private static final String PROPERTY_REPETITIVEAREAFOOTERLEFT_NAME = "RepetitiveAreaFooterLeft";
+	private static final String PROPERTY_REPETITIONFOOTERLEFT_NAME = "RepetitionFooterLeft";
 
 	/**
 	 * 重复区域脚-左坐标 属性
 	 */
 	@DbField(name = "RAFLeft", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_REPETITIVEAREAFOOTERLEFT = registerProperty(
-			PROPERTY_REPETITIVEAREAFOOTERLEFT_NAME, Integer.class, MY_CLASS);
+	public static final IPropertyInfo<Integer> PROPERTY_REPETITIONFOOTERLEFT = registerProperty(
+			PROPERTY_REPETITIONFOOTERLEFT_NAME, Integer.class, MY_CLASS);
 
 	/**
 	 * 获取-重复区域脚-左坐标
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_REPETITIVEAREAFOOTERLEFT_NAME)
-	public final Integer getRepetitiveAreaFooterLeft() {
-		return this.getProperty(PROPERTY_REPETITIVEAREAFOOTERLEFT);
+	@XmlElement(name = PROPERTY_REPETITIONFOOTERLEFT_NAME)
+	public final Integer getRepetitionFooterLeft() {
+		return this.getProperty(PROPERTY_REPETITIONFOOTERLEFT);
 	}
 
 	/**
@@ -1649,30 +1552,30 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setRepetitiveAreaFooterLeft(Integer value) {
-		this.setProperty(PROPERTY_REPETITIVEAREAFOOTERLEFT, value);
+	public final void setRepetitionFooterLeft(Integer value) {
+		this.setProperty(PROPERTY_REPETITIONFOOTERLEFT, value);
 	}
 
 	/**
 	 * 属性名称-重复区域脚-上坐标
 	 */
-	private static final String PROPERTY_REPETITIVEAREAFOOTERTOP_NAME = "RepetitiveAreaFooterTop";
+	private static final String PROPERTY_REPETITIONFOOTERTOP_NAME = "RepetitionFooterTop";
 
 	/**
 	 * 重复区域脚-上坐标 属性
 	 */
 	@DbField(name = "RAFTop", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_REPETITIVEAREAFOOTERTOP = registerProperty(
-			PROPERTY_REPETITIVEAREAFOOTERTOP_NAME, Integer.class, MY_CLASS);
+	public static final IPropertyInfo<Integer> PROPERTY_REPETITIONFOOTERTOP = registerProperty(
+			PROPERTY_REPETITIONFOOTERTOP_NAME, Integer.class, MY_CLASS);
 
 	/**
 	 * 获取-重复区域脚-上坐标
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_REPETITIVEAREAFOOTERTOP_NAME)
-	public final Integer getRepetitiveAreaFooterTop() {
-		return this.getProperty(PROPERTY_REPETITIVEAREAFOOTERTOP);
+	@XmlElement(name = PROPERTY_REPETITIONFOOTERTOP_NAME)
+	public final Integer getRepetitionFooterTop() {
+		return this.getProperty(PROPERTY_REPETITIONFOOTERTOP);
 	}
 
 	/**
@@ -1681,30 +1584,30 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setRepetitiveAreaFooterTop(Integer value) {
-		this.setProperty(PROPERTY_REPETITIVEAREAFOOTERTOP, value);
+	public final void setRepetitionFooterTop(Integer value) {
+		this.setProperty(PROPERTY_REPETITIONFOOTERTOP, value);
 	}
 
 	/**
 	 * 属性名称-重复区域脚-宽度
 	 */
-	private static final String PROPERTY_REPETITIVEAREAFOOTERWIDTH_NAME = "RepetitiveAreaFooterWidth";
+	private static final String PROPERTY_REPETITIONFOOTERWIDTH_NAME = "RepetitionFooterWidth";
 
 	/**
 	 * 重复区域脚-宽度 属性
 	 */
 	@DbField(name = "RAFWidth", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_REPETITIVEAREAFOOTERWIDTH = registerProperty(
-			PROPERTY_REPETITIVEAREAFOOTERWIDTH_NAME, Integer.class, MY_CLASS);
+	public static final IPropertyInfo<Integer> PROPERTY_REPETITIONFOOTERWIDTH = registerProperty(
+			PROPERTY_REPETITIONFOOTERWIDTH_NAME, Integer.class, MY_CLASS);
 
 	/**
 	 * 获取-重复区域脚-宽度
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_REPETITIVEAREAFOOTERWIDTH_NAME)
-	public final Integer getRepetitiveAreaFooterWidth() {
-		return this.getProperty(PROPERTY_REPETITIVEAREAFOOTERWIDTH);
+	@XmlElement(name = PROPERTY_REPETITIONFOOTERWIDTH_NAME)
+	public final Integer getRepetitionFooterWidth() {
+		return this.getProperty(PROPERTY_REPETITIONFOOTERWIDTH);
 	}
 
 	/**
@@ -1713,30 +1616,30 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setRepetitiveAreaFooterWidth(Integer value) {
-		this.setProperty(PROPERTY_REPETITIVEAREAFOOTERWIDTH, value);
+	public final void setRepetitionFooterWidth(Integer value) {
+		this.setProperty(PROPERTY_REPETITIONFOOTERWIDTH, value);
 	}
 
 	/**
 	 * 属性名称-重复区域脚-高度
 	 */
-	private static final String PROPERTY_REPETITIVEAREAFOOTERHEIGHT_NAME = "RepetitiveAreaFooterHeight";
+	private static final String PROPERTY_REPETITIONFOOTERHEIGHT_NAME = "RepetitionFooterHeight";
 
 	/**
 	 * 重复区域脚-高度 属性
 	 */
 	@DbField(name = "RAFHeight", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_REPETITIVEAREAFOOTERHEIGHT = registerProperty(
-			PROPERTY_REPETITIVEAREAFOOTERHEIGHT_NAME, Integer.class, MY_CLASS);
+	public static final IPropertyInfo<Integer> PROPERTY_REPETITIONFOOTERHEIGHT = registerProperty(
+			PROPERTY_REPETITIONFOOTERHEIGHT_NAME, Integer.class, MY_CLASS);
 
 	/**
 	 * 获取-重复区域脚-高度
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_REPETITIVEAREAFOOTERHEIGHT_NAME)
-	public final Integer getRepetitiveAreaFooterHeight() {
-		return this.getProperty(PROPERTY_REPETITIVEAREAFOOTERHEIGHT);
+	@XmlElement(name = PROPERTY_REPETITIONFOOTERHEIGHT_NAME)
+	public final Integer getRepetitionFooterHeight() {
+		return this.getProperty(PROPERTY_REPETITIONFOOTERHEIGHT);
 	}
 
 	/**
@@ -1745,30 +1648,30 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setRepetitiveAreaFooterHeight(Integer value) {
-		this.setProperty(PROPERTY_REPETITIVEAREAFOOTERHEIGHT, value);
+	public final void setRepetitionFooterHeight(Integer value) {
+		this.setProperty(PROPERTY_REPETITIONFOOTERHEIGHT, value);
 	}
 
 	/**
 	 * 属性名称-结束部分-左坐标
 	 */
-	private static final String PROPERTY_ENDOFSECTIONLEFT_NAME = "EndOfSectionLeft";
+	private static final String PROPERTY_ENDSECTIONLEFT_NAME = "EndSectionLeft";
 
 	/**
 	 * 结束部分-左坐标 属性
 	 */
 	@DbField(name = "ESLeft", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_ENDOFSECTIONLEFT = registerProperty(
-			PROPERTY_ENDOFSECTIONLEFT_NAME, Integer.class, MY_CLASS);
+	public static final IPropertyInfo<Integer> PROPERTY_ENDSECTIONLEFT = registerProperty(PROPERTY_ENDSECTIONLEFT_NAME,
+			Integer.class, MY_CLASS);
 
 	/**
 	 * 获取-结束部分-左坐标
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_ENDOFSECTIONLEFT_NAME)
-	public final Integer getEndOfSectionLeft() {
-		return this.getProperty(PROPERTY_ENDOFSECTIONLEFT);
+	@XmlElement(name = PROPERTY_ENDSECTIONLEFT_NAME)
+	public final Integer getEndSectionLeft() {
+		return this.getProperty(PROPERTY_ENDSECTIONLEFT);
 	}
 
 	/**
@@ -1777,30 +1680,30 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setEndOfSectionLeft(Integer value) {
-		this.setProperty(PROPERTY_ENDOFSECTIONLEFT, value);
+	public final void setEndSectionLeft(Integer value) {
+		this.setProperty(PROPERTY_ENDSECTIONLEFT, value);
 	}
 
 	/**
 	 * 属性名称-结束部分-上坐标
 	 */
-	private static final String PROPERTY_ENDOFSECTIONTOP_NAME = "EndOfSectionTop";
+	private static final String PROPERTY_ENDSECTIONTOP_NAME = "EndSectionTop";
 
 	/**
 	 * 结束部分-上坐标 属性
 	 */
 	@DbField(name = "ESTop", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_ENDOFSECTIONTOP = registerProperty(
-			PROPERTY_ENDOFSECTIONTOP_NAME, Integer.class, MY_CLASS);
+	public static final IPropertyInfo<Integer> PROPERTY_ENDSECTIONTOP = registerProperty(PROPERTY_ENDSECTIONTOP_NAME,
+			Integer.class, MY_CLASS);
 
 	/**
 	 * 获取-结束部分-上坐标
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_ENDOFSECTIONTOP_NAME)
-	public final Integer getEndOfSectionTop() {
-		return this.getProperty(PROPERTY_ENDOFSECTIONTOP);
+	@XmlElement(name = PROPERTY_ENDSECTIONTOP_NAME)
+	public final Integer getEndSectionTop() {
+		return this.getProperty(PROPERTY_ENDSECTIONTOP);
 	}
 
 	/**
@@ -1809,30 +1712,30 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setEndOfSectionTop(Integer value) {
-		this.setProperty(PROPERTY_ENDOFSECTIONTOP, value);
+	public final void setEndSectionTop(Integer value) {
+		this.setProperty(PROPERTY_ENDSECTIONTOP, value);
 	}
 
 	/**
 	 * 属性名称-结束部分-宽度
 	 */
-	private static final String PROPERTY_ENDOFSECTIONWIDTH_NAME = "EndOfSectionWidth";
+	private static final String PROPERTY_ENDSECTIONWIDTH_NAME = "EndSectionWidth";
 
 	/**
 	 * 结束部分-宽度 属性
 	 */
 	@DbField(name = "ESWidth", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_ENDOFSECTIONWIDTH = registerProperty(
-			PROPERTY_ENDOFSECTIONWIDTH_NAME, Integer.class, MY_CLASS);
+	public static final IPropertyInfo<Integer> PROPERTY_ENDSECTIONWIDTH = registerProperty(
+			PROPERTY_ENDSECTIONWIDTH_NAME, Integer.class, MY_CLASS);
 
 	/**
 	 * 获取-结束部分-宽度
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_ENDOFSECTIONWIDTH_NAME)
-	public final Integer getEndOfSectionWidth() {
-		return this.getProperty(PROPERTY_ENDOFSECTIONWIDTH);
+	@XmlElement(name = PROPERTY_ENDSECTIONWIDTH_NAME)
+	public final Integer getEndSectionWidth() {
+		return this.getProperty(PROPERTY_ENDSECTIONWIDTH);
 	}
 
 	/**
@@ -1841,30 +1744,30 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setEndOfSectionWidth(Integer value) {
-		this.setProperty(PROPERTY_ENDOFSECTIONWIDTH, value);
+	public final void setEndSectionWidth(Integer value) {
+		this.setProperty(PROPERTY_ENDSECTIONWIDTH, value);
 	}
 
 	/**
 	 * 属性名称-结束部分-高度
 	 */
-	private static final String PROPERTY_ENDOFSECTIONHEIGHT_NAME = "EndOfSectionHeight";
+	private static final String PROPERTY_ENDSECTIONHEIGHT_NAME = "EndSectionHeight";
 
 	/**
 	 * 结束部分-高度 属性
 	 */
 	@DbField(name = "ESHeight", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_ENDOFSECTIONHEIGHT = registerProperty(
-			PROPERTY_ENDOFSECTIONHEIGHT_NAME, Integer.class, MY_CLASS);
+	public static final IPropertyInfo<Integer> PROPERTY_ENDSECTIONHEIGHT = registerProperty(
+			PROPERTY_ENDSECTIONHEIGHT_NAME, Integer.class, MY_CLASS);
 
 	/**
 	 * 获取-结束部分-高度
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_ENDOFSECTIONHEIGHT_NAME)
-	public final Integer getEndOfSectionHeight() {
-		return this.getProperty(PROPERTY_ENDOFSECTIONHEIGHT);
+	@XmlElement(name = PROPERTY_ENDSECTIONHEIGHT_NAME)
+	public final Integer getEndSectionHeight() {
+		return this.getProperty(PROPERTY_ENDSECTIONHEIGHT);
 	}
 
 	/**
@@ -1873,8 +1776,8 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setEndOfSectionHeight(Integer value) {
-		this.setProperty(PROPERTY_ENDOFSECTIONHEIGHT, value);
+	public final void setEndSectionHeight(Integer value) {
+		this.setProperty(PROPERTY_ENDSECTIONHEIGHT, value);
 	}
 
 	/**
@@ -2006,164 +1909,234 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	}
 
 	/**
-	 * 属性名称-区域间隔
+	 * 属性名称-导出模板-页眉
 	 */
-	private static final String PROPERTY_AREAMARGIN_NAME = "AreaMargin";
+	private static final String PROPERTY_PAGEHEADERS_NAME = "PageHeaders";
 
 	/**
-	 * 区域间隔 属性
+	 * 导出模板-页眉的集合属性
+	 * 
 	 */
-	@DbField(name = "AreaMargin", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_AREAMARGIN = registerProperty(PROPERTY_AREAMARGIN_NAME,
-			Integer.class, MY_CLASS);
+	public static final IPropertyInfo<IExportTemplateItems> PROPERTY_PAGEHEADERS = registerProperty(
+			PROPERTY_PAGEHEADERS_NAME, IExportTemplateItems.class, MY_CLASS);
 
 	/**
-	 * 获取-区域间隔
+	 * 获取-导出模板-页眉
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_AREAMARGIN_NAME)
-	public final Integer getAreaMargin() {
-		return this.getProperty(PROPERTY_AREAMARGIN);
+	@XmlElementWrapper(name = PROPERTY_PAGEHEADERS_NAME)
+	@XmlElement(name = ExportTemplateItem.BUSINESS_OBJECT_NAME, type = ExportTemplateItem.class)
+	public final IExportTemplateItems getPageHeaders() {
+		return this.getProperty(PROPERTY_PAGEHEADERS);
 	}
 
 	/**
-	 * 设置-区域间隔
+	 * 设置-导出模板-页眉
 	 * 
 	 * @param value
 	 *            值
 	 */
-	public final void setAreaMargin(Integer value) {
-		this.setProperty(PROPERTY_AREAMARGIN, value);
+	public final void setPageHeaders(IExportTemplateItems value) {
+		this.setProperty(PROPERTY_PAGEHEADERS, value);
 	}
 
 	/**
-	 * 属性名称-业务对象编码
+	 * 属性名称-导出模板-开始区
 	 */
-	private static final String PROPERTY_BOCODE_NAME = "BOCode";
+	private static final String PROPERTY_STARTSECTIONS_NAME = "StartSections";
 
 	/**
-	 * 业务对象编码 属性
+	 * 导出模板-开始区的集合属性
+	 * 
 	 */
-	@DbField(name = "BOCode", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<String> PROPERTY_BOCODE = registerProperty(PROPERTY_BOCODE_NAME, String.class,
-			MY_CLASS);
+	public static final IPropertyInfo<IExportTemplateItems> PROPERTY_STARTSECTIONS = registerProperty(
+			PROPERTY_STARTSECTIONS_NAME, IExportTemplateItems.class, MY_CLASS);
 
 	/**
-	 * 获取-业务对象编码
+	 * 获取-导出模板-开始区
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_BOCODE_NAME)
-	public final String getBOCode() {
-		return this.getProperty(PROPERTY_BOCODE);
+	@XmlElementWrapper(name = PROPERTY_STARTSECTIONS_NAME)
+	@XmlElement(name = ExportTemplateItem.BUSINESS_OBJECT_NAME, type = ExportTemplateItem.class)
+	public final IExportTemplateItems getStartSections() {
+		return this.getProperty(PROPERTY_STARTSECTIONS);
 	}
 
 	/**
-	 * 设置-业务对象编码
+	 * 设置-导出模板-开始区
 	 * 
 	 * @param value
 	 *            值
 	 */
-	public final void setBOCode(String value) {
-		this.setProperty(PROPERTY_BOCODE, value);
+	public final void setStartSections(IExportTemplateItems value) {
+		this.setProperty(PROPERTY_STARTSECTIONS, value);
 	}
 
 	/**
-	 * 属性名称-平台简码
+	 * 属性名称-导出模板-重复区头
 	 */
-	private static final String PROPERTY_PLANTFORM_NAME = "Plantform";
+	private static final String PROPERTY_REPETITIONHEADERS_NAME = "RepetitionHeaders";
 
 	/**
-	 * 平台简码 属性
+	 * 导出模板-重复区头的集合属性
+	 * 
 	 */
-	@DbField(name = "Plantform", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<String> PROPERTY_PLANTFORM = registerProperty(PROPERTY_PLANTFORM_NAME,
-			String.class, MY_CLASS);
+	public static final IPropertyInfo<IExportTemplateItems> PROPERTY_REPETITIONHEADERS = registerProperty(
+			PROPERTY_REPETITIONHEADERS_NAME, IExportTemplateItems.class, MY_CLASS);
 
 	/**
-	 * 获取-平台简码
+	 * 获取-导出模板-重复区头
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_PLANTFORM_NAME)
-	public final String getPlantform() {
-		return this.getProperty(PROPERTY_PLANTFORM);
+	@XmlElementWrapper(name = PROPERTY_REPETITIONHEADERS_NAME)
+	@XmlElement(name = ExportTemplateItem.BUSINESS_OBJECT_NAME, type = ExportTemplateItem.class)
+	public final IExportTemplateItems getRepetitionHeaders() {
+		return this.getProperty(PROPERTY_REPETITIONHEADERS);
 	}
 
 	/**
-	 * 设置-平台简码
+	 * 设置-导出模板-重复区头
 	 * 
 	 * @param value
 	 *            值
 	 */
-	public final void setPlantform(String value) {
-		this.setProperty(PROPERTY_PLANTFORM, value);
+	public final void setRepetitionHeaders(IExportTemplateItems value) {
+		this.setProperty(PROPERTY_REPETITIONHEADERS, value);
 	}
 
 	/**
-	 * 属性名称-输出份数
+	 * 属性名称-导出模板-重复区
 	 */
-	private static final String PROPERTY_COPYNUMBER_NAME = "CopyNumber";
+	private static final String PROPERTY_REPETITIONS_NAME = "Repetitions";
 
 	/**
-	 * 输出份数 属性
+	 * 导出模板-重复区的集合属性
+	 * 
 	 */
-	@DbField(name = "CopyNum", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_COPYNUMBER = registerProperty(PROPERTY_COPYNUMBER_NAME,
-			Integer.class, MY_CLASS);
+	public static final IPropertyInfo<IExportTemplateItems> PROPERTY_REPETITIONS = registerProperty(
+			PROPERTY_REPETITIONS_NAME, IExportTemplateItems.class, MY_CLASS);
 
 	/**
-	 * 获取-输出份数
+	 * 获取-导出模板-重复区
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_COPYNUMBER_NAME)
-	public final Integer getCopyNumber() {
-		return this.getProperty(PROPERTY_COPYNUMBER);
+	@XmlElementWrapper(name = PROPERTY_REPETITIONS_NAME)
+	@XmlElement(name = ExportTemplateItem.BUSINESS_OBJECT_NAME, type = ExportTemplateItem.class)
+	public final IExportTemplateItems getRepetitions() {
+		return this.getProperty(PROPERTY_REPETITIONS);
 	}
 
 	/**
-	 * 设置-输出份数
+	 * 设置-导出模板-重复区
 	 * 
 	 * @param value
 	 *            值
 	 */
-	public final void setCopyNumber(Integer value) {
-		this.setProperty(PROPERTY_COPYNUMBER, value);
+	public final void setRepetitions(IExportTemplateItems value) {
+		this.setProperty(PROPERTY_REPETITIONS, value);
 	}
 
 	/**
-	 * 属性名称-数据导出模板-项
+	 * 属性名称-导出模板-重复区脚
 	 */
-	private static final String PROPERTY_DATAEXPORTTEMPLATEITEMS_NAME = "DataExportTemplateItems";
+	private static final String PROPERTY_REPETITIONFOOTERS_NAME = "RepetitionFooters";
 
 	/**
-	 * 数据导出模板-项的集合属性
+	 * 导出模板-重复区脚的集合属性
 	 * 
 	 */
-	public static final IPropertyInfo<IDataExportTemplateItems> PROPERTY_DATAEXPORTTEMPLATEITEMS = registerProperty(
-			PROPERTY_DATAEXPORTTEMPLATEITEMS_NAME, IDataExportTemplateItems.class, MY_CLASS);
+	public static final IPropertyInfo<IExportTemplateItems> PROPERTY_REPETITIONFOOTERS = registerProperty(
+			PROPERTY_REPETITIONFOOTERS_NAME, IExportTemplateItems.class, MY_CLASS);
 
 	/**
-	 * 获取-数据导出模板-项集合
+	 * 获取-导出模板-重复区脚
 	 * 
 	 * @return 值
 	 */
-	@XmlElementWrapper(name = PROPERTY_DATAEXPORTTEMPLATEITEMS_NAME)
-	@XmlElement(name = DataExportTemplateItem.BUSINESS_OBJECT_NAME, type = DataExportTemplateItem.class)
-	public final IDataExportTemplateItems getDataExportTemplateItems() {
-		return this.getProperty(PROPERTY_DATAEXPORTTEMPLATEITEMS);
+	@XmlElementWrapper(name = PROPERTY_REPETITIONFOOTERS_NAME)
+	@XmlElement(name = ExportTemplateItem.BUSINESS_OBJECT_NAME, type = ExportTemplateItem.class)
+	public final IExportTemplateItems getRepetitionFooters() {
+		return this.getProperty(PROPERTY_REPETITIONFOOTERS);
 	}
 
 	/**
-	 * 设置-数据导出模板-项集合
+	 * 设置-导出模板-重复区脚
 	 * 
 	 * @param value
 	 *            值
 	 */
-	public final void setDataExportTemplateItems(IDataExportTemplateItems value) {
-		this.setProperty(PROPERTY_DATAEXPORTTEMPLATEITEMS, value);
+	public final void setRepetitionFooters(IExportTemplateItems value) {
+		this.setProperty(PROPERTY_REPETITIONFOOTERS, value);
+	}
+
+	/**
+	 * 属性名称-导出模板-结束区
+	 */
+	private static final String PROPERTY_ENDSECTIONS_NAME = "EndSections";
+
+	/**
+	 * 导出模板-结束区的集合属性
+	 * 
+	 */
+	public static final IPropertyInfo<IExportTemplateItems> PROPERTY_ENDSECTIONS = registerProperty(
+			PROPERTY_ENDSECTIONS_NAME, IExportTemplateItems.class, MY_CLASS);
+
+	/**
+	 * 获取-导出模板-结束区
+	 * 
+	 * @return 值
+	 */
+	@XmlElementWrapper(name = PROPERTY_ENDSECTIONS_NAME)
+	@XmlElement(name = ExportTemplateItem.BUSINESS_OBJECT_NAME, type = ExportTemplateItem.class)
+	public final IExportTemplateItems getEndSections() {
+		return this.getProperty(PROPERTY_ENDSECTIONS);
+	}
+
+	/**
+	 * 设置-导出模板-结束区
+	 * 
+	 * @param value
+	 *            值
+	 */
+	public final void setEndSections(IExportTemplateItems value) {
+		this.setProperty(PROPERTY_ENDSECTIONS, value);
+	}
+
+	/**
+	 * 属性名称-导出模板-页脚区
+	 */
+	private static final String PROPERTY_PAGEFOOTERS_NAME = "PageFooters";
+
+	/**
+	 * 导出模板-页脚区的集合属性
+	 * 
+	 */
+	public static final IPropertyInfo<IExportTemplateItems> PROPERTY_PAGEFOOTERS = registerProperty(
+			PROPERTY_PAGEFOOTERS_NAME, IExportTemplateItems.class, MY_CLASS);
+
+	/**
+	 * 获取-导出模板-页脚区
+	 * 
+	 * @return 值
+	 */
+	@XmlElementWrapper(name = PROPERTY_PAGEFOOTERS_NAME)
+	@XmlElement(name = ExportTemplateItem.BUSINESS_OBJECT_NAME, type = ExportTemplateItem.class)
+	public final IExportTemplateItems getPageFooters() {
+		return this.getProperty(PROPERTY_PAGEFOOTERS);
+	}
+
+	/**
+	 * 设置-导出模板-页脚区
+	 * 
+	 * @param value
+	 *            值
+	 */
+	public final void setPageFooters(IExportTemplateItems value) {
+		this.setProperty(PROPERTY_PAGEFOOTERS, value);
 	}
 
 	/**
@@ -2172,9 +2145,15 @@ public class DataExportTemplate extends BusinessObject<DataExportTemplate> imple
 	@Override
 	protected void initialize() {
 		super.initialize();// 基类初始化，不可去除
-		this.setDataExportTemplateItems(new DataExportTemplateItems(this));
-		this.setObjectCode(MyConfiguration.applyVariables(BUSINESS_OBJECT_CODE));
-
+		this.setPageHeaders(new ExportTemplateItems(this, emAreaType.PAGE_HEADER));
+		this.setStartSections(new ExportTemplateItems(this, emAreaType.START_SECTION));
+		this.setRepetitionHeaders(new ExportTemplateItems(this, emAreaType.REPETITION_HEADER));
+		this.setRepetitions(new ExportTemplateItems(this, emAreaType.REPETITION));
+		this.setRepetitionFooters(new ExportTemplateItems(this, emAreaType.REPETITION_FOOTER));
+		this.setEndSections(new ExportTemplateItems(this, emAreaType.END_SECTION));
+		this.setPageFooters(new ExportTemplateItems(this, emAreaType.PAGE_FOOTER));
+		this.setObjectCode(BUSINESS_OBJECT_CODE);
+		this.setActivated(emYesNo.YES);
 	}
 
 }

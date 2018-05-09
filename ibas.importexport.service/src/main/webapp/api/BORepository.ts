@@ -35,12 +35,12 @@ namespace importexport {
              * 查询 数据导出模板
              * @param fetcher 查询者
              */
-            fetchDataExportTemplate(fetcher: ibas.IFetchCaller<bo.IDataExportTemplate>): void;
+            fetchExportTemplate(fetcher: ibas.IFetchCaller<bo.IExportTemplate>): void;
             /**
              * 保存 数据导出模板
              * @param saver 保存者
              */
-            saveDataExportTemplate(saver: ibas.ISaveCaller<bo.IDataExportTemplate>): void;
+            saveExportTemplate(saver: ibas.ISaveCaller<bo.IExportTemplate>): void;
         }
         /**
          * 业务对象架构相关调用者

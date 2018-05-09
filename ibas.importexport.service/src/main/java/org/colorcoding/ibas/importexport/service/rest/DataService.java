@@ -10,7 +10,7 @@ import javax.ws.rs.core.MediaType;
 import org.colorcoding.ibas.bobas.common.Criteria;
 import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.data.KeyText;
-import org.colorcoding.ibas.importexport.bo.dataexporttemplate.DataExportTemplate;
+import org.colorcoding.ibas.importexport.bo.exporttemplate.ExportTemplate;
 import org.colorcoding.ibas.importexport.repository.BORepositoryImportExport;
 
 /**
@@ -68,10 +68,9 @@ public class DataService extends BORepositoryImportExport {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("fetchDataExportTemplate")
-	public OperationResult<DataExportTemplate> fetchDataExportTemplate(Criteria criteria,
-			@QueryParam("token") String token) {
-		return super.fetchDataExportTemplate(criteria, token);
+	@Path("fetchExportTemplate")
+	public OperationResult<ExportTemplate> fetchExportTemplate(Criteria criteria, @QueryParam("token") String token) {
+		return super.fetchExportTemplate(criteria, token);
 	}
 
 	/**
@@ -86,10 +85,9 @@ public class DataService extends BORepositoryImportExport {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("saveDataExportTemplate")
-	public OperationResult<DataExportTemplate> saveDataExportTemplate(DataExportTemplate bo,
-			@QueryParam("token") String token) {
-		return super.saveDataExportTemplate(bo, token);
+	@Path("saveExportTemplate")
+	public OperationResult<ExportTemplate> saveExportTemplate(ExportTemplate bo, @QueryParam("token") String token) {
+		return super.saveExportTemplate(bo, token);
 	}
 
 	// --------------------------------------------------------------------------------------------//

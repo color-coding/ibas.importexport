@@ -7,22 +7,21 @@
  */
 namespace importexport {
     export namespace app {
-
-        /** 列表应用-数据导出模板 */
-        export class DataExportTemplateListApp extends ibas.BOListApplication<IDataExportTemplateListView, bo.DataExportTemplate> {
+        /** 列表应用-导出模板 */
+        export class ExportTemplateListApp extends ibas.BOListApplication<IExportTemplateListView, bo.ExportTemplate> {
 
             /** 应用标识 */
-            static APPLICATION_ID: string = "73514fe6-d107-4bc4-8a55-9e9ca9c66cd8";
+            static APPLICATION_ID: string = "38c657f0-af3a-4016-9dff-1142d747e69d";
             /** 应用名称 */
-            static APPLICATION_NAME: string = "importexport_app_dataexporttemplate_list";
+            static APPLICATION_NAME: string = "importexport_app_exporttemplate_list";
             /** 业务对象编码 */
-            static BUSINESS_OBJECT_CODE: string = bo.DataExportTemplate.BUSINESS_OBJECT_CODE;
+            static BUSINESS_OBJECT_CODE: string = bo.ExportTemplate.BUSINESS_OBJECT_CODE;
             /** 构造函数 */
             constructor() {
                 super();
-                this.id = DataExportTemplateListApp.APPLICATION_ID;
-                this.name = DataExportTemplateListApp.APPLICATION_NAME;
-                this.boCode = DataExportTemplateListApp.BUSINESS_OBJECT_CODE;
+                this.id = ExportTemplateListApp.APPLICATION_ID;
+                this.name = ExportTemplateListApp.APPLICATION_NAME;
+                this.boCode = ExportTemplateListApp.BUSINESS_OBJECT_CODE;
                 this.description = ibas.i18n.prop(this.name);
             }
             /** 注册视图 */
@@ -41,12 +40,16 @@ namespace importexport {
                 this.busy(true);
                 let that: this = this;
                 let boRepository: bo.BORepositoryImportExport = new bo.BORepositoryImportExport();
-                boRepository.fetchDataExportTemplate({
+                boRepository.fetchExportTemplate({
                     criteria: criteria,
-                    onCompleted(opRslt: ibas.IOperationResult<bo.DataExportTemplate>): void {
+                    onCompleted(opRslt: ibas.IOperationResult<bo.ExportTemplate>): void {
                         try {
                             if (opRslt.resultCode !== 0) {
                                 throw new Error(opRslt.message);
+                            }
+                            if (!that.isViewShowed()) {
+                                // 没显示视图，先显示
+                                that.show();
                             }
                             if (opRslt.resultObjects.length === 0) {
                                 that.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("shell_data_fetched_none"));
@@ -62,13 +65,13 @@ namespace importexport {
             }
             /** 新建数据 */
             protected newData(): void {
-                let app: DataExportTemplateEditApp = new DataExportTemplateEditApp();
+                let app: ExportTemplateEditApp = new ExportTemplateEditApp();
                 app.navigation = this.navigation;
                 app.viewShower = this.viewShower;
                 app.run();
             }
             /** 查看数据，参数：目标数据 */
-            protected viewData(data: bo.DataExportTemplate): void {
+            protected viewData(data: bo.ExportTemplate): void {
                 // 检查目标数据
                 if (ibas.objects.isNull(data)) {
                     this.messages(ibas.emMessageType.WARNING, ibas.i18n.prop("shell_please_chooose_data",
@@ -76,9 +79,14 @@ namespace importexport {
                     ));
                     return;
                 }
+                let app: ExportTemplateViewApp = new ExportTemplateViewApp();
+                app.navigation = this.navigation;
+                app.viewShower = this.viewShower;
+                app.run(data);
+
             }
             /** 编辑数据，参数：目标数据 */
-            protected editData(data: bo.DataExportTemplate): void {
+            protected editData(data: bo.ExportTemplate): void {
                 // 检查目标数据
                 if (ibas.objects.isNull(data)) {
                     this.messages(ibas.emMessageType.WARNING, ibas.i18n.prop("shell_please_chooose_data",
@@ -86,13 +94,13 @@ namespace importexport {
                     ));
                     return;
                 }
-                let app: DataExportTemplateEditApp = new DataExportTemplateEditApp();
+                let app: ExportTemplateEditApp = new ExportTemplateEditApp();
                 app.navigation = this.navigation;
                 app.viewShower = this.viewShower;
                 app.run(data);
             }
             /** 删除数据，参数：目标数据集合 */
-            protected deleteData(data: bo.DataExportTemplate | bo.DataExportTemplate[]): void {
+            protected deleteData(data: bo.ExportTemplate | bo.ExportTemplate[]): void {
                 // 检查目标数据
                 if (ibas.objects.isNull(data)) {
                     this.messages(ibas.emMessageType.WARNING, ibas.i18n.prop("shell_please_chooose_data",
@@ -100,8 +108,8 @@ namespace importexport {
                     ));
                     return;
                 }
-                let beDeleteds: ibas.ArrayList<bo.DataExportTemplate> = new ibas.ArrayList<bo.DataExportTemplate>();
-                if (data instanceof Array) {
+                let beDeleteds: ibas.ArrayList<bo.ExportTemplate> = new ibas.ArrayList<bo.ExportTemplate>();
+                if (data instanceof Array ) {
                     for (let item of data) {
                         item.delete();
                         beDeleteds.add(item);
@@ -127,10 +135,10 @@ namespace importexport {
                         if (action === ibas.emMessageAction.YES) {
                             try {
                                 let boRepository: bo.BORepositoryImportExport = new bo.BORepositoryImportExport();
-                                let saveMethod: Function = function (beSaved: bo.DataExportTemplate): void {
-                                    boRepository.saveDataExportTemplate({
+                                let saveMethod: Function = function(beSaved: bo.ExportTemplate):void {
+                                    boRepository.saveExportTemplate({
                                         beSaved: beSaved,
-                                        onCompleted(opRslt: ibas.IOperationResult<bo.DataExportTemplate>): void {
+                                        onCompleted(opRslt: ibas.IOperationResult<bo.ExportTemplate>): void {
                                             try {
                                                 if (opRslt.resultCode !== 0) {
                                                     throw new Error(opRslt.message);
@@ -143,7 +151,7 @@ namespace importexport {
                                                     // 处理完成
                                                     that.busy(false);
                                                     that.messages(ibas.emMessageType.SUCCESS,
-                                                        ibas.i18n.prop("shell_data_delete") + ibas.i18n.prop("shell_sucessful"));
+                                                    ibas.i18n.prop("shell_data_delete") + ibas.i18n.prop("shell_sucessful"));
                                                 }
                                             } catch (error) {
                                                 that.messages(ibas.emMessageType.ERROR,
@@ -165,14 +173,14 @@ namespace importexport {
                 });
             }
         }
-        /** 视图-数据导出模板 */
-        export interface IDataExportTemplateListView extends ibas.IBOListView {
+        /** 视图-导出模板 */
+        export interface IExportTemplateListView extends ibas.IBOListView {
             /** 编辑数据事件，参数：编辑对象 */
             editDataEvent: Function;
             /** 删除数据事件，参数：删除对象集合 */
             deleteDataEvent: Function;
             /** 显示数据 */
-            showData(datas: bo.DataExportTemplate[]): void;
+            showData(datas: bo.ExportTemplate[]): void;
         }
     }
 }
