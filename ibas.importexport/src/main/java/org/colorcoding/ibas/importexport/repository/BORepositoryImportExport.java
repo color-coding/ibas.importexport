@@ -152,7 +152,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			}
 			ByteArrayOutputStream writer = new ByteArrayOutputStream();
 			serializer.getSchema(boType, writer);
-			opRslt.addResultObjects(writer.toString());
+			opRslt.addResultObjects(new String(writer.toByteArray(), "utf-8"));
 		} catch (Exception e) {
 			opRslt = new OperationResult<String>(e);
 			Logger.log(e);
