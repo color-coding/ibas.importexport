@@ -11,8 +11,10 @@ import org.colorcoding.ibas.bobas.common.ICondition;
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.data.DateTime;
+import org.colorcoding.ibas.bobas.mapping.BOCode;
 import org.colorcoding.ibas.bobas.organization.OrganizationFactory;
 import org.colorcoding.ibas.bobas.repository.InvalidTokenException;
+import org.colorcoding.ibas.importexport.MyConfiguration;
 import org.colorcoding.ibas.importexport.transformer.TransformException;
 import org.colorcoding.ibas.importexport.transformer.TransformerFile;
 import org.colorcoding.ibas.importexport.transformers.excel.template.Property;
@@ -121,10 +123,29 @@ public class TransformerExcel extends TransformerFile {
 						IBOPropertyInformation itemInfo = t.getBOPropertyInformations()
 								.firstOrDefault(c -> c.getPropertyName().equals(name));
 						if (itemInfo != null) {
+							// 对象定义的属性
 							ICriteria criteria = new Criteria();
 							ICondition condition = criteria.getConditions().create();
 							condition.setAlias(BOInformation.PROPERTY_CODE.getName());
 							condition.setValue(itemInfo.getMapped());
+							IBOInformation childInfo = boRepository.fetchBOInformation(criteria).getResultObjects()
+									.firstOrDefault();
+							if (childInfo != null) {
+								childInfo.setName(object.getName());
+								this.accept(childInfo);
+							}
+						} else {
+							// 对象没有定义的，按类名称查询
+							ICriteria criteria = new Criteria();
+							ICondition condition = criteria.getConditions().create();
+							try {
+								String boCode = object.getBindingClass().getAnnotation(BOCode.class).value();
+								condition.setAlias(BOInformation.PROPERTY_CODE.getName());
+								condition.setValue(MyConfiguration.applyVariables(boCode));
+							} catch (Exception e) {
+								condition.setAlias(BOInformation.PROPERTY_NAME.getName());
+								condition.setValue(object.getBindingClass().getSimpleName());
+							}
 							IBOInformation childInfo = boRepository.fetchBOInformation(criteria).getResultObjects()
 									.firstOrDefault();
 							if (childInfo != null) {

@@ -4,6 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import org.colorcoding.ibas.bobas.approval.IApprovalData;
+import org.colorcoding.ibas.bobas.bo.IBODocument;
+import org.colorcoding.ibas.bobas.bo.IBODocumentLine;
+import org.colorcoding.ibas.bobas.bo.IBOMasterData;
+import org.colorcoding.ibas.bobas.bo.IBOMasterDataLine;
+import org.colorcoding.ibas.bobas.bo.IBOSeriesKey;
+import org.colorcoding.ibas.bobas.bo.IBOSimple;
+import org.colorcoding.ibas.bobas.bo.IBOSimpleLine;
 import org.colorcoding.ibas.bobas.bo.IBOStorageTag;
 import org.colorcoding.ibas.bobas.bo.IBOTagCanceled;
 import org.colorcoding.ibas.bobas.bo.IBOTagDeleted;
@@ -70,6 +78,10 @@ public class Object extends BindingArea<Template> {
 		List<Property> properties = new ArrayList<>();
 		IManageFields fields = (IManageFields) bo;
 		for (IFieldData field : fields.getFields()) {
+			// 不保存的对象不导出
+			if (!field.isSavable()) {
+				continue;
+			}
 			// 对象不再处理
 			if (IBusinessObjects.class.isInstance(field.getValue())) {
 				continue;
@@ -85,7 +97,7 @@ public class Object extends BindingArea<Template> {
 					@Override
 					public Boolean apply(Class<?> t) {
 						try {
-							if (t.isInstance(bo) && t.getDeclaredMethod("get" + field.getName()) != null) {
+							if (t.getDeclaredMethod("get" + field.getName()) != null) {
 								return true;
 							}
 						} catch (SecurityException | NoSuchMethodException e) {
@@ -106,7 +118,33 @@ public class Object extends BindingArea<Template> {
 					continue;
 				}
 				if (isSkip.apply(IBOTagReferenced.class)) {
-					// 删除标记跳过
+					// 引用标记跳过
+					continue;
+				}
+				if (isSkip.apply(IBOSeriesKey.class)) {
+					// 编号服务跳过
+					continue;
+				}
+				if (isSkip.apply(IApprovalData.class)) {
+					// 审批标记跳过
+					continue;
+				}
+				if (field.getName().equals(IBOSimple.MASTER_PRIMARY_KEY_NAME)) {
+					continue;
+				}
+				if (field.getName().equals(IBOSimpleLine.SECONDARY_PRIMARY_KEY_NAME)) {
+					continue;
+				}
+				if (field.getName().equals(IBODocument.MASTER_PRIMARY_KEY_NAME)) {
+					continue;
+				}
+				if (field.getName().equals(IBODocumentLine.SECONDARY_PRIMARY_KEY_NAME)) {
+					continue;
+				}
+				if (field.getName().equals(IBOMasterData.SERIAL_NUMBER_KEY_NAME)) {
+					continue;
+				}
+				if (field.getName().equals(IBOMasterDataLine.SECONDARY_PRIMARY_KEY_NAME)) {
 					continue;
 				}
 			}
