@@ -20,8 +20,8 @@ namespace initialfantasy {
     export namespace bo {
         /** 业务仓库名称 */
         export const BO_REPOSITORY_INITIALFANTASY: string = ibas.strings.format(ibas.MODULE_REPOSITORY_NAME_TEMPLATE, CONSOLE_NAME);
-        /** 业务对象编码-应用程序功能 */
-        export const BO_CODE_APPLICATIONFUNCTION: string = "${Company}_SYS_FUNCTION";
+        /** 业务对象编码-应用程序元素 */
+        export const BO_CODE_APPLICATIONELEMENT: string = "${Company}_SYS_ELEMENT";
         /** 业务对象编码-应用程序模块 */
         export const BO_CODE_APPLICATIONMODULE: string = "${Company}_SYS_MODULE";
         /** 业务对象编码-应用程序平台 */
@@ -64,6 +64,16 @@ namespace initialfantasy {
             UNAVAILABLE,
             /** 可用的 */
             AVAILABLE
+        }
+        export enum emElementType {
+            /** 模块 */
+            MODULE,
+            /** 功能 */
+            FUNCTION,
+            /** 应用 */
+            APPLICATION,
+            /** 服务 */
+            SERVICE,
         }
         /** 分配-角色 */
         export interface IRole {

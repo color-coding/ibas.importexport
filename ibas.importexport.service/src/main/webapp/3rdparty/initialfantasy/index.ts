@@ -6,7 +6,7 @@
  * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
  */
 /// <reference path="./Data.ts" />
-/// <reference path="./bo/ApplicationFunction.ts" />
+/// <reference path="./bo/ApplicationElement.ts" />
 /// <reference path="./bo/ApplicationModule.ts" />
 /// <reference path="./bo/ApplicationPlatform.ts" />
 /// <reference path="./bo/BOCriteria.ts" />
