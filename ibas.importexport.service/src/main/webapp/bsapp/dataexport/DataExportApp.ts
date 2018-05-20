@@ -116,7 +116,7 @@ namespace importexport {
                 let criteria: ibas.ICriteria = new ibas.Criteria();
                 criteria.noChilds = true;
                 let condition: ibas.ICondition = criteria.conditions.create();
-                condition.alias = "code";
+                condition.alias = "Code";
                 condition.value = ".";
                 condition.operation = ibas.emConditionOperation.NOT_CONTAIN;
                 ibas.servicesManager.runChooseService<initialfantasy.bo.IBOInformation>({

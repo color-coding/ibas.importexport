@@ -142,7 +142,7 @@ namespace importexport {
                         let boRepository: initialfantasy.bo.IBORepositoryInitialFantasy = ibas.boFactory.create(initialfantasy.bo.BO_REPOSITORY_INITIALFANTASY);
                         boRepository.fetchBOInformation({
                             criteria: [
-                                new ibas.Condition("code", ibas.emConditionOperation.EQUAL, this.criteria.businessObject)
+                                new ibas.Condition("Code", ibas.emConditionOperation.EQUAL, this.criteria.businessObject)
                             ],
                             onCompleted(opRslt: ibas.IOperationResult<initialfantasy.bo.IBOInformation>): void {
                                 let boInfo: initialfantasy.bo.IBOInformation = opRslt.resultObjects.firstOrDefault();
