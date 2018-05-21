@@ -109,6 +109,13 @@
         "bo_exporttemplateitem_borderred": "框架色-红",
         "bo_exporttemplateitem_bordergreen": "框架色-绿",
         "bo_exporttemplateitem_borderblue": "框架色-蓝",
+        "bo_exporttemplateitem_pageheaders": "页眉 ",
+        "bo_exporttemplateitem_startsections": "开始区",
+        "bo_exporttemplateitem_repetitionheaders": "重复区头",
+        "bo_exporttemplateitem_repetitions": "重复区",
+        "bo_exporttemplateitem_repetitionfooters": "重复区脚",
+        "bo_exporttemplateitem_endsections": "结束区",
+        "bo_exporttemplateitem_pagefooters": "页脚区",
         "bo_exporttemplate_closing_delimiter": "----结束----"
     },
     {}

@@ -34,13 +34,11 @@ namespace importexport {
                 // 注册功能
                 this.register(new DataImportFunc());
                 this.register(new DataExportFunc());
-                if (ibas.config.get(ibas.CONFIG_ITEM_DEBUG_MODE)) {
-                    this.register(new ExportTemplateFunc());
-                    this.register(new ExportTemplateChooseServiceMapping());
-                }
+                this.register(new ExportTemplateFunc());
                 // 注册服务应用
                 this.register(new DataExportServiceMapping());
                 this.register(new DataListExportServiceMapping());
+                this.register(new ExportTemplateChooseServiceMapping());
                 // 注册常驻应用
 
 

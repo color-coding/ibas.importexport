@@ -33,5 +33,7 @@
   "importexport_export_bo": "导出对象",
   "importexport_export_template": "导出模板",
   "importexport_export_conditions": "导出的查询条件（无条件仅为模板）",
+  "importexport_title_general": "常规",
+  "importexport_title_size": "规格",
   "importexport_closing_delimiter": "----结束----"
 }

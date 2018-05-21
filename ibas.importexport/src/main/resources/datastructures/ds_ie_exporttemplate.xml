@@ -76,7 +76,7 @@
     <Property Name="CreateActionId" Description="创建动作标识" DataType="Alphanumeric" DataSubType="Default" EditSize="36" Mapped="CreateActId"/>
     <Property Name="UpdateActionId" Description="更新动作标识" DataType="Alphanumeric" DataSubType="Default" EditSize="36" Mapped="UpdateActId"/>
     <Property Name="Area" Description="区域" DataType="Alphanumeric" DataSubType="Default" EditSize="2" DeclaredType="emAreaType" Mapped="Area"/>
-    <Property Name="ItemID" Description="项标识" DataType="Alphanumeric" DataSubType="Default" EditSize="8" Mapped="ItemID"/>
+    <Property Name="ItemID" Description="项标识" DataType="Alphanumeric" DataSubType="Default" EditSize="60" Mapped="ItemID"/>
     <Property Name="ItemLeft" Description="项左坐标" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="ItemLeft"/>
     <Property Name="ItemTop" Description="项上坐标" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="ItemTop"/>
     <Property Name="SourceType" Description="数据源" DataType="Alphanumeric" DataSubType="Default" EditSize="2" DeclaredType="emDataSourceType" Mapped="SourceType"/>
