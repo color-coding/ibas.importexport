@@ -1,4 +1,4 @@
-package org.colorcoding.ibas.importexport.transformers.excel.template;
+package org.colorcoding.ibas.importexport.transformer.template;
 
 import java.util.ArrayList;
 import java.util.List;

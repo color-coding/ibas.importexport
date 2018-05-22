@@ -10,13 +10,37 @@ namespace importexport {
 
         /** 数据转换者 */
         export class DataConverter extends ibas.DataConverter4j {
-
+            /**
+             * 解析业务对象数据
+             * @param data 目标类型
+             * @param sign 特殊标记
+             * @returns 本地类型
+             */
+            parsing(data: any, sign: string): any {
+                if (data.type === "DataExportInfo") {
+                    let remoteData: IDataExportInfo = data;
+                    let exporter: DataExporterService = new DataExporterService();
+                    exporter.name = remoteData.Transformer;
+                    exporter.template = remoteData.Template;
+                    exporter.description = remoteData.Description;
+                    return exporter;
+                }
+                return super.parsing(data, sign);
+            }
             /** 创建业务对象转换者 */
             protected createConverter(): ibas.BOConverter {
                 return new BOConverter;
             }
         }
-
+        /** 数据导出信息 */
+        export interface IDataExportInfo {
+            /** 转换者 */
+            Transformer: string;
+            /** 模板 */
+            Template: string;
+            /** 描述 */
+            Description: string;
+        }
         /** 模块业务对象工厂 */
         export const boFactory: ibas.BOFactory = new ibas.BOFactory();
         /** 业务对象转换者 */

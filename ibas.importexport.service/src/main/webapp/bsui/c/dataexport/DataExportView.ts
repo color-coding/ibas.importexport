@@ -28,9 +28,6 @@ namespace importexport {
                 draw(): any {
                     let that: this = this;
                     this.sltTempalte = new sap.m.Select("", {});
-                    this.sltTempalte.bindProperty("selectedKey", {
-                        path: "/remarks"
-                    });
                     this.form = new sap.ui.layout.form.SimpleForm("", {
                         editable: true,
                         content: [
@@ -69,7 +66,11 @@ namespace importexport {
                                     type: sap.m.ButtonType.Transparent,
                                     icon: "sap-icon://toaster-up",
                                     press: function (): void {
-                                        that.fireViewEvents(that.exportEvent);
+                                        let item: sap.ui.core.Item = that.sltTempalte.getSelectedItem();
+                                        if (ibas.objects.isNull(item)) {
+                                            return;
+                                        }
+                                        that.fireViewEvents(that.exportEvent, (<any>item.getModel()).getData());
                                     }
                                 }),
                                 new sap.m.ToolbarSeparator(""),
@@ -114,13 +115,15 @@ namespace importexport {
                     this.form.setModel(new sap.ui.model.json.JSONModel(criteria));
                     this.criteria = criteria;
                 }
-                /** 显示可用模板 */
-                showTemplates(templates: ibas.KeyText[]): void {
-                    for (let item of templates) {
-                        this.sltTempalte.addItem(new sap.ui.core.Item("", {
-                            key: item.key,
-                            text: item.text,
-                        }));
+                /** 显示导出者 */
+                showExporters(exporters: bo.IDataExporter[]): void {
+                    for (let item of exporters) {
+                        let sItem: sap.ui.core.Item = new sap.ui.core.Item("", {
+                            key: item.name,
+                            text: ibas.strings.isEmpty(item.description) ? item.name : item.description,
+                        });
+                        sItem.setModel(new sap.ui.model.json.JSONModel(item));
+                        this.sltTempalte.addItem(sItem);
                     }
                 }
                 private criteria: ibas.ICriteria;

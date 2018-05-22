@@ -5,9 +5,9 @@ import java.io.File;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.importexport.MyConfiguration;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.ExportTemplate;
+import org.colorcoding.ibas.importexport.transformer.ExcelTransformer;
 import org.colorcoding.ibas.importexport.transformer.TransformException;
-import org.colorcoding.ibas.importexport.transformers.excel.ExcelTransformer;
-import org.colorcoding.ibas.importexport.transformers.excel.TransformerExcel;
+import org.colorcoding.ibas.importexport.transformer.TransformerExcel;
 
 import junit.framework.TestCase;
 

@@ -106,5 +106,22 @@ namespace importexport {
              */
             BOLD_ITALIC
         }
+
+        /** 数据导出调用者 */
+        export interface IDataExportCaller<T> extends ibas.IMethodCaller<T> {
+            /** 导出的数据 */
+            data?: object | object[];
+            /** 数据查询 */
+            criteria?: ibas.ICriteria;
+        }
+        /** 数据导出者 */
+        export interface IDataExporter {
+            /** 名称 */
+            name: string;
+            /** 描述 */
+            description: string;
+            /** 导出 */
+            export(caller: IDataExportCaller<any>): void;
+        }
     }
 }

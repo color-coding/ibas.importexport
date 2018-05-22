@@ -10,6 +10,7 @@
 /// <reference path="../api/index.ts" />
 /// <reference path="./bo/ExportTemplate.ts" />
 /// <reference path="./DataConverter.ts" />
+/// <reference path="./DataExporter.ts" />
 /// <reference path="./BORepository.ts" />
 
 namespace importexport {

@@ -16,12 +16,12 @@ import org.colorcoding.ibas.importexport.MyConfiguration;
 import org.colorcoding.ibas.importexport.excel.data.BatchItem;
 import org.colorcoding.ibas.importexport.excel.data.Order;
 import org.colorcoding.ibas.importexport.excel.data.OrderLine;
-import org.colorcoding.ibas.importexport.transformers.excel.template.Cell;
-import org.colorcoding.ibas.importexport.transformers.excel.template.Object;
-import org.colorcoding.ibas.importexport.transformers.excel.template.Property;
-import org.colorcoding.ibas.importexport.transformers.excel.template.ResolvingException;
-import org.colorcoding.ibas.importexport.transformers.excel.template.Template;
-import org.colorcoding.ibas.importexport.transformers.excel.template.WriteFileException;
+import org.colorcoding.ibas.importexport.transformer.template.Cell;
+import org.colorcoding.ibas.importexport.transformer.template.Object;
+import org.colorcoding.ibas.importexport.transformer.template.Property;
+import org.colorcoding.ibas.importexport.transformer.template.ResolvingException;
+import org.colorcoding.ibas.importexport.transformer.template.Template;
+import org.colorcoding.ibas.importexport.transformer.template.WriteFileException;
 
 import junit.framework.TestCase;
 

@@ -1,6 +1,7 @@
 package org.colorcoding.ibas.importexport.service.rest;
 
 import java.io.InputStream;
+import java.lang.reflect.Method;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
@@ -12,15 +13,19 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.colorcoding.ibas.bobas.common.Criteria;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.data.FileData;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.repository.jersey.FileRepositoryService;
+import org.colorcoding.ibas.bobas.serialization.ISerializer;
+import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
 import org.colorcoding.ibas.importexport.MyConfiguration;
+import org.colorcoding.ibas.importexport.data.DataExportInfo;
 import org.colorcoding.ibas.importexport.repository.BORepositoryImportExport;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 @Path("file")
@@ -57,21 +62,13 @@ public class FileService extends FileRepositoryService {
 			if (opRsltFile.getError() != null) {
 				throw opRsltFile.getError();
 			}
-			if (opRsltFile.getResultCode() != 0) {
-				throw new Error(opRsltFile.getMessage());
-			}
-			// 是否更新数据
-			boolean update = Boolean.parseBoolean(sUpdate);
 			// 导入文件
 			BORepositoryImportExport boRepository = new BORepositoryImportExport();
 			boRepository.setUserToken(token);
 			for (FileData data : opRsltFile.getResultObjects()) {
-				IOperationResult<String> opRsltImport = boRepository.importData(data, update);
+				IOperationResult<String> opRsltImport = boRepository.importData(data, Boolean.parseBoolean(sUpdate));
 				if (opRsltImport.getError() != null) {
 					throw opRsltImport.getError();
-				}
-				if (opRsltImport.getResultCode() != 0) {
-					throw new Error(opRsltImport.getMessage());
 				}
 				// 记录结果
 				opRslt.addResultObjects(opRsltImport.getResultObjects());
@@ -85,15 +82,46 @@ public class FileService extends FileRepositoryService {
 
 	@POST
 	@Path("export")
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public byte[] exportData(Criteria criteria, @QueryParam("token") String token,
+	public byte[] exportData(FormDataMultiPart formData, @QueryParam("token") String token,
 			@Context HttpServletResponse response) {
 		try {
 			// 获取导出的文件
+			ISerializer<?> serializer = SerializerFactory.create().createManager().create("json");
+			DataExportInfo info = new DataExportInfo();
+			for (Method method : DataExportInfo.class.getMethods()) {
+				if (method.getParameterCount() != 1) {
+					continue;
+				}
+				String name = method.getName();
+				if (name.startsWith("set")) {
+					name = name.substring(3);
+				} else {
+					continue;
+				}
+				FormDataBodyPart bodyPart = formData.getField(name.toLowerCase());
+				if (bodyPart == null) {
+					continue;
+				}
+				Class<?> clazz = method.getParameterTypes()[0];
+				Object value = null;
+				if (clazz == String.class) {
+					value = bodyPart.getValueAs(String.class);
+				} else if (clazz == InputStream.class) {
+					value = bodyPart.getValueAs(InputStream.class);
+				} else {
+					value = serializer.deserialize(bodyPart.getValueAs(InputStream.class), clazz);
+				}
+				try {
+					method.invoke(info, value);
+				} catch (Exception e) {
+					Logger.log(e);
+				}
+			}
 			BORepositoryImportExport boRepository = new BORepositoryImportExport();
 			boRepository.setUserToken(token);
-			IOperationResult<FileData> opRsltExport = boRepository.exportData(criteria);
+			IOperationResult<FileData> opRsltExport = boRepository.exportData(info);
 			if (opRsltExport.getError() != null) {
 				throw opRsltExport.getError();
 			}

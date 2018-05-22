@@ -40,13 +40,20 @@ namespace importexport {
                 this.view.showCriteria(this.criteria);
                 let that: this = this;
                 let boRepository: bo.BORepositoryImportExport = new bo.BORepositoryImportExport();
-                boRepository.fetchTransformer({
+                boRepository.fetchDataExporter({
                     criteria: [
-                        new ibas.Condition("NAME", ibas.emConditionOperation.START, "TO_FILE_")
+                        new ibas.Condition("Transformer", ibas.emConditionOperation.START, "TO_FILE_")
                     ],
-                    onCompleted(opRslt: ibas.IOperationResult<ibas.KeyText>): void {
-                        that.view.showTemplates(opRslt.resultObjects);
-                        that.busy(false);
+                    onCompleted(opRslt: ibas.IOperationResult<bo.IDataExporter>): void {
+                        try {
+                            that.busy(false);
+                            if (opRslt.resultCode !== 0) {
+                                throw new Error(opRslt.message);
+                            }
+                            that.view.showExporters(opRslt.resultObjects);
+                        } catch (error) {
+                            that.messages(error);
+                        }
                     }
                 });
                 this.busy(true);
@@ -78,17 +85,13 @@ namespace importexport {
                 this.busy(true);
             }
             /** 导出 */
-            export(): void {
+            export(exporter: bo.IDataExporter): void {
                 if (ibas.strings.isEmpty(this.criteria.businessObject)) {
                     throw new Error(ibas.i18n.prop("sys_invalid_parameter", "BusinessObject"));
                 }
-                if (ibas.strings.isEmpty(this.criteria.remarks)) {
-                    throw new Error(ibas.i18n.prop("sys_invalid_parameter", "Template"));
-                }
                 this.busy(true);
                 let that: this = this;
-                let boRepository: bo.BORepositoryImportExport = new bo.BORepositoryImportExport();
-                boRepository.export({
+                exporter.export({
                     criteria: this.criteria,
                     onCompleted(opRslt: ibas.IOperationResult<Blob>): void {
                         try {
@@ -98,7 +101,7 @@ namespace importexport {
                             }
                             let data: Blob = opRslt.resultObjects.firstOrDefault();
                             if (!ibas.objects.isNull(data)) {
-                                let extName: string = that.criteria.remarks;
+                                let extName: string = exporter.name;
                                 extName = extName.substring(extName.lastIndexOf("_") + 1);
                                 ibas.files.save(data, ibas.strings.format("{0}_{1}.{2}",
                                     that.criteria.businessObject, ibas.dates.toString(ibas.dates.now(), "MMddHHmmss"), extName));
@@ -107,6 +110,7 @@ namespace importexport {
                             that.messages(error);
                         }
                     }
+
                 });
                 this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("importexport_exporting"));
             }
@@ -147,8 +151,8 @@ namespace importexport {
             schemaEvent: Function;
             /** 显示查询 */
             showCriteria(criteria: ibas.ICriteria): void;
-            /** 显示可用模板 */
-            showTemplates(templates: ibas.KeyText[]): void;
+            /** 显示数据导出者 */
+            showExporters(exporters: bo.IDataExporter[]): void;
             /** 选择业务对象 */
             chooseBusinessObjectEvent: Function;
             /** 导出 */

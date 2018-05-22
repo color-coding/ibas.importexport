@@ -1,4 +1,4 @@
-package org.colorcoding.ibas.importexport.transformers.excel.template;
+package org.colorcoding.ibas.importexport.transformer.template;
 
 import java.io.File;
 import java.io.IOException;
@@ -227,9 +227,9 @@ public class ExcelReader extends FileReader {
 				- this.getTemplate().getDatas().getStartingColumn() + 1);
 	}
 
-	private org.colorcoding.ibas.importexport.transformers.excel.template.Cell createCell(Property property, int row,
+	private org.colorcoding.ibas.importexport.transformer.template.Cell createCell(Property property, int row,
 			java.lang.Object value) {
-		org.colorcoding.ibas.importexport.transformers.excel.template.Cell dataCell = new org.colorcoding.ibas.importexport.transformers.excel.template.Cell();
+		org.colorcoding.ibas.importexport.transformer.template.Cell dataCell = new org.colorcoding.ibas.importexport.transformer.template.Cell();
 		dataCell.setParent(property);
 		dataCell.setStartingRow(row);
 		dataCell.setEndingRow(dataCell.getStartingRow());
@@ -246,7 +246,7 @@ public class ExcelReader extends FileReader {
 			if (sheetRow == null) {
 				continue;
 			}
-			org.colorcoding.ibas.importexport.transformers.excel.template.Cell[] dataRow = this.getTemplate().getDatas()
+			org.colorcoding.ibas.importexport.transformer.template.Cell[] dataRow = this.getTemplate().getDatas()
 					.createRow();
 			for (Object object : this.getTemplate().getObjects()) {
 				for (Property property : object.getProperties()) {
@@ -254,7 +254,7 @@ public class ExcelReader extends FileReader {
 					if (sheetCell == null) {
 						continue;
 					}
-					org.colorcoding.ibas.importexport.transformers.excel.template.Cell dataCell = null;
+					org.colorcoding.ibas.importexport.transformer.template.Cell dataCell = null;
 					try {
 						if (sheetCell.getCellTypeEnum() == CellType.BOOLEAN) {
 							if (property.getBindingClass() == Boolean.class) {

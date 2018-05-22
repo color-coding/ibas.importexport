@@ -1,10 +1,8 @@
-package org.colorcoding.ibas.importexport.transformers.excel;
+package org.colorcoding.ibas.importexport.transformer;
 
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
-import org.colorcoding.ibas.importexport.transformer.FileTransformer;
-import org.colorcoding.ibas.importexport.transformer.TransformException;
-import org.colorcoding.ibas.importexport.transformers.excel.template.ResolvingException;
-import org.colorcoding.ibas.importexport.transformers.excel.template.Template;
+import org.colorcoding.ibas.importexport.transformer.template.ResolvingException;
+import org.colorcoding.ibas.importexport.transformer.template.Template;
 
 /**
  * xlsx文件转换业务对象
@@ -12,10 +10,8 @@ import org.colorcoding.ibas.importexport.transformers.excel.template.Template;
  * @author Niuren.Zhu
  *
  */
+@TransformerInfo("FILE_XLSX_TO")
 public class ExcelTransformer extends FileTransformer {
-
-	public final static String TYPE_NAME = "xlsx";
-	public final static String NAME = String.format(GROUP_TEMPLATE, TYPE_NAME).toUpperCase();
 
 	@Override
 	public void transform() throws TransformException {

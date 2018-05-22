@@ -3,9 +3,9 @@ package org.colorcoding.ibas.importexport.repository;
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.data.FileData;
-import org.colorcoding.ibas.bobas.data.KeyText;
 import org.colorcoding.ibas.bobas.repository.IBORepositorySmartService;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.ExportTemplate;
+import org.colorcoding.ibas.importexport.data.DataExportInfo;
 
 /**
  * ImportExport仓库服务
@@ -17,13 +17,13 @@ public interface IBORepositoryImportExportSvc extends IBORepositorySmartService 
 	/**
 	 * 导出数据
 	 * 
-	 * @param criteria
+	 * @param info
 	 *            参数
 	 * @param token
 	 *            口令
 	 * @return 操作结果
 	 */
-	OperationResult<FileData> exportData(ICriteria criteria, String token);
+	OperationResult<FileData> exportData(DataExportInfo info, String token);
 
 	/**
 	 * 获取业务对象schema
@@ -39,13 +39,13 @@ public interface IBORepositoryImportExportSvc extends IBORepositorySmartService 
 	OperationResult<String> schema(String boCode, String type, String token);
 
 	/**
-	 * 获取转换者名称
+	 * 获取数据导出者
 	 * 
 	 * @param criteria
 	 *            查询
 	 * @return 操作结果
 	 */
-	OperationResult<KeyText> fetchTransformer(ICriteria criteria, String token);
+	OperationResult<DataExportInfo> fetchDataExporter(ICriteria criteria, String token);
 
 	// --------------------------------------------------------------------------------------------//
 	/**

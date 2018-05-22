@@ -15,11 +15,6 @@ import org.colorcoding.ibas.bobas.i18n.I18N;
  */
 public abstract class TransformerFile implements ITransformerFile {
 
-	/**
-	 * 组模板
-	 */
-	public final static String GROUP_TEMPLATE = "TO_FILE_%s";
-
 	private IBusinessObject[] inputData;
 
 	protected IBusinessObject[] getInputData() {

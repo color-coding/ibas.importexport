@@ -20,17 +20,17 @@ namespace importexport {
              * 导入
              * @param caller 调用者
              */
-            import(caller: ImportFileCaller): void;
+            import(caller: IImportFileCaller): void;
             /**
              * 数据导出调用者
              * @param caller 调用者
              */
-            export(caller: ibas.IDownloadFileCaller<Blob>): void;
+            export(caller: IExportFileCaller): void;
             /**
-             * 查询 获取转换者名称
+             * 查询 获取数据导出者
              * @param fetcher 查询者
              */
-            fetchTransformer(fetcher: ibas.IFetchCaller<ibas.KeyText>): void;
+            fetchDataExporter(fetcher: ibas.IFetchCaller<bo.IDataExporter>): void;
             /**
              * 查询 数据导出模板
              * @param fetcher 查询者
@@ -54,7 +54,20 @@ namespace importexport {
         /**
          * 文件导入调用者
          */
-        export interface ImportFileCaller extends ibas.IUploadFileCaller<string> {
+        export interface IImportFileCaller extends ibas.IUploadFileCaller<string> {
+        }
+        /**
+         * 数据导出调用者
+         */
+        export interface IExportFileCaller extends ibas.IMethodCaller<Blob> {
+            /** 转换者 */
+            transformer: string;
+            /** 模板 */
+            template?: string;
+            /** 查询 */
+            criteria?: ibas.ICriteria;
+            /** 内容 */
+            content?: any;
         }
     }
 }

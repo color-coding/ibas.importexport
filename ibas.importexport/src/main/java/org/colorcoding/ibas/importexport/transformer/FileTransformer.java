@@ -11,9 +11,5 @@ import org.colorcoding.ibas.bobas.bo.IBusinessObject;
  *
  */
 public abstract class FileTransformer extends Transformer<File, IBusinessObject> implements IFileTransformer {
-
-	/**
-	 * 组模板
-	 */
 	public final static String GROUP_TEMPLATE = "FILE_%s_TO";
 }

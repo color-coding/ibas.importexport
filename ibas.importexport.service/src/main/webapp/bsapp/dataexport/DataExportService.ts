@@ -5,7 +5,6 @@
  * Use of this source code is governed by an Apache License, Version 2.0
  * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
  */
-/// <reference path="./mode/DataExportMode.ts" />
 namespace importexport {
     export namespace app {
         /** 数据导出服务 */
@@ -29,9 +28,26 @@ namespace importexport {
             /** 视图显示后 */
             protected viewShowed(): void {
                 // 视图加载完成
-                let modes: ibas.ArrayList<IDataExportMode> = new ibas.ArrayList<IDataExportMode>();
-                modes.add(new DataExportModeJson());
-                this.view.showModes(modes);
+                let that: this = this;
+                let boRepository: bo.BORepositoryImportExport = new bo.BORepositoryImportExport();
+                boRepository.fetchDataExporter({
+                    criteria: new ibas.Criteria(),
+                    onCompleted(opRslt: ibas.IOperationResult<bo.IDataExporter>): void {
+                        try {
+                            if (opRslt.resultCode !== 0) {
+                                throw new Error(opRslt.message);
+                            }
+                            let exporters: ibas.IList<bo.IDataExporter> = new ibas.ArrayList();
+                            exporters.add(new bo.DataExporterJson());
+                            for (let item of opRslt.resultObjects) {
+                                exporters.add(item);
+                            }
+                            that.view.showExporters(exporters);
+                        } catch (error) {
+                            that.messages(error);
+                        }
+                    }
+                });
             }
             /** 运行服务 */
             runService(contract: ibas.IBOServiceContract): void {
@@ -59,42 +75,40 @@ namespace importexport {
             /** 导出的数据 */
             private exportDatas: ibas.IList<any>;
             /** 导出数据，参数1：使用的方式 */
-            exportData(mode: IDataExportMode): void {
-                let that: this = this;
-                if (!ibas.objects.isNull(mode)) {
-                    mode.export({
-                        datas: this.exportDatas,
-                        onCompleted(result: IExportResult): void {
-                            try {
-                                if (ibas.objects.isNull(result.address)) {
-                                    // 没有地址表示失败
-                                    throw new Error(result.content);
-                                }
-                                that.view.showReslut(result);
-                            } catch (error) {
-                                that.messages(error);
-                            }
-                        }
-                    });
-                    this.close();
-                    this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("importexport_export_is_running", mode.description));
-                } else {
-                    this.proceeding(ibas.emMessageType.WARNING, ibas.i18n.prop("sys_invalid_parameter", "mode"));
+            exportData(exporter: bo.IDataExporter): void {
+                if (ibas.objects.isNull(exporter)) {
+                    throw new Error(ibas.i18n.prop("sys_invalid_parameter", "exporter"));
                 }
+                let that: this = this;
+                exporter.export({
+                    data: this.exportDatas,
+                    onCompleted(opRslt: ibas.IOperationResult<any>): void {
+                        try {
+                            if (opRslt.resultCode !== 0) {
+                                throw new Error(opRslt.message);
+                            }
+                            that.view.showReslut(opRslt.resultObjects);
+                        } catch (error) {
+                            that.messages(error);
+                        }
+                    }
+                });
+                this.close();
+                this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("importexport_export_is_running",
+                    ibas.strings.isEmpty(exporter.description) ? exporter.name : exporter.description));
             }
         }
         /** 数据导出服务-视图 */
         export interface IDataExportServiceView extends ibas.IView {
-            /** 显示可用的模板 */
-            showModes(modes: IDataExportMode[]): void;
+            /** 显示数据导出者 */
+            showExporters(exporters: bo.IDataExporter[]): void;
             /** 导出数据，参数1：使用的方式 */
             exportDataEvent: Function;
             /** 显示结果 */
-            showReslut(result: IExportResult): void;
+            showReslut(results: any[]): void;
         }
         /** 数据导出服务映射 */
         export class DataExportServiceMapping extends ibas.ServiceMapping {
-
             constructor() {
                 super();
                 this.id = DataExportService.APPLICATION_ID;

@@ -19,7 +19,7 @@ namespace importexport {
              * 导入
              * @param caller 调用者
              */
-            import(caller: ImportFileCaller): void {
+            import(caller: IImportFileCaller): void {
                 if (!this.address.endsWith("/")) { this.address += "/"; }
                 let fileRepository: ibas.FileRepositoryUploadAjax = new ibas.FileRepositoryUploadAjax();
                 fileRepository.address = this.address.replace("/services/rest/data/", "/services/rest/file/");
@@ -31,13 +31,33 @@ namespace importexport {
              * 导出
              * @param caller 调用者
              */
-            export(caller: ibas.IDownloadFileCaller<Blob>): void {
+            export(caller: IExportFileCaller): void {
                 if (!this.address.endsWith("/")) { this.address += "/"; }
-                let fileRepository: ibas.FileRepositoryDownloadAjax = new ibas.FileRepositoryDownloadAjax();
+                let fileRepository: ibas.FileRepositoryUploadAjax = new ibas.FileRepositoryUploadAjax();
                 fileRepository.address = this.address.replace("/services/rest/data/", "/services/rest/file/");
                 fileRepository.token = this.token;
                 fileRepository.converter = this.createConverter();
-                fileRepository.download("export", caller);
+                let formData: FormData = new FormData();
+                formData.append("transformer", caller.transformer);
+                if (!ibas.objects.isNull(caller.template)) {
+                    formData.append("template", caller.template);
+                }
+                if (caller.criteria instanceof ibas.Criteria) {
+                    let data: any = fileRepository.converter.convert(caller.criteria, "");
+                    formData.append("criteria", JSON.stringify(data));
+                }
+                if (caller.content instanceof Blob) {
+                    formData.append("content", caller.content);
+                } else if (typeof caller.content === "string") {
+                    formData.append("content", caller.content);
+                } else if (caller.content instanceof Object) {
+                    let data: any = fileRepository.converter.convert(caller.content, "");
+                    formData.append("content", JSON.stringify(data));
+                }
+                fileRepository.upload("export", {
+                    fileData: formData,
+                    onCompleted: caller.onCompleted,
+                });
             }
             /**
              * 获取业务对象架构
@@ -54,11 +74,11 @@ namespace importexport {
                 boRepository.callRemoteMethod(method, undefined, caller);
             }
             /**
-             * 查询 获取转换者名称
+             * 查询 获取数据导出者
              * @param fetcher 查询者
              */
-            fetchTransformer(fetcher: ibas.IFetchCaller<ibas.KeyText>): void {
-                super.fetch("Transformer", fetcher);
+            fetchDataExporter(fetcher: ibas.IFetchCaller<bo.IDataExporter>): void {
+                super.fetch("DataExporter", fetcher);
             }
             /**
              * 查询 数据导出模板

@@ -1,4 +1,4 @@
-package org.colorcoding.ibas.importexport.transformers.excel;
+package org.colorcoding.ibas.importexport.transformer;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,12 +15,10 @@ import org.colorcoding.ibas.bobas.mapping.BOCode;
 import org.colorcoding.ibas.bobas.organization.OrganizationFactory;
 import org.colorcoding.ibas.bobas.repository.InvalidTokenException;
 import org.colorcoding.ibas.importexport.MyConfiguration;
-import org.colorcoding.ibas.importexport.transformer.TransformException;
-import org.colorcoding.ibas.importexport.transformer.TransformerFile;
-import org.colorcoding.ibas.importexport.transformers.excel.template.Property;
-import org.colorcoding.ibas.importexport.transformers.excel.template.ResolvingException;
-import org.colorcoding.ibas.importexport.transformers.excel.template.Template;
-import org.colorcoding.ibas.importexport.transformers.excel.template.WriteFileException;
+import org.colorcoding.ibas.importexport.transformer.template.Property;
+import org.colorcoding.ibas.importexport.transformer.template.ResolvingException;
+import org.colorcoding.ibas.importexport.transformer.template.Template;
+import org.colorcoding.ibas.importexport.transformer.template.WriteFileException;
 import org.colorcoding.ibas.initialfantasy.bo.boinformation.BOInformation;
 import org.colorcoding.ibas.initialfantasy.bo.boinformation.IBOInformation;
 import org.colorcoding.ibas.initialfantasy.bo.boinformation.IBOPropertyInformation;
@@ -32,10 +30,10 @@ import org.colorcoding.ibas.initialfantasy.repository.BORepositoryInitialFantasy
  * @author Niuren.Zhu
  *
  */
+@TransformerInfo("TO_FILE_XLSX")
 public class TransformerExcel extends TransformerFile {
 
 	public final static String TYPE_NAME = "xlsx";
-	public final static String NAME = String.format(GROUP_TEMPLATE, TYPE_NAME).toUpperCase();
 
 	@Override
 	public void transform() throws TransformException {
@@ -106,8 +104,7 @@ public class TransformerExcel extends TransformerFile {
 				if (t == null) {
 					return;
 				}
-				for (org.colorcoding.ibas.importexport.transformers.excel.template.Object object : template
-						.getObjects()) {
+				for (org.colorcoding.ibas.importexport.transformer.template.Object object : template.getObjects()) {
 					if (object.getName().equals(t.getName())) {
 						object.setDescription(t.getDescription());
 						for (Property property : object.getProperties()) {
