@@ -9,8 +9,7 @@
 namespace importexport {
     export namespace app {
         /** 数据导出服务 */
-        export class DataExportService extends ibas.ServiceApplication<IDataExportServiceView, ibas.IBOServiceContract | ibas.IBOListServiceContract>  {
-
+        export class DataExportService extends ibas.ServiceApplication<IDataExportServiceView, ibas.IBOServiceContract>  {
             /** 应用标识 */
             static APPLICATION_ID: string = "34a8ebc2-b105-42ea-ad06-b813fb782f9a";
             /** 应用名称 */
@@ -35,7 +34,7 @@ namespace importexport {
                 this.view.showModes(modes);
             }
             /** 运行服务 */
-            runService(contract: ibas.IBOServiceContract | ibas.IBOListServiceContract): void {
+            runService(contract: ibas.IBOServiceContract): void {
                 if (!ibas.objects.isNull(contract) && !ibas.objects.isNull(contract.data)) {
                     this.exportDatas = new ibas.ArrayList<any>();
                     if (!ibas.objects.isNull(contract.converter)) {
@@ -102,22 +101,6 @@ namespace importexport {
                 this.name = DataExportService.APPLICATION_NAME;
                 this.description = ibas.i18n.prop(this.name);
                 this.proxy = ibas.BOServiceProxy;
-                this.icon = ibas.i18n.prop("importexport_export_icon");
-            }
-            /** 创建服务实例 */
-            create(): ibas.IService<ibas.IServiceContract> {
-                return new DataExportService();
-            }
-        }
-        /** 数据导出服务映射 */
-        export class DataListExportServiceMapping extends ibas.ServiceMapping {
-
-            constructor() {
-                super();
-                this.id = DataExportService.APPLICATION_ID + "-";
-                this.name = DataExportService.APPLICATION_NAME;
-                this.description = ibas.i18n.prop(this.name);
-                this.proxy = ibas.BOListServiceProxy;
                 this.icon = ibas.i18n.prop("importexport_export_icon");
             }
             /** 创建服务实例 */

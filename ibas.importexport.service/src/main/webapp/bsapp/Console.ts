@@ -37,7 +37,6 @@ namespace importexport {
                 this.register(new ExportTemplateFunc());
                 // 注册服务应用
                 this.register(new DataExportServiceMapping());
-                this.register(new DataListExportServiceMapping());
                 this.register(new ExportTemplateChooseServiceMapping());
                 // 注册常驻应用
 
