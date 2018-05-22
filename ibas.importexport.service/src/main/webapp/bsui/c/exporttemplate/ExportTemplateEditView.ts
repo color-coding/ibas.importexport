@@ -75,9 +75,15 @@ namespace importexport {
                             }).bindProperty("value", {
                                 path: "category"
                             }),
+                            new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_notes") }),
+                            new sap.m.Input("", {
+                                type: sap.m.InputType.Text
+                            }).bindProperty("value", {
+                                path: "notes"
+                            }),
                             new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_bocode") }),
                             new sap.m.ex.BOChooseInput("", {
-                                boText: "name",
+                                boText: "description",
                                 boKey: "code",
                                 boCode: ibas.config.applyVariables(initialfantasy.bo.BO_CODE_BOINFORMATION),
                                 repositoryName: initialfantasy.bo.BO_REPOSITORY_INITIALFANTASY,
@@ -92,223 +98,442 @@ namespace importexport {
                             }).bindProperty("value", {
                                 path: "applicationId"
                             }),
-                            new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_notes") }),
-                            new sap.m.Input("", {
-                                type: sap.m.InputType.Text
-                            }).bindProperty("value", {
-                                path: "notes"
-                            }),
                             new sap.ui.core.Title("", { text: ibas.i18n.prop("importexport_title_size") }),
                             new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_width") }),
                             new sap.m.Input("", {
-                                type: sap.m.InputType.Text
+                                type: sap.m.InputType.Number
                             }).bindProperty("value", {
                                 path: "width"
                             }),
                             new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_height") }),
                             new sap.m.Input("", {
-                                type: sap.m.InputType.Text
+                                type: sap.m.InputType.Number
                             }).bindProperty("value", {
                                 path: "height"
                             }),
                             new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_marginleft") }),
                             new sap.m.Input("", {
-                                type: sap.m.InputType.Text
+                                type: sap.m.InputType.Number
                             }).bindProperty("value", {
                                 path: "marginLeft"
                             }),
                             new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_marginright") }),
                             new sap.m.Input("", {
-                                type: sap.m.InputType.Text
+                                type: sap.m.InputType.Number
                             }).bindProperty("value", {
                                 path: "marginRight"
                             }),
                             new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_margintop") }),
                             new sap.m.Input("", {
-                                type: sap.m.InputType.Text
+                                type: sap.m.InputType.Number
                             }).bindProperty("value", {
                                 path: "marginTop"
                             }),
                             new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_marginbottom") }),
                             new sap.m.Input("", {
-                                type: sap.m.InputType.Text
+                                type: sap.m.InputType.Number
                             }).bindProperty("value", {
                                 path: "marginBottom"
                             }),
                             new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_marginarea") }),
                             new sap.m.Input("", {
-                                type: sap.m.InputType.Text
+                                type: sap.m.InputType.Number
                             }).bindProperty("value", {
                                 path: "marginArea"
                             }),
                         ]
                     });
-                    this.tablePageHeaders = new sap.ui.table.Table("", {
-                        toolbar: new sap.m.Toolbar("", {
-                            content: [
-                                new sap.m.Button("", {
-                                    text: ibas.i18n.prop("shell_data_add"),
-                                    type: sap.m.ButtonType.Transparent,
-                                    icon: "sap-icon://less",
-                                    press: function (): void {
-                                        that.fireViewEvents(that.addPageHeaderEvent);
-                                    }
-                                }),
-                                new sap.m.Button("", {
-                                    text: ibas.i18n.prop("shell_data_remove"),
-                                    type: sap.m.ButtonType.Transparent,
-                                    icon: "sap-icon://less",
-                                    press: function (): void {
-                                        that.fireViewEvents(that.removePageHeaderEvent,
-                                            // 获取表格选中的对象
-                                            openui5.utils.getSelecteds<bo.ExportTemplateItem>(that.tablePageHeaders)
-                                        );
-                                    }
-                                }),
-                            ]
-                        }),
-                        enableSelectAll: false,
-                        selectionBehavior: sap.ui.table.SelectionBehavior.Row,
-                        visibleRowCount: ibas.config.get(openui5.utils.CONFIG_ITEM_LIST_TABLE_VISIBLE_ROW_COUNT, 8),
-                        rows: "{/rows}",
-                        columns: [
-                            new sap.ui.table.Column("", {
-                                label: ibas.i18n.prop("bo_exporttemplateitem_itemid"),
-                                template: new sap.m.Text("", {
-                                    wrapping: false,
-                                }).bindProperty("text", {
-                                    path: "itemId",
-                                }),
-                            }),
-                            new sap.ui.table.Column("", {
-                                label: ibas.i18n.prop("bo_exporttemplateitem_itemleft"),
-                                template: new sap.m.Input("", {
-                                    width: "100%",
-                                }).bindProperty("value", {
-                                    path: "itemLeft",
-                                }),
-                            }),
-                            new sap.ui.table.Column("", {
-                                label: ibas.i18n.prop("bo_exporttemplateitem_itemtop"),
-                                template: new sap.m.Input("", {
-                                    width: "100%",
-                                }).bindProperty("value", {
-                                    path: "itemTop",
-                                }),
-                            }),
-                            new sap.ui.table.Column("", {
-                                label: ibas.i18n.prop("bo_exporttemplateitem_sourcetype"),
-                                template: new sap.m.Select("", {
-                                    width: "100%",
-                                    items: openui5.utils.createComboBoxItems(bo.emDataSourceType),
-                                }).bindProperty("selectedKey", {
-                                    path: "sourceType",
-                                    type: "sap.ui.model.type.Integer",
-                                })
-                            }),
-                            new sap.ui.table.Column("", {
-                                label: ibas.i18n.prop("bo_exporttemplateitem_itemstring"),
-                                template: new sap.m.Input("", {
-                                    width: "100%",
-                                }).bindProperty("value", {
-                                    path: "itemString",
-                                }),
-                            }),
-                            new sap.ui.table.Column("", {
-                                label: ibas.i18n.prop("bo_exporttemplateitem_valueformat"),
-                                template: new sap.m.Input("", {
-                                    width: "100%",
-                                }).bindProperty("value", {
-                                    path: "valueFormat",
-                                }),
-                            }),
-                            new sap.ui.table.Column("", {
-                                label: ibas.i18n.prop("bo_exporttemplateitem_itemvisible"),
-                                template: new sap.m.Select("", {
-                                    width: "100%",
-                                    items: openui5.utils.createComboBoxItems(ibas.emYesNo),
-                                }).bindProperty("selectedKey", {
-                                    path: "itemVisible",
-                                    type: "sap.ui.model.type.Integer",
-                                })
-                            }),
-                            new sap.ui.table.Column("", {
-                                label: ibas.i18n.prop("bo_exporttemplateitem_width"),
-                                template: new sap.m.Input("", {
-                                    width: "100%",
-                                }).bindProperty("value", {
-                                    path: "width",
-                                }),
-                            }),
-                            new sap.ui.table.Column("", {
-                                label: ibas.i18n.prop("bo_exporttemplateitem_height"),
-                                template: new sap.m.Input("", {
-                                    width: "100%",
-                                }).bindProperty("value", {
-                                    path: "height",
-                                }),
-                            }),
-                        ]
-                    });
+                    this.tablePageHeaders = this.createTableTemplateItem(this.addPageHeaderEvent, this.removePageHeaderEvent);
+                    this.tableStartSections = this.createTableTemplateItem(this.addStartSectionEvent, this.removeStartSectionEvent);
+                    this.tableRepetitionHeaders = this.createTableTemplateItem(this.addRepetitionHeaderEvent, this.removeRepetitionHeaderEvent);
+                    this.tableRepetitions = this.createTableTemplateItem(this.addRepetitionEvent, this.removeRepetitionEvent);
+                    this.tableRepetitionFooters = this.createTableTemplateItem(this.addRepetitionFooterEvent, this.removeRepetitionFooterEvent);
+                    this.tableEndSections = this.createTableTemplateItem(this.addEndSectionEvent, this.removeEndSectionEvent);
+                    this.tablePageFooters = this.createTableTemplateItem(this.addPageFooterEvent, this.removePageFooterEvent);
+
                     let formExportTemplateItem: sap.ui.layout.form.SimpleForm = new sap.ui.layout.form.SimpleForm("", {
                         editable: true,
                         content: [
-                            new sap.m.TabContainer("", {
+                            new sap.m.IconTabBar("", {
+                                headerBackgroundDesign: sap.m.BackgroundDesign.Transparent,
                                 items: [
-                                    new sap.m.TabContainerItem("", {
-                                        key: "pageheaders",
-                                        name: ibas.i18n.prop("bo_exporttemplateitem_pageheaders"),
+                                    new sap.m.IconTabFilter("", {
+                                        key: bo.emAreaType.PAGE_HEADER,
+                                        text: ibas.i18n.prop("bo_exporttemplateitem_pageheaders"),
                                         content: [
-                                            new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_pageheaderleft") }),
-                                            new sap.m.Input("", {
-                                                type: sap.m.InputType.Text
-                                            }).bindProperty("value", {
-                                                path: "pageHeaderLeft"
-                                            }),
-                                            new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_pageheaderright") }),
-                                            new sap.m.Input("", {
-                                                type: sap.m.InputType.Text
-                                            }).bindProperty("value", {
-                                                path: "pageHeaderRight"
-                                            }),
-                                            new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_pageheadertop") }),
-                                            new sap.m.Input("", {
-                                                type: sap.m.InputType.Text
-                                            }).bindProperty("value", {
-                                                path: "pageHeaderTop"
-                                            }),
-                                            new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_pageheaderbottom") }),
-                                            new sap.m.Input("", {
-                                                type: sap.m.InputType.Text
-                                            }).bindProperty("value", {
-                                                path: "pageHeaderBottom"
+                                            new sap.m.OverflowToolbar("", {
+                                                content: [
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_left")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "pageHeaderLeft"
+                                                    }),
+                                                    new sap.m.ToolbarSeparator("", { width: "10px", }),
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_top")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "pageHeaderTop"
+                                                    }),
+                                                    new sap.m.ToolbarSeparator("", { width: "10px", }),
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_width")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "pageHeaderWidth"
+                                                    }),
+                                                    new sap.m.ToolbarSeparator("", { width: "10px", }),
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_height")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "pageHeaderHeight"
+                                                    }),
+                                                ]
                                             }),
                                             this.tablePageHeaders,
                                         ]
                                     }),
-                                    new sap.m.TabContainerItem("", {
-                                        key: "startsections",
-                                        name: ibas.i18n.prop("bo_exporttemplateitem_startsections"),
+                                    new sap.m.IconTabFilter("", {
+                                        key: bo.emAreaType.START_SECTION,
+                                        text: ibas.i18n.prop("bo_exporttemplateitem_startsections"),
+                                        content: [
+                                            new sap.m.OverflowToolbar("", {
+                                                content: [
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_left")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "startSectionLeft"
+                                                    }),
+                                                    new sap.m.ToolbarSeparator(""),
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_top")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "startSectionTop"
+                                                    }),
+                                                    new sap.m.ToolbarSeparator(""),
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_width")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "startSectionWidth"
+                                                    }),
+                                                    new sap.m.ToolbarSeparator(""),
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_height")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "startSectionHeight"
+                                                    }),
+                                                ]
+                                            }),
+                                            this.tableStartSections,
+                                        ]
                                     }),
-                                    new sap.m.TabContainerItem("", {
-                                        key: "repetitionheaders",
-                                        name: ibas.i18n.prop("bo_exporttemplateitem_repetitionheaders"),
+                                    new sap.m.IconTabFilter("", {
+                                        key: bo.emAreaType.REPETITION_HEADER,
+                                        text: ibas.i18n.prop("bo_exporttemplateitem_repetitionheaders"),
+                                        content: [
+                                            new sap.m.OverflowToolbar("", {
+                                                content: [
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_left")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "repetitionHeaderLeft"
+                                                    }),
+                                                    new sap.m.ToolbarSeparator(""),
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_top")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "repetitionHeaderTop"
+                                                    }),
+                                                    new sap.m.ToolbarSeparator(""),
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_width")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "repetitionHeaderWidth"
+                                                    }),
+                                                    new sap.m.ToolbarSeparator(""),
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_height")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "repetitionHeaderHeight"
+                                                    }),
+                                                ]
+                                            }),
+                                            this.tableRepetitionHeaders,
+                                        ]
                                     }),
-                                    new sap.m.TabContainerItem("", {
-                                        key: "repetitions",
-                                        name: ibas.i18n.prop("bo_exporttemplateitem_repetitions"),
+                                    new sap.m.IconTabFilter("", {
+                                        key: bo.emAreaType.REPETITION,
+                                        text: ibas.i18n.prop("bo_exporttemplateitem_repetitions"),
+                                        content: [
+                                            new sap.m.OverflowToolbar("", {
+                                                content: [
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_left")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "repetitionLeft"
+                                                    }),
+                                                    new sap.m.ToolbarSeparator(""),
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_top")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "repetitionTop"
+                                                    }),
+                                                    new sap.m.ToolbarSeparator(""),
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_width")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "repetitionWidth"
+                                                    }),
+                                                    new sap.m.ToolbarSeparator(""),
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_height")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "repetitionHeight"
+                                                    }),
+                                                ]
+                                            }),
+                                            this.tableRepetitions,
+                                        ]
                                     }),
-                                    new sap.m.TabContainerItem("", {
-                                        key: "repetitionfooters",
-                                        name: ibas.i18n.prop("bo_exporttemplateitem_repetitionfooters"),
+                                    new sap.m.IconTabFilter("", {
+                                        key: bo.emAreaType.REPETITION_FOOTER,
+                                        text: ibas.i18n.prop("bo_exporttemplateitem_repetitionfooters"),
+                                        content: [
+                                            new sap.m.OverflowToolbar("", {
+                                                content: [
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_left")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "repetitionFooterLeft"
+                                                    }),
+                                                    new sap.m.ToolbarSeparator(""),
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_top")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "repetitionFooterTop"
+                                                    }),
+                                                    new sap.m.ToolbarSeparator(""),
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_width")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "repetitionFooterWidth"
+                                                    }),
+                                                    new sap.m.ToolbarSeparator(""),
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_height")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "repetitionFooterHeight"
+                                                    }),
+                                                ]
+                                            }),
+                                            this.tableRepetitionFooters,
+                                        ]
                                     }),
-                                    new sap.m.TabContainerItem("", {
-                                        key: "endsections",
-                                        name: ibas.i18n.prop("bo_exporttemplateitem_endsections"),
+                                    new sap.m.IconTabFilter("", {
+                                        key: bo.emAreaType.END_SECTION,
+                                        text: ibas.i18n.prop("bo_exporttemplateitem_endsections"),
+                                        content: [
+                                            new sap.m.OverflowToolbar("", {
+                                                content: [
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_left")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "endSectionLeft"
+                                                    }),
+                                                    new sap.m.ToolbarSeparator(""),
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_top")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "endSectionTop"
+                                                    }),
+                                                    new sap.m.ToolbarSeparator(""),
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_width")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "endSectionWidth"
+                                                    }),
+                                                    new sap.m.ToolbarSeparator(""),
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_height")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "endSectionHeight"
+                                                    }),
+                                                ]
+                                            }),
+                                            this.tableEndSections,
+                                        ]
                                     }),
-                                    new sap.m.TabContainerItem("", {
-                                        key: "pagefooters",
-                                        name: ibas.i18n.prop("bo_exporttemplateitem_pagefooters"),
+                                    new sap.m.IconTabFilter("", {
+                                        key: bo.emAreaType.PAGE_FOOTER,
+                                        text: ibas.i18n.prop("bo_exporttemplateitem_pagefooters"),
+                                        content: [
+                                            new sap.m.OverflowToolbar("", {
+                                                content: [
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_left")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "pageFooterLeft"
+                                                    }),
+                                                    new sap.m.ToolbarSeparator(""),
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_top")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "pageFooterTop"
+                                                    }),
+                                                    new sap.m.ToolbarSeparator(""),
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_width")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "pageFooterWidth"
+                                                    }),
+                                                    new sap.m.ToolbarSeparator(""),
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_height")
+                                                    }),
+                                                    new sap.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("value", {
+                                                        path: "pageFooterHeight"
+                                                    }),
+                                                ]
+                                            }),
+                                            this.tablePageFooters,
+                                        ]
                                     }),
                                 ]
                             })
@@ -376,22 +601,154 @@ namespace importexport {
                     return this.page;
                 }
 
+                private createTableTemplateItem(eventAdd: Function, eventRemove: Function): sap.ui.table.Table {
+                    let that: this = this;
+                    let table: sap.ui.table.Table = new sap.ui.table.Table("", {
+                        toolbar: new sap.m.Toolbar("", {
+                            content: [
+                                new sap.m.Button("", {
+                                    text: ibas.i18n.prop("shell_data_add"),
+                                    type: sap.m.ButtonType.Transparent,
+                                    icon: "sap-icon://less",
+                                    press: function (): void {
+                                        that.fireViewEvents(eventAdd);
+                                    }
+                                }),
+                                new sap.m.Button("", {
+                                    text: ibas.i18n.prop("shell_data_remove"),
+                                    type: sap.m.ButtonType.Transparent,
+                                    icon: "sap-icon://less",
+                                    press: function (): void {
+                                        that.fireViewEvents(eventRemove,
+                                            // 获取表格选中的对象
+                                            openui5.utils.getSelecteds<bo.ExportTemplateItem>(table)
+                                        );
+                                    }
+                                }),
+                            ]
+                        }),
+                        enableSelectAll: false,
+                        selectionBehavior: sap.ui.table.SelectionBehavior.Row,
+                        visibleRowCount: ibas.config.get(openui5.utils.CONFIG_ITEM_LIST_TABLE_VISIBLE_ROW_COUNT, 8),
+                        rows: "{/rows}",
+                        columns: [
+                            new sap.ui.table.Column("", {
+                                label: ibas.i18n.prop("bo_exporttemplateitem_itemid"),
+                                template: new sap.m.Input("", {
+                                    width: "100%",
+                                }).bindProperty("value", {
+                                    path: "itemId",
+                                }),
+                            }),
+                            new sap.ui.table.Column("", {
+                                label: ibas.i18n.prop("bo_exporttemplateitem_itemleft"),
+                                template: new sap.m.Input("", {
+                                    width: "100%",
+                                }).bindProperty("value", {
+                                    path: "itemLeft",
+                                }),
+                            }),
+                            new sap.ui.table.Column("", {
+                                label: ibas.i18n.prop("bo_exporttemplateitem_itemtop"),
+                                template: new sap.m.Input("", {
+                                    width: "100%",
+                                }).bindProperty("value", {
+                                    path: "itemTop",
+                                }),
+                            }),
+                            new sap.ui.table.Column("", {
+                                label: ibas.i18n.prop("bo_exporttemplateitem_width"),
+                                template: new sap.m.Input("", {
+                                    width: "100%",
+                                }).bindProperty("value", {
+                                    path: "width",
+                                }),
+                            }),
+                            new sap.ui.table.Column("", {
+                                label: ibas.i18n.prop("bo_exporttemplateitem_height"),
+                                template: new sap.m.Input("", {
+                                    width: "100%",
+                                }).bindProperty("value", {
+                                    path: "height",
+                                }),
+                            }),
+                            new sap.ui.table.Column("", {
+                                label: ibas.i18n.prop("bo_exporttemplateitem_sourcetype"),
+                                template: new sap.m.Select("", {
+                                    width: "100%",
+                                    items: openui5.utils.createComboBoxItems(bo.emDataSourceType),
+                                }).bindProperty("selectedKey", {
+                                    path: "sourceType",
+                                    type: "sap.ui.model.type.Integer",
+                                })
+                            }),
+                            new sap.ui.table.Column("", {
+                                label: ibas.i18n.prop("bo_exporttemplateitem_itemstring"),
+                                template: new sap.m.Input("", {
+                                    width: "100%",
+                                }).bindProperty("value", {
+                                    path: "itemString",
+                                }),
+                            }),
+                            new sap.ui.table.Column("", {
+                                label: ibas.i18n.prop("bo_exporttemplateitem_valueformat"),
+                                template: new sap.m.Input("", {
+                                    width: "100%",
+                                }).bindProperty("value", {
+                                    path: "valueFormat",
+                                }),
+                            }),
+                            new sap.ui.table.Column("", {
+                                label: ibas.i18n.prop("bo_exporttemplateitem_itemvisible"),
+                                template: new sap.m.Select("", {
+                                    width: "100%",
+                                    items: openui5.utils.createComboBoxItems(ibas.emYesNo),
+                                }).bindProperty("selectedKey", {
+                                    path: "itemVisible",
+                                    type: "sap.ui.model.type.Integer",
+                                })
+                            }),
+                            new sap.ui.table.Column("", {
+                                label: ibas.i18n.prop("bo_exporttemplateitem_fontname"),
+                                template: new sap.m.Input("", {
+                                    width: "100%",
+                                }).bindProperty("value", {
+                                    path: "fontName",
+                                }),
+                            }),
+                            new sap.ui.table.Column("", {
+                                label: ibas.i18n.prop("bo_exporttemplateitem_fontsize"),
+                                template: new sap.m.Input("", {
+                                    width: "100%",
+                                    type: sap.m.InputType.Number,
+                                }).bindProperty("value", {
+                                    path: "fontSize",
+                                }),
+                            }),
+                            new sap.ui.table.Column("", {
+                                label: ibas.i18n.prop("bo_exporttemplateitem_textstyle"),
+                                template: new sap.m.Select("", {
+                                    width: "100%",
+                                    items: openui5.utils.createComboBoxItems(bo.emTextStyle),
+                                }).bindProperty("selectedKey", {
+                                    path: "textStyle",
+                                    type: "sap.ui.model.type.Integer",
+                                })
+                            }),
+                        ]
+                    });
+                    return table;
+                }
+
                 private page: sap.m.Page;
                 private layoutMain: sap.ui.layout.VerticalLayout;
                 private tablePageHeaders: sap.ui.table.Table;
-
-                /** 改变视图状态 */
-                private changeViewStatus(data: bo.ExportTemplate): void {
-                    if (ibas.objects.isNull(data)) {
-                        return;
-                    }
-                    // 新建时：禁用删除，
-                    if (data.isNew) {
-                        if (this.page.getSubHeader() instanceof sap.m.Toolbar) {
-                            openui5.utils.changeToolbarDeletable(<sap.m.Toolbar>this.page.getSubHeader(), false);
-                        }
-                    }
-                }
+                private tableStartSections: sap.ui.table.Table;
+                private tableRepetitionHeaders: sap.ui.table.Table;
+                private tableRepetitions: sap.ui.table.Table;
+                private tableRepetitionFooters: sap.ui.table.Table;
+                private tableEndSections: sap.ui.table.Table;
+                private tablePageFooters: sap.ui.table.Table;
 
                 /** 显示数据 */
                 showExportTemplate(data: bo.ExportTemplate): void {
@@ -399,36 +756,48 @@ namespace importexport {
                     this.layoutMain.bindObject("/");
                     // 监听属性改变，并更新控件
                     openui5.utils.refreshModelChanged(this.layoutMain, data);
-                    // 改变视图状态
-                    this.changeViewStatus(data);
                 }
                 /** 显示数据-页眉 */
                 showPageHeaders(datas: bo.ExportTemplateItem[]): void {
-
+                    this.tablePageHeaders.setModel(new sap.ui.model.json.JSONModel({ rows: datas }));
+                    // 监听属性改变，并更新控件
+                    openui5.utils.refreshModelChanged(this.tablePageHeaders, datas);
                 }
                 /** 显示数据-开始区域 */
                 showStartSections(datas: bo.ExportTemplateItem[]): void {
-
+                    this.tableStartSections.setModel(new sap.ui.model.json.JSONModel({ rows: datas }));
+                    // 监听属性改变，并更新控件
+                    openui5.utils.refreshModelChanged(this.tableStartSections, datas);
                 }
                 /** 显示数据-重复区头 */
                 showRepetitionHeaders(datas: bo.ExportTemplateItem[]): void {
-
+                    this.tableRepetitionHeaders.setModel(new sap.ui.model.json.JSONModel({ rows: datas }));
+                    // 监听属性改变，并更新控件
+                    openui5.utils.refreshModelChanged(this.tableRepetitionHeaders, datas);
                 }
                 /** 显示数据-重复区 */
                 showRepetitions(datas: bo.ExportTemplateItem[]): void {
-
+                    this.tableRepetitions.setModel(new sap.ui.model.json.JSONModel({ rows: datas }));
+                    // 监听属性改变，并更新控件
+                    openui5.utils.refreshModelChanged(this.tableRepetitions, datas);
                 }
                 /** 显示数据-重复区脚 */
                 showRepetitionFooters(datas: bo.ExportTemplateItem[]): void {
-
+                    this.tableRepetitionFooters.setModel(new sap.ui.model.json.JSONModel({ rows: datas }));
+                    // 监听属性改变，并更新控件
+                    openui5.utils.refreshModelChanged(this.tableRepetitionFooters, datas);
                 }
                 /** 显示数据-结束区域 */
                 showEndSections(datas: bo.ExportTemplateItem[]): void {
-
+                    this.tableEndSections.setModel(new sap.ui.model.json.JSONModel({ rows: datas }));
+                    // 监听属性改变，并更新控件
+                    openui5.utils.refreshModelChanged(this.tableEndSections, datas);
                 }
                 /** 显示数据-页脚 */
                 showPageFooters(datas: bo.ExportTemplateItem[]): void {
-
+                    this.tablePageFooters.setModel(new sap.ui.model.json.JSONModel({ rows: datas }));
+                    // 监听属性改变，并更新控件
+                    openui5.utils.refreshModelChanged(this.tablePageFooters, datas);
                 }
             }
         }

@@ -64,6 +64,14 @@ namespace importexport {
                                 })
                             }),
                             new sap.ui.table.Column("", {
+                                label: ibas.i18n.prop("bo_exporttemplate_notes"),
+                                template: new sap.m.Text("", {
+                                    wrapping: false
+                                }).bindProperty("text", {
+                                    path: "notes"
+                                })
+                            }),
+                            new sap.ui.table.Column("", {
                                 label: ibas.i18n.prop("bo_exporttemplate_width"),
                                 template: new sap.m.Text("", {
                                     wrapping: false
@@ -77,14 +85,6 @@ namespace importexport {
                                     wrapping: false
                                 }).bindProperty("text", {
                                     path: "height"
-                                })
-                            }),
-                            new sap.ui.table.Column("", {
-                                label: ibas.i18n.prop("bo_exporttemplate_notes"),
-                                template: new sap.m.Text("", {
-                                    wrapping: false
-                                }).bindProperty("text", {
-                                    path: "notes"
                                 })
                             }),
                         ]
@@ -188,7 +188,7 @@ namespace importexport {
                             ]
                         }),
                         content: [
-                            new sap.ui.layout.form.SimpleForm("",{
+                            new sap.ui.layout.form.SimpleForm("", {
                                 content: [
                                     this.table,
                                 ]

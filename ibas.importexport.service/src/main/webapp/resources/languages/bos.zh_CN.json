@@ -60,6 +60,10 @@
         "bo_exporttemplate_pagefooterwidth": "页脚-宽度",
         "bo_exporttemplate_pagefooterheight": "页脚-高度",
         "bo_exporttemplate_exporttemplateitems": "导出模板-项集合",
+        "bo_exporttemplate_area_left": "区域-左坐标",
+        "bo_exporttemplate_area_top": "区域-上坐标",
+        "bo_exporttemplate_area_width": "区域-宽度",
+        "bo_exporttemplate_area_height": "区域-高度",
         "bo_exporttemplateitem": "导出模板-项",
         "bo_exporttemplateitem_objectkey": "编号",
         "bo_exporttemplateitem_objectcode": "类型",
@@ -109,7 +113,7 @@
         "bo_exporttemplateitem_borderred": "框架色-红",
         "bo_exporttemplateitem_bordergreen": "框架色-绿",
         "bo_exporttemplateitem_borderblue": "框架色-蓝",
-        "bo_exporttemplateitem_pageheaders": "页眉 ",
+        "bo_exporttemplateitem_pageheaders": "页眉区",
         "bo_exporttemplateitem_startsections": "开始区",
         "bo_exporttemplateitem_repetitionheaders": "重复区头",
         "bo_exporttemplateitem_repetitions": "重复区",
@@ -118,5 +122,17 @@
         "bo_exporttemplateitem_pagefooters": "页脚区",
         "bo_exporttemplate_closing_delimiter": "----结束----"
     },
-    {}
+    {
+        "em_right": "靠右",
+        "em_left": "靠左",
+        "em_center": "中间",
+        "em_top": "靠上",
+        "em_bottom": "靠下",
+        "em_regular": "常规",
+        "em_bold": "粗体",
+        "em_italic": "斜体",
+        "em_bold_italic": "粗斜体",
+        "em_text": "文本",
+        "em_path": "路径"
+    }
 ]

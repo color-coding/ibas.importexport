@@ -1298,9 +1298,12 @@ namespace importexport {
                 this.setProperty(ExportTemplateItem.PROPERTY_BORDERBLUE_NAME, value);
             }
 
-
             /** 初始化数据 */
             protected init(): void {
+                this.itemVisible = ibas.emYesNo.YES;
+                this.justificationHorizontal = emJustificationHorizontal.CENTER;
+                this.justificationVertical = emJustificationVertical.CENTER;
+                this.textStyle = emTextStyle.REGULAR;
             }
         }
 
