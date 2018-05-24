@@ -28,44 +28,59 @@ namespace importexport {
             /** 视图显示后 */
             protected viewShowed(): void {
                 // 视图加载完成
-                let that: this = this;
-                let boRepository: bo.BORepositoryImportExport = new bo.BORepositoryImportExport();
-                boRepository.fetchDataExporter({
-                    criteria: new ibas.Criteria(),
-                    onCompleted(opRslt: ibas.IOperationResult<bo.IDataExporter>): void {
-                        try {
-                            if (opRslt.resultCode !== 0) {
-                                throw new Error(opRslt.message);
-                            }
-                            let exporters: ibas.IList<bo.IDataExporter> = new ibas.ArrayList();
-                            exporters.add(new bo.DataExporterJson());
-                            for (let item of opRslt.resultObjects) {
-                                exporters.add(item);
-                            }
-                            that.view.showExporters(exporters);
-                        } catch (error) {
-                            that.messages(error);
-                        }
-                    }
-                });
             }
             /** 运行服务 */
             runService(contract: ibas.IBOServiceContract): void {
                 if (!ibas.objects.isNull(contract) && !ibas.objects.isNull(contract.data)) {
+                    let boCode: string = null;
                     this.exportDatas = new ibas.ArrayList<any>();
                     if (!ibas.objects.isNull(contract.converter)) {
                         // 存在数据转换者，转换数据
                         if (Array.isArray(contract.data)) {
                             for (let item of contract.data) {
+                                if (ibas.strings.isEmpty(boCode)) {
+                                    boCode = (<ibas.IBOStorageTag><any>item).objectCode;
+                                }
                                 this.exportDatas.add(contract.converter.convert(item, this.name));
                             }
                         } else {
+                            boCode = (<ibas.IBOStorageTag><any>contract.data).objectCode;
                             this.exportDatas.add(contract.converter.convert(contract.data, this.name));
                         }
                     } else {
                         this.exportDatas.add(contract.data);
                     }
-                    super.show();
+                    let criteria: ibas.ICriteria = new ibas.Criteria();
+                    if (!ibas.strings.isEmpty(boCode)) {
+                        criteria.businessObject = boCode;
+                    }
+                    let condition: ibas.ICondition = criteria.conditions.create();
+                    condition.alias = "Transformer";
+                    condition.value = "TO_FILE_";
+                    condition.operation = ibas.emConditionOperation.START;
+                    let that: this = this;
+                    let boRepository: bo.BORepositoryImportExport = new bo.BORepositoryImportExport();
+                    boRepository.fetchDataExporter({
+                        criteria: criteria,
+                        onCompleted(opRslt: ibas.IOperationResult<bo.IDataExporter>): void {
+                            try {
+                                if (opRslt.resultCode !== 0) {
+                                    throw new Error(opRslt.message);
+                                }
+                                if (!that.isViewShowed()) {
+                                    that.show();
+                                }
+                                let exporters: ibas.IList<bo.IDataExporter> = new ibas.ArrayList();
+                                exporters.add(new bo.DataExporterJson());
+                                for (let item of opRslt.resultObjects) {
+                                    exporters.add(item);
+                                }
+                                that.view.showExporters(exporters);
+                            } catch (error) {
+                                that.messages(error);
+                            }
+                        }
+                    });
                 } else {
                     // 输入数据无效，服务不运行
                     this.proceeding(ibas.emMessageType.WARNING,

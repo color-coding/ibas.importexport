@@ -55,7 +55,7 @@ namespace importexport {
                 name = ibas.strings.format("{0}_{1}.json", name, ibas.dates.toString(new Date(), "yyyyMMdd_HHmmss"));
                 if (caller.onCompleted instanceof Function) {
                     let opRslt: ibas.OperationResult<DataExportResult<string>> = new ibas.OperationResult<DataExportResult<string>>();
-                    opRslt.addResults(new DataExportResult<string>(name, data));
+                    opRslt.addResults(new DataExportResult<string>(name, JSON.stringify(caller.data)));
                     caller.onCompleted(opRslt);
                 }
             }
