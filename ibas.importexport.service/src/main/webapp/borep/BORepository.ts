@@ -33,7 +33,7 @@ namespace importexport {
              */
             export(caller: IExportFileCaller): void {
                 if (!this.address.endsWith("/")) { this.address += "/"; }
-                let fileRepository: ibas.FileRepositoryUploadAjax = new ibas.FileRepositoryUploadAjax();
+                let fileRepository: ibas.FileRepositoryDownloadAjax = new ibas.FileRepositoryDownloadAjax();
                 fileRepository.address = this.address.replace("/services/rest/data/", "/services/rest/file/");
                 fileRepository.token = this.token;
                 fileRepository.converter = this.createConverter();
@@ -54,8 +54,8 @@ namespace importexport {
                     let data: any = fileRepository.converter.convert(caller.content, "");
                     formData.append("content", JSON.stringify(data));
                 }
-                fileRepository.upload("export", {
-                    fileData: formData,
+                fileRepository.download("export", {
+                    criteria: formData,
                     onCompleted: caller.onCompleted,
                 });
             }

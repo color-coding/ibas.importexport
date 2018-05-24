@@ -1,6 +1,7 @@
 package org.colorcoding.ibas.importexport.service.rest;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 
 import javax.servlet.http.HttpServletResponse;
@@ -24,7 +25,6 @@ import org.colorcoding.ibas.importexport.MyConfiguration;
 import org.colorcoding.ibas.importexport.data.DataExportInfo;
 import org.colorcoding.ibas.importexport.repository.BORepositoryImportExport;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
@@ -42,23 +42,21 @@ public class FileService extends FileRepositoryService {
 	@Path("upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public OperationResult<FileData> upload(@FormDataParam("file") InputStream fileStream,
-			@FormDataParam("file") FormDataContentDisposition fileDisposition, @QueryParam("token") String token) {
-		return super.save(fileStream, fileDisposition, token);
+	public OperationResult<FileData> upload(FormDataMultiPart formData, @QueryParam("token") String token) {
+		return super.save(formData.getField("file"), token);
 	}
 
 	@POST
 	@Path("import")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public OperationResult<String> importData(@FormDataParam("file") InputStream fileStream,
-			@FormDataParam("file") FormDataContentDisposition fileDisposition, @FormDataParam("update") String sUpdate,
+	public OperationResult<String> importData(FormDataMultiPart formData, @FormDataParam("update") String sUpdate,
 			@QueryParam("token") String token) {
 		OperationResult<String> opRslt = null;
 		try {
 			opRslt = new OperationResult<String>();
 			// 保存文件
-			OperationResult<FileData> opRsltFile = super.save(fileStream, fileDisposition, token);
+			OperationResult<FileData> opRsltFile = super.save(formData.getField("file"), token);
 			if (opRsltFile.getError() != null) {
 				throw opRsltFile.getError();
 			}
@@ -84,8 +82,8 @@ public class FileService extends FileRepositoryService {
 	@Path("export")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public byte[] exportData(FormDataMultiPart formData, @QueryParam("token") String token,
-			@Context HttpServletResponse response) {
+	public void exportData(FormDataMultiPart formData, @Context HttpServletResponse response,
+			@QueryParam("token") String token) {
 		try {
 			// 获取导出的文件
 			ISerializer<?> serializer = SerializerFactory.create().createManager().create("json");
@@ -128,9 +126,14 @@ public class FileService extends FileRepositoryService {
 			FileData fileData = opRsltExport.getResultObjects().firstOrDefault();
 			if (fileData != null) {
 				// 数据存在，尝试转为字节数组
+				// 为文件命名
 				response.setHeader("Content-Disposition",
-						String.format("attachment;filename=%s", fileData.getFileName()));// 为文件命名
-				return fileData.getFileBytes();
+						String.format("attachment;filename=%s", fileData.getFileName()));
+				// 设置内容类型
+				response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+				OutputStream os = response.getOutputStream();
+				os.write(fileData.getFileBytes());
+				os.flush();
 			} else {
 				// 无效的导出数据
 				throw new WebApplicationException(404);
