@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE configuration>
+<ns2:configuration xmlns:ns2="http://colorcoding.org/ibas/bobas/configuration">
+    <appSettings>
+        <!-- 配置项目-公司标记 -->
+        <add key="Company" value="CC" />
+        <!-- 配置项目-是否开启调试模式 -->
+        <add key="DebugMode" value="true" />
+        <!-- 配置项目-数据库类型 -->
+        <add key="MasterDbType" value="MSSQL" />
+        <!-- 配置项目-数据库地址 -->
+        <add key="MasterDbServer" value="localhost" />
+        <!-- 配置项目-数据库名称 -->
+        <add key="MasterDbServer" value="ibas-db-mssql" />
+        <!-- 配置项目-数据库用户名称 -->
+        <add key="MasterDbUserID" value="sa" />
+        <!-- 配置项目-数据库用户密码 -->
+        <add key="MasterDbUserPassword" value="1q2w3e" />
+        <!-- 配置项目-是否格式化输出 -->
+        <add key="FormattedOutput" value="true"  />
+        <!-- 配置项目-序列化管理方式 -->
+        <add key="SerializationWay" value="jersey" />
+        <!-- 配置项目-审批方法 -->
+        <add key="ApprovalWay" value="" />
+        <!-- 配置项目-组织方式 -->
+        <add key="OrganizationWay" value="initial" />
+        <!-- 配置项目-权限判断方式 -->
+        <add key="OwnershipWay" value="initial" />
+        <!-- 配置项目-组织过期时间（建议600） -->
+        <add key="OrgManagerExpiry" value="-1" />
+        <!-- 配置项目-权限过期时间（建议120） -->
+        <add key="OwnJudgerExpiry" value="-1" />
+    </appSettings>
+</ns2:configuration>

@@ -2,6 +2,7 @@ package org.colorcoding.ibas.importexport.repository;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.OutputStream;
 import java.util.function.Consumer;
 
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
@@ -28,6 +29,7 @@ import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplate;
 import org.colorcoding.ibas.importexport.data.DataExportInfo;
 import org.colorcoding.ibas.importexport.transformer.FileTransformer;
 import org.colorcoding.ibas.importexport.transformer.IFileTransformer;
+import org.colorcoding.ibas.importexport.transformer.ITemplateTransformer;
 import org.colorcoding.ibas.importexport.transformer.ITransformer;
 import org.colorcoding.ibas.importexport.transformer.ITransformerFile;
 import org.colorcoding.ibas.importexport.transformer.TransformerFactory;
@@ -275,15 +277,16 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			this.setUserToken(token);
 			// 获取导出的模板
 			ITransformer<?, ?> transformer = TransformerFactory.create().create(info.getTransformer());
-			if (!(transformer instanceof ITransformerFile)) {
+			if (transformer == null) {
 				throw new Exception(I18N.prop("msg_ie_not_found_transformer", info.getTransformer()));
 			}
-			ITransformerFile fileTransformer = (ITransformerFile) transformer;
-			fileTransformer.setWorkFolder(MyConfiguration.getTempFolder());
-			if (info.getCriteria() != null) {
+			if (transformer instanceof ITransformerFile) {
 				// 查询数据
 				ICriteria criteria = info.getCriteria();
-				if (criteria == null || criteria.getBusinessObject() == null) {
+				ITransformerFile fileTransformer = (ITransformerFile) transformer;
+				fileTransformer.setWorkFolder(MyConfiguration.getTempFolder());
+				if (criteria == null || criteria.getBusinessObject() == null
+						|| criteria.getBusinessObject().isEmpty()) {
 					throw new Exception(I18N.prop("msg_bobas_invaild_criteria"));
 				}
 				// 获取导出的对象类型
@@ -307,20 +310,40 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 					}
 					fileTransformer.setInputData(opRsltFetch.getResultObjects().toArray(new IBusinessObject[] {}));
 				}
-			} else {
-				// 已提供数据
-
-			}
-			// 导出数据
-			fileTransformer.transform();
-			File file = fileTransformer.getOutputData().firstOrDefault();
-			if (file != null) {
+				// 导出数据
+				fileTransformer.transform();
+				File file = fileTransformer.getOutputData().firstOrDefault();
+				if (file == null) {
+					throw new Exception(I18N.prop("msg_ie_invaild_data"));
+				}
 				FileData fileData = new FileData();
 				fileData.setFileName(file.getName());
 				fileData.setLocation(file.getPath());
 				opRslt.addResultObjects(fileData);
-			} else {
-				throw new Exception(I18N.prop("msg_ie_invaild_data"));
+			} else if (transformer instanceof ITemplateTransformer) {
+				ICriteria criteria = new Criteria();
+				ICondition condition = criteria.getConditions().create();
+				condition.setAlias(ExportTemplate.PROPERTY_ACTIVATED.getName());
+				condition.setValue(emYesNo.YES);
+				condition = criteria.getConditions().create();
+				condition.setAlias(ExportTemplate.PROPERTY_OBJECTKEY.getName());
+				condition.setValue(info.getTemplate());
+				IOperationResult<IExportTemplate> opRstlTP = this.fetchExportTemplate(criteria);
+				if (opRstlTP.getError() != null) {
+					throw opRstlTP.getError();
+				}
+				IExportTemplate template = opRstlTP.getResultObjects().firstOrDefault();
+				if (template == null) {
+					throw new Exception(I18N.prop("msg_ie_not_found_template", info.getTemplate()));
+				}
+				ITemplateTransformer templateTransformer = (ITemplateTransformer) transformer;
+				templateTransformer.setTemplate(template);
+				templateTransformer.setInputData(info.getContent());
+				templateTransformer.transform();
+				OutputStream data = templateTransformer.getOutputData().firstOrDefault();
+				if (data == null) {
+					throw new Exception(I18N.prop("msg_ie_invaild_data"));
+				}
 			}
 		} catch (Exception e) {
 			opRslt = new OperationResult<FileData>(e);

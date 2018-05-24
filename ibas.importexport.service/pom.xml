@@ -53,5 +53,10 @@
             <artifactId>ibas.importexport.excel</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.colorcoding.apps</groupId>
+            <artifactId>ibas.importexport.html</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

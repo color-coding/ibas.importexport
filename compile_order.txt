@@ -1,3 +1,4 @@
 ibas.importexport
 ibas.importexport.excel
+ibas.importexport.html
 ibas.importexport.service

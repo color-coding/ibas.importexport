@@ -1,6 +1,6 @@
 package org.colorcoding.ibas.importexport.transformer;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.colorcoding.ibas.bobas.i18n.I18N;
@@ -65,7 +65,7 @@ public final class TransformerFactory {
 
 	public final Map<String, Class<?>> getTransformers() {
 		if (this.transformers == null) {
-			this.transformers = new HashMap<>();
+			this.transformers = new LinkedHashMap<>();
 		}
 		return transformers;
 	}
