@@ -181,6 +181,8 @@ namespace importexport {
             area: emAreaType;
             /** 项标识 */
             itemID: string;
+            /** 项类型 */
+            itemType: string;
             /** 项左坐标 */
             itemLeft: number;
             /** 项上坐标 */

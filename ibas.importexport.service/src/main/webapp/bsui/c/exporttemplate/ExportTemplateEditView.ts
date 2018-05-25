@@ -638,16 +638,25 @@ namespace importexport {
                         columns: [
                             new sap.ui.table.Column("", {
                                 label: ibas.i18n.prop("bo_exporttemplateitem_itemid"),
+                                template: new sap.m.Text("", {
+                                    wrapping: false
+                                }).bindProperty("text", {
+                                    path: "itemID",
+                                }),
+                            }),
+                            new sap.ui.table.Column("", {
+                                label: ibas.i18n.prop("bo_exporttemplateitem_itemtype"),
                                 template: new sap.m.Input("", {
                                     width: "100%",
                                 }).bindProperty("value", {
-                                    path: "itemId",
+                                    path: "itemType",
                                 }),
                             }),
                             new sap.ui.table.Column("", {
                                 label: ibas.i18n.prop("bo_exporttemplateitem_itemleft"),
                                 template: new sap.m.Input("", {
                                     width: "100%",
+                                    type: sap.m.InputType.Number
                                 }).bindProperty("value", {
                                     path: "itemLeft",
                                 }),
@@ -656,24 +665,27 @@ namespace importexport {
                                 label: ibas.i18n.prop("bo_exporttemplateitem_itemtop"),
                                 template: new sap.m.Input("", {
                                     width: "100%",
+                                    type: sap.m.InputType.Number
                                 }).bindProperty("value", {
                                     path: "itemTop",
                                 }),
                             }),
                             new sap.ui.table.Column("", {
-                                label: ibas.i18n.prop("bo_exporttemplateitem_width"),
+                                label: ibas.i18n.prop("bo_exporttemplateitem_itemwidth"),
                                 template: new sap.m.Input("", {
                                     width: "100%",
+                                    type: sap.m.InputType.Number
                                 }).bindProperty("value", {
-                                    path: "width",
+                                    path: "itemWidth",
                                 }),
                             }),
                             new sap.ui.table.Column("", {
-                                label: ibas.i18n.prop("bo_exporttemplateitem_height"),
+                                label: ibas.i18n.prop("bo_exporttemplateitem_itemheight"),
                                 template: new sap.m.Input("", {
                                     width: "100%",
+                                    type: sap.m.InputType.Number
                                 }).bindProperty("value", {
-                                    path: "height",
+                                    path: "itemHeight",
                                 }),
                             }),
                             new sap.ui.table.Column("", {

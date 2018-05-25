@@ -761,6 +761,7 @@ namespace importexport {
             protected afterAdd(item: ExportTemplateItem): void {
                 super.afterAdd(item);
                 item.area = this.areaType;
+                item.itemID = ibas.strings.format("F_{0}", ibas.strings.fill(item.lineId, 3, "0"));
             }
         }
 
@@ -933,6 +934,17 @@ namespace importexport {
             /** 设置-项标识 */
             set itemID(value: string) {
                 this.setProperty(ExportTemplateItem.PROPERTY_ITEMID_NAME, value);
+            }
+
+            /** 映射的属性名称-项类型 */
+            static PROPERTY_ITEMTYPE_NAME: string = "ItemType";
+            /** 获取-项类型 */
+            get itemType(): string {
+                return this.getProperty<string>(ExportTemplateItem.PROPERTY_ITEMTYPE_NAME);
+            }
+            /** 设置-项类型 */
+            set itemType(value: string) {
+                this.setProperty(ExportTemplateItem.PROPERTY_ITEMTYPE_NAME, value);
             }
 
             /** 映射的属性名称-项左坐标 */

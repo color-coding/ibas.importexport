@@ -532,6 +532,38 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	}
 
 	/**
+	 * 属性名称-项类型
+	 */
+	private static final String PROPERTY_ITEMTYPE_NAME = "ItemType";
+
+	/**
+	 * 项类型 属性
+	 */
+	@DbField(name = "ItemType", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	public static final IPropertyInfo<String> PROPERTY_ITEMTYPE = registerProperty(PROPERTY_ITEMTYPE_NAME, String.class,
+			MY_CLASS);
+
+	/**
+	 * 获取-项类型
+	 * 
+	 * @return 值
+	 */
+	@XmlElement(name = PROPERTY_ITEMTYPE_NAME)
+	public final String getItemType() {
+		return this.getProperty(PROPERTY_ITEMTYPE);
+	}
+
+	/**
+	 * 设置-项类型
+	 * 
+	 * @param value
+	 *            值
+	 */
+	public final void setItemType(String value) {
+		this.setProperty(PROPERTY_ITEMTYPE, value);
+	}
+
+	/**
 	 * 属性名称-项左坐标
 	 */
 	private static final String PROPERTY_ITEMLEFT_NAME = "ItemLeft";

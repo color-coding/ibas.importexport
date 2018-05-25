@@ -3,10 +3,13 @@ package org.colorcoding.ibas.importexport.html;
 import java.io.File;
 import java.io.FileInputStream;
 
+import org.colorcoding.ibas.bobas.common.ConditionOperation;
 import org.colorcoding.ibas.bobas.common.Criteria;
 import org.colorcoding.ibas.bobas.common.ICondition;
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
+import org.colorcoding.ibas.bobas.common.ISort;
+import org.colorcoding.ibas.bobas.common.SortType;
 import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.bobas.organization.OrganizationFactory;
 import org.colorcoding.ibas.importexport.MyConfiguration;
@@ -21,12 +24,17 @@ public class testTransformer extends TestCase {
 
 	public void testTransform() throws Exception {
 		ICriteria criteria = new Criteria();
+		criteria.setResultCount(1);
 		ICondition condition = criteria.getConditions().create();
 		condition.setAlias(ExportTemplate.PROPERTY_ACTIVATED.getName());
 		condition.setValue(emYesNo.YES);
 		condition = criteria.getConditions().create();
-		condition.setAlias(ExportTemplate.PROPERTY_OBJECTKEY.getName());
-		condition.setValue(1);
+		condition.setAlias(ExportTemplate.PROPERTY_NAME.getName());
+		condition.setValue("销售报价");
+		condition.setOperation(ConditionOperation.START);
+		ISort sort = criteria.getSorts().create();
+		sort.setAlias(ExportTemplate.PROPERTY_OBJECTKEY.getName());
+		sort.setSortType(SortType.DESCENDING);
 		BORepositoryImportExport boRepository = new BORepositoryImportExport();
 		boRepository.setUserToken(OrganizationFactory.SYSTEM_USER.getToken());
 		IOperationResult<IExportTemplate> opRstl = boRepository.fetchExportTemplate(criteria);

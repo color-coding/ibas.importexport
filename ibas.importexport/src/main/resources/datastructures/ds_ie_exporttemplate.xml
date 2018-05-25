@@ -20,7 +20,7 @@
     <Property Name="Organization" Description="数据所属组织" DataType="Alphanumeric" DataSubType="Default" EditSize="8" Mapped="OrgCode"/>
     <Property Name="Name" Description="名称" DataType="Alphanumeric" DataSubType="Default" EditSize="30" Mapped="Name" UniqueKey="Yes"/>
     <Property Name="Activated" Description="已激活的" DataType="Alphanumeric" DataSubType="Default" EditSize="1" DeclaredType="emYesNo" Mapped="Activated"/>
-    <Property Name="Language" Description="语言" DataType="Alphanumeric" DataSubType="Default" EditSize="10" Mapped="Language"/>
+    <Property Name="Language" Description="语言" DataType="Alphanumeric" DataSubType="Default" EditSize="20" Mapped="Language"/>
     <Property Name="Category" Description="类型" DataType="Alphanumeric" DataSubType="Default" EditSize="16" Mapped="Category"/>
     <Property Name="BOCode" Description="关联的业务对象" DataType="Alphanumeric" DataSubType="Default" EditSize="30" Mapped="BOCode"/>
     <Property Name="ApplicationId" Description="关联的应用" DataType="Alphanumeric" DataSubType="Default" EditSize="36" Mapped="AppId"/>
@@ -77,6 +77,7 @@
     <Property Name="UpdateActionId" Description="更新动作标识" DataType="Alphanumeric" DataSubType="Default" EditSize="36" Mapped="UpdateActId"/>
     <Property Name="Area" Description="区域" DataType="Alphanumeric" DataSubType="Default" EditSize="2" DeclaredType="emAreaType" Mapped="Area"/>
     <Property Name="ItemID" Description="项标识" DataType="Alphanumeric" DataSubType="Default" EditSize="60" Mapped="ItemID"/>
+    <Property Name="ItemType" Description="项类型" DataType="Alphanumeric" DataSubType="Default" EditSize="8" Mapped="ItemType"/>
     <Property Name="ItemLeft" Description="项左坐标" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="ItemLeft"/>
     <Property Name="ItemTop" Description="项上坐标" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="ItemTop"/>
     <Property Name="ItemWidth" Description="项宽度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="ItemWidth"/>

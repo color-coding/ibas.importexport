@@ -80,6 +80,7 @@
         "bo_exporttemplateitem_updateactionid": "更新动作标识",
         "bo_exporttemplateitem_area": "区域",
         "bo_exporttemplateitem_itemid": "项标识",
+        "bo_exporttemplateitem_itemtype": "项类型",
         "bo_exporttemplateitem_itemleft": "项左坐标",
         "bo_exporttemplateitem_itemtop": "项上坐标",
         "bo_exporttemplateitem_sourcetype": "数据源",

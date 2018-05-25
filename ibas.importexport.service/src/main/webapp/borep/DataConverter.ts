@@ -81,6 +81,8 @@ namespace importexport {
                         return ibas.enums.toString(emJustificationHorizontal, value);
                     } else if (property === bo.ExportTemplateItem.PROPERTY_JUSTIFICATIONVERTICAL_NAME) {
                         return ibas.enums.toString(emJustificationVertical, value);
+                    } else if (property === bo.ExportTemplateItem.PROPERTY_ITEMVISIBLE_NAME) {
+                        return ibas.enums.toString(ibas.emYesNo, value);
                     }
                 }
                 return super.convertData(boName, property, value);
@@ -105,6 +107,8 @@ namespace importexport {
                         return ibas.enums.valueOf(emJustificationHorizontal, value);
                     } else if (property === bo.ExportTemplateItem.PROPERTY_JUSTIFICATIONVERTICAL_NAME) {
                         return ibas.enums.valueOf(emJustificationVertical, value);
+                    } else if (property === bo.ExportTemplateItem.PROPERTY_ITEMVISIBLE_NAME) {
+                        return ibas.enums.valueOf(ibas.emYesNo, value);
                     }
                 }
                 return super.parsingData(boName, property, value);

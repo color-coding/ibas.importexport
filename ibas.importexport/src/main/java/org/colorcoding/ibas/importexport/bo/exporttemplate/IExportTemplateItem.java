@@ -241,6 +241,21 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	void setItemID(String value);
 
 	/**
+	 * 获取-项类型
+	 * 
+	 * @return 值
+	 */
+	String getItemType();
+
+	/**
+	 * 设置-项类型
+	 * 
+	 * @param value
+	 *            值
+	 */
+	void setItemType(String value);
+
+	/**
 	 * 获取-项左坐标
 	 * 
 	 * @return 值
