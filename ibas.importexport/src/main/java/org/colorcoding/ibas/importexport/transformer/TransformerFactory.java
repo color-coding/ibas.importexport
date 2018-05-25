@@ -2,6 +2,7 @@ package org.colorcoding.ibas.importexport.transformer;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
@@ -51,19 +52,19 @@ public final class TransformerFactory {
 				if (info == null) {
 					continue;
 				}
-				if (info.value() == null || info.value().isEmpty()) {
+				if (info.name() == null || info.name().isEmpty()) {
 					continue;
 				}
-				this.getTransformers().put(info.value(), type);
+				this.getTransformers().put(info, type);
 			} catch (Exception e) {
 				Logger.log(e);
 			}
 		}
 	}
 
-	private Map<String, Class<?>> transformers;
+	private Map<TransformerInfo, Class<?>> transformers;
 
-	public final Map<String, Class<?>> getTransformers() {
+	public final Map<TransformerInfo, Class<?>> getTransformers() {
 		if (this.transformers == null) {
 			this.transformers = new LinkedHashMap<>();
 		}
@@ -74,7 +75,12 @@ public final class TransformerFactory {
 		if (sign == null) {
 			throw new TransformException(I18N.prop("msg_ie_invaild_data"));
 		}
-		Class<?> clazz = this.getTransformers().get(sign);
+		Class<?> clazz = null;
+		for (Entry<TransformerInfo, Class<?>> item : this.getTransformers().entrySet()) {
+			if (item.getKey().name().equals(sign)) {
+				clazz = item.getValue();
+			}
+		}
 		if (clazz == null) {
 			throw new TransformException(I18N.prop("msg_ie_not_found_transformer", sign));
 		}

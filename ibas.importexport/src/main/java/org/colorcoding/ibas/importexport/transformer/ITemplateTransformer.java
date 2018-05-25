@@ -1,7 +1,7 @@
 package org.colorcoding.ibas.importexport.transformer;
 
+import java.io.File;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplate;
 
@@ -11,7 +11,7 @@ import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplate;
  * @author Niuren.Zhu
  *
  */
-public interface ITemplateTransformer extends ITransformer<InputStream, OutputStream> {
+public interface ITemplateTransformer extends ITransformer<InputStream, File> {
 
 	/**
 	 * 设置-模板
@@ -25,5 +25,19 @@ public interface ITemplateTransformer extends ITransformer<InputStream, OutputSt
 	 * 
 	 * @return
 	 */
-	String getTemplate();
+	IExportTemplate getTemplate();
+
+	/**
+	 * 设置-工作目录
+	 * 
+	 * @param folder
+	 */
+	void setWorkFolder(String folder);
+
+	/**
+	 * 获取-工作目录
+	 * 
+	 * @return
+	 */
+	String getWorkFolder();
 }

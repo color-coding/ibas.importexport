@@ -726,23 +726,23 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 属性名称-项宽度
 	 */
-	private static final String PROPERTY_WIDTH_NAME = "Width";
+	private static final String PROPERTY_ITEMWIDTH_NAME = "ItemWidth";
 
 	/**
 	 * 项宽度 属性
 	 */
-	@DbField(name = "Width", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_WIDTH = registerProperty(PROPERTY_WIDTH_NAME, Integer.class,
-			MY_CLASS);
+	@DbField(name = "ItemWidth", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	public static final IPropertyInfo<Integer> PROPERTY_ITEMWIDTH = registerProperty(PROPERTY_ITEMWIDTH_NAME,
+			Integer.class, MY_CLASS);
 
 	/**
 	 * 获取-项宽度
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_WIDTH_NAME)
-	public final Integer getWidth() {
-		return this.getProperty(PROPERTY_WIDTH);
+	@XmlElement(name = PROPERTY_ITEMWIDTH_NAME)
+	public final Integer getItemWidth() {
+		return this.getProperty(PROPERTY_ITEMWIDTH);
 	}
 
 	/**
@@ -751,30 +751,30 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setWidth(Integer value) {
-		this.setProperty(PROPERTY_WIDTH, value);
+	public final void setItemWidth(Integer value) {
+		this.setProperty(PROPERTY_ITEMWIDTH, value);
 	}
 
 	/**
 	 * 属性名称-项高度
 	 */
-	private static final String PROPERTY_HEIGHT_NAME = "Height";
+	private static final String PROPERTY_ITEMHEIGHT_NAME = "ItemHeight";
 
 	/**
 	 * 项高度 属性
 	 */
-	@DbField(name = "Height", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<Integer> PROPERTY_HEIGHT = registerProperty(PROPERTY_HEIGHT_NAME, Integer.class,
-			MY_CLASS);
+	@DbField(name = "ItemHeight", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	public static final IPropertyInfo<Integer> PROPERTY_ITEMHEIGHT = registerProperty(PROPERTY_ITEMHEIGHT_NAME,
+			Integer.class, MY_CLASS);
 
 	/**
 	 * 获取-项高度
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_HEIGHT_NAME)
-	public final Integer getHeight() {
-		return this.getProperty(PROPERTY_HEIGHT);
+	@XmlElement(name = PROPERTY_ITEMHEIGHT_NAME)
+	public final Integer getItemHeight() {
+		return this.getProperty(PROPERTY_ITEMHEIGHT);
 	}
 
 	/**
@@ -783,8 +783,8 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	 * @param value
 	 *            值
 	 */
-	public final void setHeight(Integer value) {
-		this.setProperty(PROPERTY_HEIGHT, value);
+	public final void setItemHeight(Integer value) {
+		this.setProperty(PROPERTY_ITEMHEIGHT, value);
 	}
 
 	/**

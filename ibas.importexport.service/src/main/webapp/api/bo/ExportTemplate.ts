@@ -194,9 +194,9 @@ namespace importexport {
             /** 项是否可见 */
             itemVisible: ibas.emYesNo;
             /** 项宽度 */
-            width: number;
+            itemWidth: number;
             /** 项高度 */
-            height: number;
+            itemHeight: number;
             /** 左边距 */
             marginLeft: number;
             /** 右边距 */

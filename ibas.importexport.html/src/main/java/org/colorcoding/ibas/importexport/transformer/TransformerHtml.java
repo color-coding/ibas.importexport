@@ -6,11 +6,12 @@ package org.colorcoding.ibas.importexport.transformer;
  * @author Niuren.Zhu
  *
  */
-@TransformerInfo("TO_FILE_HTML")
+@TransformerInfo(name = "TO_FILE_HTML", template = true)
 public class TransformerHtml extends TemplateTransformer {
 
 	@Override
 	public void transform() throws TransformException {
+
 	}
 
 }

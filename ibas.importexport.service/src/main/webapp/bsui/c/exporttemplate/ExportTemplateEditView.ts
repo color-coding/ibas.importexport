@@ -42,6 +42,8 @@ namespace importexport {
                 addPageFooterEvent: Function;
                 /** 删除导出模板-项事件 */
                 removePageFooterEvent: Function;
+                /** 选择业务对象 */
+                chooseBusinessObjectEvent: Function;
 
                 /** 绘制视图 */
                 draw(): any {
@@ -82,12 +84,14 @@ namespace importexport {
                                 path: "notes"
                             }),
                             new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_bocode") }),
-                            new sap.m.ex.BOChooseInput("", {
+                            new sap.m.ex.BOInput("", {
                                 boText: "description",
                                 boKey: "code",
                                 boCode: ibas.config.applyVariables(initialfantasy.bo.BO_CODE_BOINFORMATION),
                                 repositoryName: initialfantasy.bo.BO_REPOSITORY_INITIALFANTASY,
-                                criteria: [],
+                                valueHelpRequest: function (): void {
+                                    that.fireViewEvents(that.chooseBusinessObjectEvent);
+                                },
                                 bindingValue: {
                                     path: "boCode"
                                 }

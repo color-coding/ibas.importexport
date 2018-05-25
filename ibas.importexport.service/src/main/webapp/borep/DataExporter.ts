@@ -72,6 +72,7 @@ namespace importexport {
                 let boRepository: bo.BORepositoryImportExport = new bo.BORepositoryImportExport();
                 boRepository.export({
                     transformer: this.name,
+                    template: this.template,
                     content: caller.data,
                     criteria: caller.criteria,
                     onCompleted: caller.onCompleted,

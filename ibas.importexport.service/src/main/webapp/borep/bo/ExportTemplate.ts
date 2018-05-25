@@ -1002,25 +1002,25 @@ namespace importexport {
             }
 
             /** 映射的属性名称-项宽度 */
-            static PROPERTY_WIDTH_NAME: string = "Width";
+            static PROPERTY_ITEMWIDTH_NAME: string = "ItemWidth";
             /** 获取-项宽度 */
-            get width(): number {
-                return this.getProperty<number>(ExportTemplateItem.PROPERTY_WIDTH_NAME);
+            get itemWidth(): number {
+                return this.getProperty<number>(ExportTemplateItem.PROPERTY_ITEMWIDTH_NAME);
             }
             /** 设置-项宽度 */
-            set width(value: number) {
-                this.setProperty(ExportTemplateItem.PROPERTY_WIDTH_NAME, value);
+            set itemWidth(value: number) {
+                this.setProperty(ExportTemplateItem.PROPERTY_ITEMWIDTH_NAME, value);
             }
 
             /** 映射的属性名称-项高度 */
-            static PROPERTY_HEIGHT_NAME: string = "Height";
+            static PROPERTY_ITEMHEIGHT_NAME: string = "ItemHeight";
             /** 获取-项高度 */
-            get height(): number {
-                return this.getProperty<number>(ExportTemplateItem.PROPERTY_HEIGHT_NAME);
+            get itemHeight(): number {
+                return this.getProperty<number>(ExportTemplateItem.PROPERTY_ITEMHEIGHT_NAME);
             }
             /** 设置-项高度 */
-            set height(value: number) {
-                this.setProperty(ExportTemplateItem.PROPERTY_HEIGHT_NAME, value);
+            set itemHeight(value: number) {
+                this.setProperty(ExportTemplateItem.PROPERTY_ITEMHEIGHT_NAME, value);
             }
 
             /** 映射的属性名称-左边距 */

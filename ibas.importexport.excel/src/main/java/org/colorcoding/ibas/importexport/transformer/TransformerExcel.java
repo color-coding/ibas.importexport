@@ -30,7 +30,7 @@ import org.colorcoding.ibas.initialfantasy.repository.BORepositoryInitialFantasy
  * @author Niuren.Zhu
  *
  */
-@TransformerInfo("TO_FILE_XLSX")
+@TransformerInfo(name = "TO_FILE_XLSX")
 public class TransformerExcel extends TransformerFile {
 
 	public final static String TYPE_NAME = "xlsx";

@@ -335,7 +335,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	 * 
 	 * @return 值
 	 */
-	Integer getWidth();
+	Integer getItemWidth();
 
 	/**
 	 * 设置-项宽度
@@ -343,14 +343,14 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	 * @param value
 	 *            值
 	 */
-	void setWidth(Integer value);
+	void setItemWidth(Integer value);
 
 	/**
 	 * 获取-项高度
 	 * 
 	 * @return 值
 	 */
-	Integer getHeight();
+	Integer getItemHeight();
 
 	/**
 	 * 设置-项高度
@@ -358,7 +358,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	 * @param value
 	 *            值
 	 */
-	void setHeight(Integer value);
+	void setItemHeight(Integer value);
 
 	/**
 	 * 获取-左边距

@@ -19,8 +19,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author Niuren.Zhu
  *
  */
-@TransformerInfo("FILE_JSON_TO")
-public class JsonTransformer extends FileSerializationTransformer {
+@TransformerInfo(name = "FILE_JSON_TO")
+public class JsonTransformer extends FileTransformerSerialization {
 
 	public final static String TYPE_NAME = "json";
 	protected final static String NODE_BO_CODE_NAME = "ObjectCode";

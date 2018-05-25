@@ -23,6 +23,9 @@ namespace importexport {
                     exporter.name = remoteData.Transformer;
                     exporter.template = remoteData.Template;
                     exporter.description = remoteData.Description;
+                    if (ibas.strings.isEmpty(exporter.description)) {
+                        exporter.description = exporter.name;
+                    }
                     return exporter;
                 }
                 return super.parsing(data, sign);

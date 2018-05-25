@@ -73,6 +73,12 @@ namespace importexport {
                                 let exporters: ibas.IList<bo.IDataExporter> = new ibas.ArrayList();
                                 exporters.add(new bo.DataExporterJson());
                                 for (let item of opRslt.resultObjects) {
+                                    if (item instanceof bo.DataExporterService) {
+                                        let sItem: bo.DataExporterService = item;
+                                        if (ibas.strings.isEmpty(sItem.template)) {
+                                            continue;
+                                        }
+                                    }
                                     exporters.add(item);
                                 }
                                 that.view.showExporters(exporters);
@@ -90,7 +96,7 @@ namespace importexport {
             /** 导出的数据 */
             private exportDatas: ibas.IList<any>;
             /** 导出数据，参数1：使用的方式 */
-            exportData(exporter: bo.IDataExporter): void {
+            private exportData(exporter: bo.IDataExporter): void {
                 if (ibas.objects.isNull(exporter)) {
                     throw new Error(ibas.i18n.prop("sys_invalid_parameter", "exporter"));
                 }
@@ -102,7 +108,7 @@ namespace importexport {
                             if (opRslt.resultCode !== 0) {
                                 throw new Error(opRslt.message);
                             }
-                            that.view.showReslut(opRslt.resultObjects);
+                            that.view.showResluts(opRslt.resultObjects);
                         } catch (error) {
                             that.messages(error);
                         }
@@ -120,7 +126,7 @@ namespace importexport {
             /** 导出数据，参数1：使用的方式 */
             exportDataEvent: Function;
             /** 显示结果 */
-            showReslut(results: any[]): void;
+            showResluts(results: any[]): void;
         }
         /** 数据导出服务映射 */
         export class DataExportServiceMapping extends ibas.ServiceMapping {

@@ -84,7 +84,7 @@ namespace importexport {
                     this.table.setModel(new sap.ui.model.json.JSONModel(exporters));
                 }
                 /** 显示结果 */
-                showReslut(results: any[]): void {
+                showResluts(results: any[]): void {
                     for (let result of results) {
                         if (result instanceof bo.DataExportResult) {
                             jQuery.sap.require("sap.ui.core.util.File");

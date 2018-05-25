@@ -17,7 +17,7 @@ import org.colorcoding.ibas.bobas.serialization.ISerializer;
  * @author Niuren.Zhu
  *
  */
-public abstract class FileSerializationTransformer extends FileTransformer {
+public abstract class FileTransformerSerialization extends FileTransformer {
 
 	private List<Class<?>> knownTypes;
 
@@ -51,8 +51,7 @@ public abstract class FileSerializationTransformer extends FileTransformer {
 		}
 		ISerializer<?> serializer = this.createSerializer();
 		if (serializer == null) {
-			throw new TransformException(
-					I18N.prop("msg_ie_not_found_serializer", this.getClass().getSimpleName()));
+			throw new TransformException(I18N.prop("msg_ie_not_found_serializer", this.getClass().getSimpleName()));
 		}
 		Logger.log(MessageLevel.INFO, "transformer: [%s] is running.", this.getClass().getSimpleName());
 		try {

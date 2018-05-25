@@ -30,6 +30,7 @@ namespace importexport {
                 // 其他事件
                 this.view.deleteDataEvent = this.deleteData;
                 this.view.createDataEvent = this.createData;
+                this.view.chooseBusinessObjectEvent = this.chooseBusinessObject;
                 this.view.addPageHeaderEvent = this.addPageHeader;
                 this.view.removePageHeaderEvent = this.removePageHeader;
                 this.view.addStartSectionEvent = this.addStartSection;
@@ -401,9 +402,31 @@ namespace importexport {
                 // 仅显示没有标记删除的
                 this.view.showPageFooters(this.editData.pageFooters.filterDeleted());
             }
+            /** 选择业务对象事件 */
+            private chooseBusinessObject(): void {
+                let that: this = this;
+                let criteria: ibas.ICriteria = new ibas.Criteria();
+                criteria.noChilds = true;
+                let condition: ibas.ICondition = criteria.conditions.create();
+                condition.alias = "Code";
+                condition.value = ".";
+                condition.operation = ibas.emConditionOperation.NOT_CONTAIN;
+                ibas.servicesManager.runChooseService<initialfantasy.bo.IBOInformation>({
+                    boCode: initialfantasy.bo.BO_CODE_BOINFORMATION,
+                    chooseType: ibas.emChooseType.SINGLE,
+                    criteria: criteria,
+                    onCompleted(selecteds: ibas.IList<initialfantasy.bo.IBOInformation>): void {
+                        let selected: initialfantasy.bo.IBOInformation = selecteds.firstOrDefault();
+                        that.editData.boCode = selected.code;
+                        that.editData.name = selected.description;
+                    }
+                });
+            }
         }
         /** 视图-导出模板 */
         export interface IExportTemplateEditView extends ibas.IBOEditView {
+            /** 选择业务对象 */
+            chooseBusinessObjectEvent: Function;
             /** 显示数据 */
             showExportTemplate(data: bo.ExportTemplate): void;
             /** 删除数据事件 */

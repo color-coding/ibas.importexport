@@ -10,7 +10,7 @@ import org.colorcoding.ibas.importexport.transformer.template.Template;
  * @author Niuren.Zhu
  *
  */
-@TransformerInfo("FILE_XLSX_TO")
+@TransformerInfo(name = "FILE_XLSX_TO")
 public class ExcelTransformer extends FileTransformer {
 
 	@Override

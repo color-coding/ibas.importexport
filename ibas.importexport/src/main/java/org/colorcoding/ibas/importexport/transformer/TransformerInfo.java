@@ -14,11 +14,17 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface TransformerInfo {
-
 	/**
 	 * 名称
 	 * 
 	 * @return
 	 */
-	public String value();
+	String name();
+
+	/**
+	 * 是否使用模板
+	 * 
+	 * @return
+	 */
+	boolean template() default false;
 }

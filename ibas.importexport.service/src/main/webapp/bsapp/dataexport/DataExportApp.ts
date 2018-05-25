@@ -115,7 +115,7 @@ namespace importexport {
                 this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("importexport_exporting"));
             }
             /** 选择业务对象事件 */
-            chooseBusinessObject(): void {
+            private chooseBusinessObject(): void {
                 let that: this = this;
                 let criteria: ibas.ICriteria = new ibas.Criteria();
                 criteria.noChilds = true;

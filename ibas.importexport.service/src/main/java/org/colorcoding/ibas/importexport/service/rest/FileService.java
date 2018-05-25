@@ -136,7 +136,7 @@ public class FileService extends FileRepositoryService {
 				os.flush();
 			} else {
 				// 无效的导出数据
-				throw new WebApplicationException(404);
+				throw new WebApplicationException(500);
 			}
 		} catch (WebApplicationException e) {
 			throw e;

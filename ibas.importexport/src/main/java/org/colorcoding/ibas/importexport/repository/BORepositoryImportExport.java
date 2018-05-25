@@ -2,7 +2,6 @@ package org.colorcoding.ibas.importexport.repository;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.OutputStream;
 import java.util.function.Consumer;
 
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
@@ -33,12 +32,16 @@ import org.colorcoding.ibas.importexport.transformer.ITemplateTransformer;
 import org.colorcoding.ibas.importexport.transformer.ITransformer;
 import org.colorcoding.ibas.importexport.transformer.ITransformerFile;
 import org.colorcoding.ibas.importexport.transformer.TransformerFactory;
+import org.colorcoding.ibas.importexport.transformer.TransformerInfo;
 
 /**
  * ImportExport仓库
  */
 public class BORepositoryImportExport extends BORepositoryServiceApplication
 		implements IBORepositoryImportExportSvc, IBORepositoryImportExportApp {
+
+	public static final String MSG_TRANSFORMER_IMPORT_DATA = "transformer: using [%s] import data.";
+	public static final String MSG_TRANSFORMER_EXPORT_DATA = "transformer: using [%s] export data.";
 
 	private volatile static IBOFactory boFactory;
 
@@ -191,6 +194,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			if (!(transformer instanceof IFileTransformer)) {
 				throw new Exception(I18N.prop("msg_ie_not_found_transformer", type));
 			}
+			Logger.log(MessageLevel.DEBUG, MSG_TRANSFORMER_IMPORT_DATA, transformer.getClass().getName());
 			IFileTransformer fileTransformer = (IFileTransformer) transformer;
 			// 转换文件数据到业务对象
 			fileTransformer.setInputData(new File(data.getLocation()));
@@ -280,6 +284,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			if (transformer == null) {
 				throw new Exception(I18N.prop("msg_ie_not_found_transformer", info.getTransformer()));
 			}
+			Logger.log(MessageLevel.DEBUG, MSG_TRANSFORMER_EXPORT_DATA, transformer.getClass().getName());
 			if (transformer instanceof ITransformerFile) {
 				// 查询数据
 				ICriteria criteria = info.getCriteria();
@@ -314,7 +319,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 				fileTransformer.transform();
 				File file = fileTransformer.getOutputData().firstOrDefault();
 				if (file == null) {
-					throw new Exception(I18N.prop("msg_ie_invaild_data"));
+					throw new Exception(I18N.prop("msg_ie_no_transformed_data"));
 				}
 				FileData fileData = new FileData();
 				fileData.setFileName(file.getName());
@@ -337,13 +342,18 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 					throw new Exception(I18N.prop("msg_ie_not_found_template", info.getTemplate()));
 				}
 				ITemplateTransformer templateTransformer = (ITemplateTransformer) transformer;
+				templateTransformer.setWorkFolder(MyConfiguration.getTempFolder());
 				templateTransformer.setTemplate(template);
 				templateTransformer.setInputData(info.getContent());
 				templateTransformer.transform();
-				OutputStream data = templateTransformer.getOutputData().firstOrDefault();
-				if (data == null) {
-					throw new Exception(I18N.prop("msg_ie_invaild_data"));
+				File file = templateTransformer.getOutputData().firstOrDefault();
+				if (file == null) {
+					throw new Exception(I18N.prop("msg_ie_no_transformed_data"));
 				}
+				FileData fileData = new FileData();
+				fileData.setFileName(file.getName());
+				fileData.setLocation(file.getPath());
+				opRslt.addResultObjects(fileData);
 			}
 		} catch (Exception e) {
 			opRslt = new OperationResult<FileData>(e);
@@ -366,37 +376,41 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			ICondition tCondition = criteria.getConditions()
 					.firstOrDefault(c -> c.getAlias().equalsIgnoreCase(DataExportInfo.CONDITION_ALIAS_TRANSFORMER));
 			OperationResult<DataExportInfo> operationResult = new OperationResult<>();
-			for (String transformer : TransformerFactory.create().getTransformers().keySet()) {
+			for (TransformerInfo transformer : TransformerFactory.create().getTransformers().keySet()) {
 				if (tCondition != null) {
 					if (tCondition.getOperation() == ConditionOperation.START) {
-						if (!transformer.startsWith(tCondition.getValue())) {
+						if (!transformer.name().startsWith(tCondition.getValue())) {
 							continue;
 						}
 					} else {
 						throw new Exception(I18N.prop("msg_bobas_invaild_condition_operation"));
 					}
 				}
-				if (criteria.getBusinessObject() != null && !criteria.getBusinessObject().isEmpty()) {
-					ICriteria tpCriteria = new Criteria();
-					ICondition condition = tpCriteria.getConditions().create();
-					condition.setAlias(ExportTemplate.PROPERTY_ACTIVATED.getName());
-					condition.setValue(emYesNo.YES);
-					condition = tpCriteria.getConditions().create();
-					condition.setAlias(ExportTemplate.PROPERTY_BOCODE.getName());
-					condition.setValue(criteria.getBusinessObject());
-					IOperationResult<IExportTemplate> opRsltET = this.fetchExportTemplate(tpCriteria);
-					if (opRsltET.getError() != null) {
-						throw opRsltET.getError();
-					}
-					for (IExportTemplate template : opRsltET.getResultObjects()) {
-						DataExportInfo info = new DataExportInfo();
-						info.setTransformer(transformer);
-						info.setTemplate(String.valueOf(template.getObjectKey()));
-						operationResult.addResultObjects(info);
+				if (transformer.template()) {
+					if (criteria.getBusinessObject() != null && !criteria.getBusinessObject().isEmpty()) {
+						ICriteria tpCriteria = new Criteria();
+						tpCriteria.setNoChilds(true);
+						ICondition condition = tpCriteria.getConditions().create();
+						condition.setAlias(ExportTemplate.PROPERTY_ACTIVATED.getName());
+						condition.setValue(emYesNo.YES);
+						condition = tpCriteria.getConditions().create();
+						condition.setAlias(ExportTemplate.PROPERTY_BOCODE.getName());
+						condition.setValue(criteria.getBusinessObject());
+						IOperationResult<IExportTemplate> opRsltET = this.fetchExportTemplate(tpCriteria);
+						if (opRsltET.getError() != null) {
+							throw opRsltET.getError();
+						}
+						for (IExportTemplate template : opRsltET.getResultObjects()) {
+							DataExportInfo info = new DataExportInfo();
+							info.setTransformer(transformer.name());
+							info.setTemplate(String.valueOf(template.getObjectKey()));
+							info.setDescription(I18N.prop("msg_ie_exporter_description", template.getName()));
+							operationResult.addResultObjects(info);
+						}
 					}
 				} else {
 					DataExportInfo info = new DataExportInfo();
-					info.setTransformer(transformer);
+					info.setTransformer(transformer.name());
 					operationResult.addResultObjects(info);
 				}
 			}

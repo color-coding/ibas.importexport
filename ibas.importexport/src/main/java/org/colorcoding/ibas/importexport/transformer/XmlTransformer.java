@@ -23,8 +23,8 @@ import org.w3c.dom.NodeList;
  * @author Niuren.Zhu
  *
  */
-@TransformerInfo("FILE_XML_TO")
-public class XmlTransformer extends FileSerializationTransformer {
+@TransformerInfo(name = "FILE_XML_TO")
+public class XmlTransformer extends FileTransformerSerialization {
 
 	public final static String TYPE_NAME = "xml";
 	protected final static String NODE_BO_CODE_NAME = "ObjectCode";
