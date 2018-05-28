@@ -42,6 +42,9 @@ namespace importexport {
                 if (!ibas.objects.isNull(caller.template)) {
                     formData.append("template", caller.template);
                 }
+                if (!ibas.strings.isEmpty(caller.contentType)) {
+                    formData.append("contentType", caller.contentType);
+                }
                 if (caller.criteria instanceof ibas.Criteria) {
                     let data: any = fileRepository.converter.convert(caller.criteria, "");
                     formData.append("criteria", JSON.stringify(data));

@@ -106,13 +106,14 @@ namespace importexport {
              */
             BOLD_ITALIC
         }
-
         /** 数据导出调用者 */
         export interface IDataExportCaller<T> extends ibas.IMethodCaller<T> {
             /** 导出的数据 */
             data?: object | object[];
             /** 数据查询 */
             criteria?: ibas.ICriteria;
+            /** 内容类型 */
+            contentType?: string;
         }
         /** 数据导出者 */
         export interface IDataExporter {
@@ -122,6 +123,17 @@ namespace importexport {
             description: string;
             /** 导出 */
             export(caller: IDataExportCaller<any>): void;
+        }
+    }
+    export namespace app {
+        /** 数据打印服务契约 */
+        export interface IDataPrintServiceContract extends ibas.IBOServiceContract {
+            /** 模板 */
+            template: number | ibas.ICondition[];
+            /** 业务对象 */
+            businessObject?: string;
+            /** 内容 */
+            content?: string;
         }
     }
 }

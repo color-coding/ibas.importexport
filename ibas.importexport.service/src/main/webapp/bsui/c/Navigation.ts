@@ -11,6 +11,7 @@
 /// <reference path="./exporttemplate/index.ts" />
 /// <reference path="./dataexport/index.ts" />
 /// <reference path="./dataimport/index.ts" />
+/// <reference path="./dataprint/index.ts" />
 namespace importexport {
     export namespace ui {
         /**
@@ -42,6 +43,9 @@ namespace importexport {
                         break;
                     case app.DataImportApp.APPLICATION_ID:
                         view = new c.DataImportView();
+                        break;
+                    case app.DataPrintService.APPLICATION_ID:
+                        view = new c.DataPrintServiceView();
                         break;
                     default:
                         break;

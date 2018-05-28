@@ -24,6 +24,11 @@ public abstract class TemplateTransformer extends Transformer<InputStream, File>
 	}
 
 	public String getWorkFolder() {
+		if (this.workFolder != null && !this.workFolder.isEmpty()) {
+			if (!this.workFolder.endsWith(File.separator)) {
+				this.workFolder += File.separator;
+			}
+		}
 		return this.workFolder;
 	}
 }

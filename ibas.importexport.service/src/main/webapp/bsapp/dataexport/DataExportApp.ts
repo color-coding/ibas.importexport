@@ -93,19 +93,19 @@ namespace importexport {
                 let that: this = this;
                 exporter.export({
                     criteria: this.criteria,
-                    onCompleted(opRslt: ibas.IOperationResult<Blob>): void {
+                    onCompleted(opRslt: ibas.IOperationResult<bo.IDataExportResult>): void {
                         try {
                             that.busy(false);
                             if (opRslt.resultCode !== 0) {
                                 throw new Error(opRslt.message);
                             }
-                            let data: Blob = opRslt.resultObjects.firstOrDefault();
-                            if (!ibas.objects.isNull(data)) {
-                                let extName: string = exporter.name;
-                                extName = extName.substring(extName.lastIndexOf("_") + 1);
-                                ibas.files.save(data, ibas.strings.format("{0}_{1}.{2}",
-                                    that.criteria.businessObject, ibas.dates.toString(ibas.dates.now(), "MMddHHmmss"), extName));
+                            for (let item of opRslt.resultObjects) {
+                                if (item instanceof bo.DataExportResultBlob) {
+                                    item.fileName = ibas.strings.format("{0}_{1}", that.criteria.businessObject, item.fileName);
+                                    item.fileName = item.fileName.toUpperCase();
+                                }
                             }
+                            that.view.showResluts(opRslt.resultObjects);
                         } catch (error) {
                             that.messages(error);
                         }
@@ -153,6 +153,8 @@ namespace importexport {
             showCriteria(criteria: ibas.ICriteria): void;
             /** 显示数据导出者 */
             showExporters(exporters: bo.IDataExporter[]): void;
+            /** 显示结果 */
+            showResluts(results: bo.IDataExportResult[]): void;
             /** 选择业务对象 */
             chooseBusinessObjectEvent: Function;
             /** 导出 */

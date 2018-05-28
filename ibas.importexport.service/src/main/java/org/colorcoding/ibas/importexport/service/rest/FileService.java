@@ -78,6 +78,26 @@ public class FileService extends FileRepositoryService {
 		return opRslt;
 	}
 
+	protected String nameElement(String name) {
+		int index = 0;
+		for (char item : name.toCharArray()) {
+			if (Character.isUpperCase(item)) {
+				index++;
+			} else {
+				break;
+			}
+		}
+		if (index > 0) {
+			if (index == 1 || index == name.length()) {
+				name = name.substring(0, index).toLowerCase() + name.substring(index);
+			} else {
+				index -= 1;
+				name = name.substring(0, index).toLowerCase() + name.substring(index);
+			}
+		}
+		return name;
+	}
+
 	@POST
 	@Path("export")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -98,7 +118,8 @@ public class FileService extends FileRepositoryService {
 				} else {
 					continue;
 				}
-				FormDataBodyPart bodyPart = formData.getField(name.toLowerCase());
+				name = this.nameElement(name);
+				FormDataBodyPart bodyPart = formData.getField(name);
 				if (bodyPart == null) {
 					continue;
 				}
@@ -130,7 +151,11 @@ public class FileService extends FileRepositoryService {
 				response.setHeader("Content-Disposition",
 						String.format("attachment;filename=%s", fileData.getFileName()));
 				// 设置内容类型
-				response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+				if (info.getContentType() != null && !info.getContentType().isEmpty()) {
+					response.setContentType(info.getContentType());
+				} else {
+					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+				}
 				OutputStream os = response.getOutputStream();
 				os.write(fileData.getFileBytes());
 				os.flush();

@@ -109,23 +109,6 @@ namespace importexport {
                 private uploader: sap.ui.unified.FileUploader;
                 private table: sap.ui.table.Table;
                 private sltTempalte: sap.m.Select;
-                /** 显示查询 */
-                showCriteria(criteria: ibas.ICriteria): void {
-                    // 显示查询
-                    this.form.setModel(new sap.ui.model.json.JSONModel(criteria));
-                    this.criteria = criteria;
-                }
-                /** 显示导出者 */
-                showExporters(exporters: bo.IDataExporter[]): void {
-                    for (let item of exporters) {
-                        let sItem: sap.ui.core.Item = new sap.ui.core.Item("", {
-                            key: item.name,
-                            text: ibas.strings.isEmpty(item.description) ? item.name : item.description,
-                        });
-                        sItem.setModel(new sap.ui.model.json.JSONModel(item));
-                        this.sltTempalte.addItem(sItem);
-                    }
-                }
                 private criteria: ibas.ICriteria;
                 /** 显示结果 */
                 showConditions(conditions: ibas.ICondition[]): void {
@@ -291,6 +274,31 @@ namespace importexport {
                         vChar = vChar + char;
                     }
                     return items;
+                }
+                /** 显示查询 */
+                showCriteria(criteria: ibas.ICriteria): void {
+                    // 显示查询
+                    this.form.setModel(new sap.ui.model.json.JSONModel(criteria));
+                    this.criteria = criteria;
+                }
+                /** 显示导出者 */
+                showExporters(exporters: bo.IDataExporter[]): void {
+                    for (let item of exporters) {
+                        let sItem: sap.ui.core.Item = new sap.ui.core.Item("", {
+                            key: item.name,
+                            text: ibas.strings.isEmpty(item.description) ? item.name : item.description,
+                        });
+                        sItem.setModel(new sap.ui.model.json.JSONModel(item));
+                        this.sltTempalte.addItem(sItem);
+                    }
+                }
+                /** 显示结果 */
+                showResluts(results: bo.IDataExportResult[]): void {
+                    for (let result of results) {
+                        if (result instanceof bo.DataExportResultBlob) {
+                            ibas.files.save(result.content, result.fileName);
+                        }
+                    }
                 }
             }
         }

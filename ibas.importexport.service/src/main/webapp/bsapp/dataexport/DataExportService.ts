@@ -126,7 +126,7 @@ namespace importexport {
             /** 导出数据，参数1：使用的方式 */
             exportDataEvent: Function;
             /** 显示结果 */
-            showResluts(results: any[]): void;
+            showResluts(results: bo.IDataExportResult[]): void;
         }
         /** 数据导出服务映射 */
         export class DataExportServiceMapping extends ibas.ServiceMapping {

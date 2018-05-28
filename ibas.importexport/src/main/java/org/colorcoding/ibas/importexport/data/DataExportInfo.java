@@ -70,6 +70,17 @@ public class DataExportInfo extends Serializable {
 		this.description = description;
 	}
 
+	private String contentType;
+
+	@XmlElement(name = "ContentType")
+	public final String getContentType() {
+		return contentType;
+	}
+
+	public final void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
 	private InputStream content;
 
 	public final InputStream getContent() {

@@ -42,6 +42,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 
 	public static final String MSG_TRANSFORMER_IMPORT_DATA = "transformer: using [%s] import data.";
 	public static final String MSG_TRANSFORMER_EXPORT_DATA = "transformer: using [%s] export data.";
+	public static final String MSG_TRANSFORMER_EXPORT_DATA_TO_FILE = "transformer: export data to file [%s].";
 
 	private volatile static IBOFactory boFactory;
 
@@ -321,6 +322,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 				if (file == null) {
 					throw new Exception(I18N.prop("msg_ie_no_transformed_data"));
 				}
+				Logger.log(MessageLevel.DEBUG, MSG_TRANSFORMER_EXPORT_DATA_TO_FILE, file.getPath());
 				FileData fileData = new FileData();
 				fileData.setFileName(file.getName());
 				fileData.setLocation(file.getPath());
@@ -350,6 +352,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 				if (file == null) {
 					throw new Exception(I18N.prop("msg_ie_no_transformed_data"));
 				}
+				Logger.log(MessageLevel.DEBUG, MSG_TRANSFORMER_EXPORT_DATA_TO_FILE, file.getPath());
 				FileData fileData = new FileData();
 				fileData.setFileName(file.getName());
 				fileData.setLocation(file.getPath());

@@ -66,6 +66,8 @@ namespace importexport {
             template?: string;
             /** 查询 */
             criteria?: ibas.ICriteria;
+            /** 内容类型 */
+            contentType?: string;
             /** 内容 */
             content?: any;
         }

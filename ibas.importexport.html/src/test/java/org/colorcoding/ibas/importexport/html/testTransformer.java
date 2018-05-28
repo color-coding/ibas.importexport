@@ -2,6 +2,7 @@ package org.colorcoding.ibas.importexport.html;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 import org.colorcoding.ibas.bobas.common.ConditionOperation;
 import org.colorcoding.ibas.bobas.common.Criteria;
@@ -17,6 +18,10 @@ import org.colorcoding.ibas.importexport.bo.exporttemplate.ExportTemplate;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplate;
 import org.colorcoding.ibas.importexport.repository.BORepositoryImportExport;
 import org.colorcoding.ibas.importexport.transformer.TransformerHtml;
+
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.InvalidJsonException;
+import com.jayway.jsonpath.JsonPath;
 
 import junit.framework.TestCase;
 
@@ -50,6 +55,21 @@ public class testTransformer extends TestCase {
 		transformer.transform();
 		for (File item : transformer.getOutputData()) {
 			System.out.println(String.format("out: %s", item.getPath()));
+		}
+	}
+
+	public void testJsonPath() throws InvalidJsonException, FileNotFoundException {
+		DocumentContext context = JsonPath.parse(new FileInputStream(
+				String.format("%s%stest_salesquote.json", MyConfiguration.getWorkFolder(), File.separator)));
+		Integer count = context.read("$.length()");
+		for (int i = 0; i < count; i++) {
+			System.out.println(String.format("data %s/%s", i, count));
+			System.out.println((String) context.read(String.format("$[%s].CustomerName", i)));
+			Integer subCount = context.read(String.format("$[%s].SalesQuoteItems.length()", i));
+			for (int j = 0; j < subCount; j++) {
+				System.out.println(
+						(String) context.read(String.format("$[%s].SalesQuoteItems[%s].ItemDescription", i, j)));
+			}
 		}
 	}
 }

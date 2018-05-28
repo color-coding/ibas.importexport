@@ -10,10 +10,10 @@
 /// <reference path="./dataexport/index.ts" />
 /// <reference path="./exporttemplate/index.ts" />
 /// <reference path="./dataimport/index.ts" />
+/// <reference path="./dataprint/index.ts" />
 
 namespace importexport {
     export namespace app {
-
         /** 模块控制台 */
         export class Console extends ibas.ModuleConsole {
             /** 构造函数 */
@@ -38,6 +38,7 @@ namespace importexport {
                 // 注册服务应用
                 this.register(new DataExportServiceMapping());
                 this.register(new ExportTemplateChooseServiceMapping());
+                this.register(new DataPrintServiceMapping());
                 // 注册常驻应用
 
 

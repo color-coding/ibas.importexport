@@ -14,29 +14,6 @@ namespace importexport {
             export class DataExportServiceView extends ibas.BODialogView implements app.IDataExportServiceView {
                 /** 导出数据，参数1：使用的模板 */
                 exportDataEvent: Function;
-                /** 绘制工具条 */
-                drawBars(): any {
-                    let that: this = this;
-                    return [
-                        new sap.m.Button("", {
-                            text: ibas.i18n.prop("importexport_export"),
-                            type: sap.m.ButtonType.Transparent,
-                            press: function (): void {
-                                that.fireViewEvents(that.exportDataEvent,
-                                    // 获取表格选中的对象
-                                    openui5.utils.getSelecteds<bo.IDataExporter>(that.table).firstOrDefault()
-                                );
-                            }
-                        }),
-                        new sap.m.Button("", {
-                            text: ibas.i18n.prop("shell_exit"),
-                            type: sap.m.ButtonType.Transparent,
-                            press: function (): void {
-                                that.fireViewEvents(that.closeEvent);
-                            }
-                        }),
-                    ];
-                }
                 /** 绘制视图 */
                 draw(): any {
                     let that: this = this;
@@ -75,7 +52,25 @@ namespace importexport {
                         horizontalScrolling: true,
                         verticalScrolling: true,
                         content: [this.table],
-                        buttons: [this.drawBars()],
+                        buttons: [
+                            new sap.m.Button("", {
+                                text: ibas.i18n.prop("importexport_export"),
+                                type: sap.m.ButtonType.Transparent,
+                                press: function (): void {
+                                    that.fireViewEvents(that.exportDataEvent,
+                                        // 获取表格选中的对象
+                                        openui5.utils.getSelecteds<bo.IDataExporter>(that.table).firstOrDefault()
+                                    );
+                                }
+                            }),
+                            new sap.m.Button("", {
+                                text: ibas.i18n.prop("shell_exit"),
+                                type: sap.m.ButtonType.Transparent,
+                                press: function (): void {
+                                    that.fireViewEvents(that.closeEvent);
+                                }
+                            }),
+                        ],
                     });
                 }
                 private table: sap.ui.table.Table;
@@ -84,20 +79,17 @@ namespace importexport {
                     this.table.setModel(new sap.ui.model.json.JSONModel(exporters));
                 }
                 /** 显示结果 */
-                showResluts(results: any[]): void {
+                showResluts(results: bo.IDataExportResult[]): void {
                     for (let result of results) {
-                        if (result instanceof bo.DataExportResult) {
+                        if (result instanceof bo.DataExportResultString) {
                             jQuery.sap.require("sap.ui.core.util.File");
                             let content: any = result.content,
-                                fileName: string = result.name.substring(0, result.name.lastIndexOf(".")),
-                                extension: string = result.name.substring(result.name.lastIndexOf(".") + 1),
+                                fileName: string = result.fileName.substring(0, result.fileName.lastIndexOf(".")),
+                                extension: string = result.fileName.substring(result.fileName.lastIndexOf(".") + 1),
                                 mimeType: string = extension;
-                            sap.ui.core.util.File.save(
-                                content,
-                                fileName,
-                                extension,
-                                mimeType,
-                                "");
+                            sap.ui.core.util.File.save(content, fileName, extension, mimeType, "");
+                        } else if (result instanceof bo.DataExportResultBlob) {
+                            ibas.files.save(result.content, result.fileName);
                         }
                     }
                 }
