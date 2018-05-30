@@ -39,12 +39,12 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 数据库表
 	 */
-	public static final String DB_TABLE_NAME = "CC_IE_EXT1";
+	public static final String DB_TABLE_NAME = "${Company}_IE_EXT1";
 
 	/**
 	 * 业务对象编码
 	 */
-	public static final String BUSINESS_OBJECT_CODE = "CC_IE_EXPORTTEMPLATE";
+	public static final String BUSINESS_OBJECT_CODE = "${Company}_IE_EXPORTTEMPLATE";
 
 	/**
 	 * 业务对象名称
@@ -1625,7 +1625,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	@Override
 	protected void initialize() {
 		super.initialize();// 基类初始化，不可去除
-		this.setObjectCode(BUSINESS_OBJECT_CODE);
+		this.setObjectCode(MyConfiguration.applyVariables(BUSINESS_OBJECT_CODE));
 		this.setItemVisible(emYesNo.YES);
 		this.setTextStyle(emTextStyle.REGULAR);
 		this.setJustificationHorizontal(emJustificationHorizontal.CENTER);

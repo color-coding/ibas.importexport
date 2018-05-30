@@ -27,6 +27,7 @@ import org.colorcoding.ibas.importexport.bo.exporttemplate.ExportTemplate;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplate;
 import org.colorcoding.ibas.importexport.data.DataExportInfo;
 import org.colorcoding.ibas.importexport.transformer.FileTransformer;
+import org.colorcoding.ibas.importexport.transformer.FileTransformerSerialization;
 import org.colorcoding.ibas.importexport.transformer.IFileTransformer;
 import org.colorcoding.ibas.importexport.transformer.ITemplateTransformer;
 import org.colorcoding.ibas.importexport.transformer.ITransformer;
@@ -194,6 +195,9 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			ITransformer<?, ?> transformer = TransformerFactory.create().create(type);
 			if (!(transformer instanceof IFileTransformer)) {
 				throw new Exception(I18N.prop("msg_ie_not_found_transformer", type));
+			}
+			if (transformer instanceof FileTransformerSerialization) {
+				((FileTransformerSerialization) transformer).setBOFactory(getBOFactory());
 			}
 			Logger.log(MessageLevel.DEBUG, MSG_TRANSFORMER_IMPORT_DATA, transformer.getClass().getName());
 			IFileTransformer fileTransformer = (IFileTransformer) transformer;

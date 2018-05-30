@@ -3,7 +3,6 @@ package org.colorcoding.ibas.importexport.transformer;
 import java.io.FileInputStream;
 import java.util.List;
 
-import org.colorcoding.ibas.bobas.core.BOFactory;
 import org.colorcoding.ibas.bobas.data.ArrayList;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.message.MessageLevel;
@@ -41,7 +40,7 @@ public class JsonTransformer extends FileTransformerSerialization {
 				if (boCode == null || boCode.isEmpty()) {
 					continue;
 				}
-				Class<?> boType = BOFactory.create().getClass(boCode);
+				Class<?> boType = this.getBOFactory().getClass(boCode);
 				if (boType == null) {
 					Logger.log(MessageLevel.WARN, "transformer: [%s] not found [%s]'s class.",
 							this.getClass().getSimpleName(), boCode);

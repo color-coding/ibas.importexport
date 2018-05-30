@@ -40,12 +40,12 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 数据库表
 	 */
-	public static final String DB_TABLE_NAME = "CC_IE_OEXT";
+	public static final String DB_TABLE_NAME = "${Company}_IE_OEXT";
 
 	/**
 	 * 业务对象编码
 	 */
-	public static final String BUSINESS_OBJECT_CODE = "CC_IE_EXPORTTEMPLATE";
+	public static final String BUSINESS_OBJECT_CODE = "${Company}_IE_EXPORTTEMPLATE";
 
 	/**
 	 * 业务对象名称
@@ -2145,6 +2145,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	@Override
 	protected void initialize() {
 		super.initialize();// 基类初始化，不可去除
+		this.setObjectCode(MyConfiguration.applyVariables(BUSINESS_OBJECT_CODE));
 		this.setPageHeaders(new ExportTemplateItems(this, emAreaType.PAGE_HEADER));
 		this.setStartSections(new ExportTemplateItems(this, emAreaType.START_SECTION));
 		this.setRepetitionHeaders(new ExportTemplateItems(this, emAreaType.REPETITION_HEADER));
@@ -2152,7 +2153,6 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 		this.setRepetitionFooters(new ExportTemplateItems(this, emAreaType.REPETITION_FOOTER));
 		this.setEndSections(new ExportTemplateItems(this, emAreaType.END_SECTION));
 		this.setPageFooters(new ExportTemplateItems(this, emAreaType.PAGE_FOOTER));
-		this.setObjectCode(BUSINESS_OBJECT_CODE);
 		this.setActivated(emYesNo.YES);
 	}
 
