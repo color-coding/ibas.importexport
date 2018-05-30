@@ -6,12 +6,19 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
+import org.colorcoding.ibas.bobas.data.DateTime;
 import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplateItem;
+import org.colorcoding.ibas.importexport.data.emDataSourceType;
+
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 
 /**
  * 业务对象转换html文件
@@ -22,6 +29,33 @@ import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplateItem;
 @TransformerInfo(name = "TO_FILE_HTML", template = true)
 public class TransformerHtml extends TemplateTransformer {
 
+	public static final String PARAM_PAGE_CURRENT = "${PAGE_CURRENT}";
+	public static final String PARAM_PAGE_TOTAL = "${PAGE_TOTAL}";
+	public static final String PARAM_TIME_NOW = "${TIME_NOW}";
+
+	private DocumentContext dataContext;
+
+	protected final DocumentContext getDataContext() {
+		if (this.dataContext == null) {
+			this.dataContext = JsonPath.parse(this.getInputData());
+		}
+		return dataContext;
+	}
+
+	private Map<String, Object> params;
+
+	@SuppressWarnings("unchecked")
+	protected <T> T paramValue(String name) {
+		if (this.params == null) {
+			return null;
+		}
+		Object value = this.params.get(name);
+		if (value == null) {
+			return null;
+		}
+		return (T) value;
+	}
+
 	@Override
 	public void transform() throws TransformException {
 		if (this.getTemplate() == null) {
@@ -30,6 +64,8 @@ public class TransformerHtml extends TemplateTransformer {
 		if (this.getInputData() == null) {
 			throw new TransformException(I18N.prop("msg_ie_no_input_data"));
 		}
+		this.params = new HashMap<>();
+		this.params.put(PARAM_TIME_NOW, DateTime.getNow());
 		try {
 			File file = new File(String.format("%s%s.html", this.getWorkFolder(), UUID.randomUUID().toString()));
 			OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), "utf-8");
@@ -215,6 +251,20 @@ public class TransformerHtml extends TemplateTransformer {
 		String value = template.getItemString();
 		if (value == null) {
 			value = "";
+		}
+		if (template.getSourceType() == emDataSourceType.PATH) {
+			// 路径取值
+			if (value.indexOf("[]") > 0) {
+				// 取数组索引
+				for (String item : value.split("[]")) {
+					String name = String.format("%s.length()", item);
+					Integer index = this.paramValue(name);
+					if (index == null) {
+						index = this.getDataContext().read(name);
+						this.params.put(name, index);
+					}
+				}
+			}
 		}
 		return value;
 	}
