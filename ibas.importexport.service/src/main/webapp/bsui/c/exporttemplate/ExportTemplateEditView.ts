@@ -637,6 +637,7 @@ namespace importexport {
                         rows: "{/rows}",
                         columns: [
                             new sap.ui.table.Column("", {
+                                width: "80px",
                                 label: ibas.i18n.prop("bo_exporttemplateitem_itemid"),
                                 template: new sap.m.Text("", {
                                     wrapping: false
@@ -645,6 +646,7 @@ namespace importexport {
                                 }),
                             }),
                             new sap.ui.table.Column("", {
+                                width: "100px",
                                 label: ibas.i18n.prop("bo_exporttemplateitem_itemtype"),
                                 template: new sap.m.Input("", {
                                     width: "100%",
@@ -653,6 +655,7 @@ namespace importexport {
                                 }),
                             }),
                             new sap.ui.table.Column("", {
+                                width: "100px",
                                 label: ibas.i18n.prop("bo_exporttemplateitem_itemleft"),
                                 template: new sap.m.Input("", {
                                     width: "100%",
@@ -662,6 +665,7 @@ namespace importexport {
                                 }),
                             }),
                             new sap.ui.table.Column("", {
+                                width: "100px",
                                 label: ibas.i18n.prop("bo_exporttemplateitem_itemtop"),
                                 template: new sap.m.Input("", {
                                     width: "100%",
@@ -671,6 +675,7 @@ namespace importexport {
                                 }),
                             }),
                             new sap.ui.table.Column("", {
+                                width: "100px",
                                 label: ibas.i18n.prop("bo_exporttemplateitem_itemwidth"),
                                 template: new sap.m.Input("", {
                                     width: "100%",
@@ -680,6 +685,7 @@ namespace importexport {
                                 }),
                             }),
                             new sap.ui.table.Column("", {
+                                width: "100px",
                                 label: ibas.i18n.prop("bo_exporttemplateitem_itemheight"),
                                 template: new sap.m.Input("", {
                                     width: "100%",
@@ -689,6 +695,7 @@ namespace importexport {
                                 }),
                             }),
                             new sap.ui.table.Column("", {
+                                width: "100px",
                                 label: ibas.i18n.prop("bo_exporttemplateitem_sourcetype"),
                                 template: new sap.m.Select("", {
                                     width: "100%",
@@ -699,6 +706,7 @@ namespace importexport {
                                 })
                             }),
                             new sap.ui.table.Column("", {
+                                width: "160px",
                                 label: ibas.i18n.prop("bo_exporttemplateitem_itemstring"),
                                 template: new sap.m.Input("", {
                                     width: "100%",
@@ -707,6 +715,7 @@ namespace importexport {
                                 }),
                             }),
                             new sap.ui.table.Column("", {
+                                width: "100px",
                                 label: ibas.i18n.prop("bo_exporttemplateitem_valueformat"),
                                 template: new sap.m.Input("", {
                                     width: "100%",
@@ -715,6 +724,7 @@ namespace importexport {
                                 }),
                             }),
                             new sap.ui.table.Column("", {
+                                width: "100px",
                                 label: ibas.i18n.prop("bo_exporttemplateitem_itemvisible"),
                                 template: new sap.m.Select("", {
                                     width: "100%",
@@ -725,6 +735,7 @@ namespace importexport {
                                 })
                             }),
                             new sap.ui.table.Column("", {
+                                width: "100px",
                                 label: ibas.i18n.prop("bo_exporttemplateitem_fontname"),
                                 template: new sap.m.Input("", {
                                     width: "100%",
@@ -733,6 +744,7 @@ namespace importexport {
                                 }),
                             }),
                             new sap.ui.table.Column("", {
+                                width: "100px",
                                 label: ibas.i18n.prop("bo_exporttemplateitem_fontsize"),
                                 template: new sap.m.Input("", {
                                     width: "100%",
@@ -742,6 +754,7 @@ namespace importexport {
                                 }),
                             }),
                             new sap.ui.table.Column("", {
+                                width: "100px",
                                 label: ibas.i18n.prop("bo_exporttemplateitem_textstyle"),
                                 template: new sap.m.Select("", {
                                     width: "100%",

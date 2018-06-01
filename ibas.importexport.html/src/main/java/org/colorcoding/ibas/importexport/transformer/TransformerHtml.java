@@ -6,14 +6,14 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.colorcoding.ibas.bobas.data.DateTime;
 import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.bobas.i18n.I18N;
+import org.colorcoding.ibas.bobas.message.Logger;
+import org.colorcoding.ibas.bobas.message.MessageLevel;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplateItem;
 import org.colorcoding.ibas.importexport.data.emDataSourceType;
 
@@ -29,31 +29,52 @@ import com.jayway.jsonpath.JsonPath;
 @TransformerInfo(name = "TO_FILE_HTML", template = true)
 public class TransformerHtml extends TemplateTransformer {
 
-	public static final String PARAM_PAGE_CURRENT = "${PAGE_CURRENT}";
-	public static final String PARAM_PAGE_TOTAL = "${PAGE_TOTAL}";
-	public static final String PARAM_TIME_NOW = "${TIME_NOW}";
-
 	private DocumentContext dataContext;
 
-	protected final DocumentContext getDataContext() {
+	private final DocumentContext getDataContext() {
 		if (this.dataContext == null) {
 			this.dataContext = JsonPath.parse(this.getInputData());
 		}
 		return dataContext;
 	}
 
-	private Map<String, Object> params;
-
+	@Override
 	@SuppressWarnings("unchecked")
-	protected <T> T paramValue(String name) {
-		if (this.params == null) {
-			return null;
+	protected <T> T dataValue(String name, T defaults) {
+		try {
+			Object value = this.getDataContext().read(name);
+			if (value == null) {
+				return defaults;
+			}
+			Logger.log(MessageLevel.DEBUG, "transformer: data [%s], value [%s].", name, value);
+			return (T) value;
+		} catch (Exception e) {
+			Logger.log(MessageLevel.WARN, e);
+			return defaults;
 		}
-		Object value = this.params.get(name);
-		if (value == null) {
-			return null;
+	}
+
+	@Override
+	protected String templateValue(IExportTemplateItem template) {
+		if (template.getSourceType() == emDataSourceType.PATH) {
+			// 路径取值
+			String value = template.getItemString();
+			if (value.indexOf("[]") > 0) {
+				int index = this.paramValue(PARAM_DATA_INDEX, -1);
+				if (index < 0) {
+					return "";
+				}
+				Object tmp = this.dataValue(value.replace("[]", String.format("[%s]", index - 1)), null);
+				if (tmp == null) {
+					return "";
+				}
+				if (template.getValueFormat() != null && !template.getValueFormat().isEmpty()) {
+					return String.format(template.getValueFormat(), tmp);
+				}
+				return String.valueOf(tmp);
+			}
 		}
-		return (T) value;
+		return super.templateValue(template);
 	}
 
 	@Override
@@ -64,8 +85,7 @@ public class TransformerHtml extends TemplateTransformer {
 		if (this.getInputData() == null) {
 			throw new TransformException(I18N.prop("msg_ie_no_input_data"));
 		}
-		this.params = new HashMap<>();
-		this.params.put(PARAM_TIME_NOW, DateTime.getNow());
+		this.init();
 		try {
 			File file = new File(String.format("%s%s.html", this.getWorkFolder(), UUID.randomUUID().toString()));
 			OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), "utf-8");
@@ -84,6 +104,96 @@ public class TransformerHtml extends TemplateTransformer {
 		}
 	}
 
+	/**
+	 * 初始化，分析数据构建变量
+	 */
+	protected void init() throws TransformException {
+		// 初始变量值
+		this.newParam(PARAM_TIME_NOW, DateTime.getNow());
+		this.newParam(PARAM_DATA_INDEX, 0);
+		// 获取数据长度
+		int size = 0;
+		for (IExportTemplateItem item : this.getTemplate().getRepetitions()) {
+			if (item.getSourceType() != emDataSourceType.PATH) {
+				continue;
+			}
+			String itemString = item.getItemString();
+			if (itemString == null || itemString.isEmpty()) {
+				continue;
+			}
+			int index = itemString.indexOf("[]");
+			if (index < 0) {
+				continue;
+			}
+			size = this.dataValue(String.format("%s.length()", itemString.substring(0, index)), 0);
+			this.newParam(PARAM_DATA_SIZE, size);
+			this.newParam(PARAM_DATA_INDEX, 1);
+			break;
+		}
+		// 计算页数
+		int count = 1;
+		int pageHeigh = this.getTemplate().getHeight();
+		pageHeigh -= this.getTemplate().getMarginTop();
+		pageHeigh -= this.getTemplate().getMarginBottom();
+		// 页眉区
+		if (!this.getTemplate().getPageHeaders().isEmpty()) {
+			pageHeigh -= this.getTemplate().getPageHeaderHeight();
+			pageHeigh -= this.getTemplate().getMarginArea();
+		}
+		// 页脚区
+		if (!this.getTemplate().getPageFooters().isEmpty()) {
+			pageHeigh -= this.getTemplate().getMarginArea();
+			pageHeigh -= this.getTemplate().getPageFooterHeight();
+		}
+		// 判断是否有空余位置
+		if (pageHeigh < 0) {
+			throw new TransformException(I18N.prop("msg_ie_template_size_not_enough", this.getTemplate().getName()));
+		}
+		int content = pageHeigh;
+		for (int i = 1; i <= size; i++) {
+			// 新页
+			if (content == pageHeigh) {
+				// 第一页
+				if (count == 1) {
+					// 开始区
+					if (!this.getTemplate().getStartSections().isEmpty()) {
+						content -= this.getTemplate().getStartSectionHeight();
+						content -= this.getTemplate().getMarginArea();
+					}
+				}
+				// 重复头区
+				if (!this.getTemplate().getRepetitionHeaders().isEmpty()) {
+					content -= this.getTemplate().getRepetitionHeaderHeight();
+				}
+				// 重复脚区
+				if (!this.getTemplate().getRepetitionFooters().isEmpty()) {
+					content -= this.getTemplate().getRepetitionFooterHeight();
+				}
+			}
+			content -= this.getTemplate().getRepetitionHeight();
+			if (content <= 0 || content < this.getTemplate().getRepetitionHeight()) {
+				// 空间用完，新起页
+				count++;
+				content = pageHeigh;
+				this.newParam(String.format(PARAM_TEMPLATE_PAGE_DATA_INDEX, i), i);
+			}
+			// 最后数据
+			if (i == size) {
+				// 结束区
+				if (!this.getTemplate().getEndSections().isEmpty()) {
+					content -= this.getTemplate().getMarginArea();
+					content -= this.getTemplate().getEndSectionHeight();
+				}
+				if (content <= 0) {
+					// 空间用完，新起页
+					count++;
+				}
+			}
+		}
+		this.newParam(PARAM_PAGE_TOTAL, count);
+		this.newParam(PARAM_PAGE_INDEX, 1);
+	}
+
 	protected void darwPage(Writer writer) throws IOException {
 		writer.write("<!DOCTYPE HTML>");
 		writer.write("<html>");
@@ -96,43 +206,74 @@ public class TransformerHtml extends TemplateTransformer {
 		writer.write("</head>");
 
 		writer.write("<body>");
-		int page = 1;
-		this.startPage(writer, page);
-		// 绘制开始区域
-		this.startDiv(writer, String.format("page_%s_startsection", page));
-		this.drawArea(writer, this.getTemplate().getStartSections());
-		this.endDiv(writer);
-		// 绘制重复区域
-		this.startTable(writer, String.format("page_%s_repetitionheaders", page),
-				this.getTemplate().getRepetitionHeaders());
-		this.endTable(writer);
-		// 绘制结束区域
-		this.startDiv(writer, String.format("page_%s_endsection", page));
-		this.drawArea(writer, this.getTemplate().getEndSections());
-		this.endDiv(writer);
-		page = this.endPage(writer, page);
+		for (int page = this.paramValue(PARAM_PAGE_INDEX, 1); page <= this.paramValue(PARAM_PAGE_TOTAL, 1); page++) {
+			// 设置当前页变量
+			this.newParam(PARAM_PAGE_INDEX, page);
+			// 开始-页
+			String pageName = String.format("page_%s", page);
+			this.startDiv(writer, pageName);
+			// 绘制页眉区域
+			String areaName = String.format("%s_header", pageName);
+			Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
+			this.startDiv(writer, areaName);
+			this.drawArea(writer, this.getTemplate().getPageHeaders());
+			this.endDiv(writer);
+			// 绘制开始区域
+			if (page == 1) {
+				// 第一页绘制
+				areaName = String.format("%s_startsection", pageName);
+				Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
+				this.startDiv(writer, areaName);
+				this.drawArea(writer, this.getTemplate().getStartSections());
+				this.endDiv(writer);
+			}
+			// 绘制重复区域
+			areaName = String.format("%s_repetitions", pageName);
+			Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
+			int index = this.paramValue(PARAM_DATA_INDEX, 1), size = this.paramValue(PARAM_DATA_SIZE, 0);
+			for (int i = index; i <= size; i++) {
+				this.newParam(PARAM_DATA_INDEX, i);
+				if (i == index) {
+					this.startDiv(writer, areaName);
+					areaName = String.format("%s_table", pageName);
+					Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
+					this.startTable(writer, areaName, this.getTemplate().getRepetitionHeaders());
+				}
+				this.drawTableRow(writer, this.getTemplate().getRepetitions());
+				if (this.paramValue(String.format(PARAM_TEMPLATE_PAGE_DATA_INDEX, i), null) != null) {
+					if (!this.getTemplate().getRepetitionFooters().isEmpty()) {
+						this.drawTableRow(writer, this.getTemplate().getRepetitionFooters());
+					}
+					this.endTable(writer);
+					this.endDiv(writer);
+					this.newParam(PARAM_DATA_INDEX, i + 1);
+					break;
+				}
+				if (i == size) {
+					this.endTable(writer);
+				}
+			}
+			// 绘制结束区域
+			if (page == this.paramValue(PARAM_PAGE_TOTAL, 1)) {
+				// 最后一页绘制
+				areaName = String.format("%s_endsection", pageName);
+				Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
+				this.startDiv(writer, areaName);
+				this.drawArea(writer, this.getTemplate().getEndSections());
+				this.endDiv(writer);
+			}
+			// 绘制页眉区域
+			areaName = String.format("%s_footer", pageName);
+			Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
+			this.startDiv(writer, areaName);
+			this.drawArea(writer, this.getTemplate().getPageFooters());
+			this.endDiv(writer);
+			// 结束-页
+			this.endDiv(writer);
+		}
 		writer.write("</body>");
 
 		writer.write("</html>");
-	}
-
-	protected void startPage(Writer writer, int page) throws IOException {
-		String id = String.format("page_%s", page);
-		this.startDiv(writer, id);
-		// 页眉
-		this.startDiv(writer, String.format("%s_header", id));
-		this.drawArea(writer, this.getTemplate().getPageHeaders());
-		this.endDiv(writer);
-	}
-
-	protected int endPage(Writer writer, int page) throws IOException {
-		// 页脚
-		String id = String.format("page_%s", page);
-		this.startDiv(writer, String.format("%s_footer", id));
-		this.drawArea(writer, this.getTemplate().getPageFooters());
-		this.endDiv(writer);
-		this.endDiv(writer);
-		return page++;
 	}
 
 	protected void startDiv(Writer writer, String id) throws IOException {
@@ -201,7 +342,7 @@ public class TransformerHtml extends TemplateTransformer {
 		writer.write("\"");
 		writer.write(" ");
 		writer.write(">");
-		writer.write(this.elementValue(template));
+		writer.write(this.templateValue(template));
 		writer.write("</");
 		writer.write(eleType);
 		writer.write(">");
@@ -240,33 +381,31 @@ public class TransformerHtml extends TemplateTransformer {
 		writer.write("</table>");
 	}
 
+	protected void drawTableRow(Writer writer, List<IExportTemplateItem> templates) throws IOException {
+		// 内容按左坐标排序
+		templates.sort(new Comparator<IExportTemplateItem>() {
+			@Override
+			public int compare(IExportTemplateItem o1, IExportTemplateItem o2) {
+				return o1.getItemLeft() - o2.getItemLeft();
+			}
+		});
+		writer.write("<tr>");
+		for (IExportTemplateItem item : templates) {
+			if (item.getItemVisible() == emYesNo.NO) {
+				continue;
+			}
+			writer.write("<td>");
+			writer.write(this.templateValue(item));
+			writer.write("</td>");
+		}
+		writer.write("</tr>");
+	}
+
 	protected String elementType(String itemType) {
 		if (itemType.equalsIgnoreCase("Picture")) {
 
 		}
 		return "label";
-	}
-
-	protected String elementValue(IExportTemplateItem template) {
-		String value = template.getItemString();
-		if (value == null) {
-			value = "";
-		}
-		if (template.getSourceType() == emDataSourceType.PATH) {
-			// 路径取值
-			if (value.indexOf("[]") > 0) {
-				// 取数组索引
-				for (String item : value.split("[]")) {
-					String name = String.format("%s.length()", item);
-					Integer index = this.paramValue(name);
-					if (index == null) {
-						index = this.getDataContext().read(name);
-						this.params.put(name, index);
-					}
-				}
-			}
-		}
-		return value;
 	}
 
 }

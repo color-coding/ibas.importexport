@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-import org.colorcoding.ibas.bobas.common.ConditionOperation;
 import org.colorcoding.ibas.bobas.common.Criteria;
 import org.colorcoding.ibas.bobas.common.ICondition;
 import org.colorcoding.ibas.bobas.common.ICriteria;
@@ -34,9 +33,8 @@ public class testTransformer extends TestCase {
 		condition.setAlias(ExportTemplate.PROPERTY_ACTIVATED.getName());
 		condition.setValue(emYesNo.YES);
 		condition = criteria.getConditions().create();
-		condition.setAlias(ExportTemplate.PROPERTY_NAME.getName());
-		condition.setValue("销售报价");
-		condition.setOperation(ConditionOperation.START);
+		condition.setAlias(ExportTemplate.PROPERTY_BOCODE.getName());
+		condition.setValue(MyConfiguration.applyVariables("${Company}_SL_SALESQUOTE"));
 		ISort sort = criteria.getSorts().create();
 		sort.setAlias(ExportTemplate.PROPERTY_OBJECTKEY.getName());
 		sort.setSortType(SortType.DESCENDING);
@@ -54,7 +52,10 @@ public class testTransformer extends TestCase {
 		transformer.setWorkFolder(MyConfiguration.getWorkFolder());
 		transformer.transform();
 		for (File item : transformer.getOutputData()) {
-			System.out.println(String.format("out: %s", item.getPath()));
+			File file = new File(String.format("%s%sout.html", item.getParentFile().getPath(), File.separator));
+			file.delete();
+			item.renameTo(file);
+			System.out.println(String.format("out: %s", file.getPath()));
 		}
 	}
 

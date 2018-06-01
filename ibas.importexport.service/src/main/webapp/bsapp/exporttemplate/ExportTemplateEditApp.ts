@@ -418,7 +418,9 @@ namespace importexport {
                     onCompleted(selecteds: ibas.IList<initialfantasy.bo.IBOInformation>): void {
                         let selected: initialfantasy.bo.IBOInformation = selecteds.firstOrDefault();
                         that.editData.boCode = selected.code;
-                        that.editData.name = selected.description;
+                        if (ibas.strings.isEmpty(that.editData.name)) {
+                            that.editData.name = selected.description;
+                        }
                     }
                 });
             }
