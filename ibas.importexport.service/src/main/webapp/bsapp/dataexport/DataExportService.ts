@@ -13,21 +13,11 @@ namespace importexport {
             static APPLICATION_ID: string = "34a8ebc2-b105-42ea-ad06-b813fb782f9a";
             /** 应用名称 */
             static APPLICATION_NAME: string = "importexport_service_dataexport";
-
             constructor() {
                 super();
                 this.id = DataExportService.APPLICATION_ID;
                 this.name = DataExportService.APPLICATION_NAME;
                 this.description = ibas.i18n.prop(this.name);
-            }
-            /** 注册视图 */
-            protected registerView(): void {
-                super.registerView();
-                this.view.exportDataEvent = this.exportData;
-            }
-            /** 视图显示后 */
-            protected viewShowed(): void {
-                // 视图加载完成
             }
             /** 运行服务 */
             runService(contract: ibas.IBOServiceContract): void {
@@ -93,6 +83,15 @@ namespace importexport {
                         ibas.i18n.prop("importexport_service_dataexport") + ibas.i18n.prop("sys_invalid_parameter", "data"));
                 }
             }
+            /** 注册视图 */
+            protected registerView(): void {
+                super.registerView();
+                this.view.exportDataEvent = this.exportData;
+            }
+            /** 视图显示后 */
+            protected viewShowed(): void {
+                // 视图加载完成
+            }
             /** 导出的数据 */
             private exportDatas: ibas.IList<any>;
             /** 导出数据，参数1：使用的方式 */
@@ -141,6 +140,83 @@ namespace importexport {
             /** 创建服务实例 */
             create(): ibas.IService<ibas.IServiceContract> {
                 return new DataExportService();
+            }
+        }
+        /** 数据表导出服务 */
+        export class DataTableExportService extends ibas.ServiceApplication<IDataExportServiceView, ibas.IDataTableServiceContract>  {
+            /** 应用标识 */
+            static APPLICATION_ID: string = "9d54fade-2393-4840-a3f9-7f8e2c1c0605";
+            /** 应用名称 */
+            static APPLICATION_NAME: string = "importexport_service_datatableexport";
+            constructor() {
+                super();
+                this.id = DataTableExportService.APPLICATION_ID;
+                this.name = DataTableExportService.APPLICATION_NAME;
+                this.description = ibas.i18n.prop(this.name);
+            }
+            /** 注册视图 */
+            protected registerView(): void {
+                super.registerView();
+                this.view.exportDataEvent = this.exportData;
+            }
+            /** 视图显示后 */
+            protected viewShowed(): void {
+                // 视图加载完成
+            }
+            /** 运行服务 */
+            runService(contract: ibas.IDataTableServiceContract): void {
+                if (contract.data instanceof ibas.DataTable) {
+                    this.exportDataTable = contract.data;
+                    let exporters: ibas.IList<bo.IDataExporter> = new ibas.ArrayList();
+                    exporters.add(new bo.DataTableExporterJson());
+                    exporters.add(new bo.DataTableExporterCSV());
+                    this.show();
+                    this.view.showExporters(exporters);
+                } else {
+                    // 输入数据无效，服务不运行
+                    this.proceeding(ibas.emMessageType.WARNING,
+                        ibas.i18n.prop("importexport_service_dataexport") + ibas.i18n.prop("sys_invalid_parameter", "data"));
+                }
+            }
+            /** 导出的数据 */
+            private exportDataTable: ibas.DataTable;
+            /** 导出数据，参数1：使用的方式 */
+            private exportData(exporter: bo.IDataExporter): void {
+                if (ibas.objects.isNull(exporter)) {
+                    throw new Error(ibas.i18n.prop("sys_invalid_parameter", "exporter"));
+                }
+                let that: this = this;
+                exporter.export({
+                    data: this.exportDataTable,
+                    onCompleted(opRslt: ibas.IOperationResult<any>): void {
+                        try {
+                            if (opRslt.resultCode !== 0) {
+                                throw new Error(opRslt.message);
+                            }
+                            that.view.showResluts(opRslt.resultObjects);
+                        } catch (error) {
+                            that.messages(error);
+                        }
+                    }
+                });
+                this.close();
+                this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("importexport_export_is_running",
+                    ibas.strings.isEmpty(exporter.description) ? exporter.name : exporter.description));
+            }
+        }
+        /** 数据表导出服务映射 */
+        export class DataTableExportServiceMapping extends ibas.ServiceMapping {
+            constructor() {
+                super();
+                this.id = DataTableExportService.APPLICATION_ID;
+                this.name = DataTableExportService.APPLICATION_NAME;
+                this.description = ibas.i18n.prop(this.name);
+                this.proxy = ibas.DataTableServiceProxy;
+                this.icon = ibas.i18n.prop("importexport_export_icon");
+            }
+            /** 创建服务实例 */
+            create(): ibas.IService<ibas.IServiceContract> {
+                return new DataTableExportService();
             }
         }
     }

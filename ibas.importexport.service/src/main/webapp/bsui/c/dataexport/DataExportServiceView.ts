@@ -87,7 +87,7 @@ namespace importexport {
                                 fileName: string = result.fileName.substring(0, result.fileName.lastIndexOf(".")),
                                 extension: string = result.fileName.substring(result.fileName.lastIndexOf(".") + 1),
                                 mimeType: string = extension;
-                            sap.ui.core.util.File.save(content, fileName, extension, mimeType, "");
+                            sap.ui.core.util.File.save(content, fileName, extension, mimeType, result.fileCharset);
                         } else if (result instanceof bo.DataExportResultBlob) {
                             ibas.files.save(result.content, result.fileName);
                         }

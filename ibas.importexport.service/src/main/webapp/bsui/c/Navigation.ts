@@ -38,6 +38,9 @@ namespace importexport {
                     case app.DataExportService.APPLICATION_ID:
                         view = new c.DataExportServiceView();
                         break;
+                    case app.DataTableExportService.APPLICATION_ID:
+                        view = new c.DataExportServiceView();
+                        break;
                     case app.DataExportApp.APPLICATION_ID:
                         view = new c.DataExportView();
                         break;
@@ -45,6 +48,9 @@ namespace importexport {
                         view = new c.DataImportView();
                         break;
                     case app.DataPrintService.APPLICATION_ID:
+                        view = new c.DataPrintServiceView();
+                        break;
+                    case app.DataTablePrintService.APPLICATION_ID:
                         view = new c.DataPrintServiceView();
                         break;
                     default:

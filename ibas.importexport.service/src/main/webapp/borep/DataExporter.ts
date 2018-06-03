@@ -37,13 +37,22 @@ namespace importexport {
         }
         /** 数据导出结果-文件 */
         export class DataExportResultString extends DataExportResult<string> {
-            constructor(name: string, contect: string) {
+            constructor();
+            constructor(name: string, contect: string);
+            constructor(name: string, contect: string, fileCharset: string);
+            constructor() {
                 super();
-                this.fileName = name;
-                this.content = contect;
+                this.fileName = arguments[0];
+                this.content = arguments[1];
+                this.fileCharset = arguments[2];
+                if (ibas.strings.isEmpty(this.fileCharset)) {
+                    this.fileCharset = "utf-8";
+                }
             }
-            /** 名称 */
+            /** 文件名称 */
             fileName: string;
+            /** 文件字符集 */
+            fileCharset: string;
         }
         /** 数据导出者-json */
         export class DataExporterJson extends DataExporter<DataExportResultString> {
@@ -122,6 +131,100 @@ namespace importexport {
                         caller.onCompleted(opRsltRS);
                     }
                 });
+            }
+        }
+        /** 数据表导出者-json */
+        export class DataTableExporterJson extends DataExporter<DataExportResultString> {
+            static MODE_SIGN: string = "TO_FILE_JSON";
+            constructor() {
+                super();
+                this.name = DataTableExporterJson.MODE_SIGN;
+                this.description = ibas.i18n.prop("importexport_export_json");
+            }
+            /** 导出 */
+            export(caller: bo.IDataExportCaller<DataExportResultString>): void {
+                if (ibas.objects.isNull(caller)) {
+                    throw new Error(ibas.i18n.prop("sys_invalid_parameter", "caller"));
+                }
+                if (!(caller.data instanceof ibas.DataTable)) {
+                    throw new Error(ibas.i18n.prop("sys_invalid_parameter", "caller.data"));
+                }
+                let data: any[] = caller.data.convert();
+                let name: string = "datatable";
+                name = ibas.strings.format("{0}_{1}.json", name, ibas.uuids.random());
+                if (caller.onCompleted instanceof Function) {
+                    let opRslt: ibas.OperationResult<DataExportResultString> = new ibas.OperationResult<DataExportResultString>();
+                    opRslt.addResults(new DataExportResultString(name, JSON.stringify(data)));
+                    caller.onCompleted(opRslt);
+                }
+            }
+        }
+        /** 数据表导出者-csv */
+        export class DataTableExporterCSV extends DataExporter<DataExportResultString> {
+            static MODE_SIGN: string = "TO_FILE_CSV";
+            constructor() {
+                super();
+                this.name = DataTableExporterCSV.MODE_SIGN;
+                this.description = ibas.i18n.prop("importexport_export_csv");
+            }
+            /** 导出 */
+            export(caller: bo.IDataExportCaller<DataExportResultString>): void {
+                if (ibas.objects.isNull(caller)) {
+                    throw new Error(ibas.i18n.prop("sys_invalid_parameter", "caller"));
+                }
+                if (!(caller.data instanceof ibas.DataTable)) {
+                    throw new Error(ibas.i18n.prop("sys_invalid_parameter", "caller.data"));
+                }
+                let stringBuilders: ibas.StringBuilder = new ibas.StringBuilder();
+                for (let item of caller.data.convert()) {
+                    if (stringBuilders.length === 0) {
+                        // 初始化标题
+                        let stringBuilder: ibas.StringBuilder = new ibas.StringBuilder();
+                        for (let name in item) {
+                            if (name !== null && name !== undefined) {
+                                if (stringBuilder.length > 0) {
+                                    stringBuilder.append(",");
+                                }
+                                let tmp: string = ibas.i18n.prop(name);
+                                if (tmp.startsWith("[") && tmp.endsWith("]")) {
+                                    stringBuilder.append(name);
+                                } else {
+                                    stringBuilder.append(tmp);
+                                }
+                            }
+                        }
+                        stringBuilders.append(stringBuilder.toString());
+                        stringBuilders.append("\n");
+                    } else {
+                        stringBuilders.append("\n");
+                    }
+                    let stringBuilder: ibas.StringBuilder = new ibas.StringBuilder();
+                    for (let name in item) {
+                        if (name !== null && name !== undefined) {
+                            if (stringBuilder.length > 0) {
+                                stringBuilder.append(",");
+                            }
+                            let value: any = item[name];
+                            if (typeof value === "string") {
+                                if (value.indexOf("\"") > 0) {
+                                    value = "\"" + value.replace("\"", "\"\"") + "\"";
+                                } else if (value.indexOf(",") > 0 || value.indexOf("\"") > 0
+                                    || value.indexOf("\n") > 0 || value.indexOf(" ") > 0) {
+                                    value = "\"" + value + "\"";
+                                }
+                            }
+                            stringBuilder.append(value);
+                        }
+                    }
+                    stringBuilders.append(stringBuilder.toString());
+                }
+                let name: string = "datatable";
+                name = ibas.strings.format("{0}_{1}.csv", name, ibas.uuids.random());
+                if (caller.onCompleted instanceof Function) {
+                    let opRslt: ibas.OperationResult<DataExportResultString> = new ibas.OperationResult<DataExportResultString>();
+                    opRslt.addResults(new DataExportResultString(name, stringBuilders.toString(), "ansi"));
+                    caller.onCompleted(opRslt);
+                }
             }
         }
     }
