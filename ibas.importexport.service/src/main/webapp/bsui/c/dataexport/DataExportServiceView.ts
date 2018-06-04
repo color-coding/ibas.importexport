@@ -85,9 +85,8 @@ namespace importexport {
                             jQuery.sap.require("sap.ui.core.util.File");
                             let content: any = result.content,
                                 fileName: string = result.fileName.substring(0, result.fileName.lastIndexOf(".")),
-                                extension: string = result.fileName.substring(result.fileName.lastIndexOf(".") + 1),
-                                mimeType: string = extension;
-                            sap.ui.core.util.File.save(content, fileName, extension, mimeType, result.fileCharset);
+                                extension: string = result.fileName.substring(result.fileName.lastIndexOf(".") + 1);
+                            sap.ui.core.util.File.save(content, fileName, extension, "text/plain", "utf-8");
                         } else if (result instanceof bo.DataExportResultBlob) {
                             ibas.files.save(result.content, result.fileName);
                         }

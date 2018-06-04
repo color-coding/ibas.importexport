@@ -39,20 +39,13 @@ namespace importexport {
         export class DataExportResultString extends DataExportResult<string> {
             constructor();
             constructor(name: string, contect: string);
-            constructor(name: string, contect: string, fileCharset: string);
             constructor() {
                 super();
                 this.fileName = arguments[0];
                 this.content = arguments[1];
-                this.fileCharset = arguments[2];
-                if (ibas.strings.isEmpty(this.fileCharset)) {
-                    this.fileCharset = "utf-8";
-                }
             }
             /** 文件名称 */
             fileName: string;
-            /** 文件字符集 */
-            fileCharset: string;
         }
         /** 数据导出者-json */
         export class DataExporterJson extends DataExporter<DataExportResultString> {
@@ -169,6 +162,14 @@ namespace importexport {
             }
             /** 导出 */
             export(caller: bo.IDataExportCaller<DataExportResultString>): void {
+                let newLine: string = "\n";
+                if (navigator.appVersion) {
+                    if (navigator.appVersion.indexOf("Windows") > 0) {
+                        newLine = "\r\n";
+                    } else if (navigator.appVersion.indexOf("Mac OS") > 0) {
+                        newLine = "\r";
+                    }
+                }
                 if (ibas.objects.isNull(caller)) {
                     throw new Error(ibas.i18n.prop("sys_invalid_parameter", "caller"));
                 }
@@ -194,9 +195,9 @@ namespace importexport {
                             }
                         }
                         stringBuilders.append(stringBuilder.toString());
-                        stringBuilders.append("\n");
+                        stringBuilders.append(newLine);
                     } else {
-                        stringBuilders.append("\n");
+                        stringBuilders.append(newLine);
                     }
                     let stringBuilder: ibas.StringBuilder = new ibas.StringBuilder();
                     for (let name in item) {
@@ -209,7 +210,7 @@ namespace importexport {
                                 if (value.indexOf("\"") > 0) {
                                     value = "\"" + value.replace("\"", "\"\"") + "\"";
                                 } else if (value.indexOf(",") > 0 || value.indexOf("\"") > 0
-                                    || value.indexOf("\n") > 0 || value.indexOf(" ") > 0) {
+                                    || value.indexOf("\n") > 0 || value.indexOf("\r") > 0 || value.indexOf(" ") > 0) {
                                     value = "\"" + value + "\"";
                                 }
                             }
@@ -222,7 +223,7 @@ namespace importexport {
                 name = ibas.strings.format("{0}_{1}.csv", name, ibas.uuids.random());
                 if (caller.onCompleted instanceof Function) {
                     let opRslt: ibas.OperationResult<DataExportResultString> = new ibas.OperationResult<DataExportResultString>();
-                    opRslt.addResults(new DataExportResultString(name, stringBuilders.toString(), "ansi"));
+                    opRslt.addResults(new DataExportResultString(name, stringBuilders.toString()));
                     caller.onCompleted(opRslt);
                 }
             }

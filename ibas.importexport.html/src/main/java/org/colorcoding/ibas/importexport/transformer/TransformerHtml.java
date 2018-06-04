@@ -246,11 +246,15 @@ public class TransformerHtml extends TemplateTransformer {
 					}
 					this.endTable(writer);
 					this.endDiv(writer);
-					this.newParam(PARAM_DATA_INDEX, i + 1);
+					this.newParam(PARAM_DATA_INDEX, ++i);
 					break;
 				}
 				if (i == size) {
+					if (!this.getTemplate().getRepetitionFooters().isEmpty()) {
+						this.drawTableRow(writer, this.getTemplate().getRepetitionFooters());
+					}
 					this.endTable(writer);
+					this.endDiv(writer);
 				}
 			}
 			// 绘制结束区域

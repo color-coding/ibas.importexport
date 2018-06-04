@@ -116,6 +116,7 @@ namespace importexport {
                                         that.fireViewEvents(that.newDataEvent);
                                     }
                                 }),
+                                /*
                                 new sap.m.Button("", {
                                     text: ibas.i18n.prop("shell_data_view"),
                                     type: sap.m.ButtonType.Transparent,
@@ -127,6 +128,7 @@ namespace importexport {
                                         );
                                     }
                                 }),
+                                 */
                                 new sap.m.Button("", {
                                     text: ibas.i18n.prop("shell_data_edit"),
                                     type: sap.m.ButtonType.Transparent,
