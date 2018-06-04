@@ -762,6 +762,13 @@ namespace importexport {
                 super.afterAdd(item);
                 item.area = this.areaType;
                 item.itemID = ibas.strings.format("F_{0}", ibas.strings.fill(item.lineId, 3, "0"));
+                if (item.area === emAreaType.REPETITION_HEADER) {
+                    item.itemHeight = this.parent.repetitionHeaderHeight;
+                } else if (item.area === emAreaType.REPETITION) {
+                    item.itemHeight = this.parent.repetitionHeight;
+                } else if (item.area === emAreaType.REPETITION_FOOTER) {
+                    item.itemHeight = this.parent.repetitionFooterHeight;
+                }
             }
         }
 

@@ -84,17 +84,14 @@ namespace importexport {
                                 path: "notes"
                             }),
                             new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_bocode") }),
-                            new sap.m.ex.BOInput("", {
-                                boText: "description",
-                                boKey: "code",
-                                boCode: ibas.config.applyVariables(initialfantasy.bo.BO_CODE_BOINFORMATION),
-                                repositoryName: initialfantasy.bo.BO_REPOSITORY_INITIALFANTASY,
+                            new sap.m.Input("", {
+                                type: sap.m.InputType.Text,
+                                showValueHelp: true,
                                 valueHelpRequest: function (): void {
                                     that.fireViewEvents(that.chooseBusinessObjectEvent);
-                                },
-                                bindingValue: {
-                                    path: "boCode"
                                 }
+                            }).bindProperty("value", {
+                                path: "boCode"
                             }),
                             new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_applicationid") }),
                             new sap.m.Input("", {
@@ -755,12 +752,12 @@ namespace importexport {
                             }),
                             new sap.ui.table.Column("", {
                                 width: "100px",
-                                label: ibas.i18n.prop("bo_exporttemplateitem_textstyle"),
+                                label: ibas.i18n.prop("bo_exporttemplateitem_justificationhorizontal"),
                                 template: new sap.m.Select("", {
                                     width: "100%",
-                                    items: openui5.utils.createComboBoxItems(bo.emTextStyle),
+                                    items: openui5.utils.createComboBoxItems(bo.emJustificationHorizontal),
                                 }).bindProperty("selectedKey", {
-                                    path: "textStyle",
+                                    path: "justificationHorizontal",
                                     type: "sap.ui.model.type.Integer",
                                 })
                             }),

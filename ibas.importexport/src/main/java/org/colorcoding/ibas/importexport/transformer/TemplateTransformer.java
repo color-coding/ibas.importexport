@@ -18,7 +18,9 @@ public abstract class TemplateTransformer extends Transformer<InputStream, File>
 	public static final String PARAM_DATA_SIZE = "${DATA_SIZE}";
 	public static final String PARAM_DATA_INDEX = "${DATA_INDEX}";
 	public static final String PARAM_TIME_NOW = "${TIME_NOW}";
-	public static final String PARAM_TEMPLATE_PAGE_DATA_INDEX = "${PAGE_DATA_INDEX_%s}";
+	public static final String PARAM_TEMPLATE_PAGE_DATA_INDEX = "${PAGE_%s_DATA_INDEX}";
+	public static final String PARAM_PAGE_DATA_BEGIN = "${PAGE_DATA_BEGIN}";
+	public static final String PARAM_PAGE_DATA_END = "${PAGE_DATA_END}";
 
 	private IExportTemplate template;
 

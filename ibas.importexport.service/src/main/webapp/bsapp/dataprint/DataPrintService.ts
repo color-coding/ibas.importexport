@@ -39,8 +39,22 @@ namespace importexport {
                             if (opRslt.resultCode !== 0) {
                                 throw new Error(opRslt.message);
                             }
+                            // 获取大小
+                            let width: string = "";
+                            let height: string = "";
+                            try {
+                                let size: string = exporter.description.substring(
+                                    exporter.description.lastIndexOf("(") + 1, exporter.description.lastIndexOf(")")
+                                );
+                                let tmps: string[] = size.split("\*");
+                                if (tmps.length >= 2) {
+                                    width = (parseInt(tmps[0], 0) + 30).toString();
+                                    height = tmps[1];
+                                }
+                            } catch (error) {
+                            }
                             for (let item of opRslt.resultObjects) {
-                                that.view.showContent(item.content);
+                                that.view.showContent(item.content, width, height);
                             }
                         } catch (error) {
                             that.messages(error);
@@ -68,7 +82,7 @@ namespace importexport {
             /** 显示数据导出者 */
             showExporters(exporters: bo.IDataExporter[]): void;
             /** 显示内容 */
-            showContent(content: Blob): void;
+            showContent(content: Blob, width: string, height: string): void;
         }
         /** 数据打印 */
         export class DataPrintService extends AbstractDataPrintService<IDataPrintServiceContract>  {
@@ -112,7 +126,7 @@ namespace importexport {
                     // 直接显示打印内容
                     this.show();
                     var blob: Blob = new Blob([contract.content], { type: "text/html; charset=utf-8" });
-                    this.view.showContent(blob);
+                    this.view.showContent(blob, null, null);
                 } else if (!ibas.objects.isNull(contract.template) || !ibas.objects.isNull(contract.businessObject)) {
                     let criteria: ibas.ICriteria = new ibas.Criteria();
                     if (!ibas.strings.isEmpty(contract.businessObject)) {

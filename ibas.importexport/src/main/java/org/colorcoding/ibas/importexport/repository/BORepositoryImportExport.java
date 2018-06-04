@@ -407,11 +407,16 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 						if (opRsltET.getError() != null) {
 							throw opRsltET.getError();
 						}
+						String name = transformer.name();
+						if (name.indexOf("_") > 0) {
+							name = name.substring(name.lastIndexOf("_") + 1).toLowerCase();
+						}
 						for (IExportTemplate template : opRsltET.getResultObjects()) {
 							DataExportInfo info = new DataExportInfo();
 							info.setTransformer(transformer.name());
 							info.setTemplate(String.valueOf(template.getObjectKey()));
-							info.setDescription(I18N.prop("msg_ie_exporter_description", template.getName()));
+							info.setDescription(I18N.prop("msg_ie_exporter_description", name, template.getName(),
+									template.getWidth(), template.getHeight()));
 							operationResult.addResultObjects(info);
 						}
 					}

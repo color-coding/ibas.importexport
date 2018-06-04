@@ -65,7 +65,7 @@ namespace importexport {
                 private html: sap.ui.core.HTML;
 
                 /** 显示内容 */
-                showContent(content: Blob): void {
+                showContent(content: Blob, width: string, height: string): void {
                     let that: this = this;
                     this.select = null;
                     this.dialog.destroyContent();
@@ -78,7 +78,7 @@ namespace importexport {
                     iframe.append(ibas.strings.format(PRINT_FRAME_TEMPLATE, this.html.getId()));
                     iframe.append("\"");
                     iframe.append(" width=\"");
-                    iframe.append(window.innerWidth * 0.8);
+                    iframe.append(ibas.strings.isEmpty(width) ? window.innerWidth * 0.8 : width);
                     iframe.append("\"");
                     iframe.append(" height=\"");
                     iframe.append(window.innerHeight * 0.7);
