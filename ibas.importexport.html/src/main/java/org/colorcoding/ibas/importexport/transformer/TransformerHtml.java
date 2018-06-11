@@ -104,6 +104,12 @@ public class TransformerHtml extends TemplateTransformer {
 					return "";
 				}
 				if (template.getValueFormat() != null && !template.getValueFormat().isEmpty()) {
+					if (template.getValueFormat().indexOf("%t") >= 0) {
+						// 日期转换
+						if (tmp instanceof String) {
+							tmp = DateTime.valueOf((String) tmp);
+						}
+					}
 					return String.format(template.getValueFormat(), tmp);
 				}
 				return String.valueOf(tmp);

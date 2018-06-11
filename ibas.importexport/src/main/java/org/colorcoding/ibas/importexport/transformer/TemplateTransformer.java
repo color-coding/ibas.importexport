@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.colorcoding.ibas.bobas.data.DateTime;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.message.MessageLevel;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplate;
@@ -110,6 +111,12 @@ public abstract class TemplateTransformer extends Transformer<InputStream, File>
 				return "";
 			}
 			if (template.getValueFormat() != null && !template.getValueFormat().isEmpty()) {
+				if (template.getValueFormat().indexOf("%t") >= 0) {
+					// 日期转换
+					if (tmp instanceof String) {
+						tmp = DateTime.valueOf((String) tmp);
+					}
+				}
 				return String.format(template.getValueFormat(), tmp);
 			}
 			return String.valueOf(tmp);
