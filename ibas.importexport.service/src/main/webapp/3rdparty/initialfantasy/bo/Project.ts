@@ -23,12 +23,6 @@ namespace initialfantasy {
             /** 项目经理 */
             manager: number;
 
-            /** 状态 */
-            status: ibas.emDocumentStatus;
-
-            /** 审批状态 */
-            approvalStatus: ibas.emApprovalStatus;
-
             /** 数据所有者 */
             dataOwner: number;
 
