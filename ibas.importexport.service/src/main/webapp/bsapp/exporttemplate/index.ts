@@ -8,5 +8,4 @@
 /// <reference path="./ExportTemplateFunc.ts" />
 /// <reference path="./ExportTemplateListApp.ts" />
 /// <reference path="./ExportTemplateChooseApp.ts" />
-/// <reference path="./ExportTemplateViewApp.ts" />
 /// <reference path="./ExportTemplateEditApp.ts" />

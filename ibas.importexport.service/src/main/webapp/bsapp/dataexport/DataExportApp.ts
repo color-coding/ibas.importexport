@@ -65,6 +65,7 @@ namespace importexport {
             private criteria: ibas.ICriteria;
             /** 获取Schema */
             schema(type: string): void {
+                this.busy(true);
                 let that: this = this;
                 let boRepository: bo.BORepositoryImportExport = new bo.BORepositoryImportExport();
                 boRepository.schema({
@@ -82,7 +83,6 @@ namespace importexport {
                         }
                     }
                 });
-                this.busy(true);
             }
             /** 导出 */
             export(exporter: bo.IDataExporter): void {

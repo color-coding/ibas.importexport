@@ -44,6 +44,7 @@ namespace importexport {
                     criteria: criteria,
                     onCompleted(opRslt: ibas.IOperationResult<bo.ExportTemplate>): void {
                         try {
+                            that.busy(false);
                             if (opRslt.resultCode !== 0) {
                                 throw new Error(opRslt.message);
                             }
@@ -55,7 +56,6 @@ namespace importexport {
                                 that.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("shell_data_fetched_none"));
                             }
                             that.view.showData(opRslt.resultObjects);
-                            that.busy(false);
                         } catch (error) {
                             that.messages(error);
                         }
@@ -79,11 +79,6 @@ namespace importexport {
                     ));
                     return;
                 }
-                let app: ExportTemplateViewApp = new ExportTemplateViewApp();
-                app.navigation = this.navigation;
-                app.viewShower = this.viewShower;
-                app.run(data);
-
             }
             /** 编辑数据，参数：目标数据 */
             protected editData(data: bo.ExportTemplate): void {
@@ -109,7 +104,7 @@ namespace importexport {
                     return;
                 }
                 let beDeleteds: ibas.ArrayList<bo.ExportTemplate> = new ibas.ArrayList<bo.ExportTemplate>();
-                if (data instanceof Array ) {
+                if (data instanceof Array) {
                     for (let item of data) {
                         item.delete();
                         beDeleteds.add(item);
@@ -135,7 +130,7 @@ namespace importexport {
                         if (action === ibas.emMessageAction.YES) {
                             try {
                                 let boRepository: bo.BORepositoryImportExport = new bo.BORepositoryImportExport();
-                                let saveMethod: Function = function(beSaved: bo.ExportTemplate):void {
+                                let saveMethod: Function = function (beSaved: bo.ExportTemplate): void {
                                     boRepository.saveExportTemplate({
                                         beSaved: beSaved,
                                         onCompleted(opRslt: ibas.IOperationResult<bo.ExportTemplate>): void {
@@ -151,7 +146,7 @@ namespace importexport {
                                                     // 处理完成
                                                     that.busy(false);
                                                     that.messages(ibas.emMessageType.SUCCESS,
-                                                    ibas.i18n.prop("shell_data_delete") + ibas.i18n.prop("shell_sucessful"));
+                                                        ibas.i18n.prop("shell_data_delete") + ibas.i18n.prop("shell_sucessful"));
                                                 }
                                             } catch (error) {
                                                 that.messages(ibas.emMessageType.ERROR,

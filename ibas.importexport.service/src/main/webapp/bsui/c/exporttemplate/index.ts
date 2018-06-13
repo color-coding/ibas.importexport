@@ -7,5 +7,4 @@
  */
 /// <reference path="./ExportTemplateListView.ts" />
 /// <reference path="./ExportTemplateChooseView.ts" />
-/// <reference path="./ExportTemplateViewView.ts" />
 /// <reference path="./ExportTemplateEditView.ts" />
