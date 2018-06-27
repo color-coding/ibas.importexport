@@ -22,6 +22,16 @@ namespace initialfantasy {
              */
             download(caller: ibas.IDownloadFileCaller<Blob>): void;
             /**
+             * 查询 应用程序配置
+             * @param fetcher 查询者
+             */
+            fetchApplicationConfig(fetcher: ibas.IFetchCaller<bo.IApplicationConfig>): void;
+            /**
+             * 保存 应用程序配置
+             * @param saver 保存者
+             */
+            saveApplicationConfig(saver: ibas.ISaveCaller<bo.IApplicationConfig>): void;
+            /**
              * 查询 应用程序元素
              * @param fetcher 查询者
              */

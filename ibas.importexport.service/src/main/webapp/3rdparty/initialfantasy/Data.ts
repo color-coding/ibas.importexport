@@ -20,6 +20,8 @@ namespace initialfantasy {
     export namespace bo {
         /** 业务仓库名称 */
         export const BO_REPOSITORY_INITIALFANTASY: string = ibas.strings.format(ibas.MODULE_REPOSITORY_NAME_TEMPLATE, CONSOLE_NAME);
+        /** 业务对象编码-应用程序配置 */
+        export const BO_CODE_APPLICATIONCONFIG: string = "${Company}_SYS_CONFIG";
         /** 业务对象编码-应用程序元素 */
         export const BO_CODE_APPLICATIONELEMENT: string = "${Company}_SYS_ELEMENT";
         /** 业务对象编码-应用程序模块 */
