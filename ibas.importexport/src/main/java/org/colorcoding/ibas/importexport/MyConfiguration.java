@@ -1,9 +1,35 @@
 package org.colorcoding.ibas.importexport;
 
+import org.colorcoding.ibas.bobas.configuration.ConfigurationFactory;
+import org.colorcoding.ibas.bobas.configuration.IConfigurationManager;
+
 /**
  * 我的配置项
  */
 public class MyConfiguration extends org.colorcoding.ibas.bobas.MyConfiguration {
+
+	private volatile static IConfigurationManager instance;
+
+	public static IConfigurationManager create() {
+		if (instance == null) {
+			synchronized (MyConfiguration.class) {
+				if (instance == null) {
+					instance = ConfigurationFactory.create().createManager();
+					instance.setConfigSign(MODULE_ID);
+					instance.update();
+				}
+			}
+		}
+		return instance;
+	}
+
+	public static <P> P getConfigValue(String key, P defaultValue) {
+		return create().getConfigValue(key, defaultValue);
+	}
+
+	public static String getConfigValue(String key) {
+		return create().getConfigValue(key);
+	}
 
 	/**
 	 * 模块标识
