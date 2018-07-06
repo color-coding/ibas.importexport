@@ -9,7 +9,7 @@ namespace initialfantasy {
     export namespace bo {
 
         /** 项目 */
-        export interface IProject extends ibas.IBOMasterData {
+        export interface IProject extends ibas.IBOMasterData, ibas.IBOUserFields {
 
             /** 编码 */
             code: string;

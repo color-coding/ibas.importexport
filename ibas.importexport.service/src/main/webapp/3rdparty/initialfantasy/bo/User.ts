@@ -8,7 +8,7 @@
 namespace initialfantasy {
     export namespace bo {
         /** 用户 */
-        export interface IUser extends ibas.IBOMasterData {
+        export interface IUser extends ibas.IBOMasterData, ibas.IBOUserFields {
 
             /** 编码 */
             code: string;
