@@ -95,7 +95,6 @@ namespace importexport {
                 }
                 /** 显示数据导出者 */
                 showExporters(exporters: bo.IDataExporter[]): void {
-                    let that: this = this;
                     this.html = null;
                     this.select = new sap.m.Select("", {
                         width: "100%",

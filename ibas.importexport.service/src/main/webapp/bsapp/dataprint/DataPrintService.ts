@@ -180,6 +180,7 @@ namespace importexport {
                 this.description = ibas.i18n.prop(this.name);
                 this.proxy = ibas.BOServiceProxy;
                 this.icon = ibas.i18n.prop("importexport_print_icon");
+                this.category = SERVICE_CATEGORY_BO_PRINT;
             }
             /** 创建服务实例 */
             create(): ibas.IService<ibas.IServiceContract> {
@@ -245,6 +246,7 @@ namespace importexport {
                 this.description = ibas.i18n.prop(this.name);
                 this.proxy = ibas.DataTableServiceProxy;
                 this.icon = ibas.i18n.prop("importexport_print_icon");
+                this.category = SERVICE_CATEGORY_DATATABLE_PRINT;
             }
             /** 创建服务实例 */
             create(): ibas.IService<ibas.IServiceContract> {

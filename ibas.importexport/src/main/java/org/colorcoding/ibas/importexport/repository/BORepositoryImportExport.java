@@ -10,7 +10,9 @@ import org.colorcoding.ibas.bobas.common.Criteria;
 import org.colorcoding.ibas.bobas.common.ICondition;
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
+import org.colorcoding.ibas.bobas.common.ISort;
 import org.colorcoding.ibas.bobas.common.OperationResult;
+import org.colorcoding.ibas.bobas.common.SortType;
 import org.colorcoding.ibas.bobas.core.BOFactory;
 import org.colorcoding.ibas.bobas.core.IBOFactory;
 import org.colorcoding.ibas.bobas.core.RepositoryException;
@@ -403,6 +405,9 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 						condition = tpCriteria.getConditions().create();
 						condition.setAlias(ExportTemplate.PROPERTY_BOCODE.getName());
 						condition.setValue(criteria.getBusinessObject());
+						ISort sort = tpCriteria.getSorts().create();
+						sort.setAlias(ExportTemplate.PROPERTY_OBJECTKEY.getName());
+						sort.setSortType(SortType.DESCENDING);
 						IOperationResult<IExportTemplate> opRsltET = this.fetchExportTemplate(tpCriteria);
 						if (opRsltET.getError() != null) {
 							throw opRsltET.getError();

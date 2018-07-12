@@ -126,6 +126,10 @@ namespace importexport {
         }
     }
     export namespace app {
+        /** 服务码-业务对象打印 */
+        export const SERVICE_CATEGORY_BO_PRINT: string = "SERVICE_CATEGORY_BO_PRINT";
+        /** 服务码-数据表打印 */
+        export const SERVICE_CATEGORY_DATATABLE_PRINT: string = "SERVICE_CATEGORY_DATATABLE_PRINT";
         /** 数据打印服务契约 */
         export interface IDataPrintServiceContract extends ibas.IBOServiceContract {
             /** 模板 */
