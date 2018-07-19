@@ -125,7 +125,7 @@ namespace importexport {
                 if (!ibas.strings.isEmpty(contract.content)) {
                     // 直接显示打印内容
                     this.show();
-                    var blob: Blob = new Blob([contract.content], { type: "text/html; charset=utf-8" });
+                    let blob: Blob = new Blob([contract.content], { type: "text/html; charset=utf-8" });
                     this.view.showContent(blob, null, null);
                 } else if (!ibas.objects.isNull(contract.template) || !ibas.objects.isNull(contract.businessObject)) {
                     let criteria: ibas.ICriteria = new ibas.Criteria();
