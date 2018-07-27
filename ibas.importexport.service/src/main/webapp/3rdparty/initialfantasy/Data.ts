@@ -76,6 +76,8 @@ namespace initialfantasy {
             APPLICATION,
             /** 服务 */
             SERVICE,
+            /** 其他 */
+            OTHER
         }
         /** 分配-角色 */
         export interface IRole {
