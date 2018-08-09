@@ -11,7 +11,7 @@ import org.colorcoding.ibas.importexport.transformer.TransformerExcel;
 
 import junit.framework.TestCase;
 
-public class testTransformer extends TestCase {
+public class TestTransformer extends TestCase {
 
 	public void testTransformExcel() throws TransformException {
 		// 测试对象到excel文件（新建对象不输出IBOTagStorage属性）

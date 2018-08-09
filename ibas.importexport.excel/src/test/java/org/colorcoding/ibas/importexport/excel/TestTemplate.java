@@ -25,7 +25,7 @@ import org.colorcoding.ibas.importexport.transformer.template.WriteFileException
 
 import junit.framework.TestCase;
 
-public class testTemplate extends TestCase {
+public class TestTemplate extends TestCase {
 
 	public void testRresolving() throws ResolvingException, WriteFileException, IOException {
 		Order order = new Order();
