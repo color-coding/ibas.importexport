@@ -177,7 +177,7 @@ namespace importexport {
                     throw new Error(ibas.i18n.prop("sys_invalid_parameter", "caller.data"));
                 }
                 let stringBuilders: ibas.StringBuilder = new ibas.StringBuilder();
-                for (let item of caller.data.convert()) {
+                for (let item of caller.data.convert({ format: true, nameAs: "description" })) {
                     if (stringBuilders.length === 0) {
                         // 初始化标题
                         let stringBuilder: ibas.StringBuilder = new ibas.StringBuilder();
