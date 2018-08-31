@@ -32,6 +32,7 @@ namespace importexport {
             /** 视图显示后 */
             protected viewShowed(): void {
                 // 视图加载完成
+                super.viewShowed();
             }
             /** 查询数据 */
             protected fetchData(criteria: ibas.ICriteria): void {
