@@ -84,7 +84,7 @@
     <Property Name="ItemHeight" Description="项高度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="ItemHeight"/>
     <Property Name="SourceType" Description="数据源" DataType="Alphanumeric" DataSubType="Default" EditSize="2" DeclaredType="emDataSourceType" Mapped="SourceType"/>
     <Property Name="ItemString" Description="项字符串" DataType="Alphanumeric" DataSubType="Default" EditSize="200" Mapped="ItemString"/>
-    <Property Name="ValueFormat" Description="显示格式" DataType="Alphanumeric" DataSubType="Default" EditSize="100" Mapped="ValFormat"/>
+    <Property Name="ValueFormat" Description="显示格式" DataType="Alphanumeric" DataSubType="Default" EditSize="200" Mapped="ValFormat"/>
     <Property Name="ItemVisible" Description="项是否可见" DataType="Alphanumeric" DataSubType="Default" EditSize="1" DeclaredType="emYesNo" Mapped="ItemVisible"/>
     <Property Name="MarginLeft" Description="左边距" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="LMargin"/>
     <Property Name="MarginRight" Description="右边距" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="RMargin"/>

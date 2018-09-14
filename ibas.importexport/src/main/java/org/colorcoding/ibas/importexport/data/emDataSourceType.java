@@ -19,4 +19,9 @@ public enum emDataSourceType {
 	 */
 	@Value("P")
 	PATH,
+	/**
+	 * 查询
+	 */
+	@Value("Q")
+	QUERY,
 }

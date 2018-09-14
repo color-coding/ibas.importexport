@@ -58,6 +58,13 @@ public class TransformerHtml extends TemplateTransformer {
 					name = name.replace(pName, String.valueOf(pValue));
 				}
 			}
+			if (name.indexOf("[]") > 0) {
+				int index = this.paramValue(PARAM_DATA_INDEX, -1);
+				if (index < 0) {
+					return defaults;
+				}
+				name = name.replace("[]", String.format("[%s]", index - 1));
+			}
 			Object value = this.getDataContext().read(name);
 			if (value == null) {
 				return defaults;
@@ -87,35 +94,6 @@ public class TransformerHtml extends TemplateTransformer {
 			Logger.log(MessageLevel.WARN, e);
 			return defaults;
 		}
-	}
-
-	@Override
-	protected String templateValue(IExportTemplateItem template) {
-		if (template.getSourceType() == emDataSourceType.PATH && template.getItemString() != null) {
-			// 路径取值
-			String value = template.getItemString();
-			if (value.indexOf("[]") > 0) {
-				int index = this.paramValue(PARAM_DATA_INDEX, -1);
-				if (index < 0) {
-					return "";
-				}
-				Object tmp = this.dataValue(value.replace("[]", String.format("[%s]", index - 1)), null);
-				if (tmp == null) {
-					return "";
-				}
-				if (template.getValueFormat() != null && !template.getValueFormat().isEmpty()) {
-					if (template.getValueFormat().indexOf("%t") >= 0) {
-						// 日期转换
-						if (tmp instanceof String) {
-							tmp = DateTime.valueOf((String) tmp);
-						}
-					}
-					return String.format(template.getValueFormat(), tmp);
-				}
-				return String.valueOf(tmp);
-			}
-		}
-		return super.templateValue(template);
 	}
 
 	@Override

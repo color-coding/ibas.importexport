@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.colorcoding.ibas.bobas.core.BOFactory;
 import org.colorcoding.ibas.bobas.data.DateTime;
@@ -14,6 +16,7 @@ import org.colorcoding.ibas.importexport.bo.exporttemplate.ExportTemplate;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.ExportTemplateItem;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplateItem;
 import org.colorcoding.ibas.importexport.transformer.JsonTransformer;
+import org.colorcoding.ibas.importexport.transformer.TemplateTransformer;
 import org.colorcoding.ibas.importexport.transformer.TransformException;
 import org.colorcoding.ibas.importexport.transformer.XmlTransformer;
 
@@ -72,6 +75,15 @@ public class TestTransformer extends TestCase {
 		transformer.transform();
 		for (Object item : transformer.getOutputData()) {
 			System.out.println(item.toString());
+		}
+	}
+
+	public void testRegex() {
+		String content = "select Name from CC_SYS_USER where DocEntry = ($[0].DataOwner)";
+		// 从内容上截取路径数组
+		Matcher matcher = Pattern.compile(TemplateTransformer.PARAM_PATTERN).matcher(content);
+		while (matcher.find()) {
+			System.out.println(matcher.group());
 		}
 	}
 }

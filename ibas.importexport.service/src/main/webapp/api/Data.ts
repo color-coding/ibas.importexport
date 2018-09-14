@@ -58,7 +58,10 @@ namespace importexport {
              * 路径
              */
             PATH,
-
+            /**
+             * 查询
+             */
+            QUERY,
         }
         export enum emJustificationHorizontal {
             /**
