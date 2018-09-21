@@ -24,7 +24,7 @@ public abstract class TemplateTransformer extends Transformer<InputStream, File>
 	/**
 	 * 变量样式，(XXXXXX)
 	 */
-	public static final String PARAM_PATTERN = "(?<=\\()[^\\)]+";
+	public static final String PARAM_PATTERN = "(?=\\(\\$)[^\\)]+";
 	public static final String PARAM_PATTERN_TEMPLATE = "(%s)";
 	public static final String PARAM_PAGE_INDEX = "${PAGE_INDEX}";
 	public static final String PARAM_PAGE_TOTAL = "${PAGE_TOTAL}";
@@ -125,7 +125,7 @@ public abstract class TemplateTransformer extends Transformer<InputStream, File>
 			Matcher matcher = Pattern.compile(PARAM_PATTERN).matcher(value);
 			while (matcher.find()) {
 				// 带格式名称${}
-				String pName = matcher.group(0);
+				String pName = matcher.group(0).substring(1);
 				Object pValue = null;
 				if (pName.startsWith("${") && pName.endsWith("}")) {
 					// 变量

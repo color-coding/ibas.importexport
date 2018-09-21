@@ -79,11 +79,17 @@ public class TestTransformer extends TestCase {
 	}
 
 	public void testRegex() {
-		String content = "select Name from CC_SYS_USER where DocEntry = ($[0].DataOwner)";
+		String content = "select Name from CC_SYS_USER where DocEntry = ($[0].DataOwner)(${PAGE_%s_DATA_INDEX})";
 		// 从内容上截取路径数组
 		Matcher matcher = Pattern.compile(TemplateTransformer.PARAM_PATTERN).matcher(content);
 		while (matcher.find()) {
-			System.out.println(matcher.group());
+			System.out.println(matcher.group(0).substring(1));
+		}
+		// 复杂一点儿的
+		content = "select CONCAT(N'($[0].ShippingAddresss[${PAGE_%s_DATA_INDEX}].Province)', N'($[0].ShippingAddresss[${PAGE_%s_DATA_INDEX}].City)', N'($[0].ShippingAddresss[0].District)', N'($[0].ShippingAddresss[0].Street)') as 'Address'";
+		matcher = Pattern.compile(TemplateTransformer.PARAM_PATTERN).matcher(content);
+		while (matcher.find()) {
+			System.out.println(matcher.group(0).substring(1));
 		}
 	}
 }
