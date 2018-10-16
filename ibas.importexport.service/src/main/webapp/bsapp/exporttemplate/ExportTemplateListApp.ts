@@ -150,6 +150,7 @@ namespace importexport {
                                                         ibas.i18n.prop("shell_data_delete") + ibas.i18n.prop("shell_sucessful"));
                                                 }
                                             } catch (error) {
+                                                that.busy(false);
                                                 that.messages(ibas.emMessageType.ERROR,
                                                     ibas.i18n.prop("shell_data_delete_error", beSaved, error.message));
                                             }

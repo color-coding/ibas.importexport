@@ -48,6 +48,8 @@ namespace initialfantasy {
         export const BO_CODE_ROLE: string = "${Company}_SYS_ROLE";
         /** 业务对象编码-项目 */
         export const BO_CODE_PROJECT: string = "${Company}_SYS_PROJECT";
+        /** 业务对象编码-过账期间 */
+        export const BO_CODE_POSTINGPERIOD: string = "${Company}_SYS_PERIOD";
 
         /**
          * 分配类型
@@ -67,6 +69,9 @@ namespace initialfantasy {
             /** 可用的 */
             AVAILABLE
         }
+        /**
+         * 元素类型
+         */
         export enum emElementType {
             /** 模块 */
             MODULE,
