@@ -1,6 +1,7 @@
 package org.colorcoding.ibas.importexport.transformer;
 
 import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.message.MessageLevel;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
+import org.xml.sax.InputSource;
 
 /**
  * 文件通过序列化转为业务对象
@@ -74,7 +76,11 @@ public abstract class FileTransformerSerialization extends FileTransformer {
 			Class<?>[] types = this.getKnownTypes().toArray(new Class<?>[] {});
 			Logger.log(MessageLevel.INFO, "transformer: [%s] to run deserialize.", this.getClass().getSimpleName());
 			List<IBusinessObject> outDatas = new ArrayList<>();
-			Object object = serializer.deserialize(new FileInputStream(this.getInputData()), types);
+			// 以UTF-8重新读取
+			InputStreamReader streamReader = new InputStreamReader(new FileInputStream(this.getInputData()), "utf-8");
+			Object object = serializer.deserialize(new InputSource(streamReader), types);
+			streamReader.close();
+			streamReader = null;
 			// 结果为数组或集合，拆散
 			if (object instanceof Iterable) {
 				Iterable<?> iterable = (Iterable<?>) object;

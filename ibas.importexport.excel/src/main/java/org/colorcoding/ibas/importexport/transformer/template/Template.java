@@ -10,7 +10,7 @@ import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.bo.IBusinessObjects;
 import org.colorcoding.ibas.bobas.core.BOFactory;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
-import org.colorcoding.ibas.bobas.core.fields.IManageFields;
+import org.colorcoding.ibas.bobas.core.fields.IManagedFields;
 
 /**
  * 模板（sheet）
@@ -198,7 +198,7 @@ public class Template extends Area<Area<?>> {
 		object.setEndingColumn(object.getStartingColumn() + object.getProperties().length - 1);
 		this.addObject(object);
 		// 集合对象
-		IManageFields fields = (IManageFields) bo;
+		IManagedFields fields = (IManagedFields) bo;
 		for (IFieldData field : fields.getFields()) {
 			if (IBusinessObjects.class.isInstance(field.getValue())) {
 				// 解析集合属性
@@ -235,10 +235,10 @@ public class Template extends Area<Area<?>> {
 			// 未初始化，退出
 			return;
 		}
-		this.resolvingDatas((IManageFields) bo, this.getHead().getName());
+		this.resolvingDatas((IManagedFields) bo, this.getHead().getName());
 	}
 
-	private void resolvingDatas(IManageFields boFields, String level) throws ResolvingException {
+	private void resolvingDatas(IManagedFields boFields, String level) throws ResolvingException {
 		if (boFields == null) {
 			// 未初始化，退出
 			return;
@@ -274,9 +274,9 @@ public class Template extends Area<Area<?>> {
 					if (field != null && IBusinessObjects.class.isInstance(field.getValue())) {
 						IBusinessObjects<?, ?> list = (IBusinessObjects<?, ?>) field.getValue();
 						for (IBusinessObject item : list) {
-							if (item instanceof IManageFields) {
+							if (item instanceof IManagedFields) {
 								// 处理此数据
-								this.resolvingDatas((IManageFields) item, object.getName());
+								this.resolvingDatas((IManagedFields) item, object.getName());
 							}
 						}
 					}
@@ -284,8 +284,8 @@ public class Template extends Area<Area<?>> {
 					// TP.BB - TP
 					String property = object.getName().substring(level.length() + 1);
 					IFieldData field = boFields.getField(property);
-					if (field != null && field.getValue() instanceof IManageFields) {
-						this.resolvingDatas((IManageFields) field.getValue(), object.getName());
+					if (field != null && field.getValue() instanceof IManagedFields) {
+						this.resolvingDatas((IManagedFields) field.getValue(), object.getName());
 					}
 				}
 			}
@@ -305,10 +305,10 @@ public class Template extends Area<Area<?>> {
 				Iterator<Cell[]> rows = this.getDatas().getRowIterator();
 				while (rows.hasNext()) {
 					IBusinessObject bo = (IBusinessObject) this.getHead().getBindingClass().newInstance();
-					if (!(bo instanceof IManageFields)) {
+					if (!(bo instanceof IManagedFields)) {
 						throw new ResolvingException(String.format("not supported %s", bo.getClass().getName()));
 					}
-					if (this.resolving((IManageFields) bo, this.getHead().getName(), rows)) {
+					if (this.resolving((IManagedFields) bo, this.getHead().getName(), rows)) {
 						// 成功获取数据
 						businessObjects.add(bo);
 					} else {
@@ -326,7 +326,7 @@ public class Template extends Area<Area<?>> {
 		return new IBusinessObject[] {};
 	}
 
-	private boolean resolving(IManageFields boFields, String level, Iterator<Cell[]> rows) {
+	private boolean resolving(IManagedFields boFields, String level, Iterator<Cell[]> rows) {
 		boolean done = false;
 		for (Object object : this.getObjects()) {
 			if (!object.getName().startsWith(level)) {
@@ -370,8 +370,8 @@ public class Template extends Area<Area<?>> {
 							IBusinessObjects<?, ?> list = (IBusinessObjects<?, ?>) field.getValue();
 							boolean doneItem = false;
 							IBusinessObject boItem = list.create();
-							if (boItem instanceof IManageFields) {
-								doneItem = this.resolving((IManageFields) boItem, object.getName(), rows);
+							if (boItem instanceof IManagedFields) {
+								doneItem = this.resolving((IManagedFields) boItem, object.getName(), rows);
 							}
 							if (!doneItem) {
 								// 未处理，移出
@@ -388,9 +388,9 @@ public class Template extends Area<Area<?>> {
 					// TP.BB - TP
 					String property = object.getName().substring(level.length() + 1);
 					IFieldData field = boFields.getField(property);
-					if (field != null && field.getValue() instanceof IManageFields) {
+					if (field != null && field.getValue() instanceof IManagedFields) {
 						boolean doneItem = false;
-						doneItem = this.resolving((IManageFields) field.getValue(), object.getName(), rows);
+						doneItem = this.resolving((IManagedFields) field.getValue(), object.getName(), rows);
 						if (doneItem) {
 							if (!done) {
 								done = true;

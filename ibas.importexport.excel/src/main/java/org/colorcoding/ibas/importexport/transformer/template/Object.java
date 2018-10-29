@@ -19,7 +19,7 @@ import org.colorcoding.ibas.bobas.bo.IBOTagReferenced;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.bo.IBusinessObjects;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
-import org.colorcoding.ibas.bobas.core.fields.IManageFields;
+import org.colorcoding.ibas.bobas.core.fields.IManagedFields;
 
 /**
  * 模板-对象区，类
@@ -76,7 +76,7 @@ public class Object extends BindingArea<Template> {
 	public final void resolving(IBusinessObject bo) throws ResolvingException {
 		this.setBindingClass(bo.getClass());
 		List<Property> properties = new ArrayList<>();
-		IManageFields fields = (IManageFields) bo;
+		IManagedFields fields = (IManagedFields) bo;
 		for (IFieldData field : fields.getFields()) {
 			// 不保存的对象不导出
 			if (!field.isSavable()) {

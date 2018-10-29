@@ -7,7 +7,7 @@ import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.bo.IBusinessObjects;
 import org.colorcoding.ibas.bobas.bo.IUserField;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
-import org.colorcoding.ibas.bobas.core.fields.IManageFields;
+import org.colorcoding.ibas.bobas.core.fields.IManagedFields;
 import org.colorcoding.ibas.bobas.data.DateTime;
 import org.colorcoding.ibas.bobas.data.Decimal;
 import org.colorcoding.ibas.bobas.data.emDocumentStatus;
@@ -75,21 +75,21 @@ public class TestTemplate extends TestCase {
 		IBusinessObject[] businessObjects = template2.resolving();
 		System.out.println(String.format("bo count %s", businessObjects.length));
 		for (IBusinessObject boItem : businessObjects) {
-			if (boItem instanceof IManageFields) {
-				this.print((IManageFields) boItem);
+			if (boItem instanceof IManagedFields) {
+				this.print((IManagedFields) boItem);
 			}
 		}
 	}
 
-	private void print(IManageFields boFields) {
+	private void print(IManagedFields boFields) {
 		System.out.println(String.format("%s", boFields.toString()));
 		for (IFieldData fieldData : boFields.getFields()) {
-			if (fieldData.getValue() instanceof IManageFields) {
-				this.print((IManageFields) fieldData.getValue());
+			if (fieldData.getValue() instanceof IManagedFields) {
+				this.print((IManagedFields) fieldData.getValue());
 			} else if (fieldData.getValue() instanceof IBusinessObjects<?, ?>) {
 				for (IBusinessObject item : (IBusinessObjects<?, ?>) fieldData.getValue()) {
-					if (item instanceof IManageFields) {
-						this.print((IManageFields) item);
+					if (item instanceof IManagedFields) {
+						this.print((IManagedFields) item);
 					}
 				}
 			} else {
