@@ -157,6 +157,7 @@ namespace importexport {
                         content: [
                             new sap.m.IconTabBar("", {
                                 headerBackgroundDesign: sap.m.BackgroundDesign.Transparent,
+                                expandable: false,
                                 items: [
                                     new sap.m.IconTabFilter("", {
                                         key: bo.emAreaType.PAGE_HEADER,
@@ -174,7 +175,7 @@ namespace importexport {
                                                     }).bindProperty("value", {
                                                         path: "pageHeaderLeft"
                                                     }),
-                                                    new sap.m.ToolbarSeparator("", { width: "10px", }),
+                                                    new sap.m.ToolbarSeparator("", {}),
                                                     new sap.m.Label("", {
                                                         width: "100px",
                                                         text: ibas.i18n.prop("bo_exporttemplate_area_top")
@@ -185,7 +186,7 @@ namespace importexport {
                                                     }).bindProperty("value", {
                                                         path: "pageHeaderTop"
                                                     }),
-                                                    new sap.m.ToolbarSeparator("", { width: "10px", }),
+                                                    new sap.m.ToolbarSeparator("", {}),
                                                     new sap.m.Label("", {
                                                         width: "100px",
                                                         text: ibas.i18n.prop("bo_exporttemplate_area_width")
@@ -196,7 +197,7 @@ namespace importexport {
                                                     }).bindProperty("value", {
                                                         path: "pageHeaderWidth"
                                                     }),
-                                                    new sap.m.ToolbarSeparator("", { width: "10px", }),
+                                                    new sap.m.ToolbarSeparator("", {}),
                                                     new sap.m.Label("", {
                                                         width: "100px",
                                                         text: ibas.i18n.prop("bo_exporttemplate_area_height")
@@ -542,7 +543,6 @@ namespace importexport {
                     });
                     this.layoutMain = new sap.ui.layout.VerticalLayout("", {
                         width: "100%",
-                        height: "100%",
                         content: [
                             formTop,
                             formExportTemplateItem,
