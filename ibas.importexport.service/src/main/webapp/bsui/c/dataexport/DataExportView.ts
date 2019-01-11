@@ -11,7 +11,7 @@ namespace importexport {
             /**
              * 视图-数据导出
              */
-            export class DataExportView extends ibas.BOView implements app.IDataExportView {
+            export class DataExportView extends ibas.View implements app.IDataExportView {
                 /** 获取Schema，参数1，类型（xml,json） */
                 schemaEvent: Function;
                 /** 选择业务对象 */

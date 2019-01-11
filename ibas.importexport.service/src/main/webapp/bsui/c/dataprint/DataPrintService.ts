@@ -12,7 +12,7 @@ namespace importexport {
             /**
              * 数据打印视图
              */
-            export class DataPrintServiceView extends ibas.BODialogView implements app.IDataPrintView {
+            export class DataPrintServiceView extends ibas.DialogView implements app.IDataPrintView {
                 /** 打印 */
                 printEvent: Function;
                 /** 预览 */

@@ -11,7 +11,7 @@ namespace importexport {
             /**
              * 视图-数据导入
              */
-            export class DataImportView extends ibas.BOView implements app.IDataImportView {
+            export class DataImportView extends ibas.View implements app.IDataImportView {
                 /** 导入 */
                 importEvent: Function;
                 /** 绘制视图 */

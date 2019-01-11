@@ -11,7 +11,7 @@ namespace importexport {
             /**
              * 数据服务视图
              */
-            export class DataExportServiceView extends ibas.BODialogView implements app.IDataExportServiceView {
+            export class DataExportServiceView extends ibas.DialogView implements app.IDataExportServiceView {
                 /** 导出数据，参数1：使用的模板 */
                 exportDataEvent: Function;
                 /** 绘制视图 */
