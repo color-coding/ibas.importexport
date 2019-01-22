@@ -45,10 +45,10 @@ declare namespace initialfantasy {
         const BO_CODE_SYSTEM_CONFIG: string;
         /** 业务对象编码-用户角色（默认与组织相同） */
         const BO_CODE_ROLE: string;
-        /** 业务对象编码-项目 */
-        const BO_CODE_PROJECT: string;
-        /** 业务对象编码-过账期间 */
-        const BO_CODE_POSTINGPERIOD: string;
+        /** 业务对象编码-身份 */
+        const BO_CODE_IDENTITY: string;
+        /** 业务对象编码-用户身份 */
+        const BO_CODE_USERIDENTITY: string;
         /**
          * 分配类型
          */
@@ -678,6 +678,104 @@ declare namespace initialfantasy {
  */
 declare namespace initialfantasy {
     namespace bo {
+        /** 身份 */
+        interface IIdentity extends ibas.IBOMasterData {
+            /** 编码 */
+            code: string;
+            /** 名称 */
+            name: string;
+            /** 激活 */
+            activated: ibas.emYesNo;
+            /** 备注 */
+            remarks: string;
+            /** 对象编号 */
+            docEntry: number;
+            /** 对象类型 */
+            objectCode: string;
+            /** 创建日期 */
+            createDate: Date;
+            /** 创建时间 */
+            createTime: number;
+            /** 修改日期 */
+            updateDate: Date;
+            /** 修改时间 */
+            updateTime: number;
+            /** 数据源 */
+            dataSource: string;
+            /** 实例号（版本） */
+            logInst: number;
+            /** 服务系列 */
+            series: number;
+            /** 创建用户 */
+            createUserSign: number;
+            /** 修改用户 */
+            updateUserSign: number;
+            /** 创建动作标识 */
+            createActionId: string;
+            /** 更新动作标识 */
+            updateActionId: string;
+        }
+    }
+}
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+declare namespace initialfantasy {
+    namespace bo {
+        /** 用户身份 */
+        interface IUserIdentity extends ibas.IBOSimple {
+            /** 用户 */
+            user: string;
+            /** 身份 */
+            identity: string;
+            /** 生效日期 */
+            validDate: Date;
+            /** 失效日期 */
+            invalidDate: Date;
+            /** 备注 */
+            remarks: string;
+            /** 对象编号 */
+            objectKey: number;
+            /** 对象类型 */
+            objectCode: string;
+            /** 创建日期 */
+            createDate: Date;
+            /** 创建时间 */
+            createTime: number;
+            /** 修改日期 */
+            updateDate: Date;
+            /** 修改时间 */
+            updateTime: number;
+            /** 实例号（版本） */
+            logInst: number;
+            /** 服务系列 */
+            series: number;
+            /** 数据源 */
+            dataSource: string;
+            /** 创建用户 */
+            createUserSign: number;
+            /** 修改用户 */
+            updateUserSign: number;
+            /** 创建动作标识 */
+            createActionId: string;
+            /** 更新动作标识 */
+            updateActionId: string;
+        }
+    }
+}
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+declare namespace initialfantasy {
+    namespace bo {
         /** InitialFantasy 业务仓库 */
         interface IBORepositoryInitialFantasy extends ibas.IBORepositoryApplication {
             /**
@@ -790,6 +888,26 @@ declare namespace initialfantasy {
              * @param saver 保存者
              */
             saveBOInformation(saver: ibas.ISaveCaller<bo.IBOInformation>): void;
+            /**
+             * 查询 身份
+             * @param fetcher 查询者
+             */
+            fetchIdentity(fetcher: ibas.IFetchCaller<bo.IIdentity>): void;
+            /**
+             * 保存 身份
+             * @param saver 保存者
+             */
+            saveIdentity(saver: ibas.ISaveCaller<bo.IIdentity>): void;
+            /**
+             * 查询 用户身份
+             * @param fetcher 查询者
+             */
+            fetchUserIdentity(fetcher: ibas.IFetchCaller<bo.IUserIdentity>): void;
+            /**
+             * 保存 用户身份
+             * @param saver 保存者
+             */
+            saveUserIdentity(saver: ibas.ISaveCaller<bo.IUserIdentity>): void;
         }
     }
 }
@@ -2165,6 +2283,221 @@ declare namespace initialfantasy {
  */
 declare namespace initialfantasy {
     namespace bo {
+        /** 身份 */
+        class Identity extends ibas.BOMasterData<Identity> implements IIdentity {
+            /** 业务对象编码 */
+            static BUSINESS_OBJECT_CODE: string;
+            /** 构造函数 */
+            constructor();
+            /** 映射的属性名称-编码 */
+            static PROPERTY_CODE_NAME: string;
+            /** 获取-编码 */
+            /** 设置-编码 */
+            code: string;
+            /** 映射的属性名称-名称 */
+            static PROPERTY_NAME_NAME: string;
+            /** 获取-名称 */
+            /** 设置-名称 */
+            name: string;
+            /** 映射的属性名称-激活 */
+            static PROPERTY_ACTIVATED_NAME: string;
+            /** 获取-激活 */
+            /** 设置-激活 */
+            activated: ibas.emYesNo;
+            /** 映射的属性名称-备注 */
+            static PROPERTY_REMARKS_NAME: string;
+            /** 获取-备注 */
+            /** 设置-备注 */
+            remarks: string;
+            /** 映射的属性名称-对象编号 */
+            static PROPERTY_DOCENTRY_NAME: string;
+            /** 获取-对象编号 */
+            /** 设置-对象编号 */
+            docEntry: number;
+            /** 映射的属性名称-对象类型 */
+            static PROPERTY_OBJECTCODE_NAME: string;
+            /** 获取-对象类型 */
+            /** 设置-对象类型 */
+            objectCode: string;
+            /** 映射的属性名称-创建日期 */
+            static PROPERTY_CREATEDATE_NAME: string;
+            /** 获取-创建日期 */
+            /** 设置-创建日期 */
+            createDate: Date;
+            /** 映射的属性名称-创建时间 */
+            static PROPERTY_CREATETIME_NAME: string;
+            /** 获取-创建时间 */
+            /** 设置-创建时间 */
+            createTime: number;
+            /** 映射的属性名称-修改日期 */
+            static PROPERTY_UPDATEDATE_NAME: string;
+            /** 获取-修改日期 */
+            /** 设置-修改日期 */
+            updateDate: Date;
+            /** 映射的属性名称-修改时间 */
+            static PROPERTY_UPDATETIME_NAME: string;
+            /** 获取-修改时间 */
+            /** 设置-修改时间 */
+            updateTime: number;
+            /** 映射的属性名称-数据源 */
+            static PROPERTY_DATASOURCE_NAME: string;
+            /** 获取-数据源 */
+            /** 设置-数据源 */
+            dataSource: string;
+            /** 映射的属性名称-实例号（版本） */
+            static PROPERTY_LOGINST_NAME: string;
+            /** 获取-实例号（版本） */
+            /** 设置-实例号（版本） */
+            logInst: number;
+            /** 映射的属性名称-服务系列 */
+            static PROPERTY_SERIES_NAME: string;
+            /** 获取-服务系列 */
+            /** 设置-服务系列 */
+            series: number;
+            /** 映射的属性名称-创建用户 */
+            static PROPERTY_CREATEUSERSIGN_NAME: string;
+            /** 获取-创建用户 */
+            /** 设置-创建用户 */
+            createUserSign: number;
+            /** 映射的属性名称-修改用户 */
+            static PROPERTY_UPDATEUSERSIGN_NAME: string;
+            /** 获取-修改用户 */
+            /** 设置-修改用户 */
+            updateUserSign: number;
+            /** 映射的属性名称-创建动作标识 */
+            static PROPERTY_CREATEACTIONID_NAME: string;
+            /** 获取-创建动作标识 */
+            /** 设置-创建动作标识 */
+            createActionId: string;
+            /** 映射的属性名称-更新动作标识 */
+            static PROPERTY_UPDATEACTIONID_NAME: string;
+            /** 获取-更新动作标识 */
+            /** 设置-更新动作标识 */
+            updateActionId: string;
+            /** 初始化数据 */
+            protected init(): void;
+        }
+    }
+}
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+declare namespace initialfantasy {
+    namespace bo {
+        /** 用户身份 */
+        class UserIdentity extends ibas.BOSimple<UserIdentity> implements IUserIdentity {
+            /** 业务对象编码 */
+            static BUSINESS_OBJECT_CODE: string;
+            /** 构造函数 */
+            constructor();
+            /** 映射的属性名称-用户 */
+            static PROPERTY_USER_NAME: string;
+            /** 获取-用户 */
+            /** 设置-用户 */
+            user: string;
+            /** 映射的属性名称-身份 */
+            static PROPERTY_IDENTITY_NAME: string;
+            /** 获取-身份 */
+            /** 设置-身份 */
+            identity: string;
+            /** 映射的属性名称-生效日期 */
+            static PROPERTY_VALIDDATE_NAME: string;
+            /** 获取-生效日期 */
+            /** 设置-生效日期 */
+            validDate: Date;
+            /** 映射的属性名称-失效日期 */
+            static PROPERTY_INVALIDDATE_NAME: string;
+            /** 获取-失效日期 */
+            /** 设置-失效日期 */
+            invalidDate: Date;
+            /** 映射的属性名称-备注 */
+            static PROPERTY_REMARKS_NAME: string;
+            /** 获取-备注 */
+            /** 设置-备注 */
+            remarks: string;
+            /** 映射的属性名称-对象编号 */
+            static PROPERTY_OBJECTKEY_NAME: string;
+            /** 获取-对象编号 */
+            /** 设置-对象编号 */
+            objectKey: number;
+            /** 映射的属性名称-对象类型 */
+            static PROPERTY_OBJECTCODE_NAME: string;
+            /** 获取-对象类型 */
+            /** 设置-对象类型 */
+            objectCode: string;
+            /** 映射的属性名称-创建日期 */
+            static PROPERTY_CREATEDATE_NAME: string;
+            /** 获取-创建日期 */
+            /** 设置-创建日期 */
+            createDate: Date;
+            /** 映射的属性名称-创建时间 */
+            static PROPERTY_CREATETIME_NAME: string;
+            /** 获取-创建时间 */
+            /** 设置-创建时间 */
+            createTime: number;
+            /** 映射的属性名称-修改日期 */
+            static PROPERTY_UPDATEDATE_NAME: string;
+            /** 获取-修改日期 */
+            /** 设置-修改日期 */
+            updateDate: Date;
+            /** 映射的属性名称-修改时间 */
+            static PROPERTY_UPDATETIME_NAME: string;
+            /** 获取-修改时间 */
+            /** 设置-修改时间 */
+            updateTime: number;
+            /** 映射的属性名称-实例号（版本） */
+            static PROPERTY_LOGINST_NAME: string;
+            /** 获取-实例号（版本） */
+            /** 设置-实例号（版本） */
+            logInst: number;
+            /** 映射的属性名称-服务系列 */
+            static PROPERTY_SERIES_NAME: string;
+            /** 获取-服务系列 */
+            /** 设置-服务系列 */
+            series: number;
+            /** 映射的属性名称-数据源 */
+            static PROPERTY_DATASOURCE_NAME: string;
+            /** 获取-数据源 */
+            /** 设置-数据源 */
+            dataSource: string;
+            /** 映射的属性名称-创建用户 */
+            static PROPERTY_CREATEUSERSIGN_NAME: string;
+            /** 获取-创建用户 */
+            /** 设置-创建用户 */
+            createUserSign: number;
+            /** 映射的属性名称-修改用户 */
+            static PROPERTY_UPDATEUSERSIGN_NAME: string;
+            /** 获取-修改用户 */
+            /** 设置-修改用户 */
+            updateUserSign: number;
+            /** 映射的属性名称-创建动作标识 */
+            static PROPERTY_CREATEACTIONID_NAME: string;
+            /** 获取-创建动作标识 */
+            /** 设置-创建动作标识 */
+            createActionId: string;
+            /** 映射的属性名称-更新动作标识 */
+            static PROPERTY_UPDATEACTIONID_NAME: string;
+            /** 获取-更新动作标识 */
+            /** 设置-更新动作标识 */
+            updateActionId: string;
+            /** 初始化数据 */
+            protected init(): void;
+        }
+    }
+}
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+declare namespace initialfantasy {
+    namespace bo {
         /** 数据转换者 */
         class DataConverter extends ibas.DataConverter4j {
             /** 创建业务对象转换者 */
@@ -2312,6 +2645,26 @@ declare namespace initialfantasy {
              * @param saver 保存者
              */
             saveBOSeriesNumbering(saver: ibas.ISaveCaller<bo.BOSeriesNumbering>): void;
+            /**
+             * 查询 身份
+             * @param fetcher 查询者
+             */
+            fetchIdentity(fetcher: ibas.IFetchCaller<bo.Identity>): void;
+            /**
+             * 保存 身份
+             * @param saver 保存者
+             */
+            saveIdentity(saver: ibas.ISaveCaller<bo.Identity>): void;
+            /**
+             * 查询 用户身份
+             * @param fetcher 查询者
+             */
+            fetchUserIdentity(fetcher: ibas.IFetchCaller<bo.UserIdentity>): void;
+            /**
+             * 保存 用户身份
+             * @param saver 保存者
+             */
+            saveUserIdentity(saver: ibas.ISaveCaller<bo.UserIdentity>): void;
         }
     }
 }
@@ -4293,6 +4646,7 @@ declare namespace initialfantasy {
             protected editData(data: bo.User): void;
             /** 删除数据，参数：目标数据集合 */
             protected deleteData(data: bo.User | bo.User[]): void;
+            private userIdentity;
         }
         /** 视图-用户 */
         interface IUserListView extends ibas.IBOListView {
@@ -4302,6 +4656,8 @@ declare namespace initialfantasy {
             deleteDataEvent: Function;
             /** 显示数据 */
             showData(datas: bo.User[]): void;
+            /** 用户身份事件 */
+            userIdentityEvent: Function;
         }
     }
 }
@@ -4335,6 +4691,335 @@ declare namespace initialfantasy {
             showUser(user: bo.User): void;
             /** 保存用户事件 */
             saveUserEvent: Function;
+        }
+    }
+}
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+declare namespace initialfantasy {
+    namespace app {
+        class IdentityFunc extends ibas.ModuleFunction {
+            /** 功能标识 */
+            static FUNCTION_ID: string;
+            /** 功能名称 */
+            static FUNCTION_NAME: string;
+            /** 构造函数 */
+            constructor();
+            /** 默认功能 */
+            default(): ibas.IApplication<ibas.IView>;
+        }
+    }
+}
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+declare namespace initialfantasy {
+    namespace app {
+        /** 列表应用-身份 */
+        class IdentityListApp extends ibas.BOListApplication<IIdentityListView, bo.Identity> {
+            /** 应用标识 */
+            static APPLICATION_ID: string;
+            /** 应用名称 */
+            static APPLICATION_NAME: string;
+            /** 业务对象编码 */
+            static BUSINESS_OBJECT_CODE: string;
+            /** 构造函数 */
+            constructor();
+            /** 注册视图 */
+            protected registerView(): void;
+            /** 视图显示后 */
+            protected viewShowed(): void;
+            /** 查询数据 */
+            protected fetchData(criteria: ibas.ICriteria): void;
+            /** 新建数据 */
+            protected newData(): void;
+            /** 查看数据，参数：目标数据 */
+            protected viewData(data: bo.Identity): void;
+            /** 编辑数据，参数：目标数据 */
+            protected editData(data: bo.Identity): void;
+            /** 删除数据，参数：目标数据集合 */
+            protected deleteData(data: bo.Identity | bo.Identity[]): void;
+        }
+        /** 视图-身份 */
+        interface IIdentityListView extends ibas.IBOListView {
+            /** 编辑数据事件，参数：编辑对象 */
+            editDataEvent: Function;
+            /** 删除数据事件，参数：删除对象集合 */
+            deleteDataEvent: Function;
+            /** 显示数据 */
+            showData(datas: bo.Identity[]): void;
+        }
+    }
+}
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+declare namespace initialfantasy {
+    namespace app {
+        /** 选择应用-身份 */
+        class IdentityChooseApp extends ibas.BOChooseService<IIdentityChooseView, bo.Identity> {
+            /** 应用标识 */
+            static APPLICATION_ID: string;
+            /** 应用名称 */
+            static APPLICATION_NAME: string;
+            /** 业务对象编码 */
+            static BUSINESS_OBJECT_CODE: string;
+            /** 构造函数 */
+            constructor();
+            /** 注册视图 */
+            protected registerView(): void;
+            /** 视图显示后 */
+            protected viewShowed(): void;
+            /** 查询数据 */
+            protected fetchData(criteria: ibas.ICriteria): void;
+            /** 新建数据 */
+            protected newData(): void;
+        }
+        /** 视图-身份 */
+        interface IIdentityChooseView extends ibas.IBOChooseView {
+            /** 显示数据 */
+            showData(datas: bo.Identity[]): void;
+        }
+        /** 身份选择服务映射 */
+        class IdentityChooseServiceMapping extends ibas.BOChooseServiceMapping {
+            /** 构造函数 */
+            constructor();
+            /** 创建服务实例 */
+            create(): ibas.IBOChooseService<bo.Identity>;
+        }
+    }
+}
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+declare namespace initialfantasy {
+    namespace app {
+        /** 编辑应用-身份 */
+        class IdentityEditApp extends ibas.BOEditApplication<IIdentityEditView, bo.Identity> {
+            /** 应用标识 */
+            static APPLICATION_ID: string;
+            /** 应用名称 */
+            static APPLICATION_NAME: string;
+            /** 业务对象编码 */
+            static BUSINESS_OBJECT_CODE: string;
+            /** 构造函数 */
+            constructor();
+            /** 注册视图 */
+            protected registerView(): void;
+            /** 视图显示后 */
+            protected viewShowed(): void;
+            run(): void;
+            run(data: bo.Identity): void;
+            /** 待编辑的数据 */
+            protected editData: bo.Identity;
+            /** 保存数据 */
+            protected saveData(): void;
+            /** 删除数据 */
+            protected deleteData(): void;
+            /** 新建数据，参数1：是否克隆 */
+            protected createData(clone: boolean): void;
+        }
+        /** 视图-身份 */
+        interface IIdentityEditView extends ibas.IBOEditView {
+            /** 显示数据 */
+            showIdentity(data: bo.Identity): void;
+            /** 删除数据事件 */
+            deleteDataEvent: Function;
+            /** 新建数据事件，参数1：是否克隆 */
+            createDataEvent: Function;
+        }
+    }
+}
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+declare namespace initialfantasy {
+    namespace app {
+        class UserIdentityFunc extends ibas.ModuleFunction {
+            /** 功能标识 */
+            static FUNCTION_ID: string;
+            /** 功能名称 */
+            static FUNCTION_NAME: string;
+            /** 构造函数 */
+            constructor();
+            /** 默认功能 */
+            default(): ibas.IApplication<ibas.IView>;
+        }
+    }
+}
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+declare namespace initialfantasy {
+    namespace app {
+        /** 列表应用-用户身份 */
+        class UserIdentityListApp extends ibas.BOListApplication<IUserIdentityListView, bo.UserIdentity> {
+            /** 应用标识 */
+            static APPLICATION_ID: string;
+            /** 应用名称 */
+            static APPLICATION_NAME: string;
+            /** 业务对象编码 */
+            static BUSINESS_OBJECT_CODE: string;
+            /** 构造函数 */
+            constructor();
+            /** 注册视图 */
+            protected registerView(): void;
+            /** 视图显示后 */
+            protected viewShowed(): void;
+            /** 查询数据 */
+            protected fetchData(criteria: ibas.ICriteria): void;
+            /** 新建数据 */
+            protected newData(): void;
+            /** 查看数据，参数：目标数据 */
+            protected viewData(data: bo.UserIdentity): void;
+            /** 编辑数据，参数：目标数据 */
+            protected editData(data: bo.UserIdentity): void;
+            /** 删除数据，参数：目标数据集合 */
+            protected deleteData(data: bo.UserIdentity | bo.UserIdentity[]): void;
+            private identity;
+        }
+        /** 视图-用户身份 */
+        interface IUserIdentityListView extends ibas.IBOListView {
+            /** 编辑数据事件，参数：编辑对象 */
+            editDataEvent: Function;
+            /** 删除数据事件，参数：删除对象集合 */
+            deleteDataEvent: Function;
+            /** 显示数据 */
+            showData(datas: bo.UserIdentity[]): void;
+            /** 身份事件 */
+            identityEvent: Function;
+        }
+    }
+}
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+declare namespace initialfantasy {
+    namespace app {
+        /** 选择应用-用户身份 */
+        class UserIdentityChooseApp extends ibas.BOChooseService<IUserIdentityChooseView, bo.UserIdentity> {
+            /** 应用标识 */
+            static APPLICATION_ID: string;
+            /** 应用名称 */
+            static APPLICATION_NAME: string;
+            /** 业务对象编码 */
+            static BUSINESS_OBJECT_CODE: string;
+            /** 构造函数 */
+            constructor();
+            /** 注册视图 */
+            protected registerView(): void;
+            /** 视图显示后 */
+            protected viewShowed(): void;
+            /** 查询数据 */
+            protected fetchData(criteria: ibas.ICriteria): void;
+            /** 新建数据 */
+            protected newData(): void;
+        }
+        /** 视图-用户身份 */
+        interface IUserIdentityChooseView extends ibas.IBOChooseView {
+            /** 显示数据 */
+            showData(datas: bo.UserIdentity[]): void;
+        }
+        /** 用户身份选择服务映射 */
+        class UserIdentityChooseServiceMapping extends ibas.BOChooseServiceMapping {
+            /** 构造函数 */
+            constructor();
+            /** 创建服务实例 */
+            create(): ibas.IBOChooseService<bo.UserIdentity>;
+        }
+    }
+}
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+declare namespace initialfantasy {
+    namespace app {
+        /** 编辑应用-用户身份 */
+        class UserIdentityEditApp extends ibas.BOEditApplication<IUserIdentityEditView, bo.UserIdentity> {
+            /** 应用标识 */
+            static APPLICATION_ID: string;
+            /** 应用名称 */
+            static APPLICATION_NAME: string;
+            /** 业务对象编码 */
+            static BUSINESS_OBJECT_CODE: string;
+            /** 构造函数 */
+            constructor();
+            /** 注册视图 */
+            protected registerView(): void;
+            /** 视图显示后 */
+            protected viewShowed(): void;
+            run(): void;
+            run(data: bo.UserIdentity): void;
+            /** 待编辑的数据 */
+            protected editData: bo.UserIdentity;
+            /** 保存数据 */
+            protected saveData(): void;
+            /** 删除数据 */
+            protected deleteData(): void;
+            /** 新建数据，参数1：是否克隆 */
+            protected createData(clone: boolean): void;
+            private chooseUser;
+            private chooseIdentity;
+        }
+        /** 视图-用户身份 */
+        interface IUserIdentityEditView extends ibas.IBOEditView {
+            /** 显示数据 */
+            showUserIdentity(data: bo.UserIdentity): void;
+            /** 删除数据事件 */
+            deleteDataEvent: Function;
+            /** 新建数据事件，参数1：是否克隆 */
+            createDataEvent: Function;
+            /** 选择用户事件 */
+            chooseUserEvent: Function;
+            /** 选择身份事件 */
+            chooseIdentityEvent: Function;
         }
     }
 }
