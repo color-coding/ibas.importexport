@@ -97,23 +97,7 @@ namespace importexport {
             }
             /** 删除数据，参数：目标数据集合 */
             protected deleteData(data: bo.ExportTemplate | bo.ExportTemplate[]): void {
-                // 检查目标数据
-                if (ibas.objects.isNull(data)) {
-                    this.messages(ibas.emMessageType.WARNING, ibas.i18n.prop("shell_please_chooose_data",
-                        ibas.i18n.prop("shell_data_delete")
-                    ));
-                    return;
-                }
-                let beDeleteds: ibas.ArrayList<bo.ExportTemplate> = new ibas.ArrayList<bo.ExportTemplate>();
-                if (data instanceof Array) {
-                    for (let item of data) {
-                        item.delete();
-                        beDeleteds.add(item);
-                    }
-                } else {
-                    data.delete();
-                    beDeleteds.add(data);
-                }
+                let beDeleteds: ibas.IList<bo.ExportTemplate> = ibas.arrays.create(data);
                 // 没有选择删除的对象
                 if (beDeleteds.length === 0) {
                     this.messages(ibas.emMessageType.WARNING, ibas.i18n.prop("shell_please_chooose_data",
@@ -121,6 +105,10 @@ namespace importexport {
                     ));
                     return;
                 }
+                // 标记删除对象
+                beDeleteds.forEach((value) => {
+                    value.delete();
+                });
                 let that: this = this;
                 this.messages({
                     type: ibas.emMessageType.QUESTION,
@@ -128,44 +116,34 @@ namespace importexport {
                     message: ibas.i18n.prop("shell_multiple_data_delete_continue", beDeleteds.length),
                     actions: [ibas.emMessageAction.YES, ibas.emMessageAction.NO],
                     onCompleted(action: ibas.emMessageAction): void {
-                        if (action === ibas.emMessageAction.YES) {
-                            try {
-                                let boRepository: bo.BORepositoryImportExport = new bo.BORepositoryImportExport();
-                                let saveMethod: Function = function (beSaved: bo.ExportTemplate): void {
-                                    boRepository.saveExportTemplate({
-                                        beSaved: beSaved,
-                                        onCompleted(opRslt: ibas.IOperationResult<bo.ExportTemplate>): void {
-                                            try {
-                                                if (opRslt.resultCode !== 0) {
-                                                    throw new Error(opRslt.message);
-                                                }
-                                                // 保存下一个数据
-                                                let index: number = beDeleteds.indexOf(beSaved) + 1;
-                                                if (index > 0 && index < beDeleteds.length) {
-                                                    saveMethod(beDeleteds[index]);
-                                                } else {
-                                                    // 处理完成
-                                                    that.busy(false);
-                                                    that.messages(ibas.emMessageType.SUCCESS,
-                                                        ibas.i18n.prop("shell_data_delete") + ibas.i18n.prop("shell_sucessful"));
-                                                }
-                                            } catch (error) {
-                                                that.busy(false);
-                                                that.messages(ibas.emMessageType.ERROR,
-                                                    ibas.i18n.prop("shell_data_delete_error", beSaved, error.message));
-                                            }
-                                        }
-                                    });
-                                    that.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("shell_data_deleting", beSaved));
-                                };
-                                that.busy(true);
-                                // 开始保存
-                                saveMethod(beDeleteds.firstOrDefault());
-                            } catch (error) {
-                                that.busy(false);
-                                that.messages(error);
-                            }
+                        if (action !== ibas.emMessageAction.YES) {
+                            return;
                         }
+                        let boRepository: bo.BORepositoryImportExport = new bo.BORepositoryImportExport();
+                        ibas.queues.execute(beDeleteds, (data, next) => {
+                            // 处理数据
+                            boRepository.saveExportTemplate({
+                                beSaved: data,
+                                onCompleted(opRslt: ibas.IOperationResult<bo.ExportTemplate>): void {
+                                    if (opRslt.resultCode !== 0) {
+                                        next(new Error(ibas.i18n.prop("shell_data_delete_error", data, opRslt.message)));
+                                    } else {
+                                        next();
+                                    }
+                                }
+                            });
+                            that.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("shell_data_deleting", data));
+                        }, (error) => {
+                            // 处理完成
+                            if (error instanceof Error) {
+                                that.messages(ibas.emMessageType.ERROR, error.message);
+                            } else {
+                                that.messages(ibas.emMessageType.SUCCESS,
+                                    ibas.i18n.prop("shell_data_delete") + ibas.i18n.prop("shell_sucessful"));
+                            }
+                            that.busy(false);
+                        });
+                        that.busy(true);
                     }
                 });
             }

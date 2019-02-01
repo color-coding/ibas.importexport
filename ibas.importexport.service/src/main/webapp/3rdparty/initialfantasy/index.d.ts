@@ -580,6 +580,8 @@ declare namespace initialfantasy {
             activated: ibas.emYesNo;
             /** 权限类型 */
             authoriseValue: ibas.emAuthoriseType;
+            /** 自动运行 */
+            automatic: ibas.emYesNo;
             /** 对象编号 */
             objectKey: number;
             /** 对象类型 */
@@ -2069,6 +2071,11 @@ declare namespace initialfantasy {
             /** 获取-权限类型 */
             /** 设置-权限类型 */
             authoriseValue: ibas.emAuthoriseType;
+            /** 映射的属性名称-自动运行 */
+            static PROPERTY_AUTOMATIC_NAME: string;
+            /** 获取-自动运行 */
+            /** 设置-自动运行 */
+            automatic: ibas.emYesNo;
             /** 映射的属性名称-对象编号 */
             static PROPERTY_OBJECTKEY_NAME: string;
             /** 获取-对象编号 */
