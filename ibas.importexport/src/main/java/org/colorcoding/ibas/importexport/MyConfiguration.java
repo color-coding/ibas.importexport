@@ -55,13 +55,19 @@ public class MyConfiguration extends org.colorcoding.ibas.bobas.MyConfiguration 
 	 * 服务命名空间
 	 */
 	public static final String NAMESPACE_SERVICE = NAMESPACE_ROOT + "service";
+
 	/**
 	 * 配置项目-转换者工厂，多个时“;”分隔
 	 */
 	public final static String CONFIG_ITEM_TRANSFORMER_FACTORY = "TransformerFactory";
+
 	/**
 	 * 配置项目-扫描的命名空间，多个时“;”分隔
 	 */
 	public final static String CONFIG_ITEM_SCANING_PACKAGES = "ScaningPackages";
 
+	/**
+	 * 标记-数据源
+	 */
+	public static final String SIGN_DATA_SOURCE = "I";
 }

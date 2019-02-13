@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.function.Consumer;
 
+import org.colorcoding.ibas.bobas.bo.IBOStorageTag;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.common.ConditionOperation;
 import org.colorcoding.ibas.bobas.common.Criteria;
@@ -95,10 +96,8 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	/**
 	 * 查询-数据导出模板
 	 * 
-	 * @param criteria
-	 *            查询
-	 * @param token
-	 *            口令
+	 * @param criteria 查询
+	 * @param token    口令
 	 * @return 操作结果
 	 */
 	public OperationResult<ExportTemplate> fetchExportTemplate(ICriteria criteria, String token) {
@@ -108,8 +107,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	/**
 	 * 查询-数据导出模板（提前设置用户口令）
 	 * 
-	 * @param criteria
-	 *            查询
+	 * @param criteria 查询
 	 * @return 操作结果
 	 */
 	public IOperationResult<IExportTemplate> fetchExportTemplate(ICriteria criteria) {
@@ -119,10 +117,8 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	/**
 	 * 保存-数据导出模板
 	 * 
-	 * @param bo
-	 *            对象实例
-	 * @param token
-	 *            口令
+	 * @param bo    对象实例
+	 * @param token 口令
 	 * @return 操作结果
 	 */
 	public OperationResult<ExportTemplate> saveExportTemplate(ExportTemplate bo, String token) {
@@ -132,8 +128,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	/**
 	 * 保存-数据导出模板（提前设置用户口令）
 	 * 
-	 * @param bo
-	 *            对象实例
+	 * @param bo 对象实例
 	 * @return 操作结果
 	 */
 	public IOperationResult<IExportTemplate> saveExportTemplate(IExportTemplate bo) {
@@ -174,12 +169,9 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	/**
 	 * 导入数据
 	 * 
-	 * @param data
-	 *            数据
-	 * @param update
-	 *            更新数据
-	 * @param token
-	 *            口令
+	 * @param data   数据
+	 * @param update 更新数据
+	 * @param token  口令
 	 * @return 操作结果
 	 */
 	public OperationResult<String> importData(FileData data, boolean update, String token) {
@@ -214,6 +206,11 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 						"DATA_IMPORT");
 				// 保存业务对象
 				for (IBusinessObject object : fileTransformer.getOutputData()) {
+					// 导入的数据，源标记为I
+					if (object instanceof IBOStorageTag) {
+						IBOStorageTag tag = (IBOStorageTag) object;
+						tag.setDataSource(MyConfiguration.SIGN_DATA_SOURCE);
+					}
 					// 判断对象是否存在
 					ICriteria criteria = object.getCriteria();
 					if (criteria != null && !criteria.getConditions().isEmpty()) {
