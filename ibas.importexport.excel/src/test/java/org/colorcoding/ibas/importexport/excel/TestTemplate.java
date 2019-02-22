@@ -36,7 +36,7 @@ public class TestTemplate extends TestCase {
 		order.setDocumentStatus(emDocumentStatus.RELEASED);
 		order.setDocumentDate(DateTime.getToday());
 		userField01.setValue("i'm niuren.zhu.");
-		userField02.setValue(new Decimal("999.1999"));
+		userField02.setValue(Decimal.valueOf("999.1999"));
 		userField03.setValue(DateTime.MAX_VALUE);
 		order.getUser().setCode("manager");
 		order.getUser().setName("管理员大叔");

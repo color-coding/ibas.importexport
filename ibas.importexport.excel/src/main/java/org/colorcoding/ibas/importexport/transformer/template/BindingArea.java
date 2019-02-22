@@ -1,6 +1,9 @@
 package org.colorcoding.ibas.importexport.transformer.template;
 
+import java.math.BigDecimal;
+
 import org.colorcoding.ibas.bobas.core.BOFactory;
+import org.colorcoding.ibas.bobas.data.Decimal;
 
 public abstract class BindingArea<P extends Area<?>> extends Area<P> {
 
@@ -48,6 +51,10 @@ public abstract class BindingArea<P extends Area<?>> extends Area<P> {
 		String bind = lines[2].substring(NOTE_LINE_CLASS.length());
 		if (bind == null || bind.isEmpty()) {
 			return false;
+		}
+		if (Decimal.class.getName().equals(bind)) {
+			// 兼容性，重新指定类型
+			bind = BigDecimal.class.getName();
 		}
 		Class<?> bindType = BOFactory.create().loadClass(bind);
 		if (type == null) {
