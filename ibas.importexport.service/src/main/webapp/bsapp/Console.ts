@@ -12,6 +12,8 @@
 /// <reference path="./dataprint/index.ts" />
 namespace importexport {
     export namespace app {
+        /** 属性-导航 */
+        const PROPERTY_NAVIGATION: symbol = Symbol("navigation");
         /** 模块控制台 */
         export class Console extends ibas.ModuleConsole {
             /** 构造函数 */
@@ -22,10 +24,9 @@ namespace importexport {
                 this.version = CONSOLE_VERSION;
                 this.copyright = ibas.i18n.prop("shell_license");
             }
-            private _navigation: ibas.IViewNavigation;
             /** 创建视图导航 */
             navigation(): ibas.IViewNavigation {
-                return this._navigation;
+                return this[PROPERTY_NAVIGATION];
             }
             /** 初始化 */
             protected registers(): void {
@@ -64,12 +65,12 @@ namespace importexport {
                     // 使用c类型视图
                     uiModules.push("index.ui.c");
                 }
-                let that: this = this;
-                this.loadUI(uiModules, function (ui: any): void {
+                // 加载视图库
+                this.loadUI(uiModules, (ui) => {
                     // 设置导航
-                    that._navigation = new ui.Navigation();
+                    this[PROPERTY_NAVIGATION] = new ui.Navigation();
                     // 调用初始化
-                    that.initialize();
+                    this.initialize();
                 });
                 // 保留基类方法
                 super.run();
