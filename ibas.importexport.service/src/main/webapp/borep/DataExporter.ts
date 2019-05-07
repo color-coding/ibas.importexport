@@ -66,7 +66,7 @@ namespace importexport {
                 let name: string = "unknown";
                 let data: any = caller.data[0];
                 if (!ibas.objects.isNull(data)) {
-                    name = ibas.objects.getName(ibas.objects.getType(data));
+                    name = ibas.objects.nameOf(data);
                 }
                 if (name === "Object" && !ibas.objects.isNull(data[ibas.REMOTE_OBJECT_TYPE_PROPERTY_NAME])) {
                     name = data[ibas.REMOTE_OBJECT_TYPE_PROPERTY_NAME];

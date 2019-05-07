@@ -20,11 +20,10 @@ namespace importexport {
                 /** 绘制视图 */
                 draw(): any {
                     let that: this = this;
-                    this.dialog = new sap.m.Dialog("", {
+                    return this.dialog = new sap.m.Dialog("", {
                         title: this.title,
                         type: sap.m.DialogType.Standard,
                         state: sap.ui.core.ValueState.None,
-                        stretchOnPhone: true,
                         horizontalScrolling: true,
                         verticalScrolling: true,
                         content: [
@@ -58,7 +57,6 @@ namespace importexport {
                             }),
                         ],
                     });
-                    return this.dialog;
                 }
                 private dialog: sap.m.Dialog;
                 private select: sap.m.Select;
@@ -66,7 +64,6 @@ namespace importexport {
 
                 /** 显示内容 */
                 showContent(content: Blob, width: string, height: string): void {
-                    let that: this = this;
                     this.select = null;
                     this.dialog.destroyContent();
                     this.html = new sap.ui.core.HTML("", {});

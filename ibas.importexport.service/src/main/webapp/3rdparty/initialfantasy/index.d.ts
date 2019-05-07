@@ -4333,11 +4333,12 @@ declare namespace initialfantasy {
             showPlatforms(datas: bo.ApplicationPlatform[]): void;
         }
         /** 系统权限 */
-        class Privilege implements ibas.IBindable {
+        class Privilege extends ibas.Bindable {
             constructor(data: bo.Privilege, type: bo.emElementType);
             registerListener(listener: ibas.IPropertyChangedListener): void;
             removeListener(listener: ibas.IPropertyChangedListener): void;
-            removeListener(recursive: boolean): void;
+            removeListener(id: string): void;
+            removeListener(): void;
             data: bo.Privilege;
             type: bo.emElementType;
             readonly isNew: boolean;

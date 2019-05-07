@@ -110,6 +110,10 @@ public class TransformerExcel extends TransformerFile {
 						for (Property property : object.getProperties()) {
 							IBOPropertyInformation itemInfo = t.getBOPropertyInformations()
 									.firstOrDefault(c -> c.getPropertyName().equals(property.getName()));
+							if (itemInfo == null) {
+								itemInfo = t.getBOPropertyInformations()
+										.firstOrDefault(c -> c.getMapped().equals(property.getName()));
+							}
 							if (itemInfo != null) {
 								property.setDescription(itemInfo.getDescription());
 							}
