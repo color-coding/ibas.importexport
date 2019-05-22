@@ -49,6 +49,8 @@ declare namespace initialfantasy {
         const BO_CODE_IDENTITY: string;
         /** 业务对象编码-用户身份 */
         const BO_CODE_USERIDENTITY: string;
+        /** 业务对象编码-身份权限 */
+        const BO_CODE_IDENTITYPRIVILEGE: string;
         /**
          * 分配类型
          */
@@ -90,6 +92,20 @@ declare namespace initialfantasy {
             name: string;
             /** 激活 */
             activated: ibas.emYesNo;
+        }
+    }
+    namespace app {
+        /** 身份权限配置契约 */
+        interface IIdentityPrivilegeConfigContract extends ibas.IServiceContract {
+            /** 平台 */
+            platform: ibas.emPlantform | string | bo.IApplicationPlatform;
+            /** 角色 */
+            role: string | bo.IRole;
+            /** 角色权限 */
+            privileges?: bo.IPrivilege[];
+        }
+        /** 身份权限配置服务代理 */
+        class IdentityPrivilegeConfigServiceProxy extends ibas.ServiceProxy<IIdentityPrivilegeConfigContract> {
         }
     }
 }
@@ -778,6 +794,62 @@ declare namespace initialfantasy {
  */
 declare namespace initialfantasy {
     namespace bo {
+        /** 身份权限 */
+        interface IIdentityPrivilege extends ibas.IBOSimple {
+            /** 角色标识 */
+            roleCode: string;
+            /** 平台标识 */
+            platformId: string;
+            /** 模块标识 */
+            moduleId: string;
+            /** 目标标识 */
+            target: string;
+            /** 是否可用 */
+            activated: ibas.emYesNo;
+            /** 身份标识 */
+            identityCode: string;
+            /** 权限类型 */
+            authoriseValue: ibas.emAuthoriseType;
+            /** 自动运行 */
+            automatic: ibas.emYesNo;
+            /** 对象编号 */
+            objectKey: number;
+            /** 对象类型 */
+            objectCode: string;
+            /** 创建日期 */
+            createDate: Date;
+            /** 创建时间 */
+            createTime: number;
+            /** 修改日期 */
+            updateDate: Date;
+            /** 修改时间 */
+            updateTime: number;
+            /** 实例号（版本） */
+            logInst: number;
+            /** 服务系列 */
+            series: number;
+            /** 数据源 */
+            dataSource: string;
+            /** 创建用户 */
+            createUserSign: number;
+            /** 修改用户 */
+            updateUserSign: number;
+            /** 创建动作标识 */
+            createActionId: string;
+            /** 更新动作标识 */
+            updateActionId: string;
+        }
+    }
+}
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+declare namespace initialfantasy {
+    namespace bo {
         /** InitialFantasy 业务仓库 */
         interface IBORepositoryInitialFantasy extends ibas.IBORepositoryApplication {
             /**
@@ -861,6 +933,11 @@ declare namespace initialfantasy {
              */
             saveOrganization(saver: ibas.ISaveCaller<bo.IOrganization>): void;
             /**
+             * 查询 角色
+             * @param fetcher 查询者
+             */
+            fetchRole(fetcher: ibas.IFetchCaller<bo.IRole>): void;
+            /**
              * 查询 系统权限
              * @param fetcher 查询者
              */
@@ -910,6 +987,16 @@ declare namespace initialfantasy {
              * @param saver 保存者
              */
             saveUserIdentity(saver: ibas.ISaveCaller<bo.IUserIdentity>): void;
+            /**
+             * 查询 身份权限
+             * @param fetcher 查询者
+             */
+            fetchIdentityPrivilege(fetcher: ibas.IFetchCaller<bo.IIdentityPrivilege>): void;
+            /**
+             * 保存 身份权限
+             * @param saver 保存者
+             */
+            saveIdentityPrivilege(saver: ibas.ISaveCaller<bo.IIdentityPrivilege>): void;
         }
     }
 }
@@ -1866,11 +1953,6 @@ declare namespace initialfantasy {
             /** 获取-对象编码 */
             /** 设置-对象编码 */
             objectCode: string;
-            /** 映射的属性名称-子类型 */
-            static PROPERTY_DOCUMENTSUBTYPE_NAME: string;
-            /** 获取-子类型 */
-            /** 设置-子类型 */
-            documentSubType: string;
             /** 映射的属性名称-自动序号 */
             static PROPERTY_AUTOKEY_NAME: string;
             /** 获取-自动序号 */
@@ -2505,6 +2587,131 @@ declare namespace initialfantasy {
  */
 declare namespace initialfantasy {
     namespace bo {
+        /** 身份权限 */
+        class IdentityPrivilege extends ibas.BOSimple<IdentityPrivilege> implements IIdentityPrivilege {
+            /** 业务对象编码 */
+            static BUSINESS_OBJECT_CODE: string;
+            /** 构造函数 */
+            constructor();
+            /** 映射的属性名称-角色标识 */
+            static PROPERTY_ROLECODE_NAME: string;
+            /** 获取-角色标识 */
+            /** 设置-角色标识 */
+            roleCode: string;
+            /** 映射的属性名称-平台标识 */
+            static PROPERTY_PLATFORMID_NAME: string;
+            /** 获取-平台标识 */
+            /** 设置-平台标识 */
+            platformId: string;
+            /** 映射的属性名称-模块标识 */
+            static PROPERTY_MODULEID_NAME: string;
+            /** 获取-模块标识 */
+            /** 设置-模块标识 */
+            moduleId: string;
+            /** 映射的属性名称-目标标识 */
+            static PROPERTY_TARGET_NAME: string;
+            /** 获取-目标标识 */
+            /** 设置-目标标识 */
+            target: string;
+            /** 映射的属性名称-是否可用 */
+            static PROPERTY_ACTIVATED_NAME: string;
+            /** 获取-是否可用 */
+            /** 设置-是否可用 */
+            activated: ibas.emYesNo;
+            /** 映射的属性名称-身份标识 */
+            static PROPERTY_IDENTITYCODE_NAME: string;
+            /** 获取-身份标识 */
+            /** 设置-身份标识 */
+            identityCode: string;
+            /** 映射的属性名称-权限类型 */
+            static PROPERTY_AUTHORISEVALUE_NAME: string;
+            /** 获取-权限类型 */
+            /** 设置-权限类型 */
+            authoriseValue: ibas.emAuthoriseType;
+            /** 映射的属性名称-自动运行 */
+            static PROPERTY_AUTOMATIC_NAME: string;
+            /** 获取-自动运行 */
+            /** 设置-自动运行 */
+            automatic: ibas.emYesNo;
+            /** 映射的属性名称-对象编号 */
+            static PROPERTY_OBJECTKEY_NAME: string;
+            /** 获取-对象编号 */
+            /** 设置-对象编号 */
+            objectKey: number;
+            /** 映射的属性名称-对象类型 */
+            static PROPERTY_OBJECTCODE_NAME: string;
+            /** 获取-对象类型 */
+            /** 设置-对象类型 */
+            objectCode: string;
+            /** 映射的属性名称-创建日期 */
+            static PROPERTY_CREATEDATE_NAME: string;
+            /** 获取-创建日期 */
+            /** 设置-创建日期 */
+            createDate: Date;
+            /** 映射的属性名称-创建时间 */
+            static PROPERTY_CREATETIME_NAME: string;
+            /** 获取-创建时间 */
+            /** 设置-创建时间 */
+            createTime: number;
+            /** 映射的属性名称-修改日期 */
+            static PROPERTY_UPDATEDATE_NAME: string;
+            /** 获取-修改日期 */
+            /** 设置-修改日期 */
+            updateDate: Date;
+            /** 映射的属性名称-修改时间 */
+            static PROPERTY_UPDATETIME_NAME: string;
+            /** 获取-修改时间 */
+            /** 设置-修改时间 */
+            updateTime: number;
+            /** 映射的属性名称-实例号（版本） */
+            static PROPERTY_LOGINST_NAME: string;
+            /** 获取-实例号（版本） */
+            /** 设置-实例号（版本） */
+            logInst: number;
+            /** 映射的属性名称-服务系列 */
+            static PROPERTY_SERIES_NAME: string;
+            /** 获取-服务系列 */
+            /** 设置-服务系列 */
+            series: number;
+            /** 映射的属性名称-数据源 */
+            static PROPERTY_DATASOURCE_NAME: string;
+            /** 获取-数据源 */
+            /** 设置-数据源 */
+            dataSource: string;
+            /** 映射的属性名称-创建用户 */
+            static PROPERTY_CREATEUSERSIGN_NAME: string;
+            /** 获取-创建用户 */
+            /** 设置-创建用户 */
+            createUserSign: number;
+            /** 映射的属性名称-修改用户 */
+            static PROPERTY_UPDATEUSERSIGN_NAME: string;
+            /** 获取-修改用户 */
+            /** 设置-修改用户 */
+            updateUserSign: number;
+            /** 映射的属性名称-创建动作标识 */
+            static PROPERTY_CREATEACTIONID_NAME: string;
+            /** 获取-创建动作标识 */
+            /** 设置-创建动作标识 */
+            createActionId: string;
+            /** 映射的属性名称-更新动作标识 */
+            static PROPERTY_UPDATEACTIONID_NAME: string;
+            /** 获取-更新动作标识 */
+            /** 设置-更新动作标识 */
+            updateActionId: string;
+            /** 初始化数据 */
+            protected init(): void;
+        }
+    }
+}
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+declare namespace initialfantasy {
+    namespace bo {
         /** 数据转换者 */
         class DataConverter extends ibas.DataConverter4j {
             /** 创建业务对象转换者 */
@@ -2608,6 +2815,11 @@ declare namespace initialfantasy {
              */
             saveOrganization(saver: ibas.ISaveCaller<bo.Organization>): void;
             /**
+             * 查询 角色
+             * @param fetcher 查询者
+             */
+            fetchRole(fetcher: ibas.IFetchCaller<IRole>): void;
+            /**
              * 查询 系统权限
              * @param fetcher 查询者
              */
@@ -2672,6 +2884,16 @@ declare namespace initialfantasy {
              * @param saver 保存者
              */
             saveUserIdentity(saver: ibas.ISaveCaller<bo.UserIdentity>): void;
+            /**
+             * 查询 身份权限
+             * @param fetcher 查询者
+             */
+            fetchIdentityPrivilege(fetcher: ibas.IFetchCaller<bo.IdentityPrivilege>): void;
+            /**
+             * 保存 身份权限
+             * @param saver 保存者
+             */
+            saveIdentityPrivilege(saver: ibas.ISaveCaller<bo.IdentityPrivilege>): void;
         }
     }
 }
@@ -4312,6 +4534,8 @@ declare namespace initialfantasy {
             private copyPrivileges;
             /** 删除权限 */
             private deletePrivileges;
+            /** 编辑身份权限 */
+            private editIdentityPrivileges;
         }
         /** 视图-系统权限 */
         interface IPrivilegeConfigView extends ibas.IView {
@@ -4331,6 +4555,8 @@ declare namespace initialfantasy {
             showPrivileges(datas: Privilege[]): void;
             /** 显示平台 */
             showPlatforms(datas: bo.ApplicationPlatform[]): void;
+            /** 编辑身份权限  */
+            editIdentityPrivilegesEvent: Function;
         }
         /** 系统权限 */
         class Privilege extends ibas.Bindable {
@@ -4341,7 +4567,7 @@ declare namespace initialfantasy {
             removeListener(): void;
             data: bo.Privilege;
             type: bo.emElementType;
-            readonly isNew: boolean;
+            readonly isDirty: boolean;
             roleCode: string;
             platformId: string;
             moduleId: string;
@@ -4349,6 +4575,95 @@ declare namespace initialfantasy {
             activated: ibas.emYesNo;
             authoriseValue: ibas.emAuthoriseType;
             automatic: ibas.emYesNo;
+        }
+    }
+}
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+declare namespace initialfantasy {
+    namespace app {
+        /** 应用-身份权限配置 */
+        class IdentityPrivilegeConfigApp extends ibas.ServiceApplication<IIdentityPrivilegeConfigView, IIdentityPrivilegeConfigContract> {
+            /** 应用标识 */
+            static APPLICATION_ID: string;
+            /** 应用名称 */
+            static APPLICATION_NAME: string;
+            /** 构造函数 */
+            constructor();
+            /** 注册视图 */
+            protected registerView(): void;
+            /** 视图显示后 */
+            protected viewShowed(): void;
+            /** 运行服务 */
+            protected runService(contract: IIdentityPrivilegeConfigContract): void;
+            show(): void;
+            /** 查询数据 */
+            protected fetchIdentities(criteria: ibas.ICriteria): void;
+            private oRole;
+            private oPlatform;
+            private oPrivileges;
+            private oIdentityPrivileges;
+            /** 查询数据 */
+            private fetchIdentityPrivileges;
+            /** 保存数据 */
+            private saveIdentityPrivileges;
+            /** 复制身份权限  */
+            private copyIdentityPrivileges;
+            /** 删除权限 */
+            private deleteIdentityPrivileges;
+        }
+        /** 视图-身份权限 */
+        interface IIdentityPrivilegeConfigView extends ibas.IView {
+            /** 显示平台 */
+            showPlatform(data: bo.IApplicationPlatform): void;
+            /** 显示角色 */
+            showRole(data: bo.IRole): void;
+            /** 查询身份  */
+            fetchIdentitiesEvent: Function;
+            /** 显示身份 */
+            showIdentities(datas: bo.IIdentity[]): void;
+            /** 查询身份权限  */
+            fetchIdentityPrivilegesEvent: Function;
+            /** 显示身份权限 */
+            showIdentityPrivileges(datas: IdentityPrivilege[]): void;
+            /** 保存身份权限 */
+            saveIdentityPrivilegesEvent: Function;
+            /** 删除身份权限 */
+            deleteIdentityPrivilegesEvent: Function;
+            /** 复制身份权限  */
+            copyIdentityPrivilegesEvent: Function;
+        }
+        /** 身份权限 */
+        class IdentityPrivilege extends ibas.Bindable {
+            constructor(data: bo.IdentityPrivilege, type: bo.emElementType);
+            registerListener(listener: ibas.IPropertyChangedListener): void;
+            removeListener(listener: ibas.IPropertyChangedListener): void;
+            removeListener(id: string): void;
+            removeListener(): void;
+            data: bo.IdentityPrivilege;
+            type: bo.emElementType;
+            original: ibas.emAuthoriseType;
+            readonly isDirty: boolean;
+            roleCode: string;
+            platformId: string;
+            identityCode: string;
+            moduleId: string;
+            target: string;
+            activated: ibas.emYesNo;
+            authoriseValue: ibas.emAuthoriseType;
+            automatic: ibas.emYesNo;
+        }
+        /** 身份权限服务映射 */
+        class IdentityPrivilegeConfigServiceMapping extends ibas.ServiceMapping {
+            /** 构造函数 */
+            constructor();
+            /** 创建服务实例 */
+            create(): ibas.IService<ibas.IServiceContract>;
         }
     }
 }

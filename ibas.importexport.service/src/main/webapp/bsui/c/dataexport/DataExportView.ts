@@ -49,6 +49,7 @@ namespace importexport {
                                 path: "/businessObject",
                                 type: new sap.extension.data.Alphanumeric(),
                             }),
+                            new sap.ui.core.Title("", {}),
                             new sap.ui.core.Title("", { text: ibas.i18n.prop("importexport_export_conditions") }),
                         ]
                     });
