@@ -11,7 +11,7 @@ import org.colorcoding.ibas.bobas.common.ICondition;
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.data.DateTime;
-import org.colorcoding.ibas.bobas.mapping.BOCode;
+import org.colorcoding.ibas.bobas.mapping.BusinessObjectUnit;
 import org.colorcoding.ibas.bobas.organization.OrganizationFactory;
 import org.colorcoding.ibas.bobas.repository.InvalidTokenException;
 import org.colorcoding.ibas.importexport.MyConfiguration;
@@ -140,9 +140,9 @@ public class TransformerExcel extends TransformerFile {
 							ICriteria criteria = new Criteria();
 							ICondition condition = criteria.getConditions().create();
 							try {
-								String boCode = object.getBindingClass().getAnnotation(BOCode.class).value();
+								String code = object.getBindingClass().getAnnotation(BusinessObjectUnit.class).code();
 								condition.setAlias(BOInformation.PROPERTY_CODE.getName());
-								condition.setValue(MyConfiguration.applyVariables(boCode));
+								condition.setValue(MyConfiguration.applyVariables(code));
 							} catch (Exception e) {
 								condition.setAlias(BOInformation.PROPERTY_NAME.getName());
 								condition.setValue(object.getBindingClass().getSimpleName());

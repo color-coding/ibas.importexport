@@ -11,7 +11,7 @@ import org.colorcoding.ibas.bobas.bo.BusinessObject;
 import org.colorcoding.ibas.bobas.core.IPropertyInfo;
 import org.colorcoding.ibas.bobas.data.DateTime;
 import org.colorcoding.ibas.bobas.data.emYesNo;
-import org.colorcoding.ibas.bobas.mapping.BOCode;
+import org.colorcoding.ibas.bobas.mapping.BusinessObjectUnit;
 import org.colorcoding.ibas.bobas.mapping.DbField;
 import org.colorcoding.ibas.bobas.mapping.DbFieldType;
 import org.colorcoding.ibas.importexport.MyConfiguration;
@@ -24,7 +24,7 @@ import org.colorcoding.ibas.importexport.data.emAreaType;
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = ExportTemplate.BUSINESS_OBJECT_NAME, namespace = MyConfiguration.NAMESPACE_BO)
 @XmlRootElement(name = ExportTemplate.BUSINESS_OBJECT_NAME, namespace = MyConfiguration.NAMESPACE_BO)
-@BOCode(ExportTemplate.BUSINESS_OBJECT_CODE)
+@BusinessObjectUnit(code = ExportTemplate.BUSINESS_OBJECT_CODE)
 public class ExportTemplate extends BusinessObject<ExportTemplate> implements IExportTemplate {
 
 	/**
