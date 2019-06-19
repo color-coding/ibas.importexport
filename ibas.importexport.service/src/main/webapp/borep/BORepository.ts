@@ -33,7 +33,7 @@ namespace importexport {
              */
             export(caller: IExportFileCaller): void {
                 if (!this.address.endsWith("/")) { this.address += "/"; }
-                let fileRepository: ibas.FileRepositoryDownloadAjax = new ibas.FileRepositoryDownloadAjax();
+                let fileRepository: FileRepositoryDownloadAjax = new FileRepositoryDownloadAjax();
                 fileRepository.address = this.address.replace("/services/rest/data/", "/services/rest/file/");
                 fileRepository.token = this.token;
                 fileRepository.converter = this.createConverter();
@@ -97,8 +97,15 @@ namespace importexport {
             saveExportTemplate(saver: ibas.ISaveCaller<bo.ExportTemplate>): void {
                 super.save(bo.ExportTemplate.name, saver);
             }
-
         }
-
+        class FileRepositoryDownloadAjax extends ibas.FileRepositoryDownloadAjax {
+            protected createHttpRequest(method: string): XMLHttpRequest {
+                let methodUrl: string = this.methodUrl(method);
+                let xhr: XMLHttpRequest = new XMLHttpRequest();
+                xhr.open("POST", methodUrl, true);
+                xhr.responseType = "blob";
+                return xhr;
+            }
+        }
     }
 }
