@@ -570,6 +570,8 @@ declare namespace initialfantasy {
             createActionId: string;
             /** 更新动作标识 */
             updateActionId: string;
+            /** 数据所有者 */
+            dataOwner: number;
         }
     }
 }
@@ -2103,6 +2105,11 @@ declare namespace initialfantasy {
             /** 获取-更新动作标识 */
             /** 设置-更新动作标识 */
             updateActionId: string;
+            /** 映射的属性名称-数据所有者 */
+            static PROPERTY_DATAOWNER_NAME: string;
+            /** 获取-数据所有者 */
+            /** 设置-数据所有者 */
+            dataOwner: number;
             /** 初始化数据 */
             protected init(): void;
         }
