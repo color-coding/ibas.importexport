@@ -103,7 +103,7 @@ public abstract class FileTransformerSerialization extends FileTransformer {
 			for (IBusinessObject item : outDatas) {
 				if (item instanceof BusinessObject<?>) {
 					BusinessObject<?> bo = (BusinessObject<?>) item;
-					bo.resetStatus();
+					bo.reset();
 				}
 			}
 			this.setOutputData(outDatas);

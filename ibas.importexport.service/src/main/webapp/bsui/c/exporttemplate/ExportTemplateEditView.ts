@@ -784,6 +784,17 @@ namespace importexport {
                                 }),
                             }),
                             new sap.extension.table.DataColumn("", {
+                                label: ibas.i18n.prop("bo_exporttemplateitem_textstyle"),
+                                template: new sap.extension.m.EnumSelect("", {
+                                    enumType: bo.emTextStyle
+                                }).bindProperty("bindingValue", {
+                                    path: "textStyle",
+                                    type: new sap.extension.data.Enum({
+                                        enumType: bo.emTextStyle
+                                    }),
+                                }),
+                            }),
+                            new sap.extension.table.DataColumn("", {
                                 label: ibas.i18n.prop("bo_exporttemplateitem_justificationhorizontal"),
                                 template: new sap.extension.m.EnumSelect("", {
                                     enumType: bo.emJustificationHorizontal

@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.SqlQuery;
 import org.colorcoding.ibas.bobas.data.DateTime;
+import org.colorcoding.ibas.bobas.data.Decimal;
 import org.colorcoding.ibas.bobas.data.SingleValue;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.message.MessageLevel;
@@ -17,6 +18,7 @@ import org.colorcoding.ibas.bobas.repository.BORepository4DbReadonly;
 import org.colorcoding.ibas.bobas.repository.BORepositoryService;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplate;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplateItem;
+import org.colorcoding.ibas.importexport.data.DataConvert;
 import org.colorcoding.ibas.importexport.data.emDataSourceType;
 
 public abstract class TemplateTransformer extends Transformer<InputStream, File> implements ITemplateTransformer {
@@ -154,33 +156,41 @@ public abstract class TemplateTransformer extends Transformer<InputStream, File>
 		if (format == null || format.isEmpty() || value == null) {
 			return String.valueOf(value);
 		}
-		int pIndex = format.indexOf("%");
-		if (pIndex < 0) {
-			return String.valueOf(value);
-		}
-		// 日期类型转换
-		int sIndex = format.indexOf("t");
-		if (sIndex > pIndex) {
-			if (value instanceof String) {
-				value = DateTime.valueOf((String) value);
-			} else if (value instanceof Long) {
-				value = DateTime.valueOf((Long) value);
-			} else if (value instanceof Integer) {
-				value = DateTime.valueOf(Long.valueOf(value.toString()));
+		int pIndex, sIndex;
+		// String.format 转换
+		pIndex = format.indexOf("%");
+		if (pIndex >= 0) {
+			// 日期类型转换
+			sIndex = format.indexOf("t");
+			if (sIndex > 0 && sIndex > pIndex) {
+				if (value instanceof String) {
+					value = DateTime.valueOf((String) value);
+				} else if (value instanceof Long) {
+					value = DateTime.valueOf((Long) value);
+				} else if (value instanceof Integer) {
+					value = DateTime.valueOf(Long.valueOf(value.toString()));
+				}
 			}
+			// 整数类型转换
+			sIndex = format.indexOf("d");
+			if (sIndex > 0 && sIndex > pIndex) {
+				value = Long.valueOf(value.toString());
+			}
+			// 小数类型转换
+			sIndex = format.indexOf("f");
+			if (sIndex > 0 && sIndex > pIndex) {
+				value = Double.valueOf(value.toString());
+			}
+			// 人民币转换
+			sIndex = format.indexOf("￥");
+			if (sIndex > 0 && sIndex > pIndex) {
+				value = DataConvert.toChineseYuan(Decimal.valueOf(value.toString()));
+				format = format.replace("￥", "s");
+			}
+			// 字符串格式化
+			return String.format(format, value);
 		}
-		// 整数类型转换
-		sIndex = format.indexOf("d");
-		if (sIndex > pIndex) {
-			value = Long.valueOf(value.toString());
-		}
-		// 小数类型转换
-		sIndex = format.indexOf("f");
-		if (sIndex > pIndex) {
-			value = Double.valueOf(value.toString());
-		}
-		// 默认字符串
-		return String.format(format, value);
+		return String.valueOf(value);
 	}
 
 	/**

@@ -84,6 +84,15 @@ declare namespace initialfantasy {
             /** 其他 */
             OTHER = 4
         }
+        /**
+         * 筛选种类
+         */
+        enum emFilteringCategory {
+            /** 读取 */
+            READ = 0,
+            /** 写入 */
+            SAVE = 1
+        }
         /** 分配-角色 */
         interface IRole {
             /** 编码 */
@@ -368,6 +377,8 @@ declare namespace initialfantasy {
             roleCode: string;
             /** 对象类型 */
             boCode: string;
+            /** 类别 */
+            category: emFilteringCategory;
             /** 激活的 */
             activated: ibas.emYesNo;
             /** 筛选类型 */
@@ -1569,6 +1580,11 @@ declare namespace initialfantasy {
             /** 获取-对象类型 */
             /** 设置-对象类型 */
             boCode: string;
+            /** 映射的属性名称-类别 */
+            static PROPERTY_CATEGORY_NAME: string;
+            /** 获取-类别 */
+            /** 设置-类别 */
+            category: emFilteringCategory;
             /** 映射的属性名称-激活的 */
             static PROPERTY_ACTIVATED_NAME: string;
             /** 获取-激活的 */
@@ -5084,14 +5100,11 @@ declare namespace initialfantasy {
             protected viewShowed(): void;
             private user;
             private fetchUser;
-            private saveUser;
         }
         /** 视图-用户配置 */
         interface IUserProfileView extends ibas.IResidentView {
             /** 显示用户信息 */
             showUser(user: bo.User): void;
-            /** 保存用户事件 */
-            saveUserEvent: Function;
         }
     }
 }
