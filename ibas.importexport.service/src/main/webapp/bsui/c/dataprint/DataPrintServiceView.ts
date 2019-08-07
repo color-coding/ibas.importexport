@@ -89,6 +89,10 @@ namespace importexport {
                     iframe.append(">");
                     iframe.append("</iframe>");
                     this.html.setContent(iframe.toString());
+                    // 释放资源
+                    this.onClosed = () => {
+                        URL.revokeObjectURL(url);
+                    };
                 }
                 /** 显示数据导出者 */
                 showExporters(exporters: bo.IDataExporter[]): void {

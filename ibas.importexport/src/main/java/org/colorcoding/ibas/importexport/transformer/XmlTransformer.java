@@ -1,6 +1,7 @@
 package org.colorcoding.ibas.importexport.transformer;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -37,10 +38,10 @@ public class XmlTransformer extends FileTransformerSerialization {
 	public List<Class<?>> getKnownTypes() {
 		List<Class<?>> knownTypes = super.getKnownTypes();
 		knownTypes.add(ArrayList.class);
-		try {
+		try (InputStream inputStream = new FileInputStream(this.getInputData())) {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document document = builder.parse(new FileInputStream(this.getInputData()));
+			Document document = builder.parse(inputStream);
 			Element root = document.getDocumentElement();
 			NodeList nodeList = root.getElementsByTagName(NODE_BO_CODE_NAME);
 			for (int i = 0; i < nodeList.getLength(); i++) {

@@ -1,6 +1,7 @@
 package org.colorcoding.ibas.importexport.transformer;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.List;
 
 import org.colorcoding.ibas.bobas.data.ArrayList;
@@ -31,9 +32,9 @@ public class JsonTransformer extends FileTransformerSerialization {
 	public List<Class<?>> getKnownTypes() {
 		List<Class<?>> knownTypes = super.getKnownTypes();
 		knownTypes.add(ArrayList.class);
-		try {
+		try (InputStream inputStream = new FileInputStream(this.getInputData())) {
 			ObjectMapper mapper = new ObjectMapper();
-			JsonNode root = mapper.readTree(new FileInputStream(this.getInputData()));
+			JsonNode root = mapper.readTree(inputStream);
 			List<JsonNode> nodes = root.findValues(NODE_BO_CODE_NAME);
 			for (JsonNode node : nodes) {
 				String boCode = node.textValue();

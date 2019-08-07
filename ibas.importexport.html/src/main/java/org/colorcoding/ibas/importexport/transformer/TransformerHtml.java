@@ -3,6 +3,7 @@ package org.colorcoding.ibas.importexport.transformer;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Comparator;
@@ -105,19 +106,19 @@ public class TransformerHtml extends TemplateTransformer {
 			throw new TransformException(I18N.prop("msg_ie_no_input_data"));
 		}
 		this.init();
-		try {
-			File file = new File(String.format("%s%s.html", this.getWorkFolder(), UUID.randomUUID().toString()));
-			OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), "utf-8");
-			if (!file.getParentFile().exists()) {
-				file.mkdirs();
+		File file = new File(String.format("%s%s.html", this.getWorkFolder(), UUID.randomUUID().toString()));
+		try (OutputStream stream = new FileOutputStream(file)) {
+			try (OutputStreamWriter writer = new OutputStreamWriter(stream, "utf-8")) {
+				if (!file.getParentFile().exists()) {
+					file.mkdirs();
+				}
+				if (!file.exists()) {
+					file.createNewFile();
+				}
+				this.darwPage(writer);
+				writer.flush();
+				this.setOutputData(new File[] { file });
 			}
-			if (!file.exists()) {
-				file.createNewFile();
-			}
-			this.darwPage(writer);
-			writer.flush();
-			writer.close();
-			this.setOutputData(new File[] { file });
 		} catch (IOException e) {
 			throw new TransformException(e);
 		}

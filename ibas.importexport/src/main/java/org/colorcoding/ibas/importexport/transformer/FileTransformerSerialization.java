@@ -1,6 +1,7 @@
 package org.colorcoding.ibas.importexport.transformer;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -72,43 +73,42 @@ public abstract class FileTransformerSerialization extends FileTransformer {
 			throw new TransformException(I18N.prop("msg_ie_not_found_serializer", this.getClass().getSimpleName()));
 		}
 		Logger.log(MessageLevel.INFO, "transformer: [%s] is running.", this.getClass().getSimpleName());
-		try {
-			Class<?>[] types = this.getKnownTypes().toArray(new Class<?>[] {});
-			Logger.log(MessageLevel.INFO, "transformer: [%s] to run deserialize.", this.getClass().getSimpleName());
+		Class<?>[] types = this.getKnownTypes().toArray(new Class<?>[] {});
+		try (InputStream stream = new FileInputStream(this.getInputData())) {
 			List<IBusinessObject> outDatas = new ArrayList<>();
 			// 以UTF-8重新读取
-			InputStreamReader streamReader = new InputStreamReader(new FileInputStream(this.getInputData()), "utf-8");
-			Object object = serializer.deserialize(new InputSource(streamReader), types);
-			streamReader.close();
-			streamReader = null;
-			// 结果为数组或集合，拆散
-			if (object instanceof Iterable) {
-				Iterable<?> iterable = (Iterable<?>) object;
-				for (Object item : iterable) {
-					if (item instanceof IBusinessObject) {
-						outDatas.add((IBusinessObject) item);
+			try (InputStreamReader streamReader = new InputStreamReader(stream, "utf-8")) {
+				Logger.log(MessageLevel.INFO, "transformer: [%s] to run deserialize.", this.getClass().getSimpleName());
+				Object object = serializer.deserialize(new InputSource(streamReader), types);
+				// 结果为数组或集合，拆散
+				if (object instanceof Iterable) {
+					Iterable<?> iterable = (Iterable<?>) object;
+					for (Object item : iterable) {
+						if (item instanceof IBusinessObject) {
+							outDatas.add((IBusinessObject) item);
+						}
+					}
+				} else if (object.getClass().isArray()) {
+					for (int i = 0; i < Array.getLength(object); i++) {
+						Object item = Array.get(object, i);
+						if (item instanceof IBusinessObject) {
+							outDatas.add((IBusinessObject) item);
+						}
+					}
+				} else if (object instanceof IBusinessObject) {
+					outDatas.add((IBusinessObject) object);
+				}
+				// 重置状态
+				for (IBusinessObject item : outDatas) {
+					if (item instanceof BusinessObject<?>) {
+						BusinessObject<?> bo = (BusinessObject<?>) item;
+						bo.reset();
 					}
 				}
-			} else if (object.getClass().isArray()) {
-				for (int i = 0; i < Array.getLength(object); i++) {
-					Object item = Array.get(object, i);
-					if (item instanceof IBusinessObject) {
-						outDatas.add((IBusinessObject) item);
-					}
-				}
-			} else if (object instanceof IBusinessObject) {
-				outDatas.add((IBusinessObject) object);
+				this.setOutputData(outDatas);
+				Logger.log(MessageLevel.INFO, "transformer: [%s] got bo count [%s].", this.getClass().getSimpleName(),
+						this.getOutputData().size());
 			}
-			// 重置状态
-			for (IBusinessObject item : outDatas) {
-				if (item instanceof BusinessObject<?>) {
-					BusinessObject<?> bo = (BusinessObject<?>) item;
-					bo.reset();
-				}
-			}
-			this.setOutputData(outDatas);
-			Logger.log(MessageLevel.INFO, "transformer: [%s] got bo count [%s].", this.getClass().getSimpleName(),
-					this.getOutputData().size());
 		} catch (Exception e) {
 			Logger.log(e);
 			throw new TransformException(e);

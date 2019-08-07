@@ -144,7 +144,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	@Override
 	public OperationResult<String> schema(String boCode, String type, String token) {
 		OperationResult<String> opRslt = new OperationResult<String>();
-		try {
+		try (ByteArrayOutputStream writer = new ByteArrayOutputStream()) {
 			this.setUserToken(token);
 			Class<?> boType = getBOFactory().getClass(boCode);
 			if (boType == null) {
@@ -154,7 +154,6 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			if (serializer == null) {
 				throw new Exception(I18N.prop("msg_ie_not_found_serializer", type));
 			}
-			ByteArrayOutputStream writer = new ByteArrayOutputStream();
 			serializer.getSchema(boType, writer);
 			opRslt.addResultObjects(new String(writer.toByteArray(), "utf-8"));
 		} catch (Exception e) {
