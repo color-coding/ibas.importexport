@@ -66,7 +66,7 @@ namespace importexport {
                                         if (ibas.objects.isNull(elements) || elements.length === 0) {
                                             return;
                                         }
-                                        let element: any = elements[0];
+                                        let element: HTMLInputElement = <HTMLInputElement>elements[0];
                                         if (ibas.objects.isNull(element.files) || element.files.length === 0) {
                                             return;
                                         }

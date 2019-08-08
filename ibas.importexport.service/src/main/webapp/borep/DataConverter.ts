@@ -84,6 +84,7 @@ namespace importexport {
                     } else if (property === bo.ExportTemplateItem.PROPERTY_ITEMVISIBLE_NAME) {
                         return ibas.enums.toString(ibas.emYesNo, value);
                     }
+                } else if (boName === bo.ExportTemplate.name) {
                 }
                 return super.convertData(boName, property, value);
             }
@@ -110,6 +111,7 @@ namespace importexport {
                     } else if (property === bo.ExportTemplateItem.PROPERTY_ITEMVISIBLE_NAME) {
                         return ibas.enums.valueOf(ibas.emYesNo, value);
                     }
+                } else if (boName === bo.ExportTemplate.name) {
                 }
                 return super.parsingData(boName, property, value);
             }

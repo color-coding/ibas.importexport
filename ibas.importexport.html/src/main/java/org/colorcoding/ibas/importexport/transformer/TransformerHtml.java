@@ -224,9 +224,38 @@ public class TransformerHtml extends TemplateTransformer {
 		writer.write("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
 		writer.write("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">");
 		writer.write("<meta charset=\"utf-8\" />");
-
+		writer.write("<meta name=\"page_template\" content=\"");
+		writer.write(this.getTemplate().getObjectKey().toString());
+		writer.write("\" ");
+		writer.write("/>");
+		writer.write("<meta name=\"page_width\" content=\"");
+		writer.write(this.getTemplate().getWidth().toString());
+		writer.write("\" ");
+		writer.write("/>");
+		writer.write("<meta name=\"page_height\" content=\"");
+		writer.write(this.getTemplate().getHeight().toString());
+		writer.write("\" ");
+		writer.write("/>");
+		if (Integer.compare(this.getTemplate().getDpi(), 0) > 0) {
+			writer.write("<meta name=\"page_dpi\" content=\"");
+			writer.write(this.getTemplate().getDpi().toString());
+			writer.write("\" ");
+			writer.write("/>");
+		}
 		writer.write("<style>");
-		writer.write("@media print { .no_print { display:none;}}");
+		writer.write("@media print {");
+		// 不打印内容
+		writer.write(".no_print { display:none;}");
+		writer.write(" ");
+		writer.write("@page {");
+		writer.write("size: ");
+		writer.write("auto");
+		writer.write(" ");
+		writer.write(";");
+		// 默认不打印边距
+		writer.write("margin: 0;");
+		writer.write("}");
+		writer.write("}");
 		writer.write("</style>");
 
 		writer.write("</head>");
@@ -246,8 +275,6 @@ public class TransformerHtml extends TemplateTransformer {
 			// 开始-页
 			String pageName = String.format("page_%s", page);
 			pageTop = (page - 1) * pageHeight;
-			int top = 0;
-			this.startDiv(writer, pageName, pageLeft, pageTop, pageWidth, pageHeight);
 			if (page > 1) {
 				// 页分隔线
 				writer.write("<div");
@@ -259,101 +286,102 @@ public class TransformerHtml extends TemplateTransformer {
 				writer.write("class=\"no_print\"");
 				writer.write(" ");
 				writer.write("style=\"");
-				writer.write("border:0.5px dashed black;");
+				writer.write("position:absolute;");
+				writer.write("border:1px dashed black;");
+				writer.write("top:");
+				writer.write(String.valueOf(pageTop));
+				writer.write("px;");
+				writer.write("width:");
+				writer.write(String.valueOf(pageWidth));
+				writer.write("px;");
 				writer.write("\"");
 				writer.write(" ");
 				writer.write(">");
 				writer.write("</div>");
 			}
+			int top = 0;
+			this.startDiv(writer, pageName, pageLeft, pageTop, pageWidth, pageHeight);
 			// 绘制页眉区域
-			if (!this.getTemplate().getPageHeaders().isEmpty()) {
-				String areaName = String.format("%s_header", pageName);
-				Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
-				this.startDiv(writer, areaName, this.getTemplate().getPageHeaderLeft(),
-						this.getTemplate().getPageHeaderTop(), this.getTemplate().getPageHeaderWidth(),
-						this.getTemplate().getPageHeaderHeight());
-				this.drawArea(writer, this.getTemplate().getPageHeaders());
-				this.endDiv(writer);
-				top = this.getTemplate().getPageHeaderTop();
-				top += this.getTemplate().getPageHeaderHeight();
-				top += this.getTemplate().getMarginArea();
-			}
+			String areaName = String.format("%s_header", pageName);
+			Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
+			this.startDiv(writer, areaName, this.getTemplate().getPageHeaderLeft(), top,
+					this.getTemplate().getPageHeaderWidth(), this.getTemplate().getPageHeaderHeight());
+			this.drawArea(writer, this.getTemplate().getPageHeaders());
+			this.endDiv(writer);
+			top += this.getTemplate().getPageHeaderTop();
+			top += this.getTemplate().getPageHeaderHeight();
+			top += this.getTemplate().getMarginArea();
 			// 绘制开始区域
-			if (page == 1 && !this.getTemplate().getStartSections().isEmpty()) {
+			if (page == 1) {
 				// 第一页绘制
-				String areaName = String.format("%s_startsection", pageName);
+				areaName = String.format("%s_startsection", pageName);
 				Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
-				this.startDiv(writer, areaName, this.getTemplate().getStartSectionLeft(),
-						this.getTemplate().getStartSectionTop(), this.getTemplate().getStartSectionWidth(),
-						this.getTemplate().getStartSectionHeight());
+				this.startDiv(writer, areaName, this.getTemplate().getStartSectionLeft(), top,
+						this.getTemplate().getStartSectionWidth(), this.getTemplate().getStartSectionHeight());
 				this.drawArea(writer, this.getTemplate().getStartSections());
 				this.endDiv(writer);
-				top = this.getTemplate().getStartSectionTop();
 				top += this.getTemplate().getStartSectionHeight();
 				top += this.getTemplate().getMarginArea();
 			}
 			// 绘制重复区域
-			if (!this.getTemplate().getRepetitions().isEmpty()) {
-				String areaName = String.format("%s_repetitions", pageName);
-				Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
-				int index = this.paramValue(PARAM_DATA_INDEX, 1), size = this.paramValue(PARAM_DATA_SIZE, 0);
-				for (int i = index; i <= size; i++) {
-					this.newParam(PARAM_DATA_INDEX, i);
-					if (i == index) {
-						this.startDiv(writer, areaName, this.getTemplate().getRepetitionHeaderLeft(), top,
-								this.getTemplate().getRepetitionHeaderWidth(), -1);
-						areaName = String.format("%s_table", pageName);
-						Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
-						this.startTable(writer, areaName, this.getTemplate().getRepetitionHeaders());
-						top += this.getTemplate().getRepetitionHeaderHeight();
+			areaName = String.format("%s_repetitions", pageName);
+			Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
+			int index = this.paramValue(PARAM_DATA_INDEX, 1), size = this.paramValue(PARAM_DATA_SIZE, 0);
+			for (int i = index; i <= size; i++) {
+				this.newParam(PARAM_DATA_INDEX, i);
+				if (i == index) {
+					this.startDiv(writer, areaName, this.getTemplate().getRepetitionHeaderLeft(), top,
+							this.getTemplate().getRepetitionHeaderWidth(), -1);
+					areaName = String.format("%s_table", pageName);
+					Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
+					this.startTable(writer, areaName, this.getTemplate().getRepetitionHeaders());
+					top += this.getTemplate().getRepetitionHeaderHeight();
+				}
+				this.drawTableRow(writer, this.getTemplate().getRepetitions());
+				top += this.getTemplate().getRepetitionHeight();
+				if (this.paramValue(String.format(PARAM_TEMPLATE_PAGE_DATA_INDEX, page), -1) == i) {
+					if (!this.getTemplate().getRepetitionFooters().isEmpty()) {
+						this.drawTableRow(writer, this.getTemplate().getRepetitionFooters(),
+								this.getTemplate().getRepetitions().size()
+										- this.getTemplate().getRepetitionFooters().size() + 1);
+						top += this.getTemplate().getRepetitionFooterHeight();
 					}
-					this.drawTableRow(writer, this.getTemplate().getRepetitions());
-					top += this.getTemplate().getRepetitionHeight();
-					if (this.paramValue(String.format(PARAM_TEMPLATE_PAGE_DATA_INDEX, page), -1) == i) {
-						if (!this.getTemplate().getRepetitionFooters().isEmpty()) {
-							this.drawTableRow(writer, this.getTemplate().getRepetitionFooters(),
-									this.getTemplate().getRepetitions().size()
-											- this.getTemplate().getRepetitionFooters().size() + 1);
-							top += this.getTemplate().getRepetitionFooterHeight();
-						}
-						this.endTable(writer);
-						this.endDiv(writer);
-						this.newParam(PARAM_DATA_INDEX, ++i);
-						break;
+					this.endTable(writer);
+					this.endDiv(writer);
+					this.newParam(PARAM_DATA_INDEX, ++i);
+					break;
+				}
+				if (i == size) {
+					if (!this.getTemplate().getRepetitionFooters().isEmpty()) {
+						this.drawTableRow(writer, this.getTemplate().getRepetitionFooters(),
+								this.getTemplate().getRepetitions().size()
+										- this.getTemplate().getRepetitionFooters().size() + 1);
+						top += this.getTemplate().getRepetitionFooterHeight();
 					}
-					if (i == size) {
-						if (!this.getTemplate().getRepetitionFooters().isEmpty()) {
-							this.drawTableRow(writer, this.getTemplate().getRepetitionFooters(),
-									this.getTemplate().getRepetitions().size()
-											- this.getTemplate().getRepetitionFooters().size() + 1);
-							top += this.getTemplate().getRepetitionFooterHeight();
-						}
-						this.endTable(writer);
-						this.endDiv(writer);
-					}
+					this.endTable(writer);
+					this.endDiv(writer);
 				}
 			}
 			// 绘制结束区域
-			if (page == this.paramValue(PARAM_PAGE_TOTAL, 1) && !this.getTemplate().getEndSections().isEmpty()) {
+			if (page == this.paramValue(PARAM_PAGE_TOTAL, 1)) {
 				// 最后一页绘制
-				String areaName = String.format("%s_endsection", pageName);
+				top += this.getTemplate().getMarginArea();
+				areaName = String.format("%s_endsection", pageName);
 				Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
-				this.startDiv(writer, areaName, this.getTemplate().getEndSectionLeft(),
-						top + this.getTemplate().getMarginArea(), this.getTemplate().getEndSectionWidth(),
-						this.getTemplate().getEndSectionHeight());
+				this.startDiv(writer, areaName, this.getTemplate().getEndSectionLeft(), top,
+						this.getTemplate().getEndSectionWidth(), this.getTemplate().getEndSectionHeight());
 				this.drawArea(writer, this.getTemplate().getEndSections());
 				this.endDiv(writer);
+				top += this.getTemplate().getEndSectionHeight();
 			}
 			// 绘制页脚区域
-			if (!this.getTemplate().getPageFooters().isEmpty()) {
-				String areaName = String.format("%s_footer", pageName);
-				Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
-				this.startDiv(writer, areaName, this.getTemplate().getPageFooterLeft(),
-						this.getTemplate().getPageFooterTop(), this.getTemplate().getPageFooterWidth(),
-						this.getTemplate().getPageFooterHeight());
-				this.drawArea(writer, this.getTemplate().getPageFooters());
-				this.endDiv(writer);
-			}
+			areaName = String.format("%s_footer", pageName);
+			Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
+			this.startDiv(writer, areaName, this.getTemplate().getPageFooterLeft(),
+					this.getTemplate().getPageFooterTop(), this.getTemplate().getPageFooterWidth(),
+					this.getTemplate().getPageFooterHeight());
+			this.drawArea(writer, this.getTemplate().getPageFooters());
+			this.endDiv(writer);
 			// 结束-页
 			this.endDiv(writer);
 		}
@@ -497,9 +525,7 @@ public class TransformerHtml extends TemplateTransformer {
 		writer.write(" ");
 		writer.write("style=\"");
 		writer.write("table-layout:fixed;border-collapse:collapse;");
-		writer.write("width:");
-		writer.write(String.valueOf(this.getTemplate().getRepetitionHeaderWidth()));
-		writer.write("px;");
+		writer.write("width:100%;");
 		writer.write("\"");
 		writer.write(" ");
 		writer.write(">");

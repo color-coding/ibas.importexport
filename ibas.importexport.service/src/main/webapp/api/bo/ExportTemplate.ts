@@ -59,6 +59,8 @@ namespace importexport {
             width: number;
             /** 输出高度 */
             height: number;
+            /** 输出像素 */
+            dpi: number;
             /** 左边距 */
             marginLeft: number;
             /** 右边距 */

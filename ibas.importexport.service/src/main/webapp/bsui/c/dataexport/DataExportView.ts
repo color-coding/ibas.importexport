@@ -36,11 +36,11 @@ namespace importexport {
                             new sap.m.Label("", { text: ibas.i18n.prop("importexport_export_bo") }),
                             new sap.extension.m.RepositoryInput("", {
                                 showValueHelp: true,
-                                repository: initialfantasy.bo.BO_REPOSITORY_INITIALFANTASY,
+                                repository: initialfantasy.bo.BORepositoryInitialFantasy,
                                 dataInfo: {
-                                    type: ibas.boFactory.classOf(initialfantasy.bo.BO_CODE_BOINFORMATION),
-                                    key: "Code",
-                                    text: "Description"
+                                    type: initialfantasy.bo.BOInformation,
+                                    key: initialfantasy.bo.BOInformation.PROPERTY_CODE_NAME,
+                                    text: initialfantasy.bo.BOInformation.PROPERTY_DESCRIPTION_NAME
                                 },
                                 valueHelpRequest: function (): void {
                                     that.fireViewEvents(that.chooseBusinessObjectEvent);

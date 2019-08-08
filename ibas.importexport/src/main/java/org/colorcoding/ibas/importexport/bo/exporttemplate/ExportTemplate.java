@@ -77,8 +77,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-编号
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setObjectKey(Integer value) {
 		this.setProperty(PROPERTY_OBJECTKEY, value);
@@ -109,8 +108,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-类型
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setObjectCode(String value) {
 		this.setProperty(PROPERTY_OBJECTCODE, value);
@@ -141,8 +139,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-实例号（版本）
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setLogInst(Integer value) {
 		this.setProperty(PROPERTY_LOGINST, value);
@@ -173,8 +170,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-数据源
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setDataSource(String value) {
 		this.setProperty(PROPERTY_DATASOURCE, value);
@@ -205,8 +201,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-服务系列
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setSeries(Integer value) {
 		this.setProperty(PROPERTY_SERIES, value);
@@ -237,8 +232,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-创建日期
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setCreateDate(DateTime value) {
 		this.setProperty(PROPERTY_CREATEDATE, value);
@@ -269,8 +263,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-创建时间
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setCreateTime(Short value) {
 		this.setProperty(PROPERTY_CREATETIME, value);
@@ -301,8 +294,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-修改日期
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setUpdateDate(DateTime value) {
 		this.setProperty(PROPERTY_UPDATEDATE, value);
@@ -333,8 +325,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-修改时间
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setUpdateTime(Short value) {
 		this.setProperty(PROPERTY_UPDATETIME, value);
@@ -365,8 +356,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-创建用户
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setCreateUserSign(Integer value) {
 		this.setProperty(PROPERTY_CREATEUSERSIGN, value);
@@ -397,8 +387,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-修改用户
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setUpdateUserSign(Integer value) {
 		this.setProperty(PROPERTY_UPDATEUSERSIGN, value);
@@ -429,8 +418,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-创建动作标识
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setCreateActionId(String value) {
 		this.setProperty(PROPERTY_CREATEACTIONID, value);
@@ -461,8 +449,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-更新动作标识
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setUpdateActionId(String value) {
 		this.setProperty(PROPERTY_UPDATEACTIONID, value);
@@ -493,8 +480,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-数据所有者
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setDataOwner(Integer value) {
 		this.setProperty(PROPERTY_DATAOWNER, value);
@@ -525,8 +511,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-团队成员
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setTeamMembers(String value) {
 		this.setProperty(PROPERTY_TEAMMEMBERS, value);
@@ -557,8 +542,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-数据所属组织
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setOrganization(String value) {
 		this.setProperty(PROPERTY_ORGANIZATION, value);
@@ -589,8 +573,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-名称
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setName(String value) {
 		this.setProperty(PROPERTY_NAME, value);
@@ -621,8 +604,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-已激活的
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setActivated(emYesNo value) {
 		this.setProperty(PROPERTY_ACTIVATED, value);
@@ -653,8 +635,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-语言
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setLanguage(String value) {
 		this.setProperty(PROPERTY_LANGUAGE, value);
@@ -685,8 +666,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-类型
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setCategory(String value) {
 		this.setProperty(PROPERTY_CATEGORY, value);
@@ -717,8 +697,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-关联的业务对象
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setBOCode(String value) {
 		this.setProperty(PROPERTY_BOCODE, value);
@@ -749,8 +728,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-关联的应用
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setApplicationId(String value) {
 		this.setProperty(PROPERTY_APPLICATIONID, value);
@@ -781,8 +759,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-注释
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setNotes(String value) {
 		this.setProperty(PROPERTY_NOTES, value);
@@ -813,8 +790,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-输出宽度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setWidth(Integer value) {
 		this.setProperty(PROPERTY_WIDTH, value);
@@ -845,11 +821,41 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-输出高度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setHeight(Integer value) {
 		this.setProperty(PROPERTY_HEIGHT, value);
+	}
+
+	/**
+	 * 属性名称-输出像素
+	 */
+	private static final String PROPERTY_DPI_NAME = "Dpi";
+
+	/**
+	 * 输出像素 属性
+	 */
+	@DbField(name = "Dpi", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	public static final IPropertyInfo<Integer> PROPERTY_DPI = registerProperty(PROPERTY_DPI_NAME, Integer.class,
+			MY_CLASS);
+
+	/**
+	 * 获取-输出像素
+	 * 
+	 * @return 值
+	 */
+	@XmlElement(name = PROPERTY_DPI_NAME)
+	public final Integer getDpi() {
+		return this.getProperty(PROPERTY_DPI);
+	}
+
+	/**
+	 * 设置-输出像素
+	 * 
+	 * @param value 值
+	 */
+	public final void setDpi(Integer value) {
+		this.setProperty(PROPERTY_DPI, value);
 	}
 
 	/**
@@ -877,8 +883,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-左边距
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setMarginLeft(Integer value) {
 		this.setProperty(PROPERTY_MARGINLEFT, value);
@@ -909,8 +914,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-右边距
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setMarginRight(Integer value) {
 		this.setProperty(PROPERTY_MARGINRIGHT, value);
@@ -941,8 +945,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-上边距
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setMarginTop(Integer value) {
 		this.setProperty(PROPERTY_MARGINTOP, value);
@@ -973,8 +976,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-下边距
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setMarginBottom(Integer value) {
 		this.setProperty(PROPERTY_MARGINBOTTOM, value);
@@ -1005,8 +1007,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-区域间隔
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setMarginArea(Integer value) {
 		this.setProperty(PROPERTY_MARGINAREA, value);
@@ -1037,8 +1038,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-页眉-左坐标
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setPageHeaderLeft(Integer value) {
 		this.setProperty(PROPERTY_PAGEHEADERLEFT, value);
@@ -1069,8 +1069,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-页眉-上坐标
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setPageHeaderTop(Integer value) {
 		this.setProperty(PROPERTY_PAGEHEADERTOP, value);
@@ -1101,8 +1100,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-页眉-宽度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setPageHeaderWidth(Integer value) {
 		this.setProperty(PROPERTY_PAGEHEADERWIDTH, value);
@@ -1133,8 +1131,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-页眉-高度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setPageHeaderHeight(Integer value) {
 		this.setProperty(PROPERTY_PAGEHEADERHEIGHT, value);
@@ -1165,8 +1162,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-开始部分-左坐标
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setStartSectionLeft(Integer value) {
 		this.setProperty(PROPERTY_STARTSECTIONLEFT, value);
@@ -1197,8 +1193,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-开始部分-上坐标
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setStartSectionTop(Integer value) {
 		this.setProperty(PROPERTY_STARTSECTIONTOP, value);
@@ -1229,8 +1224,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-开始部分-宽度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setStartSectionWidth(Integer value) {
 		this.setProperty(PROPERTY_STARTSECTIONWIDTH, value);
@@ -1261,8 +1255,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-开始部分-高度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setStartSectionHeight(Integer value) {
 		this.setProperty(PROPERTY_STARTSECTIONHEIGHT, value);
@@ -1293,8 +1286,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-重复区域头-左坐标
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setRepetitionHeaderLeft(Integer value) {
 		this.setProperty(PROPERTY_REPETITIONHEADERLEFT, value);
@@ -1325,8 +1317,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-重复区域头-上坐标
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setRepetitionHeaderTop(Integer value) {
 		this.setProperty(PROPERTY_REPETITIONHEADERTOP, value);
@@ -1357,8 +1348,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-重复区域头-宽度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setRepetitionHeaderWidth(Integer value) {
 		this.setProperty(PROPERTY_REPETITIONHEADERWIDTH, value);
@@ -1389,8 +1379,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-重复区域头-高度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setRepetitionHeaderHeight(Integer value) {
 		this.setProperty(PROPERTY_REPETITIONHEADERHEIGHT, value);
@@ -1421,8 +1410,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-重复区域-左坐标
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setRepetitionLeft(Integer value) {
 		this.setProperty(PROPERTY_REPETITIONLEFT, value);
@@ -1453,8 +1441,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-重复区域-上坐标
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setRepetitionTop(Integer value) {
 		this.setProperty(PROPERTY_REPETITIONTOP, value);
@@ -1485,8 +1472,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-重复区域-宽度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setRepetitionWidth(Integer value) {
 		this.setProperty(PROPERTY_REPETITIONWIDTH, value);
@@ -1517,8 +1503,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-重复区域-高度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setRepetitionHeight(Integer value) {
 		this.setProperty(PROPERTY_REPETITIONHEIGHT, value);
@@ -1549,8 +1534,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-重复区域脚-左坐标
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setRepetitionFooterLeft(Integer value) {
 		this.setProperty(PROPERTY_REPETITIONFOOTERLEFT, value);
@@ -1581,8 +1565,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-重复区域脚-上坐标
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setRepetitionFooterTop(Integer value) {
 		this.setProperty(PROPERTY_REPETITIONFOOTERTOP, value);
@@ -1613,8 +1596,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-重复区域脚-宽度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setRepetitionFooterWidth(Integer value) {
 		this.setProperty(PROPERTY_REPETITIONFOOTERWIDTH, value);
@@ -1645,8 +1627,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-重复区域脚-高度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setRepetitionFooterHeight(Integer value) {
 		this.setProperty(PROPERTY_REPETITIONFOOTERHEIGHT, value);
@@ -1677,8 +1658,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-结束部分-左坐标
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setEndSectionLeft(Integer value) {
 		this.setProperty(PROPERTY_ENDSECTIONLEFT, value);
@@ -1709,8 +1689,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-结束部分-上坐标
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setEndSectionTop(Integer value) {
 		this.setProperty(PROPERTY_ENDSECTIONTOP, value);
@@ -1741,8 +1720,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-结束部分-宽度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setEndSectionWidth(Integer value) {
 		this.setProperty(PROPERTY_ENDSECTIONWIDTH, value);
@@ -1773,8 +1751,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-结束部分-高度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setEndSectionHeight(Integer value) {
 		this.setProperty(PROPERTY_ENDSECTIONHEIGHT, value);
@@ -1805,8 +1782,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-页脚-左坐标
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setPageFooterLeft(Integer value) {
 		this.setProperty(PROPERTY_PAGEFOOTERLEFT, value);
@@ -1837,8 +1813,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-页脚-上坐标
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setPageFooterTop(Integer value) {
 		this.setProperty(PROPERTY_PAGEFOOTERTOP, value);
@@ -1869,8 +1844,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-页脚-宽度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setPageFooterWidth(Integer value) {
 		this.setProperty(PROPERTY_PAGEFOOTERWIDTH, value);
@@ -1901,8 +1875,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-页脚-高度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setPageFooterHeight(Integer value) {
 		this.setProperty(PROPERTY_PAGEFOOTERHEIGHT, value);
@@ -1934,8 +1907,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-导出模板-页眉
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setPageHeaders(IExportTemplateItems value) {
 		this.setProperty(PROPERTY_PAGEHEADERS, value);
@@ -1967,8 +1939,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-导出模板-开始区
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setStartSections(IExportTemplateItems value) {
 		this.setProperty(PROPERTY_STARTSECTIONS, value);
@@ -2000,8 +1971,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-导出模板-重复区头
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setRepetitionHeaders(IExportTemplateItems value) {
 		this.setProperty(PROPERTY_REPETITIONHEADERS, value);
@@ -2033,8 +2003,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-导出模板-重复区
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setRepetitions(IExportTemplateItems value) {
 		this.setProperty(PROPERTY_REPETITIONS, value);
@@ -2066,8 +2035,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-导出模板-重复区脚
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setRepetitionFooters(IExportTemplateItems value) {
 		this.setProperty(PROPERTY_REPETITIONFOOTERS, value);
@@ -2099,8 +2067,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-导出模板-结束区
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setEndSections(IExportTemplateItems value) {
 		this.setProperty(PROPERTY_ENDSECTIONS, value);
@@ -2132,8 +2099,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	/**
 	 * 设置-导出模板-页脚区
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setPageFooters(IExportTemplateItems value) {
 		this.setProperty(PROPERTY_PAGEFOOTERS, value);

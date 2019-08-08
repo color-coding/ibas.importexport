@@ -290,6 +290,17 @@ namespace importexport {
                 this.setProperty(ExportTemplate.PROPERTY_HEIGHT_NAME, value);
             }
 
+            /** 映射的属性名称-输出像素 */
+            static PROPERTY_DPI_NAME: string = "Dpi";
+            /** 获取-输出像素 */
+            get dpi(): number {
+                return this.getProperty<number>(ExportTemplate.PROPERTY_DPI_NAME);
+            }
+            /** 设置-输出像素 */
+            set dpi(value: number) {
+                this.setProperty(ExportTemplate.PROPERTY_DPI_NAME, value);
+            }
+
             /** 映射的属性名称-左边距 */
             static PROPERTY_MARGINLEFT_NAME: string = "MarginLeft";
             /** 获取-左边距 */

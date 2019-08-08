@@ -27,6 +27,7 @@
     <Property Name="Notes" Description="注释" DataType="Alphanumeric" DataSubType="Default" EditSize="100" Mapped="Notes"/>
     <Property Name="Width" Description="输出宽度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="Width"/>
     <Property Name="Height" Description="输出高度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="Height"/>
+    <Property Name="Dpi" Description="输出像素" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="Dpi"/>
     <Property Name="MarginLeft" Description="左边距" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="LMargin"/>
     <Property Name="MarginRight" Description="右边距" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="RMargin"/>
     <Property Name="MarginTop" Description="上边距" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="TMargin"/>

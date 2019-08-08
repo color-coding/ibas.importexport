@@ -208,11 +208,9 @@ namespace importexport {
                             let value: any = item[name];
                             if (typeof value === "string") {
                                 if (value.indexOf("\"") > 0) {
-                                    value = "\"" + value.replace("\"", "\"\"") + "\"";
-                                } else if (value.indexOf(",") > 0 || value.indexOf("\"") > 0
-                                    || value.indexOf("\n") > 0 || value.indexOf("\r") > 0 || value.indexOf(" ") > 0) {
-                                    value = "\"" + value + "\"";
+                                    value = value.replace("\"", "\"\"");
                                 }
+                                value = "\"" + value + "\"";
                             }
                             stringBuilder.append(value);
                         }

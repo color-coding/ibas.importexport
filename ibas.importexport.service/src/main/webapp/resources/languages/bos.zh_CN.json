@@ -26,6 +26,7 @@
         "bo_exporttemplate_notes": "注释",
         "bo_exporttemplate_width": "输出宽度",
         "bo_exporttemplate_height": "输出高度",
+        "bo_exporttemplate_dpi": "输出像素",
         "bo_exporttemplate_marginleft": "左边距",
         "bo_exporttemplate_marginright": "右边距",
         "bo_exporttemplate_margintop": "上边距",

@@ -32,6 +32,7 @@ namespace importexport {
                             }),
                             new sap.extension.table.Column("", {
                                 label: ibas.i18n.prop("importexport_export_mode_description"),
+                                width: "20rem",
                                 template: new sap.extension.m.Text("", {
                                 }).bindProperty("bindingValue", {
                                     path: "description",
