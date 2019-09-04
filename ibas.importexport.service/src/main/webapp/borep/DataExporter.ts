@@ -152,6 +152,51 @@ namespace importexport {
                 }
             }
         }
+        class StringBuilder extends ibas.StringBuilder {
+            static NEW_LINE: string = function (): string {
+                if (navigator.appVersion) {
+                    if (navigator.appVersion.indexOf("Windows") > 0) {
+                        return "\r\n";
+                    } else if (navigator.appVersion.indexOf("Mac OS") > 0) {
+                        return "\r";
+                    }
+                    return "\n";
+                }
+            }();
+            static SEPARATOR: string = ",";
+
+            constructor() {
+                super();
+                this.map(undefined, "");
+                this.map(null, "");
+            }
+            /**
+             * 添加字符
+             */
+            append(value: any): void {
+                if (typeof value === "string") {
+                    if (value.indexOf("\"") >= 0) {
+                        value = ibas.strings.replace(value, "\"", "\"\"");
+                    }
+                    value = "\"" + value + "\"";
+                } else if (value instanceof Date) {
+                    value = "\"" + ibas.dates.toString(value) + "\"";
+                }
+                super.append(value);
+            }
+            /**
+             * 新行
+             */
+            newLine(): void {
+                super.append(StringBuilder.NEW_LINE);
+            }
+            /**
+             * 分隔
+             */
+            separator(): void {
+                super.append(StringBuilder.SEPARATOR);
+            }
+        }
         /** 数据表导出者-csv */
         export class DataTableExporterCSV extends DataExporter<DataExportResultString> {
             static MODE_SIGN: string = "TO_FILE_CSV";
@@ -162,63 +207,47 @@ namespace importexport {
             }
             /** 导出 */
             export(caller: bo.IDataExportCaller<DataExportResultString>): void {
-                let newLine: string = "\n";
-                if (navigator.appVersion) {
-                    if (navigator.appVersion.indexOf("Windows") > 0) {
-                        newLine = "\r\n";
-                    } else if (navigator.appVersion.indexOf("Mac OS") > 0) {
-                        newLine = "\r";
-                    }
-                }
                 if (ibas.objects.isNull(caller)) {
                     throw new Error(ibas.i18n.prop("sys_invalid_parameter", "caller"));
                 }
                 if (!(caller.data instanceof ibas.DataTable)) {
                     throw new Error(ibas.i18n.prop("sys_invalid_parameter", "caller.data"));
                 }
-                let stringBuilders: ibas.StringBuilder = new ibas.StringBuilder();
+                let stringBuilders: StringBuilder = new StringBuilder();
                 for (let item of caller.data.convert({ format: true, nameAs: "description" })) {
                     if (stringBuilders.length === 0) {
                         // 初始化标题
-                        let stringBuilder: ibas.StringBuilder = new ibas.StringBuilder();
+                        let stringBuilder: StringBuilder = new StringBuilder();
                         for (let name in item) {
                             if (name !== null && name !== undefined) {
                                 if (stringBuilder.length > 0) {
-                                    stringBuilder.append(",");
+                                    stringBuilder.separator();
                                 }
                                 let tmp: string = ibas.i18n.prop(name);
-                                if (tmp.startsWith("[") && tmp.endsWith("]")) {
+                                if (ibas.strings.isWith(tmp, "[", "]")) {
                                     stringBuilder.append(name);
                                 } else {
                                     stringBuilder.append(tmp);
                                 }
                             }
                         }
-                        stringBuilders.append(stringBuilder.toString());
-                        stringBuilders.append(newLine);
+                        stringBuilders.append(stringBuilder);
+                        stringBuilders.newLine();
                     } else {
-                        stringBuilders.append(newLine);
+                        stringBuilders.newLine();
                     }
-                    let stringBuilder: ibas.StringBuilder = new ibas.StringBuilder();
+                    let stringBuilder: StringBuilder = new StringBuilder();
                     for (let name in item) {
                         if (name !== null && name !== undefined) {
                             if (stringBuilder.length > 0) {
-                                stringBuilder.append(",");
+                                stringBuilder.separator();
                             }
-                            let value: any = item[name];
-                            if (typeof value === "string") {
-                                if (value.indexOf("\"") > 0) {
-                                    value = value.replace("\"", "\"\"");
-                                }
-                                value = "\"" + value + "\"";
-                            }
-                            stringBuilder.append(value);
+                            stringBuilder.append(item[name]);
                         }
                     }
-                    stringBuilders.append(stringBuilder.toString());
+                    stringBuilders.append(stringBuilder);
                 }
-                let name: string = "datatable";
-                name = ibas.strings.format("{0}_{1}.csv", name, ibas.uuids.random());
+                let name: string = ibas.strings.format("datatable_{0}.csv", ibas.dates.toString(ibas.dates.now(), "yyyyMMddHHss"));
                 if (caller.onCompleted instanceof Function) {
                     let opRslt: ibas.OperationResult<DataExportResultString> = new ibas.OperationResult<DataExportResultString>();
                     opRslt.addResults(new DataExportResultString(name, stringBuilders.toString()));
