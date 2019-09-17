@@ -74,7 +74,9 @@ namespace importexport {
                 let method: string =
                     ibas.strings.format("schema?boCode={0}&type={1}&token={2}",
                         caller.boCode, caller.type, this.token);
-                boRepository.callRemoteMethod(method, undefined, caller);
+                boRepository.callRemoteMethod(method, undefined, (opRslt) => {
+                    caller.onCompleted.call(ibas.objects.isNull(caller.caller) ? caller : caller.caller, opRslt);
+                });
             }
             /**
              * 查询 获取数据导出者
