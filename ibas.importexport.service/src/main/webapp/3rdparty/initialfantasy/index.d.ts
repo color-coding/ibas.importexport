@@ -102,6 +102,42 @@ declare namespace initialfantasy {
             /** 激活 */
             activated: ibas.emYesNo;
         }
+        /** 比较操作 */
+        enum emConditionOperation {
+            /** 等于(=) */
+            EQUAL = 0,
+            /** 大于(>) */
+            GRATER_THAN = 1,
+            /** 小于(<) */
+            LESS_THAN = 2,
+            /** 大于等于(>=) */
+            GRATER_EQUAL = 3,
+            /** 小于等于(<=) */
+            LESS_EQUAL = 4,
+            /** 不等于(<>) */
+            NOT_EQUAL = 5,
+            /** 开始于 */
+            BEGIN_WITH = 6,
+            /** 不是开始于 */
+            NOT_BEGIN_WITH = 7,
+            /** 结束于 */
+            END_WITH = 8,
+            /** 不是结束于 */
+            NOT_END_WITH = 9,
+            /** 包括 */
+            CONTAIN = 10,
+            /** 不包含 */
+            NOT_CONTAIN = 11
+        }
+        /** 比较关系 */
+        enum emConditionRelationship {
+            /** 无 */
+            NONE = 0,
+            /** 并且 */
+            AND = 1,
+            /** 或者 */
+            OR = 2
+        }
     }
     namespace app {
         /** 身份权限配置契约 */
@@ -451,9 +487,9 @@ declare namespace initialfantasy {
             /** 比较的值 */
             conditionValue: string;
             /** 比较的方法 */
-            operation: ibas.emConditionOperation;
+            operation: emConditionOperation;
             /** 与上一个条件的关系 */
-            relationship: ibas.emConditionRelationship;
+            relationship: emConditionRelationship;
             /** 开括号数 */
             bracketOpen: number;
             /** 闭括号数 */
@@ -1766,12 +1802,12 @@ declare namespace initialfantasy {
             static PROPERTY_OPERATION_NAME: string;
             /** 获取-比较的方法 */
             /** 设置-比较的方法 */
-            operation: ibas.emConditionOperation;
+            operation: emConditionOperation;
             /** 映射的属性名称-与上一个条件的关系 */
             static PROPERTY_RELATIONSHIP_NAME: string;
             /** 获取-与上一个条件的关系 */
             /** 设置-与上一个条件的关系 */
-            relationship: ibas.emConditionRelationship;
+            relationship: emConditionRelationship;
             /** 映射的属性名称-开括号数 */
             static PROPERTY_BRACKETOPEN_NAME: string;
             /** 获取-开括号数 */
