@@ -43,7 +43,7 @@ namespace importexport {
                 /** 绘制视图 */
                 draw(): any {
                     let that: this = this;
-                    return this.dialog = new sap.m.Dialog("", {
+                    return this.dialog = new sap.extension.m.Dialog("", {
                         title: this.title,
                         type: sap.m.DialogType.Standard,
                         state: sap.ui.core.ValueState.None,
@@ -168,9 +168,10 @@ namespace importexport {
                         this.select.addItem(sItem);
                     }
                     this.dialog.addContent(
-                        new sap.m.VBox("", {
-                            items: [
-                                new sap.m.Title("", {
+                        new sap.ui.layout.form.SimpleForm("", {
+                            editable: true,
+                            content: [
+                                new sap.m.Label("", {
                                     width: "100%",
                                     text: ibas.i18n.prop("importexport_please_template"),
                                 }),
