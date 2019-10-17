@@ -745,10 +745,53 @@ namespace importexport {
                             new sap.extension.table.DataColumn("", {
                                 label: ibas.i18n.prop("bo_exporttemplateitem_itemstring"),
                                 template: new sap.extension.m.Input("", {
+                                    showValueHelp: true,
+                                    valueHelpOnly: false,
+                                    valueHelpRequest: function (event: sap.ui.base.Event): void {
+                                        let source: any = event.getSource();
+                                        if (!source) {
+                                            return;
+                                        }
+                                        let data: bo.ExportTemplateItem = source.getBindingContext().getObject();
+                                        if (ibas.objects.isNull(data)) {
+                                            return;
+                                        }
+                                        jQuery.sap.require("sap.ui.codeeditor.CodeEditor");
+                                        let dialog: sap.m.Dialog = new sap.extension.m.Dialog("", {
+                                            title: ibas.i18n.prop("bo_exporttemplateitem_itemstring") + ibas.i18n.prop("shell_data_edit"),
+                                            type: sap.m.DialogType.Standard,
+                                            state: sap.ui.core.ValueState.None,
+                                            content: [
+                                                new sap.ui.codeeditor.CodeEditor("", {
+                                                    height: ibas.strings.format("{0}px", window.innerHeight * 0.6),
+                                                    width: ibas.strings.format("{0}px", window.innerWidth * 0.6),
+                                                    type: data.sourceType === bo.emDataSourceType.QUERY ? "sql" : "text",
+                                                    colorTheme: "eclipse",
+                                                    value: {
+                                                        path: "/itemString"
+                                                    }
+                                                })
+                                            ],
+                                            buttons: [
+                                                new sap.m.Button("", {
+                                                    text: ibas.i18n.prop("shell_exit"),
+                                                    type: sap.m.ButtonType.Transparent,
+                                                    icon: "sap-icon://inspect-down",
+                                                    press: function (): void {
+                                                        dialog.close();
+                                                        dialog = null;
+                                                    }
+                                                }),
+                                            ]
+                                        });
+                                        dialog.setModel(new sap.extension.model.JSONModel(data));
+                                        dialog.open();
+                                        dialog.focus(undefined);
+                                    }
                                 }).bindProperty("bindingValue", {
                                     path: "itemString",
                                     type: new sap.extension.data.Alphanumeric({
-                                        maxLength: 200
+                                        maxLength: 800
                                     })
                                 }),
                             }),
