@@ -75,6 +75,8 @@ namespace importexport {
                         return ibas.enums.toString(emAreaType, value);
                     } else if (property === bo.ExportTemplateItem.PROPERTY_TEXTSTYLE_NAME) {
                         return ibas.enums.toString(emTextStyle, value);
+                    } else if (property === bo.ExportTemplateItem.PROPERTY_TEXTSEGMENT_NAME) {
+                        return ibas.enums.toString(emTextSegment, value);
                     } else if (property === bo.ExportTemplateItem.PROPERTY_SOURCETYPE_NAME) {
                         return ibas.enums.toString(emDataSourceType, value);
                     } else if (property === bo.ExportTemplateItem.PROPERTY_JUSTIFICATIONHORIZONTAL_NAME) {
@@ -102,6 +104,8 @@ namespace importexport {
                         return ibas.enums.valueOf(emAreaType, value);
                     } else if (property === bo.ExportTemplateItem.PROPERTY_TEXTSTYLE_NAME) {
                         return ibas.enums.valueOf(emTextStyle, value);
+                    } else if (property === bo.ExportTemplateItem.PROPERTY_TEXTSEGMENT_NAME) {
+                        return ibas.enums.valueOf(emTextSegment, value);
                     } else if (property === bo.ExportTemplateItem.PROPERTY_SOURCETYPE_NAME) {
                         return ibas.enums.valueOf(emDataSourceType, value);
                     } else if (property === bo.ExportTemplateItem.PROPERTY_JUSTIFICATIONHORIZONTAL_NAME) {

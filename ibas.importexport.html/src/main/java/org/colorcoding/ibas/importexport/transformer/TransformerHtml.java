@@ -21,6 +21,8 @@ import org.colorcoding.ibas.importexport.MyConfiguration;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplateItem;
 import org.colorcoding.ibas.importexport.data.emDataSourceType;
 import org.colorcoding.ibas.importexport.data.emJustificationHorizontal;
+import org.colorcoding.ibas.importexport.data.emJustificationVertical;
+import org.colorcoding.ibas.importexport.data.emTextSegment;
 import org.colorcoding.ibas.importexport.data.emTextStyle;
 
 import com.jayway.jsonpath.DocumentContext;
@@ -36,6 +38,9 @@ import net.minidev.json.JSONArray;
  */
 @TransformerInfo(name = "TO_FILE_HTML", template = true)
 public class TransformerHtml extends TemplateTransformer {
+
+	public final static String DISPLAY_ELEMENT_IMAGE = "IMG";
+	public final static String DISPLAY_ELEMENT_TEXT = "TEXT";
 
 	private DocumentContext dataContext;
 
@@ -395,6 +400,12 @@ public class TransformerHtml extends TemplateTransformer {
 	}
 
 	protected void startDiv(Writer writer, String id, int left, int top, int width, int height) throws IOException {
+		this.startDiv(writer, id, left, top, width, height, null, null, null);
+	}
+
+	protected void startDiv(Writer writer, String id, int left, int top, int width, int height,
+			emJustificationHorizontal horizontal, emJustificationVertical vertical, emTextSegment segment)
+			throws IOException {
 		writer.write("<div");
 		writer.write(" ");
 		writer.write("id=\"");
@@ -403,7 +414,12 @@ public class TransformerHtml extends TemplateTransformer {
 		writer.write(" ");
 		writer.write("style=\"");
 		writer.write("position:absolute;");
-		writer.write("white-space:nowrap;overflow:hidden;");
+		writer.write("white-space:normal;overflow:hidden;");
+		if (segment == emTextSegment.WORD) {
+			writer.write("word-break:keep-all;");
+		} else if (segment == emTextSegment.CELL) {
+			writer.write("word-break:break-all;");
+		}
 		writer.write("left:");
 		writer.write(String.valueOf(left));
 		writer.write("px;");
@@ -419,6 +435,20 @@ public class TransformerHtml extends TemplateTransformer {
 			writer.write("height:");
 			writer.write(String.valueOf(height));
 			writer.write("px;");
+		}
+		if (horizontal == emJustificationHorizontal.CENTER) {
+			writer.write("text-align:center;");
+		} else if (horizontal == emJustificationHorizontal.LEFT) {
+			writer.write("text-align:left;");
+		} else if (horizontal == emJustificationHorizontal.RIGHT) {
+			writer.write("text-align:right;");
+		}
+		if (vertical == emJustificationVertical.CENTER) {
+			writer.write("vertical-align:middle;");
+		} else if (vertical == emJustificationVertical.TOP) {
+			writer.write("vertical-align:top;");
+		} else if (vertical == emJustificationVertical.BOTTOM) {
+			writer.write("vertical-align:bottom;");
 		}
 		writer.write("\"");
 		writer.write(" ");
@@ -445,70 +475,73 @@ public class TransformerHtml extends TemplateTransformer {
 				continue;
 			}
 			this.startDiv(writer, String.format("_%s", item.getItemID()), item.getItemLeft(), item.getItemTop(),
-					item.getItemWidth(), item.getItemHeight());
+					item.getItemWidth(), item.getItemHeight(), item.getJustificationHorizontal(),
+					item.getJustificationVertical(), item.getTextSegment());
 			this.drawElement(writer, item);
 			this.endDiv(writer);
 		}
 	}
 
 	protected void drawElement(Writer writer, IExportTemplateItem template) throws IOException {
-		if (template.getItemType() != null) {
-			if (template.getItemType().equalsIgnoreCase("IMG")) {
-				writer.write("<img");
-				writer.write(" ");
-				writer.write("id=\"");
-				writer.write(template.getItemID());
-				writer.write("\"");
-				writer.write(" ");
-				writer.write("style=\"");
-				writer.write("max-width:100%;max-height:100%;");
-				writer.write("\"");
-				writer.write(" ");
-				writer.write("src=\"");
-				writer.write(this.templateValue(template));
-				writer.write("\"");
-				writer.write(" ");
-				writer.write(">");
-				writer.write("</img>");
-				return;
+		if (DISPLAY_ELEMENT_IMAGE.equalsIgnoreCase(template.getItemType())) {
+			writer.write("<img");
+			writer.write(" ");
+			writer.write("id=\"");
+			writer.write(template.getItemID());
+			writer.write("\"");
+			writer.write(" ");
+			writer.write("style=\"");
+			writer.write("height:inherit;width:inherit;");
+			writer.write("\"");
+			writer.write(" ");
+			writer.write("src=\"");
+			writer.write(this.templateValue(template));
+			writer.write("\"");
+			writer.write(" ");
+			writer.write(">");
+			writer.write("</img>");
+		} else {
+			writer.write("<label");
+			writer.write(" ");
+			writer.write("id=\"");
+			writer.write(template.getItemID());
+			writer.write("\"");
+			writer.write(" ");
+			writer.write("style=\"");
+			writer.write("display:block;");
+			writer.write("height:inherit;width:inherit;");
+			if (template.getFontSize() > 0) {
+				writer.write("font-size:");
+				writer.write(String.valueOf(template.getFontSize()));
+				writer.write("px;");
 			}
+			if (template.getFontName() != null && !template.getFontName().isEmpty()) {
+				writer.write("font-family:");
+				writer.write(template.getFontName());
+				writer.write(";");
+			}
+			if (template.getTextStyle() == emTextStyle.BOLD || template.getTextStyle() == emTextStyle.BOLD_ITALIC) {
+				writer.write("font-weight:bold;");
+			}
+			if (template.getTextStyle() == emTextStyle.ITALIC || template.getTextStyle() == emTextStyle.BOLD_ITALIC) {
+				writer.write("font-style:italic;");
+			}
+			if (template.getJustificationHorizontal() == emJustificationHorizontal.LEFT) {
+				writer.write("padding-left:2px;");
+			} else if (template.getJustificationHorizontal() == emJustificationHorizontal.RIGHT) {
+				writer.write("padding-right:2px;");
+			}
+			if (template.getJustificationVertical() == emJustificationVertical.TOP) {
+				// writer.write("padding-top:2px;");
+			} else if (template.getJustificationVertical() == emJustificationVertical.BOTTOM) {
+				// writer.write("padding-bottom:2px;");
+			}
+			writer.write("\"");
+			writer.write(" ");
+			writer.write(">");
+			writer.write(this.templateValue(template));
+			writer.write("</label>");
 		}
-		writer.write("<label");
-		writer.write(" ");
-		writer.write("id=\"");
-		writer.write(template.getItemID());
-		writer.write("\"");
-		writer.write(" ");
-		writer.write("style=\"");
-		writer.write("display:block;");
-		if (template.getFontSize() > 0) {
-			writer.write("font-size:");
-			writer.write(String.valueOf(template.getFontSize()));
-			writer.write("px;");
-		}
-		if (template.getFontName() != null && !template.getFontName().isEmpty()) {
-			writer.write("font-family:");
-			writer.write(template.getFontName());
-			writer.write(";");
-		}
-		if (template.getTextStyle() == emTextStyle.BOLD || template.getTextStyle() == emTextStyle.BOLD_ITALIC) {
-			writer.write("font-weight:bold;");
-		}
-		if (template.getTextStyle() == emTextStyle.ITALIC || template.getTextStyle() == emTextStyle.BOLD_ITALIC) {
-			writer.write("font-style:italic;");
-		}
-		if (template.getJustificationHorizontal() == emJustificationHorizontal.CENTER) {
-			writer.write("text-align:center;");
-		} else if (template.getJustificationHorizontal() == emJustificationHorizontal.LEFT) {
-			writer.write("text-align:left;padding-left:2px;");
-		} else if (template.getJustificationHorizontal() == emJustificationHorizontal.RIGHT) {
-			writer.write("text-align:right;padding-right:2px;");
-		}
-		writer.write("\"");
-		writer.write(" ");
-		writer.write(">");
-		writer.write(this.templateValue(template));
-		writer.write("</label>");
 	}
 
 	protected void startTable(Writer writer, String id, List<IExportTemplateItem> templates) throws IOException {
@@ -551,7 +584,26 @@ public class TransformerHtml extends TemplateTransformer {
 			writer.write("height:");
 			writer.write(String.valueOf(item.getItemHeight() - item.getLineTop() - item.getLineBottom()));
 			writer.write("px;");
-			writer.write("white-space:nowrap;overflow:hidden;");
+			writer.write("white-space:normal;overflow:hidden;");
+			if (item.getTextSegment() == emTextSegment.WORD) {
+				writer.write("word-break:keep-all;");
+			} else if (item.getTextSegment() == emTextSegment.CELL) {
+				writer.write("word-break:break-all;");
+			}
+			if (item.getJustificationHorizontal() == emJustificationHorizontal.CENTER) {
+				writer.write("text-align:center;");
+			} else if (item.getJustificationHorizontal() == emJustificationHorizontal.LEFT) {
+				writer.write("text-align:left;");
+			} else if (item.getJustificationHorizontal() == emJustificationHorizontal.RIGHT) {
+				writer.write("text-align:right;");
+			}
+			if (item.getJustificationVertical() == emJustificationVertical.CENTER) {
+				writer.write("vertical-align:middle;");
+			} else if (item.getJustificationVertical() == emJustificationVertical.TOP) {
+				writer.write("vertical-align:top;");
+			} else if (item.getJustificationVertical() == emJustificationVertical.BOTTOM) {
+				writer.write("vertical-align:bottom;");
+			}
 			writer.write("\"");
 			writer.write(" ");
 			writer.write(">");
@@ -584,8 +636,26 @@ public class TransformerHtml extends TemplateTransformer {
 			writer.write("height:");
 			writer.write(String.valueOf(item.getItemHeight() - item.getLineTop() - item.getLineBottom()));
 			writer.write("px;");
-			// 超出文字，隐藏
-			writer.write("white-space:nowrap;overflow:hidden;word-break:keep-all;");
+			if (item.getJustificationHorizontal() == emJustificationHorizontal.CENTER) {
+				writer.write("text-align:center;");
+			} else if (item.getJustificationHorizontal() == emJustificationHorizontal.LEFT) {
+				writer.write("text-align:left;");
+			} else if (item.getJustificationHorizontal() == emJustificationHorizontal.RIGHT) {
+				writer.write("text-align:right;");
+			}
+			if (item.getJustificationVertical() == emJustificationVertical.CENTER) {
+				writer.write("vertical-align:middle;");
+			} else if (item.getJustificationVertical() == emJustificationVertical.TOP) {
+				writer.write("vertical-align:top;");
+			} else if (item.getJustificationVertical() == emJustificationVertical.BOTTOM) {
+				writer.write("vertical-align:bottom;");
+			}
+			writer.write("white-space:normal;overflow:hidden;");
+			if (item.getTextSegment() == emTextSegment.WORD) {
+				writer.write("word-break:keep-all;");
+			} else if (item.getTextSegment() == emTextSegment.CELL) {
+				writer.write("word-break:break-all;");
+			}
 			writer.write("\"");
 			if (colSpan > 0) {
 				writer.write(" ");

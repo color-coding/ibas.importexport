@@ -109,6 +109,16 @@ namespace importexport {
              */
             BOLD_ITALIC
         }
+        export enum emTextSegment {
+            /**
+             * 字段落
+             */
+            WORD,
+            /**
+             * 单元格
+             */
+            CELL,
+        }
         /** 数据导出调用者 */
         export interface IDataExportCaller<T> extends ibas.IMethodCaller<T> {
             /** 导出的数据 */

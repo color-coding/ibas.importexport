@@ -101,6 +101,7 @@
         "bo_exporttemplateitem_fontname": "字体名称",
         "bo_exporttemplateitem_fontsize": "字体大小",
         "bo_exporttemplateitem_textstyle": "文本样式",
+        "bo_exporttemplateitem_textsegment": "文本段落",
         "bo_exporttemplateitem_justificationhorizontal": "水平对齐方式",
         "bo_exporttemplateitem_justificationvertical": "竖直对齐方式",
         "bo_exporttemplateitem_backgroundred": "背景色-红",
@@ -123,6 +124,10 @@
         "bo_exporttemplateitem_endsections": "结束区",
         "bo_exporttemplateitem_pagefooters": "页脚区",
         "bo_exporttemplate_closing_delimiter": "----结束----"
+    },
+    {
+        "template_item_type_text": "文本",
+        "template_item_type_image": "图片"
     },
     {
         "em_areatype_page_header": "页眉",
@@ -148,6 +153,10 @@
         "em_textstyle_bold": "粗体",
         "em_textstyle_italic": "斜体",
         "em_textstyle_bold_italic": "粗斜体"
+    },
+    {
+        "em_textsegment_word": "文字",
+        "em_textsegment_cell": "单元格"
     },
     {
         "em_datasourcetype_text": "文本",

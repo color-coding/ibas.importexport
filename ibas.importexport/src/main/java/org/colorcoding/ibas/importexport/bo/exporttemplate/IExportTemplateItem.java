@@ -7,6 +7,7 @@ import org.colorcoding.ibas.importexport.data.emAreaType;
 import org.colorcoding.ibas.importexport.data.emDataSourceType;
 import org.colorcoding.ibas.importexport.data.emJustificationHorizontal;
 import org.colorcoding.ibas.importexport.data.emJustificationVertical;
+import org.colorcoding.ibas.importexport.data.emTextSegment;
 import org.colorcoding.ibas.importexport.data.emTextStyle;
 
 /**
@@ -25,8 +26,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-编号
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setObjectKey(Integer value);
 
@@ -40,8 +40,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-类型
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setObjectCode(String value);
 
@@ -55,8 +54,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-行号
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setLineId(Integer value);
 
@@ -70,8 +68,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-数据源
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setDataSource(String value);
 
@@ -85,8 +82,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-实例号（版本）
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setLogInst(Integer value);
 
@@ -100,8 +96,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-创建日期
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setCreateDate(DateTime value);
 
@@ -115,8 +110,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-创建时间
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setCreateTime(Short value);
 
@@ -130,8 +124,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-修改日期
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setUpdateDate(DateTime value);
 
@@ -145,8 +138,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-修改时间
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setUpdateTime(Short value);
 
@@ -160,8 +152,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-创建用户
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setCreateUserSign(Integer value);
 
@@ -175,8 +166,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-修改用户
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setUpdateUserSign(Integer value);
 
@@ -190,8 +180,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-创建动作标识
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setCreateActionId(String value);
 
@@ -205,8 +194,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-更新动作标识
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setUpdateActionId(String value);
 
@@ -220,8 +208,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-区域
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setArea(emAreaType value);
 
@@ -235,8 +222,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-项标识
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setItemID(String value);
 
@@ -250,8 +236,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-项类型
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setItemType(String value);
 
@@ -265,8 +250,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-项左坐标
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setItemLeft(Integer value);
 
@@ -280,8 +264,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-项上坐标
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setItemTop(Integer value);
 
@@ -295,8 +278,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-数据源
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setSourceType(emDataSourceType value);
 
@@ -310,8 +292,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-项字符串
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setItemString(String value);
 
@@ -325,8 +306,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-显示格式
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setValueFormat(String value);
 
@@ -340,8 +320,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-项是否可见
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setItemVisible(emYesNo value);
 
@@ -355,8 +334,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-项宽度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setItemWidth(Integer value);
 
@@ -370,8 +348,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-项高度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setItemHeight(Integer value);
 
@@ -385,8 +362,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-左边距
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setMarginLeft(Integer value);
 
@@ -400,8 +376,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-右边距
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setMarginRight(Integer value);
 
@@ -415,8 +390,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-上边距
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setMarginTop(Integer value);
 
@@ -430,8 +404,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-下边距
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setMarginBottom(Integer value);
 
@@ -445,8 +418,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-左线长度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setLineLeft(Integer value);
 
@@ -460,8 +432,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-右线长度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setLineRight(Integer value);
 
@@ -475,8 +446,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-上线长度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setLineTop(Integer value);
 
@@ -490,8 +460,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-下线长度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setLineBottom(Integer value);
 
@@ -505,8 +474,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-字体名称
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setFontName(String value);
 
@@ -520,8 +488,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-字体大小
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setFontSize(Integer value);
 
@@ -535,10 +502,23 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-文本样式
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setTextStyle(emTextStyle value);
+
+	/**
+	 * 获取-文本段落
+	 * 
+	 * @return 值
+	 */
+	emTextSegment getTextSegment();
+
+	/**
+	 * 设置-文本段落
+	 * 
+	 * @param value 值
+	 */
+	void setTextSegment(emTextSegment value);
 
 	/**
 	 * 获取-水平对齐方式
@@ -550,8 +530,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-水平对齐方式
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setJustificationHorizontal(emJustificationHorizontal value);
 
@@ -565,8 +544,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-竖直对齐方式
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setJustificationVertical(emJustificationVertical value);
 
@@ -580,8 +558,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-背景色-红
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setBackgroundRed(Integer value);
 
@@ -595,8 +572,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-背景色-绿
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setBackgroundGreen(Integer value);
 
@@ -610,8 +586,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-背景色-蓝
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setBackgroundBlue(Integer value);
 
@@ -625,8 +600,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-前景色-红
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setForegroundRed(Integer value);
 
@@ -640,8 +614,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-前景色-绿
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setForegroundGreen(Integer value);
 
@@ -655,8 +628,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-前景色-蓝
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setForegroundBlue(Integer value);
 
@@ -670,8 +642,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-高亮显示色-红
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setMarkerRed(Integer value);
 
@@ -685,8 +656,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-高亮显示色-绿
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setMarkerGreen(Integer value);
 
@@ -700,8 +670,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-高亮显示色-蓝
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setMarkerBlue(Integer value);
 
@@ -715,8 +684,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-框架色-红
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setBorderRed(Integer value);
 
@@ -730,8 +698,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-框架色-绿
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setBorderGreen(Integer value);
 
@@ -745,8 +712,7 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	/**
 	 * 设置-框架色-蓝
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setBorderBlue(Integer value);
 

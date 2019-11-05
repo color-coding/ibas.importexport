@@ -98,6 +98,7 @@
     <Property Name="FontName" Description="字体名称" DataType="Alphanumeric" DataSubType="Default" EditSize="50" Mapped="FontName"/>
     <Property Name="FontSize" Description="字体大小" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="FontSize"/>
     <Property Name="TextStyle" Description="文本样式" DataType="Alphanumeric" DataSubType="Default" EditSize="2" DeclaredType="emTextStyle" Mapped="TextStyle"/>
+    <Property Name="TextSegment" Description="文本段落" DataType="Alphanumeric" DataSubType="Default" EditSize="2" DeclaredType="emTextSegment" Mapped="TextSegment"/>
     <Property Name="JustificationHorizontal" Description="水平对齐方式" DataType="Alphanumeric" DataSubType="Default" EditSize="2" DeclaredType="emJustificationHorizontal" Mapped="XJustific"/>
     <Property Name="JustificationVertical" Description="竖直对齐方式" DataType="Alphanumeric" DataSubType="Default" EditSize="2" DeclaredType="emJustificationVertical" Mapped="YJustific"/>
     <Property Name="BackgroundRed" Description="背景色-红" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="BGRed"/>

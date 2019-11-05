@@ -688,6 +688,17 @@ namespace importexport {
                             new sap.extension.table.DataColumn("", {
                                 label: ibas.i18n.prop("bo_exporttemplateitem_itemtype"),
                                 template: new sap.extension.m.Input("", {
+                                    showSuggestion: true,
+                                    suggestionItems: [
+                                        new sap.ui.core.ListItem("", {
+                                            key: "TEXT",
+                                            text: ibas.i18n.prop("template_item_type_text"),
+                                        }),
+                                        new sap.ui.core.ListItem("", {
+                                            key: "IMG",
+                                            text: ibas.i18n.prop("template_item_type_image"),
+                                        })
+                                    ]
                                 }).bindProperty("bindingValue", {
                                     path: "itemType",
                                     type: new sap.extension.data.Alphanumeric({
@@ -845,6 +856,17 @@ namespace importexport {
                                 }),
                             }),
                             new sap.extension.table.DataColumn("", {
+                                label: ibas.i18n.prop("bo_exporttemplateitem_textsegment"),
+                                template: new sap.extension.m.EnumSelect("", {
+                                    enumType: bo.emTextSegment
+                                }).bindProperty("bindingValue", {
+                                    path: "textSegment",
+                                    type: new sap.extension.data.Enum({
+                                        enumType: bo.emTextSegment
+                                    }),
+                                }),
+                            }),
+                            new sap.extension.table.DataColumn("", {
                                 label: ibas.i18n.prop("bo_exporttemplateitem_justificationhorizontal"),
                                 template: new sap.extension.m.EnumSelect("", {
                                     enumType: bo.emJustificationHorizontal
@@ -852,6 +874,17 @@ namespace importexport {
                                     path: "justificationHorizontal",
                                     type: new sap.extension.data.Enum({
                                         enumType: bo.emJustificationHorizontal
+                                    })
+                                }),
+                            }),
+                            new sap.extension.table.DataColumn("", {
+                                label: ibas.i18n.prop("bo_exporttemplateitem_justificationvertical"),
+                                template: new sap.extension.m.EnumSelect("", {
+                                    enumType: bo.emJustificationVertical
+                                }).bindProperty("bindingValue", {
+                                    path: "justificationVertical",
+                                    type: new sap.extension.data.Enum({
+                                        enumType: bo.emJustificationVertical
                                     })
                                 }),
                             }),

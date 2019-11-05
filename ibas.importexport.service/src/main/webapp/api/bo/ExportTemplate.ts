@@ -223,6 +223,8 @@ namespace importexport {
             fontSize: number;
             /** 文本样式 */
             textStyle: emTextStyle;
+            /** 文本段落 */
+            textSegment: emTextSegment;
             /** 水平对齐方式 */
             justificationHorizontal: emJustificationHorizontal;
             /** 竖直对齐方式 */

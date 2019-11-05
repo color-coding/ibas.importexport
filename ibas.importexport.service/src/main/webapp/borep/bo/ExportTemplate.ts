@@ -773,11 +773,11 @@ namespace importexport {
                 super.afterAdd(item);
                 item.area = this.areaType;
                 item.itemID = ibas.strings.format("F_{0}", ibas.strings.fill(item.lineId, 3, "0"));
-                if (item.area === emAreaType.REPETITION_HEADER) {
+                if (item.area === emAreaType.REPETITION_HEADER && this.parent.repetitionHeaderHeight > 0) {
                     item.itemHeight = this.parent.repetitionHeaderHeight;
-                } else if (item.area === emAreaType.REPETITION) {
+                } else if (item.area === emAreaType.REPETITION && this.parent.repetitionHeight > 0) {
                     item.itemHeight = this.parent.repetitionHeight;
-                } else if (item.area === emAreaType.REPETITION_FOOTER) {
+                } else if (item.area === emAreaType.REPETITION_FOOTER && this.parent.repetitionFooterHeight > 0) {
                     item.itemHeight = this.parent.repetitionFooterHeight;
                 }
             }
@@ -1174,6 +1174,17 @@ namespace importexport {
                 this.setProperty(ExportTemplateItem.PROPERTY_TEXTSTYLE_NAME, value);
             }
 
+            /** 映射的属性名称-文本段落 */
+            static PROPERTY_TEXTSEGMENT_NAME: string = "TextSegment";
+            /** 获取-文本段落 */
+            get textSegment(): emTextSegment {
+                return this.getProperty<emTextSegment>(ExportTemplateItem.PROPERTY_TEXTSEGMENT_NAME);
+            }
+            /** 设置-文本段落 */
+            set textSegment(value: emTextSegment) {
+                this.setProperty(ExportTemplateItem.PROPERTY_TEXTSEGMENT_NAME, value);
+            }
+
             /** 映射的属性名称-水平对齐方式 */
             static PROPERTY_JUSTIFICATIONHORIZONTAL_NAME: string = "JustificationHorizontal";
             /** 获取-水平对齐方式 */
@@ -1331,9 +1342,10 @@ namespace importexport {
             /** 初始化数据 */
             protected init(): void {
                 this.itemVisible = ibas.emYesNo.YES;
+                this.textStyle = emTextStyle.REGULAR;
+                this.textSegment = emTextSegment.WORD;
                 this.justificationHorizontal = emJustificationHorizontal.CENTER;
                 this.justificationVertical = emJustificationVertical.CENTER;
-                this.textStyle = emTextStyle.REGULAR;
             }
         }
 

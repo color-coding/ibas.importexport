@@ -153,7 +153,10 @@ public abstract class TemplateTransformer extends Transformer<InputStream, File>
 	 * @return
 	 */
 	protected String formatValue(Object value, String format) {
-		if (format == null || format.isEmpty() || value == null) {
+		if (value == null) {
+			return "";
+		}
+		if (format == null || format.isEmpty()) {
 			return String.valueOf(value);
 		}
 		int pIndex, sIndex;

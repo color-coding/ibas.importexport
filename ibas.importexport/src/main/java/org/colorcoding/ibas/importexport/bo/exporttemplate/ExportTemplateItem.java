@@ -16,6 +16,7 @@ import org.colorcoding.ibas.importexport.data.emAreaType;
 import org.colorcoding.ibas.importexport.data.emDataSourceType;
 import org.colorcoding.ibas.importexport.data.emJustificationHorizontal;
 import org.colorcoding.ibas.importexport.data.emJustificationVertical;
+import org.colorcoding.ibas.importexport.data.emTextSegment;
 import org.colorcoding.ibas.importexport.data.emTextStyle;
 
 /**
@@ -76,8 +77,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-编号
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setObjectKey(Integer value) {
 		this.setProperty(PROPERTY_OBJECTKEY, value);
@@ -108,8 +108,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-类型
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setObjectCode(String value) {
 		this.setProperty(PROPERTY_OBJECTCODE, value);
@@ -140,8 +139,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-行号
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setLineId(Integer value) {
 		this.setProperty(PROPERTY_LINEID, value);
@@ -172,8 +170,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-数据源
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setDataSource(String value) {
 		this.setProperty(PROPERTY_DATASOURCE, value);
@@ -204,8 +201,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-实例号（版本）
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setLogInst(Integer value) {
 		this.setProperty(PROPERTY_LOGINST, value);
@@ -236,8 +232,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-创建日期
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setCreateDate(DateTime value) {
 		this.setProperty(PROPERTY_CREATEDATE, value);
@@ -268,8 +263,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-创建时间
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setCreateTime(Short value) {
 		this.setProperty(PROPERTY_CREATETIME, value);
@@ -300,8 +294,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-修改日期
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setUpdateDate(DateTime value) {
 		this.setProperty(PROPERTY_UPDATEDATE, value);
@@ -332,8 +325,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-修改时间
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setUpdateTime(Short value) {
 		this.setProperty(PROPERTY_UPDATETIME, value);
@@ -364,8 +356,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-创建用户
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setCreateUserSign(Integer value) {
 		this.setProperty(PROPERTY_CREATEUSERSIGN, value);
@@ -396,8 +387,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-修改用户
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setUpdateUserSign(Integer value) {
 		this.setProperty(PROPERTY_UPDATEUSERSIGN, value);
@@ -428,8 +418,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-创建动作标识
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setCreateActionId(String value) {
 		this.setProperty(PROPERTY_CREATEACTIONID, value);
@@ -460,8 +449,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-更新动作标识
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setUpdateActionId(String value) {
 		this.setProperty(PROPERTY_UPDATEACTIONID, value);
@@ -492,8 +480,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-区域
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setArea(emAreaType value) {
 		this.setProperty(PROPERTY_AREA, value);
@@ -524,8 +511,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-项标识
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setItemID(String value) {
 		this.setProperty(PROPERTY_ITEMID, value);
@@ -556,8 +542,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-项类型
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setItemType(String value) {
 		this.setProperty(PROPERTY_ITEMTYPE, value);
@@ -588,8 +573,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-项左坐标
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setItemLeft(Integer value) {
 		this.setProperty(PROPERTY_ITEMLEFT, value);
@@ -620,8 +604,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-项上坐标
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setItemTop(Integer value) {
 		this.setProperty(PROPERTY_ITEMTOP, value);
@@ -652,8 +635,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-数据源
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setSourceType(emDataSourceType value) {
 		this.setProperty(PROPERTY_SOURCETYPE, value);
@@ -684,8 +666,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-项字符串
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setItemString(String value) {
 		this.setProperty(PROPERTY_ITEMSTRING, value);
@@ -716,8 +697,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-显示格式
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setValueFormat(String value) {
 		this.setProperty(PROPERTY_VALUEFORMAT, value);
@@ -748,8 +728,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-项是否可见
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setItemVisible(emYesNo value) {
 		this.setProperty(PROPERTY_ITEMVISIBLE, value);
@@ -780,8 +759,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-项宽度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setItemWidth(Integer value) {
 		this.setProperty(PROPERTY_ITEMWIDTH, value);
@@ -812,8 +790,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-项高度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setItemHeight(Integer value) {
 		this.setProperty(PROPERTY_ITEMHEIGHT, value);
@@ -844,8 +821,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-左边距
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setMarginLeft(Integer value) {
 		this.setProperty(PROPERTY_MARGINLEFT, value);
@@ -876,8 +852,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-右边距
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setMarginRight(Integer value) {
 		this.setProperty(PROPERTY_MARGINRIGHT, value);
@@ -908,8 +883,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-上边距
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setMarginTop(Integer value) {
 		this.setProperty(PROPERTY_MARGINTOP, value);
@@ -940,8 +914,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-下边距
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setMarginBottom(Integer value) {
 		this.setProperty(PROPERTY_MARGINBOTTOM, value);
@@ -972,8 +945,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-左线长度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setLineLeft(Integer value) {
 		this.setProperty(PROPERTY_LINELEFT, value);
@@ -1004,8 +976,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-右线长度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setLineRight(Integer value) {
 		this.setProperty(PROPERTY_LINERIGHT, value);
@@ -1036,8 +1007,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-上线长度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setLineTop(Integer value) {
 		this.setProperty(PROPERTY_LINETOP, value);
@@ -1068,8 +1038,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-下线长度
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setLineBottom(Integer value) {
 		this.setProperty(PROPERTY_LINEBOTTOM, value);
@@ -1100,8 +1069,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-字体名称
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setFontName(String value) {
 		this.setProperty(PROPERTY_FONTNAME, value);
@@ -1132,8 +1100,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-字体大小
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setFontSize(Integer value) {
 		this.setProperty(PROPERTY_FONTSIZE, value);
@@ -1164,11 +1131,41 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-文本样式
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setTextStyle(emTextStyle value) {
 		this.setProperty(PROPERTY_TEXTSTYLE, value);
+	}
+
+	/**
+	 * 属性名称-文本段落
+	 */
+	private static final String PROPERTY_TEXTSEGMENT_NAME = "TextSegment";
+
+	/**
+	 * 文本段落 属性
+	 */
+	@DbField(name = "TextSegment", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	public static final IPropertyInfo<emTextSegment> PROPERTY_TEXTSEGMENT = registerProperty(PROPERTY_TEXTSEGMENT_NAME,
+			emTextSegment.class, MY_CLASS);
+
+	/**
+	 * 获取-文本段落
+	 * 
+	 * @return 值
+	 */
+	@XmlElement(name = PROPERTY_TEXTSEGMENT_NAME)
+	public final emTextSegment getTextSegment() {
+		return this.getProperty(PROPERTY_TEXTSEGMENT);
+	}
+
+	/**
+	 * 设置-文本段落
+	 * 
+	 * @param value 值
+	 */
+	public final void setTextSegment(emTextSegment value) {
+		this.setProperty(PROPERTY_TEXTSEGMENT, value);
 	}
 
 	/**
@@ -1196,8 +1193,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-水平对齐方式
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setJustificationHorizontal(emJustificationHorizontal value) {
 		this.setProperty(PROPERTY_JUSTIFICATIONHORIZONTAL, value);
@@ -1228,8 +1224,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-竖直对齐方式
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setJustificationVertical(emJustificationVertical value) {
 		this.setProperty(PROPERTY_JUSTIFICATIONVERTICAL, value);
@@ -1260,8 +1255,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-背景色-红
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setBackgroundRed(Integer value) {
 		this.setProperty(PROPERTY_BACKGROUNDRED, value);
@@ -1292,8 +1286,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-背景色-绿
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setBackgroundGreen(Integer value) {
 		this.setProperty(PROPERTY_BACKGROUNDGREEN, value);
@@ -1324,8 +1317,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-背景色-蓝
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setBackgroundBlue(Integer value) {
 		this.setProperty(PROPERTY_BACKGROUNDBLUE, value);
@@ -1356,8 +1348,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-前景色-红
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setForegroundRed(Integer value) {
 		this.setProperty(PROPERTY_FOREGROUNDRED, value);
@@ -1388,8 +1379,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-前景色-绿
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setForegroundGreen(Integer value) {
 		this.setProperty(PROPERTY_FOREGROUNDGREEN, value);
@@ -1420,8 +1410,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-前景色-蓝
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setForegroundBlue(Integer value) {
 		this.setProperty(PROPERTY_FOREGROUNDBLUE, value);
@@ -1452,8 +1441,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-高亮显示色-红
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setMarkerRed(Integer value) {
 		this.setProperty(PROPERTY_MARKERRED, value);
@@ -1484,8 +1472,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-高亮显示色-绿
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setMarkerGreen(Integer value) {
 		this.setProperty(PROPERTY_MARKERGREEN, value);
@@ -1516,8 +1503,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-高亮显示色-蓝
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setMarkerBlue(Integer value) {
 		this.setProperty(PROPERTY_MARKERBLUE, value);
@@ -1548,8 +1534,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-框架色-红
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setBorderRed(Integer value) {
 		this.setProperty(PROPERTY_BORDERRED, value);
@@ -1580,8 +1565,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-框架色-绿
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setBorderGreen(Integer value) {
 		this.setProperty(PROPERTY_BORDERGREEN, value);
@@ -1612,8 +1596,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 设置-框架色-蓝
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setBorderBlue(Integer value) {
 		this.setProperty(PROPERTY_BORDERBLUE, value);
@@ -1628,6 +1611,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 		this.setObjectCode(MyConfiguration.applyVariables(BUSINESS_OBJECT_CODE));
 		this.setItemVisible(emYesNo.YES);
 		this.setTextStyle(emTextStyle.REGULAR);
+		this.setTextSegment(emTextSegment.WORD);
 		this.setJustificationHorizontal(emJustificationHorizontal.CENTER);
 		this.setJustificationVertical(emJustificationVertical.CENTER);
 	}
