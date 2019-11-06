@@ -37,7 +37,7 @@ public class TransformerExcel extends TransformerFile {
 
 	@Override
 	public void transform() throws TransformException {
-		if (this.getInputData() == null) {
+		if (this.getInputData() == null || this.getInputData().length == 0) {
 			return;
 		}
 		try {

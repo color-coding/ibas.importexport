@@ -346,24 +346,22 @@ public class TransformerHtml extends TemplateTransformer {
 				top += this.getTemplate().getRepetitionHeight();
 				if (this.paramValue(String.format(PARAM_TEMPLATE_PAGE_DATA_INDEX, page), -1) == i) {
 					if (!this.getTemplate().getRepetitionFooters().isEmpty()) {
-						this.drawTableRow(writer, this.getTemplate().getRepetitionFooters(),
-								this.getTemplate().getRepetitions().size()
-										- this.getTemplate().getRepetitionFooters().size() + 1);
+						this.endTable(writer, this.getTemplate().getRepetitionFooters());
 						top += this.getTemplate().getRepetitionFooterHeight();
+					} else {
+						this.endTable(writer);
 					}
-					this.endTable(writer);
 					this.endDiv(writer);
 					this.newParam(PARAM_DATA_INDEX, ++i);
 					break;
 				}
 				if (i == size) {
 					if (!this.getTemplate().getRepetitionFooters().isEmpty()) {
-						this.drawTableRow(writer, this.getTemplate().getRepetitionFooters(),
-								this.getTemplate().getRepetitions().size()
-										- this.getTemplate().getRepetitionFooters().size() + 1);
+						this.endTable(writer, this.getTemplate().getRepetitionFooters());
 						top += this.getTemplate().getRepetitionFooterHeight();
+					} else {
+						this.endTable(writer);
 					}
-					this.endTable(writer);
 					this.endDiv(writer);
 				}
 			}
@@ -400,26 +398,16 @@ public class TransformerHtml extends TemplateTransformer {
 	}
 
 	protected void startDiv(Writer writer, String id, int left, int top, int width, int height) throws IOException {
-		this.startDiv(writer, id, left, top, width, height, null, null, null);
-	}
-
-	protected void startDiv(Writer writer, String id, int left, int top, int width, int height,
-			emJustificationHorizontal horizontal, emJustificationVertical vertical, emTextSegment segment)
-			throws IOException {
 		writer.write("<div");
 		writer.write(" ");
-		writer.write("id=\"");
-		writer.write(id);
-		writer.write("\"");
+		if (id != null) {
+			writer.write("id=\"");
+			writer.write(id);
+			writer.write("\"");
+		}
 		writer.write(" ");
 		writer.write("style=\"");
 		writer.write("position:absolute;");
-		writer.write("white-space:normal;overflow:hidden;");
-		if (segment == emTextSegment.WORD) {
-			writer.write("word-break:keep-all;");
-		} else if (segment == emTextSegment.CELL) {
-			writer.write("word-break:break-all;");
-		}
 		writer.write("left:");
 		writer.write(String.valueOf(left));
 		writer.write("px;");
@@ -435,20 +423,6 @@ public class TransformerHtml extends TemplateTransformer {
 			writer.write("height:");
 			writer.write(String.valueOf(height));
 			writer.write("px;");
-		}
-		if (horizontal == emJustificationHorizontal.CENTER) {
-			writer.write("text-align:center;");
-		} else if (horizontal == emJustificationHorizontal.LEFT) {
-			writer.write("text-align:left;");
-		} else if (horizontal == emJustificationHorizontal.RIGHT) {
-			writer.write("text-align:right;");
-		}
-		if (vertical == emJustificationVertical.CENTER) {
-			writer.write("vertical-align:middle;");
-		} else if (vertical == emJustificationVertical.TOP) {
-			writer.write("vertical-align:top;");
-		} else if (vertical == emJustificationVertical.BOTTOM) {
-			writer.write("vertical-align:bottom;");
 		}
 		writer.write("\"");
 		writer.write(" ");
@@ -474,9 +448,8 @@ public class TransformerHtml extends TemplateTransformer {
 			if (item.getItemVisible() == emYesNo.NO) {
 				continue;
 			}
-			this.startDiv(writer, String.format("_%s", item.getItemID()), item.getItemLeft(), item.getItemTop(),
-					item.getItemWidth(), item.getItemHeight(), item.getJustificationHorizontal(),
-					item.getJustificationVertical(), item.getTextSegment());
+			this.startDiv(writer, null, item.getItemLeft(), item.getItemTop(), item.getItemWidth(),
+					item.getItemHeight());
 			this.drawElement(writer, item);
 			this.endDiv(writer);
 		}
@@ -501,6 +474,16 @@ public class TransformerHtml extends TemplateTransformer {
 			writer.write(">");
 			writer.write("</img>");
 		} else {
+			int widht = template.getItemWidth();
+			int height = template.getItemHeight();
+			widht -= template.getLineLeft();
+			widht -= template.getLineRight();
+			if (template.getJustificationHorizontal() == emJustificationHorizontal.LEFT
+					|| template.getJustificationHorizontal() == emJustificationHorizontal.RIGHT) {
+				widht -= 2;
+			}
+			height -= template.getLineTop();
+			height -= template.getLineBottom();
 			writer.write("<label");
 			writer.write(" ");
 			writer.write("id=\"");
@@ -509,7 +492,13 @@ public class TransformerHtml extends TemplateTransformer {
 			writer.write(" ");
 			writer.write("style=\"");
 			writer.write("display:block;");
-			writer.write("height:inherit;width:inherit;");
+			writer.write("height:");
+			writer.write(String.valueOf((height)));
+			writer.write("px;");
+			writer.write("width:");
+			writer.write(String.valueOf((widht)));
+			writer.write("px;");
+			writer.write("white-space:normal;overflow:hidden;");
 			if (template.getFontSize() > 0) {
 				writer.write("font-size:");
 				writer.write(String.valueOf(template.getFontSize()));
@@ -526,15 +515,33 @@ public class TransformerHtml extends TemplateTransformer {
 			if (template.getTextStyle() == emTextStyle.ITALIC || template.getTextStyle() == emTextStyle.BOLD_ITALIC) {
 				writer.write("font-style:italic;");
 			}
-			if (template.getJustificationHorizontal() == emJustificationHorizontal.LEFT) {
+			if (template.getTextSegment() == emTextSegment.WORD) {
+				writer.write("word-break:keep-all;");
+			} else if (template.getTextSegment() == emTextSegment.CELL) {
+				writer.write("word-break:break-all;");
+			}
+			if (template.getJustificationHorizontal() == emJustificationHorizontal.CENTER) {
+				writer.write("text-align:center;");
+			} else if (template.getJustificationHorizontal() == emJustificationHorizontal.LEFT) {
+				writer.write("text-align:left;");
 				writer.write("padding-left:2px;");
 			} else if (template.getJustificationHorizontal() == emJustificationHorizontal.RIGHT) {
+				writer.write("text-align:right;");
 				writer.write("padding-right:2px;");
 			}
-			if (template.getJustificationVertical() == emJustificationVertical.TOP) {
-				// writer.write("padding-top:2px;");
+			if (template.getJustificationVertical() == emJustificationVertical.CENTER) {
+				writer.write("line-height:");
+				writer.write(String.valueOf((height)));
+				writer.write("px;");
 			} else if (template.getJustificationVertical() == emJustificationVertical.BOTTOM) {
-				// writer.write("padding-bottom:2px;");
+				writer.write("position:relative;");
+				writer.write("line-height:");
+				writer.write(String.valueOf((height)));
+				writer.write("px;");
+				writer.write("bottom:");
+				writer.write("-");
+				writer.write(String.valueOf(template.getFontSize()));
+				writer.write("px;");
 			}
 			writer.write("\"");
 			writer.write(" ");
@@ -558,11 +565,91 @@ public class TransformerHtml extends TemplateTransformer {
 		writer.write(" ");
 		writer.write("style=\"");
 		writer.write("table-layout:fixed;border-collapse:collapse;");
-		writer.write("width:100%;");
 		writer.write("\"");
 		writer.write(" ");
 		writer.write(">");
 		// 绘制列名
+		// 内容按左坐标排序
+		templates.sort(new Comparator<IExportTemplateItem>() {
+			@Override
+			public int compare(IExportTemplateItem o1, IExportTemplateItem o2) {
+				return o1.getItemLeft() - o2.getItemLeft();
+			}
+		});
+		writer.write("<tr>");
+		for (IExportTemplateItem item : templates) {
+			if (item.getItemVisible() == emYesNo.NO) {
+				continue;
+			}
+			writer.write("<th");
+			writer.write(" ");
+			writer.write("style=\"");
+			writer.write("width:");
+			writer.write(String.valueOf(item.getItemWidth() - item.getLineLeft() - item.getLineRight()));
+			writer.write("px;");
+			writer.write("height:");
+			writer.write(String.valueOf(item.getItemHeight() - item.getLineTop() - item.getLineBottom()));
+			writer.write("px;");
+			writer.write("\"");
+			writer.write(" ");
+			writer.write(">");
+			this.drawElement(writer, item);
+			writer.write("</th>");
+		}
+		writer.write("</tr>");
+	}
+
+	protected void endTable(Writer writer) throws IOException {
+		writer.write("</table>");
+	}
+
+	protected void endTable(Writer writer, List<IExportTemplateItem> templates) throws IOException {
+		// 内容按左坐标排序
+		templates.sort(new Comparator<IExportTemplateItem>() {
+			@Override
+			public int compare(IExportTemplateItem o1, IExportTemplateItem o2) {
+				return o1.getItemLeft() - o2.getItemLeft();
+			}
+		});
+		writer.write("<tr>");
+		writer.write("<td");
+		writer.write(" ");
+		writer.write("style=\"");
+		writer.write("height:");
+		writer.write(String.valueOf(this.getTemplate().getRepetitionFooterHeight()));
+		writer.write("px;");
+		writer.write("\"");
+		writer.write(" ");
+		writer.write("colspan=\"");
+		writer.write(String.valueOf(this.getTemplate().getRepetitions().size()));
+		writer.write("\"");
+		writer.write(" ");
+		writer.write(">");
+		writer.write("<div");
+		writer.write(" ");
+		writer.write("style=\"");
+		writer.write("position:relative;");
+		writer.write("width:100%;");
+		writer.write("height:100%;");
+		writer.write("\"");
+		writer.write(" ");
+		writer.write(">");
+		for (IExportTemplateItem item : templates) {
+			if (item.getItemVisible() == emYesNo.NO) {
+				continue;
+			}
+			this.startDiv(writer, null, item.getItemLeft(), item.getItemTop(), item.getItemWidth(),
+					item.getItemHeight());
+			this.drawElement(writer, item);
+			this.endDiv(writer);
+		}
+		writer.write("</div>");
+		writer.write("</td>");
+		writer.write("</tr>");
+		this.endTable(writer);
+	}
+
+	protected void drawTableRow(Writer writer, List<IExportTemplateItem> templates) throws IOException {
 		// 内容按左坐标排序
 		templates.sort(new Comparator<IExportTemplateItem>() {
 			@Override
@@ -584,26 +671,6 @@ public class TransformerHtml extends TemplateTransformer {
 			writer.write("height:");
 			writer.write(String.valueOf(item.getItemHeight() - item.getLineTop() - item.getLineBottom()));
 			writer.write("px;");
-			writer.write("white-space:normal;overflow:hidden;");
-			if (item.getTextSegment() == emTextSegment.WORD) {
-				writer.write("word-break:keep-all;");
-			} else if (item.getTextSegment() == emTextSegment.CELL) {
-				writer.write("word-break:break-all;");
-			}
-			if (item.getJustificationHorizontal() == emJustificationHorizontal.CENTER) {
-				writer.write("text-align:center;");
-			} else if (item.getJustificationHorizontal() == emJustificationHorizontal.LEFT) {
-				writer.write("text-align:left;");
-			} else if (item.getJustificationHorizontal() == emJustificationHorizontal.RIGHT) {
-				writer.write("text-align:right;");
-			}
-			if (item.getJustificationVertical() == emJustificationVertical.CENTER) {
-				writer.write("vertical-align:middle;");
-			} else if (item.getJustificationVertical() == emJustificationVertical.TOP) {
-				writer.write("vertical-align:top;");
-			} else if (item.getJustificationVertical() == emJustificationVertical.BOTTOM) {
-				writer.write("vertical-align:bottom;");
-			}
 			writer.write("\"");
 			writer.write(" ");
 			writer.write(">");
@@ -611,69 +678,6 @@ public class TransformerHtml extends TemplateTransformer {
 			writer.write("</td>");
 		}
 		writer.write("</tr>");
-	}
-
-	protected void endTable(Writer writer) throws IOException {
-		writer.write("</table>");
-	}
-
-	protected void drawTableRow(Writer writer, List<IExportTemplateItem> templates, int colSpan) throws IOException {
-		// 内容按左坐标排序
-		templates.sort(new Comparator<IExportTemplateItem>() {
-			@Override
-			public int compare(IExportTemplateItem o1, IExportTemplateItem o2) {
-				return o1.getItemLeft() - o2.getItemLeft();
-			}
-		});
-		writer.write("<tr>");
-		for (IExportTemplateItem item : templates) {
-			if (item.getItemVisible() == emYesNo.NO) {
-				continue;
-			}
-			writer.write("<td");
-			writer.write(" ");
-			writer.write("style=\"");
-			writer.write("height:");
-			writer.write(String.valueOf(item.getItemHeight() - item.getLineTop() - item.getLineBottom()));
-			writer.write("px;");
-			if (item.getJustificationHorizontal() == emJustificationHorizontal.CENTER) {
-				writer.write("text-align:center;");
-			} else if (item.getJustificationHorizontal() == emJustificationHorizontal.LEFT) {
-				writer.write("text-align:left;");
-			} else if (item.getJustificationHorizontal() == emJustificationHorizontal.RIGHT) {
-				writer.write("text-align:right;");
-			}
-			if (item.getJustificationVertical() == emJustificationVertical.CENTER) {
-				writer.write("vertical-align:middle;");
-			} else if (item.getJustificationVertical() == emJustificationVertical.TOP) {
-				writer.write("vertical-align:top;");
-			} else if (item.getJustificationVertical() == emJustificationVertical.BOTTOM) {
-				writer.write("vertical-align:bottom;");
-			}
-			writer.write("white-space:normal;overflow:hidden;");
-			if (item.getTextSegment() == emTextSegment.WORD) {
-				writer.write("word-break:keep-all;");
-			} else if (item.getTextSegment() == emTextSegment.CELL) {
-				writer.write("word-break:break-all;");
-			}
-			writer.write("\"");
-			if (colSpan > 0) {
-				writer.write(" ");
-				writer.write("colspan=\"");
-				writer.write(String.valueOf(colSpan));
-				writer.write("\"");
-				colSpan = -1;
-			}
-			writer.write(" ");
-			writer.write(">");
-			this.drawElement(writer, item);
-			writer.write("</td>");
-		}
-		writer.write("</tr>");
-	}
-
-	protected void drawTableRow(Writer writer, List<IExportTemplateItem> templates) throws IOException {
-		this.drawTableRow(writer, templates, 0);
 	}
 
 }
