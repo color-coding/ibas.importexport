@@ -14,6 +14,7 @@ import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.bobas.mapping.BusinessObjectUnit;
 import org.colorcoding.ibas.bobas.mapping.DbField;
 import org.colorcoding.ibas.bobas.mapping.DbFieldType;
+import org.colorcoding.ibas.bobas.ownership.IDataOwnership;
 import org.colorcoding.ibas.importexport.MyConfiguration;
 import org.colorcoding.ibas.importexport.data.emAreaType;
 
@@ -25,7 +26,7 @@ import org.colorcoding.ibas.importexport.data.emAreaType;
 @XmlType(name = ExportTemplate.BUSINESS_OBJECT_NAME, namespace = MyConfiguration.NAMESPACE_BO)
 @XmlRootElement(name = ExportTemplate.BUSINESS_OBJECT_NAME, namespace = MyConfiguration.NAMESPACE_BO)
 @BusinessObjectUnit(code = ExportTemplate.BUSINESS_OBJECT_CODE)
-public class ExportTemplate extends BusinessObject<ExportTemplate> implements IExportTemplate {
+public class ExportTemplate extends BusinessObject<ExportTemplate> implements IExportTemplate, IDataOwnership {
 
 	/**
 	 * 序列化版本标记

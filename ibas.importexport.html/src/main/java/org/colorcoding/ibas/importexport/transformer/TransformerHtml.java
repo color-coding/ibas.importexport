@@ -408,6 +408,7 @@ public class TransformerHtml extends TemplateTransformer {
 		writer.write(" ");
 		writer.write("style=\"");
 		writer.write("position:absolute;");
+		writer.write("white-space:normal;overflow:hidden;");
 		writer.write("left:");
 		writer.write(String.valueOf(left));
 		writer.write("px;");

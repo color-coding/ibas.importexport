@@ -566,6 +566,8 @@ declare namespace initialfantasy {
             value: string;
             /** 描述 */
             description: string;
+            /** 默认值 */
+            default: ibas.emYesNo;
         }
         /** 业务对象属性信息 集合 */
         interface IBOPropertyValues extends ibas.IBusinessObjects<IBOPropertyValue> {
@@ -2180,6 +2182,12 @@ declare namespace initialfantasy {
             get description(): string;
             /** 设置-描述 */
             set description(value: string);
+            /** 映射的属性名称-默认值 */
+            static PROPERTY_DEFAULT_NAME: string;
+            /** 获取-默认值 */
+            get default(): ibas.emYesNo;
+            /** 设置-默认值 */
+            set default(value: ibas.emYesNo);
             /** 字符串 */
             toString(): string;
             /** 获取查询 */
@@ -2191,6 +2199,8 @@ declare namespace initialfantasy {
         class BOPropertyValues extends ibas.BusinessObjects<BOPropertyValue, BOPropertyInformation> implements IBOPropertyValues {
             /** 创建并添加子项 */
             create(): BOPropertyValue;
+            /** 子项属性改变时 */
+            protected onItemPropertyChanged(item: BOPropertyValue, name: string): void;
         }
     }
 }
