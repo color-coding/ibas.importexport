@@ -73,7 +73,6 @@ public class FileService extends FileRepositoryService {
 			}
 		} catch (Exception e) {
 			opRslt = new OperationResult<String>(e);
-			Logger.log(e);
 		}
 		return opRslt;
 	}

@@ -92,8 +92,14 @@ declare namespace initialfantasy {
         enum emFilteringCategory {
             /** 读取 */
             READ = 0,
-            /** 写入 */
-            SAVE = 1
+            /** 保存 */
+            SAVE = 1,
+            /** 新建 */
+            CREATE = 2,
+            /** 更新 */
+            UPDATE = 3,
+            /** 删除 */
+            DELETE = 4
         }
         /** 分配-角色 */
         interface IRole {
@@ -139,6 +145,24 @@ declare namespace initialfantasy {
             AND = 1,
             /** 或者 */
             OR = 2
+        }
+        enum emSearchedValue {
+            /** 默认值 */
+            DEFAULT = 0,
+            /** 否 */
+            NO = 1,
+            /** 是 */
+            YES = 2
+        }
+        enum emAuthorisedValue {
+            /** 默认值 */
+            DEFAULT = 0,
+            /** 完全 */
+            ALL = 1,
+            /** 只读 */
+            READ = 2,
+            /** 没有 */
+            NONE = 3
         }
     }
     namespace app {
@@ -912,9 +936,9 @@ declare namespace initialfantasy {
             /** 位置 */
             position: number;
             /** 检索的 */
-            searched: ibas.emYesNo;
+            searched: emSearchedValue;
             /** 权限 */
-            authorised: ibas.emAuthoriseType;
+            authorised: emAuthorisedValue;
             /** 对象编号 */
             objectKey: number;
             /** 对象类型 */
@@ -3143,15 +3167,15 @@ declare namespace initialfantasy {
             /** 映射的属性名称-检索的 */
             static PROPERTY_SEARCHED_NAME: string;
             /** 获取-检索的 */
-            get searched(): ibas.emYesNo;
+            get searched(): emSearchedValue;
             /** 设置-检索的 */
-            set searched(value: ibas.emYesNo);
+            set searched(value: emSearchedValue);
             /** 映射的属性名称-权限 */
             static PROPERTY_AUTHORISED_NAME: string;
             /** 获取-权限 */
-            get authorised(): ibas.emAuthoriseType;
+            get authorised(): emAuthorisedValue;
             /** 设置-权限 */
-            set authorised(value: ibas.emAuthoriseType);
+            set authorised(value: emAuthorisedValue);
             /** 映射的属性名称-对象编号 */
             static PROPERTY_OBJECTKEY_NAME: string;
             /** 获取-对象编号 */
@@ -6065,10 +6089,10 @@ declare namespace initialfantasy {
             get editType(): string;
             get editSize(): number;
             get systemed(): ibas.emYesNo;
-            get searched(): ibas.emYesNo;
-            set searched(value: ibas.emYesNo);
-            get authorised(): ibas.emAuthoriseType;
-            set authorised(value: ibas.emAuthoriseType);
+            get searched(): bo.emSearchedValue;
+            set searched(value: bo.emSearchedValue);
+            get authorised(): bo.emAuthorisedValue;
+            set authorised(value: bo.emAuthorisedValue);
             get position(): number;
             set position(value: number);
             protected firePropertyChanged(property: string): void;

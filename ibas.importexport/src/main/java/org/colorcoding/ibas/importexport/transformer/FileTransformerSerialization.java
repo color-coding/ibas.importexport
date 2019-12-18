@@ -110,7 +110,6 @@ public abstract class FileTransformerSerialization extends FileTransformer {
 						this.getOutputData().size());
 			}
 		} catch (Exception e) {
-			Logger.log(e);
 			throw new TransformException(e);
 		}
 	}

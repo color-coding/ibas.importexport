@@ -11,6 +11,7 @@ import org.colorcoding.ibas.bobas.common.ICondition;
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.data.DateTime;
+import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.mapping.BusinessObjectUnit;
 import org.colorcoding.ibas.bobas.organization.OrganizationFactory;
 import org.colorcoding.ibas.bobas.repository.InvalidTokenException;
@@ -34,6 +35,7 @@ import org.colorcoding.ibas.initialfantasy.repository.BORepositoryInitialFantasy
 public class TransformerExcel extends TransformerFile {
 
 	public final static String TYPE_NAME = "xlsx";
+	public final static String PROPERTY_DATATYPE_ALPHANUMERIC = "Alphanumeric";
 
 	@Override
 	public void transform() throws TransformException {
@@ -71,6 +73,11 @@ public class TransformerExcel extends TransformerFile {
 	 */
 	protected void describing(Template template) throws InvalidTokenException {
 		if (template == null) {
+			return;
+		}
+		String language = I18N.getInstance().getLanguageCode();
+		if (language != null && !language.startsWith("zh")) {
+			// 非中文语言，使用英文
 			return;
 		}
 		ICriteria criteria = null;
@@ -116,6 +123,10 @@ public class TransformerExcel extends TransformerFile {
 							}
 							if (itemInfo != null) {
 								property.setDescription(itemInfo.getDescription());
+								if (PROPERTY_DATATYPE_ALPHANUMERIC.equalsIgnoreCase(itemInfo.getDataType())) {
+									property.setDescription(String.format("%s (%d)", property.getDescription(),
+											itemInfo.getEditSize()));
+								}
 							}
 						}
 					} else if (object.getName().startsWith(t.getName())) {

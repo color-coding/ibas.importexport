@@ -21,6 +21,9 @@ hs_err_pid*
 *.map
 *.d.ts
 
+# mac os files
+.DS_Store
+
 # work folder
 /target/
 /release/

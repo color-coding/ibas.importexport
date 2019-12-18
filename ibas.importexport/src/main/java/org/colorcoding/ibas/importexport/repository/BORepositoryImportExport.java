@@ -205,6 +205,17 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 						"DATA_IMPORT");
 				// 保存业务对象
 				for (IBusinessObject object : fileTransformer.getOutputData()) {
+					// 调试模式，输出识别对象
+					if (MyConfiguration.isDebugMode()) {
+						StringBuilder stringBuilder = new StringBuilder();
+						stringBuilder.append("transformer:");
+						stringBuilder.append(" ");
+						stringBuilder.append("be imported data");
+						stringBuilder.append(System.getProperty("line.seperator", "\n"));
+						stringBuilder.append("  ");
+						stringBuilder.append(object.toString("xml"));
+						Logger.log(MessageLevel.DEBUG, stringBuilder.toString());
+					}
 					// 导入的数据，源标记为I
 					if (object instanceof IBOStorageTag) {
 						IBOStorageTag tag = (IBOStorageTag) object;

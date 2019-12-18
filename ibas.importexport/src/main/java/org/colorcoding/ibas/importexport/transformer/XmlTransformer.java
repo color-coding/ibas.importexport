@@ -61,7 +61,7 @@ public class XmlTransformer extends FileTransformerSerialization {
 				}
 			}
 		} catch (Exception e) {
-			Logger.log(e);
+			Logger.log(MessageLevel.DEBUG, e);
 		}
 		return knownTypes;
 	}
