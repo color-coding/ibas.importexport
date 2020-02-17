@@ -86,7 +86,12 @@ namespace importexport {
                     } else if (property === bo.ExportTemplateItem.PROPERTY_ITEMVISIBLE_NAME) {
                         return ibas.enums.toString(ibas.emYesNo, value);
                     }
-                } else if (boName === bo.ExportTemplate.name) {
+                } else if (boName === bo.ExportTemplateAppendix.name) {
+                    if (property === bo.ExportTemplateAppendix.PROPERTY_PAGEHEADER_NAME) {
+                        return ibas.enums.toString(ibas.emYesNo, value);
+                    } else if (property === bo.ExportTemplateAppendix.PROPERTY_PAGEFOOTER_NAME) {
+                        return ibas.enums.toString(ibas.emYesNo, value);
+                    }
                 }
                 return super.convertData(boName, property, value);
             }
@@ -115,7 +120,12 @@ namespace importexport {
                     } else if (property === bo.ExportTemplateItem.PROPERTY_ITEMVISIBLE_NAME) {
                         return ibas.enums.valueOf(ibas.emYesNo, value);
                     }
-                } else if (boName === bo.ExportTemplate.name) {
+                } else if (boName === bo.ExportTemplateAppendix.name) {
+                    if (property === bo.ExportTemplateAppendix.PROPERTY_PAGEHEADER_NAME) {
+                        return ibas.enums.valueOf(ibas.emYesNo, value);
+                    } else if (property === bo.ExportTemplateAppendix.PROPERTY_PAGEFOOTER_NAME) {
+                        return ibas.enums.valueOf(ibas.emYesNo, value);
+                    }
                 }
                 return super.parsingData(boName, property, value);
             }

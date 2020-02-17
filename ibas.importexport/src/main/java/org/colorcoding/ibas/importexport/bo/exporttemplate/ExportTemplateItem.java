@@ -487,6 +487,37 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	}
 
 	/**
+	 * 属性名称-区域子项
+	 */
+	private static final String PROPERTY_AREASUB_NAME = "AreaSub";
+
+	/**
+	 * 区域子项 属性
+	 */
+	@DbField(name = "AreaSub", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	public static final IPropertyInfo<Integer> PROPERTY_AREASUB = registerProperty(PROPERTY_AREASUB_NAME, Integer.class,
+			MY_CLASS);
+
+	/**
+	 * 获取-区域子项
+	 * 
+	 * @return 值
+	 */
+	@XmlElement(name = PROPERTY_AREASUB_NAME)
+	public final Integer getAreaSub() {
+		return this.getProperty(PROPERTY_AREASUB);
+	}
+
+	/**
+	 * 设置-区域子项
+	 * 
+	 * @param value 值
+	 */
+	public final void setAreaSub(Integer value) {
+		this.setProperty(PROPERTY_AREASUB, value);
+	}
+
+	/**
 	 * 属性名称-项标识
 	 */
 	private static final String PROPERTY_ITEMID_NAME = "ItemID";

@@ -213,6 +213,20 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	void setArea(emAreaType value);
 
 	/**
+	 * 获取-区域子项
+	 * 
+	 * @return 值
+	 */
+	Integer getAreaSub();
+
+	/**
+	 * 设置-区域子项
+	 * 
+	 * @param value 值
+	 */
+	void setAreaSub(Integer value);
+
+	/**
 	 * 获取-项标识
 	 * 
 	 * @return 值

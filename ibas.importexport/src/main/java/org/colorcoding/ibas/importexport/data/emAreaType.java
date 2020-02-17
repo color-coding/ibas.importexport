@@ -44,4 +44,9 @@ public enum emAreaType {
 	 */
 	@Value("PF")
 	PAGE_FOOTER,
+	/**
+	 * 附录
+	 */
+	@Value("AP")
+	APPENDIX,
 }

@@ -77,6 +77,7 @@
     <Property Name="CreateActionId" Description="创建动作标识" DataType="Alphanumeric" DataSubType="Default" EditSize="36" Mapped="CreateActId"/>
     <Property Name="UpdateActionId" Description="更新动作标识" DataType="Alphanumeric" DataSubType="Default" EditSize="36" Mapped="UpdateActId"/>
     <Property Name="Area" Description="区域" DataType="Alphanumeric" DataSubType="Default" EditSize="2" DeclaredType="emAreaType" Mapped="Area"/>
+    <Property Name="AreaSub" Description="区域子项" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="AreaSub"/>
     <Property Name="ItemID" Description="项标识" DataType="Alphanumeric" DataSubType="Default" EditSize="60" Mapped="ItemID"/>
     <Property Name="ItemType" Description="项类型" DataType="Alphanumeric" DataSubType="Default" EditSize="8" Mapped="ItemType"/>
     <Property Name="ItemLeft" Description="项左坐标" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="ItemLeft"/>
@@ -114,7 +115,34 @@
     <Property Name="BorderGreen" Description="框架色-绿" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="BrdrGreen"/>
     <Property Name="BorderBlue" Description="框架色-蓝" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="BrdrBlue"/>
   </Model>
+  <Model Name="ExportTemplateAppendix" Description="导出模板-附录" ModelType="SimpleLine" Mapped="${Company}_IE_EXT2">
+    <Property Name="ObjectKey" Description="编号" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="ObjectKey" PrimaryKey="Yes"/>
+    <Property Name="ObjectCode" Description="类型" DataType="Alphanumeric" DataSubType="Default" EditSize="30" Mapped="Object"/>
+    <Property Name="LineId" Description="行号" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="LineId" PrimaryKey="Yes"/>
+    <Property Name="DataSource" Description="数据源" DataType="Alphanumeric" DataSubType="Default" EditSize="8" Mapped="DataSource"/>
+    <Property Name="LogInst" Description="实例号（版本）" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="LogInst"/>
+    <Property Name="CreateDate" Description="创建日期" DataType="Date" DataSubType="Default" EditSize="8" Mapped="CreateDate"/>
+    <Property Name="CreateTime" Description="创建时间" DataType="Date" DataSubType="Time" EditSize="8" Mapped="CreateTime"/>
+    <Property Name="UpdateDate" Description="修改日期" DataType="Date" DataSubType="Default" EditSize="8" Mapped="UpdateDate"/>
+    <Property Name="UpdateTime" Description="修改时间" DataType="Date" DataSubType="Time" EditSize="8" Mapped="UpdateTime"/>
+    <Property Name="CreateUserSign" Description="创建用户" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="Creator"/>
+    <Property Name="UpdateUserSign" Description="修改用户" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="Updator"/>
+    <Property Name="CreateActionId" Description="创建动作标识" DataType="Alphanumeric" DataSubType="Default" EditSize="36" Mapped="CreateActId"/>
+    <Property Name="UpdateActionId" Description="更新动作标识" DataType="Alphanumeric" DataSubType="Default" EditSize="36" Mapped="UpdateActId"/>
+    <Property Name="PageOrder" Description="页序号" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="PageOrder"/>
+    <Property Name="PageHeader" Description="使用页眉" DataType="Alphanumeric" DataSubType="Default" EditSize="1" DeclaredType="emYesNo" Mapped="PageHeader"/>
+    <Property Name="PageFooter" Description="使用页脚" DataType="Alphanumeric" DataSubType="Default" EditSize="1" DeclaredType="emYesNo" Mapped="PageFooter"/>
+    <Property Name="ContentLeft" Description="内容-左坐标" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="CntLeft"/>
+    <Property Name="ContentTop" Description="内容-上坐标" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="CntTop"/>
+    <Property Name="ContentWidth" Description="内容-宽度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="CntWidth"/>
+    <Property Name="ContentHeight" Description="内容-高度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="CntHeight"/>
+    <Property Name="BackgroundRed" Description="背景色-红" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="BGRed"/>
+    <Property Name="BackgroundGreen" Description="背景色-绿" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="BGGreen"/>
+    <Property Name="BackgroundBlue" Description="背景色-蓝" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="BGBlue"/>
+    <Property Name="BackgroundImage" Description="背景图" DataType="Alphanumeric" DataSubType="Default" EditSize="200" Mapped="BGImage"/>
+  </Model>
   <BusinessObject MappedModel="ExportTemplate" ShortName="${Company}_IE_EXPORTTEMPLATE">
     <RelatedBO Relation="OneToMany" MappedModel="ExportTemplateItem"/>
+    <RelatedBO Relation="OneToMany" MappedModel="ExportTemplateAppendix"/>
   </BusinessObject>
 </Domain>

@@ -48,6 +48,10 @@ namespace importexport {
              * 页脚区
              */
             PAGE_FOOTER,
+            /**
+             * 附录
+             */
+            APPENDIX,
         }
         export enum emDataSourceType {
             /**

@@ -142,7 +142,8 @@ namespace importexport {
             endSections: IExportTemplateItems;
             /** 导出模板-页脚区 */
             pageFooters: IExportTemplateItems;
-
+            /** 导出模板-附录集合 */
+            appendixs: IExportTemplateAppendixs;
         }
 
         /** 导出模板-项 集合 */
@@ -255,6 +256,66 @@ namespace importexport {
             borderBlue: number;
 
         }
+
+        /** 导出模板-附录 集合 */
+        export interface IExportTemplateAppendixs extends ibas.IBusinessObjects<IExportTemplateAppendix> {
+            /** 创建并添加子项 */
+            create(): IExportTemplateAppendix;
+        }
+        /** 导出模板-附录 */
+        export interface IExportTemplateAppendix extends ibas.IBOSimpleLine {
+            /** 编号 */
+            objectKey: number;
+            /** 类型 */
+            objectCode: string;
+            /** 行号 */
+            lineId: number;
+            /** 数据源 */
+            dataSource: string;
+            /** 实例号（版本） */
+            logInst: number;
+            /** 创建日期 */
+            createDate: Date;
+            /** 创建时间 */
+            createTime: number;
+            /** 修改日期 */
+            updateDate: Date;
+            /** 修改时间 */
+            updateTime: number;
+            /** 创建用户 */
+            createUserSign: number;
+            /** 修改用户 */
+            updateUserSign: number;
+            /** 创建动作标识 */
+            createActionId: string;
+            /** 更新动作标识 */
+            updateActionId: string;
+            /** 页序号 */
+            pageOrder: number;
+            /** 使用页眉 */
+            pageHeader: ibas.emYesNo;
+            /** 使用页脚 */
+            pageFooter: ibas.emYesNo;
+            /** 内容-左坐标 */
+            contentLeft: number;
+            /** 内容-上坐标 */
+            contentTop: number;
+            /** 内容-宽度 */
+            contentWidth: number;
+            /** 内容-高度 */
+            contentHeight: number;
+            /** 背景色-红 */
+            backgroundRed: number;
+            /** 背景色-绿 */
+            backgroundGreen: number;
+            /** 背景色-蓝 */
+            backgroundBlue: number;
+            /** 背景图 */
+            backgroundImage: string;
+            /** 附录内容 */
+            contents: IExportTemplateItems;
+        }
+
 
 
     }

@@ -26,7 +26,8 @@ import org.colorcoding.ibas.importexport.data.emAreaType;
 @XmlType(name = ExportTemplate.BUSINESS_OBJECT_NAME, namespace = MyConfiguration.NAMESPACE_BO)
 @XmlRootElement(name = ExportTemplate.BUSINESS_OBJECT_NAME, namespace = MyConfiguration.NAMESPACE_BO)
 @BusinessObjectUnit(code = ExportTemplate.BUSINESS_OBJECT_CODE)
-public class ExportTemplate extends BusinessObject<ExportTemplate> implements IExportTemplate, IDataOwnership {
+public class ExportTemplate extends BusinessObject<ExportTemplate>
+		implements IExportTemplate, IExportTemplateItemParent, IDataOwnership {
 
 	/**
 	 * 序列化版本标记
@@ -2107,6 +2108,43 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 	}
 
 	/**
+	 * 属性名称-导出模板-附录
+	 */
+	private static final String PROPERTY_APPENDIXS_NAME = "Appendixs";
+
+	/**
+	 * 导出模板-附录的集合属性
+	 * 
+	 */
+	public static final IPropertyInfo<IExportTemplateAppendixs> PROPERTY_EXPORTTEMPLATEAPPENDIXS = registerProperty(
+			PROPERTY_APPENDIXS_NAME, IExportTemplateAppendixs.class, MY_CLASS);
+
+	/**
+	 * 获取-导出模板-附录集合
+	 * 
+	 * @return 值
+	 */
+	@XmlElementWrapper(name = PROPERTY_APPENDIXS_NAME)
+	@XmlElement(name = ExportTemplateAppendix.BUSINESS_OBJECT_NAME, type = ExportTemplateAppendix.class)
+	public final IExportTemplateAppendixs getAppendixs() {
+		return this.getProperty(PROPERTY_EXPORTTEMPLATEAPPENDIXS);
+	}
+
+	/**
+	 * 设置-导出模板-附录集合
+	 * 
+	 * @param value 值
+	 */
+	public final void setAppendixs(IExportTemplateAppendixs value) {
+		this.setProperty(PROPERTY_EXPORTTEMPLATEAPPENDIXS, value);
+	}
+
+	@Override
+	public Integer getLineId() {
+		return -1;
+	}
+
+	/**
 	 * 初始化数据
 	 */
 	@Override
@@ -2120,6 +2158,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate> implements IE
 		this.setRepetitionFooters(new ExportTemplateItems(this, emAreaType.REPETITION_FOOTER));
 		this.setEndSections(new ExportTemplateItems(this, emAreaType.END_SECTION));
 		this.setPageFooters(new ExportTemplateItems(this, emAreaType.PAGE_FOOTER));
+		this.setAppendixs(new ExportTemplateAppendixs(this));
 		this.setActivated(emYesNo.YES);
 	}
 

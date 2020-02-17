@@ -934,4 +934,17 @@ public interface IExportTemplate extends IBOSimple {
 	 */
 	void setPageFooters(IExportTemplateItems value);
 
+	/**
+	 * 获取-导出模板-附录集合
+	 * 
+	 * @return 值
+	 */
+	IExportTemplateAppendixs getAppendixs();
+
+	/**
+	 * 设置-导出模板-附录集合
+	 * 
+	 * @param value 值
+	 */
+	void setAppendixs(IExportTemplateAppendixs value);
 }

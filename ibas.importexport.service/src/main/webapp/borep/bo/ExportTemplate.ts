@@ -740,6 +740,16 @@ namespace importexport {
             set pageFooters(value: ExportTemplateItems) {
                 this.setProperty(ExportTemplate.PROPERTY_PAGEFOOTERS_NAME, value);
             }
+            /** 映射的属性名称-导出模板-附录集合 */
+            static PROPERTY_APPENDIXS_NAME: string = "Appendixs";
+            /** 获取-导出模板-附录集合 */
+            get appendixs(): ExportTemplateAppendixs {
+                return this.getProperty<ExportTemplateAppendixs>(ExportTemplate.PROPERTY_APPENDIXS_NAME);
+            }
+            /** 设置-导出模板-附录集合 */
+            set appendixs(value: ExportTemplateAppendixs) {
+                this.setProperty(ExportTemplate.PROPERTY_APPENDIXS_NAME, value);
+            }
 
             /** 初始化数据 */
             protected init(): void {
@@ -750,14 +760,15 @@ namespace importexport {
                 this.repetitionFooters = new ExportTemplateItems(this, emAreaType.REPETITION_FOOTER);
                 this.endSections = new ExportTemplateItems(this, emAreaType.END_SECTION);
                 this.pageFooters = new ExportTemplateItems(this, emAreaType.PAGE_FOOTER);
+                this.appendixs = new ExportTemplateAppendixs(this);
                 this.objectCode = ibas.config.applyVariables(ExportTemplate.BUSINESS_OBJECT_CODE);
                 this.activated = ibas.emYesNo.YES;
             }
         }
 
         /** 导出模板-项 集合 */
-        export class ExportTemplateItems extends ibas.BusinessObjects<ExportTemplateItem, ExportTemplate> implements IExportTemplateItems {
-            constructor(parent: ExportTemplate, areaType: emAreaType) {
+        export class ExportTemplateItems extends ibas.BusinessObjects<ExportTemplateItem, ExportTemplate | ExportTemplateAppendix> implements IExportTemplateItems {
+            constructor(parent: ExportTemplate | ExportTemplateAppendix, areaType: emAreaType) {
                 super(parent);
                 this.areaType = areaType;
             }
@@ -773,12 +784,14 @@ namespace importexport {
                 super.afterAdd(item);
                 item.area = this.areaType;
                 item.itemID = ibas.strings.format("F_{0}", ibas.strings.fill(item.lineId, 3, "0"));
-                if (item.area === emAreaType.REPETITION_HEADER && this.parent.repetitionHeaderHeight > 0) {
-                    item.itemHeight = this.parent.repetitionHeaderHeight;
-                } else if (item.area === emAreaType.REPETITION && this.parent.repetitionHeight > 0) {
-                    item.itemHeight = this.parent.repetitionHeight;
-                } else if (item.area === emAreaType.REPETITION_FOOTER && this.parent.repetitionFooterHeight > 0) {
-                    item.itemHeight = this.parent.repetitionFooterHeight;
+                if (this.parent instanceof ExportTemplate) {
+                    if (item.area === emAreaType.REPETITION_HEADER && this.parent.repetitionHeaderHeight > 0) {
+                        item.itemHeight = this.parent.repetitionHeaderHeight;
+                    } else if (item.area === emAreaType.REPETITION && this.parent.repetitionHeight > 0) {
+                        item.itemHeight = this.parent.repetitionHeight;
+                    } else if (item.area === emAreaType.REPETITION_FOOTER && this.parent.repetitionFooterHeight > 0) {
+                        item.itemHeight = this.parent.repetitionFooterHeight;
+                    }
                 }
             }
         }
@@ -1346,6 +1359,306 @@ namespace importexport {
                 this.textSegment = emTextSegment.WORD;
                 this.justificationHorizontal = emJustificationHorizontal.CENTER;
                 this.justificationVertical = emJustificationVertical.CENTER;
+            }
+        }
+        /** 导出模板-附录 集合 */
+        export class ExportTemplateAppendixs extends ibas.BusinessObjects<ExportTemplateAppendix, ExportTemplate> implements IExportTemplateAppendixs {
+            /** 创建并添加子项 */
+            create(): ExportTemplateAppendix {
+                let item: ExportTemplateAppendix = new ExportTemplateAppendix();
+                this.add(item);
+                return item;
+            }
+        }
+
+        /** 导出模板-附录 */
+        export class ExportTemplateAppendix extends ibas.BOSimpleLine<ExportTemplateAppendix> implements IExportTemplateAppendix {
+            /** 构造函数 */
+            constructor() {
+                super();
+            }
+            /** 映射的属性名称-编号 */
+            static PROPERTY_OBJECTKEY_NAME: string = "ObjectKey";
+            /** 获取-编号 */
+            get objectKey(): number {
+                return this.getProperty<number>(ExportTemplateAppendix.PROPERTY_OBJECTKEY_NAME);
+            }
+            /** 设置-编号 */
+            set objectKey(value: number) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_OBJECTKEY_NAME, value);
+            }
+
+            /** 映射的属性名称-类型 */
+            static PROPERTY_OBJECTCODE_NAME: string = "ObjectCode";
+            /** 获取-类型 */
+            get objectCode(): string {
+                return this.getProperty<string>(ExportTemplateAppendix.PROPERTY_OBJECTCODE_NAME);
+            }
+            /** 设置-类型 */
+            set objectCode(value: string) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_OBJECTCODE_NAME, value);
+            }
+
+            /** 映射的属性名称-行号 */
+            static PROPERTY_LINEID_NAME: string = "LineId";
+            /** 获取-行号 */
+            get lineId(): number {
+                return this.getProperty<number>(ExportTemplateAppendix.PROPERTY_LINEID_NAME);
+            }
+            /** 设置-行号 */
+            set lineId(value: number) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_LINEID_NAME, value);
+            }
+
+            /** 映射的属性名称-数据源 */
+            static PROPERTY_DATASOURCE_NAME: string = "DataSource";
+            /** 获取-数据源 */
+            get dataSource(): string {
+                return this.getProperty<string>(ExportTemplateAppendix.PROPERTY_DATASOURCE_NAME);
+            }
+            /** 设置-数据源 */
+            set dataSource(value: string) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_DATASOURCE_NAME, value);
+            }
+
+            /** 映射的属性名称-实例号（版本） */
+            static PROPERTY_LOGINST_NAME: string = "LogInst";
+            /** 获取-实例号（版本） */
+            get logInst(): number {
+                return this.getProperty<number>(ExportTemplateAppendix.PROPERTY_LOGINST_NAME);
+            }
+            /** 设置-实例号（版本） */
+            set logInst(value: number) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_LOGINST_NAME, value);
+            }
+
+            /** 映射的属性名称-创建日期 */
+            static PROPERTY_CREATEDATE_NAME: string = "CreateDate";
+            /** 获取-创建日期 */
+            get createDate(): Date {
+                return this.getProperty<Date>(ExportTemplateAppendix.PROPERTY_CREATEDATE_NAME);
+            }
+            /** 设置-创建日期 */
+            set createDate(value: Date) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_CREATEDATE_NAME, value);
+            }
+
+            /** 映射的属性名称-创建时间 */
+            static PROPERTY_CREATETIME_NAME: string = "CreateTime";
+            /** 获取-创建时间 */
+            get createTime(): number {
+                return this.getProperty<number>(ExportTemplateAppendix.PROPERTY_CREATETIME_NAME);
+            }
+            /** 设置-创建时间 */
+            set createTime(value: number) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_CREATETIME_NAME, value);
+            }
+
+            /** 映射的属性名称-修改日期 */
+            static PROPERTY_UPDATEDATE_NAME: string = "UpdateDate";
+            /** 获取-修改日期 */
+            get updateDate(): Date {
+                return this.getProperty<Date>(ExportTemplateAppendix.PROPERTY_UPDATEDATE_NAME);
+            }
+            /** 设置-修改日期 */
+            set updateDate(value: Date) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_UPDATEDATE_NAME, value);
+            }
+
+            /** 映射的属性名称-修改时间 */
+            static PROPERTY_UPDATETIME_NAME: string = "UpdateTime";
+            /** 获取-修改时间 */
+            get updateTime(): number {
+                return this.getProperty<number>(ExportTemplateAppendix.PROPERTY_UPDATETIME_NAME);
+            }
+            /** 设置-修改时间 */
+            set updateTime(value: number) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_UPDATETIME_NAME, value);
+            }
+
+            /** 映射的属性名称-创建用户 */
+            static PROPERTY_CREATEUSERSIGN_NAME: string = "CreateUserSign";
+            /** 获取-创建用户 */
+            get createUserSign(): number {
+                return this.getProperty<number>(ExportTemplateAppendix.PROPERTY_CREATEUSERSIGN_NAME);
+            }
+            /** 设置-创建用户 */
+            set createUserSign(value: number) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_CREATEUSERSIGN_NAME, value);
+            }
+
+            /** 映射的属性名称-修改用户 */
+            static PROPERTY_UPDATEUSERSIGN_NAME: string = "UpdateUserSign";
+            /** 获取-修改用户 */
+            get updateUserSign(): number {
+                return this.getProperty<number>(ExportTemplateAppendix.PROPERTY_UPDATEUSERSIGN_NAME);
+            }
+            /** 设置-修改用户 */
+            set updateUserSign(value: number) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_UPDATEUSERSIGN_NAME, value);
+            }
+
+            /** 映射的属性名称-创建动作标识 */
+            static PROPERTY_CREATEACTIONID_NAME: string = "CreateActionId";
+            /** 获取-创建动作标识 */
+            get createActionId(): string {
+                return this.getProperty<string>(ExportTemplateAppendix.PROPERTY_CREATEACTIONID_NAME);
+            }
+            /** 设置-创建动作标识 */
+            set createActionId(value: string) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_CREATEACTIONID_NAME, value);
+            }
+
+            /** 映射的属性名称-更新动作标识 */
+            static PROPERTY_UPDATEACTIONID_NAME: string = "UpdateActionId";
+            /** 获取-更新动作标识 */
+            get updateActionId(): string {
+                return this.getProperty<string>(ExportTemplateAppendix.PROPERTY_UPDATEACTIONID_NAME);
+            }
+            /** 设置-更新动作标识 */
+            set updateActionId(value: string) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_UPDATEACTIONID_NAME, value);
+            }
+
+            /** 映射的属性名称-页序号 */
+            static PROPERTY_PAGEORDER_NAME: string = "PageOrder";
+            /** 获取-页序号 */
+            get pageOrder(): number {
+                return this.getProperty<number>(ExportTemplateAppendix.PROPERTY_PAGEORDER_NAME);
+            }
+            /** 设置-页序号 */
+            set pageOrder(value: number) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_PAGEORDER_NAME, value);
+            }
+
+            /** 映射的属性名称-使用页眉 */
+            static PROPERTY_PAGEHEADER_NAME: string = "PageHeader";
+            /** 获取-使用页眉 */
+            get pageHeader(): ibas.emYesNo {
+                return this.getProperty<ibas.emYesNo>(ExportTemplateAppendix.PROPERTY_PAGEHEADER_NAME);
+            }
+            /** 设置-使用页眉 */
+            set pageHeader(value: ibas.emYesNo) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_PAGEHEADER_NAME, value);
+            }
+
+            /** 映射的属性名称-使用页脚 */
+            static PROPERTY_PAGEFOOTER_NAME: string = "PageFooter";
+            /** 获取-使用页脚 */
+            get pageFooter(): ibas.emYesNo {
+                return this.getProperty<ibas.emYesNo>(ExportTemplateAppendix.PROPERTY_PAGEFOOTER_NAME);
+            }
+            /** 设置-使用页脚 */
+            set pageFooter(value: ibas.emYesNo) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_PAGEFOOTER_NAME, value);
+            }
+
+            /** 映射的属性名称-内容-左坐标 */
+            static PROPERTY_CONTENTLEFT_NAME: string = "ContentLeft";
+            /** 获取-内容-左坐标 */
+            get contentLeft(): number {
+                return this.getProperty<number>(ExportTemplateAppendix.PROPERTY_CONTENTLEFT_NAME);
+            }
+            /** 设置-内容-左坐标 */
+            set contentLeft(value: number) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_CONTENTLEFT_NAME, value);
+            }
+
+            /** 映射的属性名称-内容-上坐标 */
+            static PROPERTY_CONTENTTOP_NAME: string = "ContentTop";
+            /** 获取-内容-上坐标 */
+            get contentTop(): number {
+                return this.getProperty<number>(ExportTemplateAppendix.PROPERTY_CONTENTTOP_NAME);
+            }
+            /** 设置-内容-上坐标 */
+            set contentTop(value: number) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_CONTENTTOP_NAME, value);
+            }
+
+            /** 映射的属性名称-内容-宽度 */
+            static PROPERTY_CONTENTWIDTH_NAME: string = "ContentWidth";
+            /** 获取-内容-宽度 */
+            get contentWidth(): number {
+                return this.getProperty<number>(ExportTemplateAppendix.PROPERTY_CONTENTWIDTH_NAME);
+            }
+            /** 设置-内容-宽度 */
+            set contentWidth(value: number) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_CONTENTWIDTH_NAME, value);
+            }
+
+            /** 映射的属性名称-内容-高度 */
+            static PROPERTY_CONTENTHEIGHT_NAME: string = "ContentHeight";
+            /** 获取-内容-高度 */
+            get contentHeight(): number {
+                return this.getProperty<number>(ExportTemplateAppendix.PROPERTY_CONTENTHEIGHT_NAME);
+            }
+            /** 设置-内容-高度 */
+            set contentHeight(value: number) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_CONTENTHEIGHT_NAME, value);
+            }
+
+            /** 映射的属性名称-背景色-红 */
+            static PROPERTY_BACKGROUNDRED_NAME: string = "BackgroundRed";
+            /** 获取-背景色-红 */
+            get backgroundRed(): number {
+                return this.getProperty<number>(ExportTemplateAppendix.PROPERTY_BACKGROUNDRED_NAME);
+            }
+            /** 设置-背景色-红 */
+            set backgroundRed(value: number) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_BACKGROUNDRED_NAME, value);
+            }
+
+            /** 映射的属性名称-背景色-绿 */
+            static PROPERTY_BACKGROUNDGREEN_NAME: string = "BackgroundGreen";
+            /** 获取-背景色-绿 */
+            get backgroundGreen(): number {
+                return this.getProperty<number>(ExportTemplateAppendix.PROPERTY_BACKGROUNDGREEN_NAME);
+            }
+            /** 设置-背景色-绿 */
+            set backgroundGreen(value: number) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_BACKGROUNDGREEN_NAME, value);
+            }
+
+            /** 映射的属性名称-背景色-蓝 */
+            static PROPERTY_BACKGROUNDBLUE_NAME: string = "BackgroundBlue";
+            /** 获取-背景色-蓝 */
+            get backgroundBlue(): number {
+                return this.getProperty<number>(ExportTemplateAppendix.PROPERTY_BACKGROUNDBLUE_NAME);
+            }
+            /** 设置-背景色-蓝 */
+            set backgroundBlue(value: number) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_BACKGROUNDBLUE_NAME, value);
+            }
+
+            /** 映射的属性名称-背景图 */
+            static PROPERTY_BACKGROUNDIMAGE_NAME: string = "BackgroundImage";
+            /** 获取-背景图 */
+            get backgroundImage(): string {
+                return this.getProperty<string>(ExportTemplateAppendix.PROPERTY_BACKGROUNDIMAGE_NAME);
+            }
+            /** 设置-背景图 */
+            set backgroundImage(value: string) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_BACKGROUNDIMAGE_NAME, value);
+            }
+
+            /** 映射的属性名称-附录内容 */
+            static PROPERTY_CONTENTS_NAME: string = "Contents";
+            /** 获取-附录内容 */
+            get contents(): ExportTemplateItems {
+                return this.getProperty<ExportTemplateItems>(ExportTemplateAppendix.PROPERTY_CONTENTS_NAME);
+            }
+            /** 设置-附录内容 */
+            set contents(value: ExportTemplateItems) {
+                this.setProperty(ExportTemplateAppendix.PROPERTY_CONTENTS_NAME, value);
+            }
+
+
+            /** 初始化数据 */
+            protected init(): void {
+                this.objectCode = ibas.config.applyVariables(ExportTemplate.BUSINESS_OBJECT_CODE);
+                this.contents = new ExportTemplateItems(this, emAreaType.PAGE_FOOTER);
+                this.pageHeader = ibas.emYesNo.YES;
+                this.pageFooter = ibas.emYesNo.YES;
             }
         }
 
