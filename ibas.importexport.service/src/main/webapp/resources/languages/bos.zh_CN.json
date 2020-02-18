@@ -125,6 +125,7 @@
         "bo_exporttemplateitem_repetitionfooters": "重复区脚",
         "bo_exporttemplateitem_endsections": "结束区",
         "bo_exporttemplateitem_pagefooters": "页脚区",
+        "bo_exporttemplateitem_appendixs": "附录",
         "bo_exporttemplateappendix": "导出模板-附录",
         "bo_exporttemplateappendix_objectkey": "编号",
         "bo_exporttemplateappendix_objectcode": "类型",

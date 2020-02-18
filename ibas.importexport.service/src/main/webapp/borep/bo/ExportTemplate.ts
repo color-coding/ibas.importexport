@@ -1363,6 +1363,21 @@ namespace importexport {
         }
         /** 导出模板-附录 集合 */
         export class ExportTemplateAppendixs extends ibas.BusinessObjects<ExportTemplateAppendix, ExportTemplate> implements IExportTemplateAppendixs {
+            constructor(parent: ExportTemplate) {
+                super(parent);
+                this.registerListener({
+                    propertyChanged: (property) => {
+                        if (ibas.strings.equalsIgnoreCase("length", property)) {
+                            for (let index: number = 0; index < this.length; index++) {
+                                let item: any = this[index];
+                                if (item instanceof ExportTemplateAppendix) {
+                                    item.pageOrder = index + 1;
+                                }
+                            }
+                        }
+                    }
+                });
+            }
             /** 创建并添加子项 */
             create(): ExportTemplateAppendix {
                 let item: ExportTemplateAppendix = new ExportTemplateAppendix();

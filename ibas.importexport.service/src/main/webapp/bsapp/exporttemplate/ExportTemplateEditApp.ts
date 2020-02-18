@@ -45,6 +45,8 @@ namespace importexport {
                 this.view.removeEndSectionEvent = this.removeEndSection;
                 this.view.addPageFooterEvent = this.addPageFooter;
                 this.view.removePageFooterEvent = this.removePageFooter;
+                this.view.addAppendixEvent = this.addAppendix;
+                this.view.removeAppendixEvent = this.removeAppendix;
             }
             /** 视图显示后 */
             protected viewShowed(): void {
@@ -63,6 +65,7 @@ namespace importexport {
                 this.view.showRepetitionFooters(this.editData.repetitionFooters.filterDeleted());
                 this.view.showEndSections(this.editData.endSections.filterDeleted());
                 this.view.showPageFooters(this.editData.pageFooters.filterDeleted());
+                this.view.showAppendixes(this.editData.appendixs.filterDeleted());
             }
             run(): void;
             run(data: bo.ExportTemplate): void;
@@ -201,9 +204,7 @@ namespace importexport {
             /** 删除导出模板-项事件 */
             protected removePageHeader(items: bo.ExportTemplateItem[]): void {
                 // 非数组，转为数组
-                if (!(items instanceof Array)) {
-                    items = [items];
-                }
+                items = ibas.arrays.create(items);
                 if (items.length === 0) {
                     return;
                 }
@@ -231,9 +232,7 @@ namespace importexport {
             /** 删除导出模板-项事件 */
             protected removeStartSection(items: bo.ExportTemplateItem[]): void {
                 // 非数组，转为数组
-                if (!(items instanceof Array)) {
-                    items = [items];
-                }
+                items = ibas.arrays.create(items);
                 if (items.length === 0) {
                     return;
                 }
@@ -262,9 +261,7 @@ namespace importexport {
             /** 删除导出模板-项事件 */
             protected removeRepetitionHeader(items: bo.ExportTemplateItem[]): void {
                 // 非数组，转为数组
-                if (!(items instanceof Array)) {
-                    items = [items];
-                }
+                items = ibas.arrays.create(items);
                 if (items.length === 0) {
                     return;
                 }
@@ -292,9 +289,7 @@ namespace importexport {
             /** 删除导出模板-项事件 */
             protected removeRepetition(items: bo.ExportTemplateItem[]): void {
                 // 非数组，转为数组
-                if (!(items instanceof Array)) {
-                    items = [items];
-                }
+                items = ibas.arrays.create(items);
                 if (items.length === 0) {
                     return;
                 }
@@ -322,9 +317,7 @@ namespace importexport {
             /** 删除导出模板-项事件 */
             protected removeRepetitionFooter(items: bo.ExportTemplateItem[]): void {
                 // 非数组，转为数组
-                if (!(items instanceof Array)) {
-                    items = [items];
-                }
+                items = ibas.arrays.create(items);
                 if (items.length === 0) {
                     return;
                 }
@@ -352,9 +345,7 @@ namespace importexport {
             /** 删除导出模板-项事件 */
             protected removeEndSection(items: bo.ExportTemplateItem[]): void {
                 // 非数组，转为数组
-                if (!(items instanceof Array)) {
-                    items = [items];
-                }
+                items = ibas.arrays.create(items);
                 if (items.length === 0) {
                     return;
                 }
@@ -382,9 +373,7 @@ namespace importexport {
             /** 删除导出模板-项事件 */
             protected removePageFooter(items: bo.ExportTemplateItem[]): void {
                 // 非数组，转为数组
-                if (!(items instanceof Array)) {
-                    items = [items];
-                }
+                items = ibas.arrays.create(items);
                 if (items.length === 0) {
                     return;
                 }
@@ -424,6 +413,34 @@ namespace importexport {
                         }
                     }
                 });
+            }
+            /** 添加导出模板-项事件 */
+            addAppendix(): void {
+                this.editData.appendixs.create();
+                // 仅显示没有标记删除的
+                this.view.showAppendixes(this.editData.appendixs.filterDeleted());
+            }
+            /** 删除导出模板-项事件 */
+            removeAppendix(items: bo.ExportTemplateAppendix[]): void {
+                // 非数组，转为数组
+                items = ibas.arrays.create(items);
+                if (items.length === 0) {
+                    return;
+                }
+                // 移除项目
+                for (let item of items) {
+                    if (this.editData.appendixs.indexOf(item) >= 0) {
+                        if (item.isNew) {
+                            // 新建的移除集合
+                            this.editData.appendixs.remove(item);
+                        } else {
+                            // 非新建标记删除
+                            item.delete();
+                        }
+                    }
+                }
+                // 仅显示没有标记删除的
+                this.view.showAppendixes(this.editData.appendixs.filterDeleted());
             }
         }
         /** 视图-导出模板 */
@@ -478,6 +495,12 @@ namespace importexport {
             removePageFooterEvent: Function;
             /** 显示数据-页脚 */
             showPageFooters(datas: bo.ExportTemplateItem[]): void;
+            /** 添加导出模板-项事件 */
+            addAppendixEvent: Function;
+            /** 删除导出模板-项事件 */
+            removeAppendixEvent: Function;
+            /** 显示数据-附录 */
+            showAppendixes(datas: bo.ExportTemplateAppendix[]): void;
         }
     }
 }

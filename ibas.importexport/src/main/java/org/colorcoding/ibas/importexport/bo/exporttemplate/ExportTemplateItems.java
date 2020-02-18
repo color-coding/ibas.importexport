@@ -74,7 +74,7 @@ public class ExportTemplateItems extends BusinessObjects<IExportTemplateItem, IE
 	protected void afterAddItem(IExportTemplateItem item) {
 		super.afterAddItem(item);
 		item.setArea(this.areaType);
-		if (Integer.compare(this.getParent().getLineId(), 0) >= 0) {
+		if (this.getParent().getLineId() != null && Integer.compare(this.getParent().getLineId(), 0) >= 0) {
 			item.setAreaSub(this.getParent().getLineId());
 		}
 	}

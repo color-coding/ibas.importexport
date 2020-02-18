@@ -43,5 +43,7 @@
   "importexport_export_conditions": "导出的查询条件（无条件仅为模板）",
   "importexport_title_general": "常规",
   "importexport_title_size": "规格",
+  "importexport_page_number": "第{0}页",
+  "importexport_remove_page_continue": "删除{0}，是否继续?",
   "importexport_closing_delimiter": "----结束----"
 }

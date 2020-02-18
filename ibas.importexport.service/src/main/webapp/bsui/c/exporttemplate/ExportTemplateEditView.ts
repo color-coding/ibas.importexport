@@ -42,6 +42,10 @@ namespace importexport {
                 addPageFooterEvent: Function;
                 /** 删除导出模板-项事件 */
                 removePageFooterEvent: Function;
+                /** 添加导出模板-项事件 */
+                addAppendixEvent: Function;
+                /** 删除导出模板-项事件 */
+                removeAppendixEvent: Function;
                 /** 选择业务对象 */
                 chooseBusinessObjectEvent: Function;
 
@@ -589,6 +593,101 @@ namespace importexport {
                                             this.tablePageFooters = this.createTableTemplateItem(this.addPageFooterEvent, this.removePageFooterEvent),
                                         ]
                                     }),
+                                    new sap.m.IconTabSeparator("", {
+                                        icon: "sap-icon://vertical-grip"
+                                    }),
+                                    new sap.m.IconTabFilter("", {
+                                        key: bo.emAreaType.APPENDIX,
+                                        text: ibas.i18n.prop("bo_exporttemplateitem_appendixs"),
+                                        content: [
+                                            this.tabContainerAppendixes = new sap.m.TabContainer("", {
+                                                showAddNewButton: true,
+                                                backgroundDesign: sap.m.PageBackgroundDesign.Transparent,
+                                                addNewButtonPress(event: sap.ui.base.Event): void {
+                                                    that.fireViewEvents(that.addAppendixEvent);
+                                                    let items: any[] = that.tabContainerAppendixes.getItems();
+                                                    if (items.length > 0) {
+                                                        that.tabContainerAppendixes.setSelectedItem(items[items.length - 1]);
+                                                    }
+                                                },
+                                                itemClose(event: sap.ui.base.Event): void {
+                                                    let item: any = event.getParameter("item");
+                                                    if (item instanceof sap.m.TabContainerItem) {
+                                                        let model: any = item.getModel();
+                                                        if (model instanceof sap.extension.model.JSONModel) {
+                                                            that.application.viewShower.messages({
+                                                                type: ibas.emMessageType.QUESTION,
+                                                                actions: [
+                                                                    ibas.emMessageAction.YES,
+                                                                    ibas.emMessageAction.NO,
+                                                                ],
+                                                                message: ibas.i18n.prop("importexport_remove_page_continue", item.getName()),
+                                                                onCompleted: (action) => {
+                                                                    if (action === ibas.emMessageAction.YES) {
+                                                                        that.fireViewEvents(that.removeAppendixEvent, model.getData());
+                                                                    }
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+                                                    event.preventDefault();
+                                                },
+                                                itemSelect(event: sap.ui.base.Event): void {
+                                                    let item: any = event.getParameter("item");
+                                                    if (item instanceof sap.m.TabContainerItem) {
+                                                        let model: any = item.getModel();
+                                                        if (model instanceof sap.extension.model.JSONModel) {
+                                                            let data: any = model.getData();
+                                                            if (data instanceof bo.ExportTemplateAppendix) {
+                                                                that.tableAppendixes.setModel(new sap.extension.model.JSONModel({ rows: data.contents.filterDeleted() }));
+                                                                return;
+                                                            }
+                                                        }
+                                                    }
+                                                    that.tableAppendixes.setModel(null);
+                                                },
+                                            }),
+                                            this.tableAppendixes = <any>this.createTableTemplateItem(function (): void {
+                                                let selectItem: any = sap.ui.getCore().byId(that.tabContainerAppendixes.getSelectedItem());
+                                                if (selectItem instanceof sap.m.TabContainerItem) {
+                                                    let model: any = selectItem.getModel();
+                                                    if (model instanceof sap.extension.model.JSONModel) {
+                                                        let data: any = model.getData();
+                                                        if (data instanceof bo.ExportTemplateAppendix) {
+                                                            data.contents.create();
+                                                            that.tableAppendixes.setModel(new sap.extension.model.JSONModel({ rows: data.contents.filterDeleted() }));
+                                                        }
+                                                    }
+                                                }
+                                            }, function (items: bo.ExportTemplateItem[]): void {
+                                                items = ibas.arrays.create(items);
+                                                if (items.length === 0) {
+                                                    return;
+                                                }
+                                                let selectItem: any = sap.ui.getCore().byId(that.tabContainerAppendixes.getSelectedItem());
+                                                if (selectItem instanceof sap.m.TabContainerItem) {
+                                                    let model: any = selectItem.getModel();
+                                                    if (model instanceof sap.extension.model.JSONModel) {
+                                                        let data: any = model.getData();
+                                                        if (data instanceof bo.ExportTemplateAppendix) {
+                                                            for (let item of items) {
+                                                                if (data.contents.indexOf(item) >= 0) {
+                                                                    if (item.isNew) {
+                                                                        // 新建的移除集合
+                                                                        data.contents.remove(item);
+                                                                    } else {
+                                                                        // 非新建标记删除
+                                                                        item.delete();
+                                                                    }
+                                                                }
+                                                            }
+                                                            that.tableAppendixes.setModel(new sap.extension.model.JSONModel({ rows: data.contents.filterDeleted() }));
+                                                        }
+                                                    }
+                                                }
+                                            }).setVisible(false),
+                                        ]
+                                    }),
                                 ]
                             })
                         ]
@@ -660,7 +759,7 @@ namespace importexport {
                                 new sap.m.Button("", {
                                     text: ibas.i18n.prop("shell_data_add"),
                                     type: sap.m.ButtonType.Transparent,
-                                    icon: "sap-icon://less",
+                                    icon: "sap-icon://add",
                                     press: function (): void {
                                         that.fireViewEvents(eventAdd);
                                     }
@@ -901,6 +1000,8 @@ namespace importexport {
                 private tableRepetitionFooters: sap.extension.table.Table;
                 private tableEndSections: sap.extension.table.Table;
                 private tablePageFooters: sap.extension.table.Table;
+                private tableAppendixes: sap.extension.table.Table;
+                private tabContainerAppendixes: sap.m.TabContainer;
 
                 /** 显示数据 */
                 showExportTemplate(data: bo.ExportTemplate): void {
@@ -935,6 +1036,25 @@ namespace importexport {
                 /** 显示数据-页脚 */
                 showPageFooters(datas: bo.ExportTemplateItem[]): void {
                     this.tablePageFooters.setModel(new sap.extension.model.JSONModel({ rows: datas }));
+                }
+                /** 显示数据-附录 */
+                showAppendixes(datas: bo.ExportTemplateAppendix[]): void {
+                    this.tabContainerAppendixes.destroyItems();
+                    for (let item of datas) {
+                        let tabItem: sap.m.TabContainerItem = new sap.m.TabContainerItem("", {
+                            name: {
+                                path: "/pageOrder",
+                                formatter(data: number): string {
+                                    return ibas.i18n.prop("importexport_page_number", data ? data : 0);
+                                },
+                            }
+                        });
+                        tabItem.setModel(new sap.extension.model.JSONModel(item));
+                        this.tabContainerAppendixes.addItem(tabItem);
+                    }
+                    if (this.tabContainerAppendixes.getItems().length > 0) {
+                        this.tableAppendixes.setVisible(true);
+                    }
                 }
             }
         }
