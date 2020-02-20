@@ -9,6 +9,7 @@ import org.colorcoding.ibas.bobas.bo.BusinessObjects;
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.ISort;
 import org.colorcoding.ibas.bobas.common.SortType;
+import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.importexport.MyConfiguration;
 
 /**
@@ -68,6 +69,18 @@ public class ExportTemplateAppendixs extends BusinessObjects<IExportTemplateAppe
 	@Override
 	protected void afterAddItem(IExportTemplateAppendix item) {
 		super.afterAddItem(item);
+		item.setContentHeight(this.getParent().getHeight());
+		item.setContentWidth(this.getParent().getWidth());
+		if (item.getPageHeader() == emYesNo.YES) {
+			item.setContentTop(this.getParent().getPageHeaderTop() + this.getParent().getPageHeaderHeight()
+					+ this.getParent().getMarginArea());
+			item.setContentHeight(item.getContentHeight() - this.getParent().getPageHeaderHeight()
+					- this.getParent().getMarginArea());
+		}
+		if (item.getPageFooter() == emYesNo.YES) {
+			item.setContentHeight(item.getContentHeight() - this.getParent().getMarginArea()
+					- this.getParent().getPageFooterHeight());
+		}
 	}
 
 	@Override
@@ -83,7 +96,51 @@ public class ExportTemplateAppendixs extends BusinessObjects<IExportTemplateAppe
 	}
 
 	@Override
-	public void onParentPropertyChanged(PropertyChangeEvent evt) {
+	protected void onParentPropertyChanged(PropertyChangeEvent evt) {
 		super.onParentPropertyChanged(evt);
+		if (ExportTemplate.PROPERTY_WIDTH.getName().equalsIgnoreCase(evt.getPropertyName())) {
+			for (IExportTemplateAppendix item : this) {
+				item.setContentWidth(this.getParent().getWidth());
+			}
+		} else if (ExportTemplate.PROPERTY_HEIGHT.getName().equalsIgnoreCase(evt.getPropertyName())
+				|| ExportTemplate.PROPERTY_PAGEHEADERTOP.getName().equalsIgnoreCase(evt.getPropertyName())
+				|| ExportTemplate.PROPERTY_PAGEHEADERHEIGHT.getName().equalsIgnoreCase(evt.getPropertyName())
+				|| ExportTemplate.PROPERTY_MARGINAREA.getName().equalsIgnoreCase(evt.getPropertyName())
+				|| ExportTemplate.PROPERTY_PAGEFOOTERHEIGHT.getName().equalsIgnoreCase(evt.getPropertyName())) {
+			for (IExportTemplateAppendix item : this) {
+				item.setContentHeight(this.getParent().getHeight());
+				if (item.getPageHeader() == emYesNo.YES) {
+					item.setContentTop(this.getParent().getPageHeaderTop() + this.getParent().getPageHeaderHeight()
+							+ this.getParent().getMarginArea());
+					item.setContentHeight(item.getContentHeight() - this.getParent().getPageHeaderHeight()
+							- this.getParent().getMarginArea());
+				}
+				if (item.getPageFooter() == emYesNo.YES) {
+					item.setContentHeight(item.getContentHeight() - this.getParent().getMarginArea()
+							- this.getParent().getPageFooterHeight());
+				}
+			}
+		}
+	}
+
+	@Override
+	protected void onItemPropertyChanged(PropertyChangeEvent evt) {
+		super.onItemPropertyChanged(evt);
+		if (ExportTemplateAppendix.PROPERTY_PAGEHEADER.getName().equalsIgnoreCase(evt.getPropertyName())
+				|| ExportTemplateAppendix.PROPERTY_PAGEFOOTER.getName().equalsIgnoreCase(evt.getPropertyName())) {
+			for (IExportTemplateAppendix item : this) {
+				item.setContentHeight(this.getParent().getHeight());
+				if (item.getPageHeader() == emYesNo.YES) {
+					item.setContentTop(this.getParent().getPageHeaderTop() + this.getParent().getPageHeaderHeight()
+							+ this.getParent().getMarginArea());
+					item.setContentHeight(item.getContentHeight() - this.getParent().getPageHeaderHeight()
+							- this.getParent().getMarginArea());
+				}
+				if (item.getPageFooter() == emYesNo.YES) {
+					item.setContentHeight(item.getContentHeight() - this.getParent().getMarginArea()
+							- this.getParent().getPageFooterHeight());
+				}
+			}
+		}
 	}
 }

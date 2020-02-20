@@ -30,6 +30,7 @@ public abstract class TemplateTransformer extends Transformer<InputStream, File>
 	public static final String PARAM_PATTERN_TEMPLATE = "(%s)";
 	public static final String PARAM_PAGE_INDEX = "${PAGE_INDEX}";
 	public static final String PARAM_PAGE_TOTAL = "${PAGE_TOTAL}";
+	public static final String PARAM_PAGE_MAIN_TOTAL = "${PAGE_MAIN_TOTAL}";
 	public static final String PARAM_DATA_SIZE = "${DATA_SIZE}";
 	public static final String PARAM_DATA_INDEX = "${DATA_INDEX}";
 	public static final String PARAM_TIME_NOW = "${TIME_NOW}";

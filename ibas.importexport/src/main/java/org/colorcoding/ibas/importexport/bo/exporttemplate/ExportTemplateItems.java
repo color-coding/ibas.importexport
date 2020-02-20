@@ -100,7 +100,7 @@ public class ExportTemplateItems extends BusinessObjects<IExportTemplateItem, IE
 	}
 
 	@Override
-	public void onParentPropertyChanged(PropertyChangeEvent evt) {
+	protected void onParentPropertyChanged(PropertyChangeEvent evt) {
 		super.onParentPropertyChanged(evt);
 		if (ExportTemplateItem.PROPERTY_OBJECTKEY.getName().equals(evt.getPropertyName())) {
 			for (IExportTemplateItem item : this) {

@@ -18,6 +18,7 @@ import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.message.MessageLevel;
 import org.colorcoding.ibas.importexport.MyConfiguration;
+import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplateAppendix;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplateItem;
 import org.colorcoding.ibas.importexport.data.emDataSourceType;
 import org.colorcoding.ibas.importexport.data.emJustificationHorizontal;
@@ -216,6 +217,13 @@ public class TransformerHtml extends TemplateTransformer {
 				}
 			}
 		}
+		// 正文页数
+		this.newParam(PARAM_PAGE_MAIN_TOTAL, count);
+		// 增加附录页数
+		if (!this.getTemplate().getAppendixs().isEmpty()) {
+			count += this.getTemplate().getAppendixs().size();
+		}
+		// 总页数
 		this.newParam(PARAM_PAGE_TOTAL, count);
 		this.newParam(PARAM_PAGE_INDEX, 1);
 	}
@@ -269,7 +277,9 @@ public class TransformerHtml extends TemplateTransformer {
 
 		int pageTop = 0, pageLeft = 0, pageWidth = this.getTemplate().getWidth(),
 				pageHeight = this.getTemplate().getHeight();
-		for (int page = this.paramValue(PARAM_PAGE_INDEX, 1); page <= this.paramValue(PARAM_PAGE_TOTAL, 1); page++) {
+		// 绘制正文
+		for (int page = this.paramValue(PARAM_PAGE_INDEX, 1); page <= this.paramValue(PARAM_PAGE_MAIN_TOTAL,
+				1); page++) {
 			// 设置当前页变量
 			this.newParam(PARAM_PAGE_INDEX, page);
 			// 设置当前页数据
@@ -282,35 +292,16 @@ public class TransformerHtml extends TemplateTransformer {
 			pageTop = (page - 1) * pageHeight;
 			if (page > 1) {
 				// 页分隔线
-				writer.write("<div");
-				writer.write(" ");
-				writer.write("id=\"");
-				writer.write(String.format("%s_line", pageName));
-				writer.write("\"");
-				writer.write(" ");
-				writer.write("class=\"no_print\"");
-				writer.write(" ");
-				writer.write("style=\"");
-				writer.write("position:absolute;");
-				writer.write("border:1px dashed black;");
-				writer.write("top:");
-				writer.write(String.valueOf(pageTop));
-				writer.write("px;");
-				writer.write("width:");
-				writer.write(String.valueOf(pageWidth));
-				writer.write("px;");
-				writer.write("\"");
-				writer.write(" ");
-				writer.write(">");
-				writer.write("</div>");
+				this.drawPageSeparator(writer, pageName, pageTop, pageWidth);
 			}
 			int top = 0;
 			this.startDiv(writer, pageName, pageLeft, pageTop, pageWidth, pageHeight);
 			// 绘制页眉区域
 			String areaName = String.format("%s_header", pageName);
 			Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
-			this.startDiv(writer, areaName, this.getTemplate().getPageHeaderLeft(), top,
-					this.getTemplate().getPageHeaderWidth(), this.getTemplate().getPageHeaderHeight());
+			this.startDiv(writer, areaName, this.getTemplate().getPageHeaderLeft(),
+					this.getTemplate().getPageHeaderTop(), this.getTemplate().getPageHeaderWidth(),
+					this.getTemplate().getPageHeaderHeight());
 			this.drawArea(writer, this.getTemplate().getPageHeaders());
 			this.endDiv(writer);
 			top += this.getTemplate().getPageHeaderTop();
@@ -366,7 +357,7 @@ public class TransformerHtml extends TemplateTransformer {
 				}
 			}
 			// 绘制结束区域
-			if (page == this.paramValue(PARAM_PAGE_TOTAL, 1)) {
+			if (page == this.paramValue(PARAM_PAGE_MAIN_TOTAL, 1)) {
 				// 最后一页绘制
 				top += this.getTemplate().getMarginArea();
 				areaName = String.format("%s_endsection", pageName);
@@ -388,8 +379,49 @@ public class TransformerHtml extends TemplateTransformer {
 			// 结束-页
 			this.endDiv(writer);
 		}
+		int page = this.paramValue(PARAM_PAGE_INDEX, 0);
+		// 绘制附录
+		for (int index = 0; index < this.getTemplate().getAppendixs().size(); index++) {
+			// 设置当前页变量
+			page += 1;
+			this.newParam(PARAM_PAGE_INDEX, page);
+			IExportTemplateAppendix appendix = this.getTemplate().getAppendixs().get(index);
+			// 开始-页
+			String pageName = String.format("page_%s", page), areaName;
+			pageTop = (page - 1) * pageHeight;
+			this.drawPageSeparator(writer, pageName, pageTop, pageWidth);
+			this.startDiv(writer, pageName, pageLeft, pageTop, pageWidth, pageHeight);
+			// 绘制页眉区域
+			if (appendix.getPageHeader() == emYesNo.YES) {
+				areaName = String.format("%s_header", pageName);
+				Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
+				this.startDiv(writer, areaName, this.getTemplate().getPageHeaderLeft(),
+						this.getTemplate().getPageHeaderTop(), this.getTemplate().getPageHeaderWidth(),
+						this.getTemplate().getPageHeaderHeight());
+				this.drawArea(writer, this.getTemplate().getPageHeaders());
+				this.endDiv(writer);
+			}
+			// 绘制附录
+			areaName = String.format("%s_appendix", pageName);
+			Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
+			this.startDiv(writer, areaName, appendix.getContentLeft(), appendix.getContentTop(),
+					appendix.getContentWidth(), appendix.getContentHeight());
+			this.drawArea(writer, appendix.getContents());
+			this.endDiv(writer);
+			// 绘制页脚区域
+			if (appendix.getPageFooter() == emYesNo.YES) {
+				areaName = String.format("%s_footer", pageName);
+				Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
+				this.startDiv(writer, areaName, this.getTemplate().getPageFooterLeft(),
+						this.getTemplate().getPageFooterTop(), this.getTemplate().getPageFooterWidth(),
+						this.getTemplate().getPageFooterHeight());
+				this.drawArea(writer, this.getTemplate().getPageFooters());
+				this.endDiv(writer);
+			}
+			// 结束-页
+			this.endDiv(writer);
+		}
 		writer.write("</body>");
-
 		writer.write("</html>");
 	}
 
@@ -681,4 +713,27 @@ public class TransformerHtml extends TemplateTransformer {
 		writer.write("</tr>");
 	}
 
+	protected void drawPageSeparator(Writer writer, String pageName, int top, int width) throws IOException {
+		writer.write("<div");
+		writer.write(" ");
+		writer.write("id=\"");
+		writer.write(String.format("%s_line", pageName));
+		writer.write("\"");
+		writer.write(" ");
+		writer.write("class=\"no_print\"");
+		writer.write(" ");
+		writer.write("style=\"");
+		writer.write("position:absolute;");
+		writer.write("border:1px dashed black;");
+		writer.write("top:");
+		writer.write(String.valueOf(top));
+		writer.write("px;");
+		writer.write("width:");
+		writer.write(String.valueOf(width));
+		writer.write("px;");
+		writer.write("\"");
+		writer.write(" ");
+		writer.write(">");
+		writer.write("</div>");
+	}
 }

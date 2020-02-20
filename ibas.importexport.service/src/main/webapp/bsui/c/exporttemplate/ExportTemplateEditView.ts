@@ -639,14 +639,80 @@ namespace importexport {
                                                         if (model instanceof sap.extension.model.JSONModel) {
                                                             let data: any = model.getData();
                                                             if (data instanceof bo.ExportTemplateAppendix) {
+                                                                that.toolbarAppendixes.setModel(new sap.extension.model.JSONModel(data));
                                                                 that.tableAppendixes.setModel(new sap.extension.model.JSONModel({ rows: data.contents.filterDeleted() }));
                                                                 return;
                                                             }
                                                         }
                                                     }
+                                                    that.toolbarAppendixes.setModel(null);
                                                     that.tableAppendixes.setModel(null);
                                                 },
                                             }),
+                                            this.toolbarAppendixes = <any>new sap.m.OverflowToolbar("", {
+                                                content: [
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_left")
+                                                    }),
+                                                    new sap.extension.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("bindingValue", {
+                                                        path: "/contentLeft",
+                                                        type: new sap.extension.data.Numeric()
+                                                    }),
+                                                    new sap.m.ToolbarSeparator(""),
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_top")
+                                                    }),
+                                                    new sap.extension.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("bindingValue", {
+                                                        path: "/contentTop",
+                                                        type: new sap.extension.data.Numeric()
+                                                    }),
+                                                    new sap.m.ToolbarSeparator(""),
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_width")
+                                                    }),
+                                                    new sap.extension.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("bindingValue", {
+                                                        path: "/contentWidth",
+                                                        type: new sap.extension.data.Numeric()
+                                                    }),
+                                                    new sap.m.ToolbarSeparator(""),
+                                                    new sap.m.Label("", {
+                                                        width: "100px",
+                                                        text: ibas.i18n.prop("bo_exporttemplate_area_height")
+                                                    }),
+                                                    new sap.extension.m.Input("", {
+                                                        width: "160px",
+                                                        type: sap.m.InputType.Number
+                                                    }).bindProperty("bindingValue", {
+                                                        path: "/contentHeight",
+                                                        type: new sap.extension.data.Numeric()
+                                                    }),
+                                                    new sap.m.ToolbarSpacer(""),
+                                                    new sap.extension.m.CheckBox("", {
+                                                        text: ibas.i18n.prop("bo_exporttemplateappendix_pageheader")
+                                                    }).bindProperty("bindingValue", {
+                                                        path: "/pageHeader",
+                                                        type: new sap.extension.data.YesNo()
+                                                    }),
+                                                    new sap.extension.m.CheckBox("", {
+                                                        text: ibas.i18n.prop("bo_exporttemplateappendix_pagefooter")
+                                                    }).bindProperty("bindingValue", {
+                                                        path: "/pageFooter",
+                                                        type: new sap.extension.data.YesNo()
+                                                    }),
+                                                ]
+                                            }).setVisible(false),
                                             this.tableAppendixes = <any>this.createTableTemplateItem(function (): void {
                                                 let selectItem: any = sap.ui.getCore().byId(that.tabContainerAppendixes.getSelectedItem());
                                                 if (selectItem instanceof sap.m.TabContainerItem) {
@@ -1002,6 +1068,7 @@ namespace importexport {
                 private tablePageFooters: sap.extension.table.Table;
                 private tableAppendixes: sap.extension.table.Table;
                 private tabContainerAppendixes: sap.m.TabContainer;
+                private toolbarAppendixes: sap.m.Toolbar;
 
                 /** 显示数据 */
                 showExportTemplate(data: bo.ExportTemplate): void {
@@ -1054,6 +1121,10 @@ namespace importexport {
                     }
                     if (this.tabContainerAppendixes.getItems().length > 0) {
                         this.tableAppendixes.setVisible(true);
+                        this.toolbarAppendixes.setVisible(true);
+                    } else {
+                        this.tableAppendixes.setVisible(false);
+                        this.toolbarAppendixes.setVisible(false);
                     }
                 }
             }
