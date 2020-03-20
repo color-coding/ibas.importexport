@@ -23,7 +23,7 @@ namespace importexport {
                         content: [
                             new sap.ui.core.Title("", { text: ibas.i18n.prop("importexport_import_data") }),
                             uploader = new sap.ui.unified.FileUploader("", {
-                                name: "file",
+                                name: ibas.strings.format("FILE_{0}", ibas.uuids.random().toUpperCase()),
                                 width: "100%",
                                 placeholder: ibas.i18n.prop("importexport_please_choose_file"),
                             }),

@@ -143,8 +143,11 @@ namespace importexport {
                     throw new Error(ibas.i18n.prop("sys_invalid_parameter", "caller.data"));
                 }
                 let data: any[] = caller.data.convert();
-                let name: string = "datatable";
-                name = ibas.strings.format("{0}_{1}.json", name, ibas.uuids.random());
+                let name: string = caller.data.description;
+                if (ibas.strings.isEmpty(name)) {
+                    name = "datatable";
+                }
+                name = ibas.strings.format("{0}_{1}.json", name, ibas.dates.toString(ibas.dates.now(), "yyyyMMddHHss"));
                 if (caller.onCompleted instanceof Function) {
                     let opRslt: ibas.OperationResult<DataExportResultString> = new ibas.OperationResult<DataExportResultString>();
                     opRslt.addResults(new DataExportResultString(name, JSON.stringify(data)));
@@ -247,7 +250,11 @@ namespace importexport {
                     }
                     stringBuilders.append(stringBuilder);
                 }
-                let name: string = ibas.strings.format("datatable_{0}.csv", ibas.dates.toString(ibas.dates.now(), "yyyyMMddHHss"));
+                let name: string = caller.data.description;
+                if (ibas.strings.isEmpty(name)) {
+                    name = "datatable";
+                }
+                name = ibas.strings.format("{0}_{1}.csv", name, ibas.dates.toString(ibas.dates.now(), "yyyyMMddHHss"));
                 if (caller.onCompleted instanceof Function) {
                     let opRslt: ibas.OperationResult<DataExportResultString> = new ibas.OperationResult<DataExportResultString>();
                     opRslt.addResults(new DataExportResultString(name, stringBuilders.toString()));

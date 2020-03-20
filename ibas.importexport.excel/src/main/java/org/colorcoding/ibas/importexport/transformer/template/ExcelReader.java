@@ -277,12 +277,17 @@ public class ExcelReader extends FileReader {
 							}
 						} else if (sheetCell.getCellTypeEnum() == CellType.STRING) {
 							String value = sheetCell.getStringCellValue();
-							if (value != null && !value.isEmpty()) {
-								if (property.getBindingClass() == DateTime.class) {
-									dataCell = this.createCell(property, sheetRow.getRowNum(), DateTime.valueOf(value));
-								} else {
-									dataCell = this.createCell(property, sheetRow.getRowNum(),
-											DataConvert.convert(property.getBindingClass(), value));
+							if (value != null) {
+								if (!value.isEmpty()) {
+									if (property.getBindingClass() == DateTime.class) {
+										dataCell = this.createCell(property, sheetRow.getRowNum(),
+												DateTime.valueOf(value));
+									} else {
+										dataCell = this.createCell(property, sheetRow.getRowNum(),
+												DataConvert.convert(property.getBindingClass(), value));
+									}
+								} else if (property.getBindingClass() == String.class) {
+									dataCell = this.createCell(property, sheetRow.getRowNum(), value);
 								}
 							}
 						}
