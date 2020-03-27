@@ -45,5 +45,6 @@
   "importexport_title_size": "规格",
   "importexport_page_number": "第{0}页",
   "importexport_remove_page_continue": "删除{0}，是否继续?",
+  "importexport_import_data_information": "操作成功：识别{0}条数据，导入{0}条数据",
   "importexport_closing_delimiter": "----结束----"
 }

@@ -39,6 +39,8 @@ declare namespace initialfantasy {
         const BO_CODE_USER: string;
         /** 业务对象编码-业务对象信息 */
         const BO_CODE_BOINFORMATION: string;
+        /** 业务对象编码-业务对象属性 */
+        const BO_CODE_BOPROPERTY: string;
         /** 业务对象编码-系统变量 */
         const BO_CODE_SYSTEM_VARIABLE: string;
         /** 业务对象编码-系统配置 */
@@ -4625,6 +4627,48 @@ declare namespace initialfantasy {
             boNumberingEvent: Function;
             /** 显示数据 */
             showData(datas: bo.BOInformation[]): void;
+        }
+    }
+}
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+declare namespace initialfantasy {
+    namespace app {
+        /** 应用-业务对象信息 */
+        class BOPropertyChooseApp extends ibas.BOChooseService<IBOPropertyChooseView, bo.IBOPropertyInformation> {
+            /** 应用标识 */
+            static APPLICATION_ID: string;
+            /** 应用名称 */
+            static APPLICATION_NAME: string;
+            /** 业务对象编码 */
+            static BUSINESS_OBJECT_CODE: string;
+            /** 构造函数 */
+            constructor();
+            /** 注册视图 */
+            protected registerView(): void;
+            /** 视图显示后 */
+            protected viewShowed(): void;
+            /** 查询数据 */
+            protected fetchData(criteria: ibas.ICriteria): void;
+            /** 新建数据 */
+            protected newData(): void;
+        }
+        /** 视图-业务对象信息 */
+        interface IBOPropertyChooseView extends ibas.IBOChooseView {
+            /** 显示数据 */
+            showData(datas: bo.IBOPropertyInformation[]): void;
+        }
+        /** 业务对象信息选择服务映射 */
+        class BOPropertyChooseServiceMapping extends ibas.BOChooseServiceMapping {
+            /** 构造函数 */
+            constructor();
+            /** 创建服务实例 */
+            create(): ibas.IService<ibas.IBOChooseServiceCaller<bo.IBOPropertyInformation>>;
         }
     }
 }

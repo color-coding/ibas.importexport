@@ -70,6 +70,7 @@ public class FileService extends FileRepositoryService {
 				}
 				// 记录结果
 				opRslt.addResultObjects(opRsltImport.getResultObjects());
+				opRslt.addInformations(opRsltImport.getInformations());
 			}
 		} catch (Exception e) {
 			opRslt = new OperationResult<String>(e);

@@ -201,6 +201,8 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			try {
 				opRslt = new OperationResult<String>();
 				// 返回存储事务标记
+				opRslt.addInformations("IDENTIFY_DATA_COUNT", String.valueOf(fileTransformer.getOutputData().size()),
+						"DATA_IMPORT");
 				opRslt.addInformations("REPOSITORY_TRANSACTION_ID", this.getRepository().getTransactionId(),
 						"DATA_IMPORT");
 				// 保存业务对象
@@ -254,6 +256,8 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 						opRslt.addResultObjects(item.toString());
 					}
 				}
+				opRslt.addInformations("SAVE_DATA_COUNT", String.valueOf(opRslt.getResultObjects().size()),
+						"DATA_IMPORT");
 				if (myTrans) {
 					this.commitTransaction();
 				}

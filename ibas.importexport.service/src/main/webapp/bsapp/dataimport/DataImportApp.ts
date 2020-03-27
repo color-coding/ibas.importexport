@@ -50,7 +50,10 @@ namespace importexport {
                                 throw new Error(opRslt.message);
                             }
                             that.messages(ibas.emMessageType.SUCCESS,
-                                ibas.i18n.prop("shell_upload") + ibas.i18n.prop("shell_sucessful"));
+                                ibas.i18n.prop("importexport_import_data_information",
+                                    opRslt.informations.firstOrDefault(c => c.name === "IDENTIFY_DATA_COUNT").content,
+                                    opRslt.informations.firstOrDefault(c => c.name === "SAVE_DATA_COUNT").content
+                                ));
                             that.view.showResults(opRslt.resultObjects);
                         } catch (error) {
                             that.messages(error);
