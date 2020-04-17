@@ -944,11 +944,36 @@ namespace importexport {
                                                     type: data.sourceType === bo.emDataSourceType.QUERY ? "sql" : "text",
                                                     colorTheme: "eclipse",
                                                     value: {
-                                                        path: "/itemString"
+                                                        path: "/itemString",
+                                                        type: new sap.extension.data.Unknown({
+                                                            formatValue(oValue: any, sInternalType: string): any {
+                                                                if (sInternalType === "string") {
+                                                                    return ibas.strings.valueOf(oValue);
+                                                                }
+                                                                return oValue;
+                                                            },
+                                                            parseValue(oValue: any, sInternalType: string): any {
+                                                                if (sInternalType === "string") {
+                                                                    return ibas.strings.valueOf(oValue).replace(/\r\n/g, " ").replace(/\n/g, " ");
+                                                                }
+                                                                return oValue;
+                                                            }
+                                                        })
                                                     }
                                                 })
                                             ],
                                             buttons: [
+                                                new sap.m.Button("", {
+                                                    text: ibas.i18n.prop("importexport_code_pretty"),
+                                                    type: sap.m.ButtonType.Transparent,
+                                                    icon: "sap-icon://text-formatting",
+                                                    press: function (event: sap.ui.base.Event): void {
+                                                        let content: any = dialog.getContent()[0];
+                                                        if (content instanceof sap.ui.codeeditor.CodeEditor) {
+                                                            content.prettyPrint();
+                                                        }
+                                                    }
+                                                }),
                                                 new sap.m.Button("", {
                                                     text: ibas.i18n.prop("shell_exit"),
                                                     type: sap.m.ButtonType.Transparent,

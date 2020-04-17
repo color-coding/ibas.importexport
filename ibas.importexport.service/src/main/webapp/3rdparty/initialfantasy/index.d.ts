@@ -16,6 +16,14 @@ declare namespace initialfantasy {
     const CONFIG_VALUE_ORGANIZATION_WAY: string;
     /** 配置值-数据权限方式 */
     const CONFIG_VALUE_OWNERSHIP_WAY: string;
+    namespace config {
+        /**
+         * 获取此模块配置
+         * @param key 配置项
+         * @param defalut 默认值
+         */
+        function get<T>(key: string, defalut?: T): T;
+    }
     namespace bo {
         /** 业务仓库名称 */
         const BO_REPOSITORY_INITIALFANTASY: string;
@@ -55,6 +63,8 @@ declare namespace initialfantasy {
         const BO_CODE_IDENTITYPRIVILEGE: string;
         /** 业务对象编码-业务对象属性设置 */
         const BO_CODE_BOPROPERTYSETTING: string;
+        /** 业务对象编码-应用程序配置-身份 */
+        const BO_CODE_APPLICATIONCONFIGIDENTITY: string;
         /**
          * 分配类型
          */
@@ -166,6 +176,18 @@ declare namespace initialfantasy {
             /** 没有 */
             NONE = 3
         }
+        /**
+         * 配置种类
+         *
+         * @author Niuren.Zhu
+         *
+         */
+        enum emConfigCategory {
+            /** 服务端 */
+            SERVER = 0,
+            /** 客户端 */
+            CLIENT = 1
+        }
     }
     namespace app {
         /** 身份权限配置契约 */
@@ -199,6 +221,60 @@ declare namespace initialfantasy {
             configKey: string;
             /** 配置说明 */
             configDescription: string;
+            /** 配置值 */
+            configValue: string;
+            /** 种类 */
+            category: emConfigCategory;
+            /** 设置 */
+            settings: string;
+            /** 激活 */
+            activated: ibas.emYesNo;
+            /** 对象键值 */
+            objectKey: number;
+            /** 对象类型 */
+            objectCode: string;
+            /** 数据源 */
+            dataSource: string;
+            /** 创建日期 */
+            createDate: Date;
+            /** 创建时间 */
+            createTime: number;
+            /** 修改日期 */
+            updateDate: Date;
+            /** 修改时间 */
+            updateTime: number;
+            /** 创建动作标识 */
+            createActionId: string;
+            /** 更新动作标识 */
+            updateActionId: string;
+            /** 实例号（版本） */
+            logInst: number;
+            /** 创建用户 */
+            createUserSign: number;
+            /** 修改用户 */
+            updateUserSign: number;
+        }
+    }
+}
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+declare namespace initialfantasy {
+    namespace bo {
+        /** 应用程序配置-身份 */
+        interface IApplicationConfigIdentity extends ibas.IBOSimple {
+            /** 角色标识 */
+            roleCode: string;
+            /** 身份标识 */
+            identityCode: string;
+            /** 配置组 */
+            configGroup: string;
+            /** 配置项 */
+            configKey: string;
             /** 配置值 */
             configValue: string;
             /** 对象键值 */
@@ -1136,6 +1212,16 @@ declare namespace initialfantasy {
              * @param saver 保存者
              */
             saveBOPropertySetting(saver: ibas.ISaveCaller<bo.IBOPropertySetting>): void;
+            /**
+             * 查询 应用程序配置-身份
+             * @param fetcher 查询者
+             */
+            fetchApplicationConfigIdentity(fetcher: ibas.IFetchCaller<bo.IApplicationConfigIdentity>): void;
+            /**
+             * 保存 应用程序配置-身份
+             * @param saver 保存者
+             */
+            saveApplicationConfigIdentity(saver: ibas.ISaveCaller<bo.IApplicationConfigIdentity>): void;
         }
     }
 }
@@ -1179,6 +1265,146 @@ declare namespace initialfantasy {
             get configDescription(): string;
             /** 设置-配置说明 */
             set configDescription(value: string);
+            /** 映射的属性名称-配置值 */
+            static PROPERTY_CONFIGVALUE_NAME: string;
+            /** 获取-配置值 */
+            get configValue(): string;
+            /** 设置-配置值 */
+            set configValue(value: string);
+            /** 映射的属性名称-种类 */
+            static PROPERTY_CATEGORY_NAME: string;
+            /** 获取-种类 */
+            get category(): emConfigCategory;
+            /** 设置-种类 */
+            set category(value: emConfigCategory);
+            /** 映射的属性名称-设置 */
+            static PROPERTY_SETTINGS_NAME: string;
+            /** 获取-设置 */
+            get settings(): string;
+            /** 设置-设置 */
+            set settings(value: string);
+            /** 映射的属性名称-激活 */
+            static PROPERTY_ACTIVATED_NAME: string;
+            /** 获取-激活 */
+            get activated(): ibas.emYesNo;
+            /** 设置-激活 */
+            set activated(value: ibas.emYesNo);
+            /** 映射的属性名称-对象键值 */
+            static PROPERTY_OBJECTKEY_NAME: string;
+            /** 获取-对象键值 */
+            get objectKey(): number;
+            /** 设置-对象键值 */
+            set objectKey(value: number);
+            /** 映射的属性名称-对象类型 */
+            static PROPERTY_OBJECTCODE_NAME: string;
+            /** 获取-对象类型 */
+            get objectCode(): string;
+            /** 设置-对象类型 */
+            set objectCode(value: string);
+            /** 映射的属性名称-数据源 */
+            static PROPERTY_DATASOURCE_NAME: string;
+            /** 获取-数据源 */
+            get dataSource(): string;
+            /** 设置-数据源 */
+            set dataSource(value: string);
+            /** 映射的属性名称-创建日期 */
+            static PROPERTY_CREATEDATE_NAME: string;
+            /** 获取-创建日期 */
+            get createDate(): Date;
+            /** 设置-创建日期 */
+            set createDate(value: Date);
+            /** 映射的属性名称-创建时间 */
+            static PROPERTY_CREATETIME_NAME: string;
+            /** 获取-创建时间 */
+            get createTime(): number;
+            /** 设置-创建时间 */
+            set createTime(value: number);
+            /** 映射的属性名称-修改日期 */
+            static PROPERTY_UPDATEDATE_NAME: string;
+            /** 获取-修改日期 */
+            get updateDate(): Date;
+            /** 设置-修改日期 */
+            set updateDate(value: Date);
+            /** 映射的属性名称-修改时间 */
+            static PROPERTY_UPDATETIME_NAME: string;
+            /** 获取-修改时间 */
+            get updateTime(): number;
+            /** 设置-修改时间 */
+            set updateTime(value: number);
+            /** 映射的属性名称-创建动作标识 */
+            static PROPERTY_CREATEACTIONID_NAME: string;
+            /** 获取-创建动作标识 */
+            get createActionId(): string;
+            /** 设置-创建动作标识 */
+            set createActionId(value: string);
+            /** 映射的属性名称-更新动作标识 */
+            static PROPERTY_UPDATEACTIONID_NAME: string;
+            /** 获取-更新动作标识 */
+            get updateActionId(): string;
+            /** 设置-更新动作标识 */
+            set updateActionId(value: string);
+            /** 映射的属性名称-实例号（版本） */
+            static PROPERTY_LOGINST_NAME: string;
+            /** 获取-实例号（版本） */
+            get logInst(): number;
+            /** 设置-实例号（版本） */
+            set logInst(value: number);
+            /** 映射的属性名称-创建用户 */
+            static PROPERTY_CREATEUSERSIGN_NAME: string;
+            /** 获取-创建用户 */
+            get createUserSign(): number;
+            /** 设置-创建用户 */
+            set createUserSign(value: number);
+            /** 映射的属性名称-修改用户 */
+            static PROPERTY_UPDATEUSERSIGN_NAME: string;
+            /** 获取-修改用户 */
+            get updateUserSign(): number;
+            /** 设置-修改用户 */
+            set updateUserSign(value: number);
+            /** 初始化数据 */
+            protected init(): void;
+        }
+    }
+}
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+declare namespace initialfantasy {
+    namespace bo {
+        /** 应用程序配置-身份 */
+        class ApplicationConfigIdentity extends ibas.BOSimple<ApplicationConfigIdentity> implements IApplicationConfigIdentity {
+            /** 业务对象编码 */
+            static BUSINESS_OBJECT_CODE: string;
+            /** 构造函数 */
+            constructor();
+            /** 映射的属性名称-角色标识 */
+            static PROPERTY_ROLECODE_NAME: string;
+            /** 获取-角色标识 */
+            get roleCode(): string;
+            /** 设置-角色标识 */
+            set roleCode(value: string);
+            /** 映射的属性名称-身份标识 */
+            static PROPERTY_IDENTITYCODE_NAME: string;
+            /** 获取-身份标识 */
+            get identityCode(): string;
+            /** 设置-身份标识 */
+            set identityCode(value: string);
+            /** 映射的属性名称-配置组 */
+            static PROPERTY_CONFIGGROUP_NAME: string;
+            /** 获取-配置组 */
+            get configGroup(): string;
+            /** 设置-配置组 */
+            set configGroup(value: string);
+            /** 映射的属性名称-配置项 */
+            static PROPERTY_CONFIGKEY_NAME: string;
+            /** 获取-配置项 */
+            get configKey(): string;
+            /** 设置-配置项 */
+            set configKey(value: string);
             /** 映射的属性名称-配置值 */
             static PROPERTY_CONFIGVALUE_NAME: string;
             /** 获取-配置值 */
@@ -3462,6 +3688,16 @@ declare namespace initialfantasy {
              * @param saver 保存者
              */
             saveBOPropertySetting(saver: ibas.ISaveCaller<bo.BOPropertySetting>): void;
+            /**
+             * 查询 应用程序配置-身份
+             * @param fetcher 查询者
+             */
+            fetchApplicationConfigIdentity(fetcher: ibas.IFetchCaller<bo.ApplicationConfigIdentity>): void;
+            /**
+             * 保存 应用程序配置-身份
+             * @param saver 保存者
+             */
+            saveApplicationConfigIdentity(saver: ibas.ISaveCaller<bo.ApplicationConfigIdentity>): void;
         }
     }
 }
@@ -3507,38 +3743,92 @@ declare namespace initialfantasy {
 declare namespace initialfantasy {
     namespace app {
         /** 列表应用-应用程序配置 */
-        class ApplicationConfigListApp extends ibas.BOListApplication<IApplicationConfigListView, bo.ApplicationConfig> {
+        class ApplicationConfigListApp extends ibas.Application<IApplicationConfigListView> {
             /** 应用标识 */
             static APPLICATION_ID: string;
             /** 应用名称 */
             static APPLICATION_NAME: string;
-            /** 业务对象编码 */
-            static BUSINESS_OBJECT_CODE: string;
             /** 构造函数 */
             constructor();
             /** 注册视图 */
             protected registerView(): void;
             /** 视图显示后 */
             protected viewShowed(): void;
-            /** 查询数据 */
-            protected fetchData(criteria: ibas.ICriteria): void;
-            /** 新建数据 */
-            protected newData(): void;
-            /** 查看数据，参数：目标数据 */
-            protected viewData(data: bo.ApplicationConfig): void;
-            /** 编辑数据，参数：目标数据 */
-            protected editData(data: bo.ApplicationConfig): void;
-            /** 删除数据，参数：目标数据集合 */
-            protected deleteData(data: bo.ApplicationConfig | bo.ApplicationConfig[]): void;
+            private configGroups;
+            private editConfigItem;
+            private changeConfigGroup;
+            private fetchIdentityConfig;
+            private copyConfigValues;
+            private doCopyConfigValues;
+            private save;
+            private viewUserConfigs;
+        }
+        class ConfigGroup {
+            constructor();
+            constructor(code: string, name: string, icon?: string);
+            code: string;
+            name: string;
+            icon: string;
+        }
+        abstract class ConfigItem extends ibas.Bindable {
+            abstract readonly group: string;
+            abstract readonly key: string;
+            abstract readonly description: string;
+            abstract readonly settings: string;
+            abstract readonly category: bo.emConfigCategory;
+            abstract value: string;
+        }
+        class ConfigItemOrigin extends ConfigItem {
+            constructor(data: bo.IApplicationConfig);
+            get data(): bo.IApplicationConfig;
+            get group(): string;
+            get key(): string;
+            get description(): string;
+            get category(): bo.emConfigCategory;
+            get settings(): string;
+            get value(): string;
+            set value(value: string);
+        }
+        class ConfigItemIdentity extends ConfigItem {
+            constructor(data: bo.IApplicationConfig, extra: bo.IApplicationConfigIdentity);
+            get data(): bo.IApplicationConfig;
+            get extra(): bo.IApplicationConfigIdentity;
+            get group(): string;
+            get key(): string;
+            get description(): string;
+            get category(): bo.emConfigCategory;
+            get settings(): string;
+            get roleCode(): string;
+            set roleCode(value: string);
+            get identityCode(): string;
+            set identityCode(value: string);
+            get value(): string;
+            set value(value: string);
         }
         /** 视图-应用程序配置 */
-        interface IApplicationConfigListView extends ibas.IBOListView {
-            /** 编辑数据事件，参数：编辑对象 */
-            editDataEvent: Function;
-            /** 删除数据事件，参数：删除对象集合 */
-            deleteDataEvent: Function;
-            /** 显示数据 */
-            showData(datas: bo.ApplicationConfig[]): void;
+        interface IApplicationConfigListView extends ibas.IView {
+            /** 显示配置组 */
+            showConfigGroups(datas: ConfigGroup[]): void;
+            /** 改变配置组 */
+            changeConfigGroupEvent: Function;
+            /** 改变角色身份：参数1，角色；参数2，身份 */
+            changeRoleIdentityEvent: Function;
+            /** 显示配置值 */
+            showConfigValues(values: ConfigItem[]): void;
+            /** 保存 */
+            saveEvent: Function;
+            /** 编辑配置项目 */
+            editConfigItemEvent: Function;
+            /** 赋值配置项目值 */
+            copyConfigValuesEvent: Function;
+            /** 身份 */
+            identity: string;
+            /** 角色 */
+            role: string;
+            /** 预览用户配置项目值 */
+            viewUserConfigsEvent: Function;
+            /** 显示用户配置值 */
+            showUserConfigs(values: shell.bo.IUserConfig[], user: bo.IUser): void;
         }
     }
 }
@@ -3567,23 +3857,13 @@ declare namespace initialfantasy {
             protected viewShowed(): void;
             run(): void;
             run(data: bo.ApplicationConfig): void;
-            /** 待编辑的数据 */
-            protected editData: bo.ApplicationConfig;
             /** 保存数据 */
             protected saveData(): void;
-            /** 删除数据 */
-            protected deleteData(): void;
-            /** 新建数据，参数1：是否克隆 */
-            protected createData(clone: boolean): void;
         }
         /** 视图-应用程序配置 */
         interface IApplicationConfigEditView extends ibas.IBOEditView {
             /** 显示数据 */
             showApplicationConfig(data: bo.ApplicationConfig): void;
-            /** 删除数据事件 */
-            deleteDataEvent: Function;
-            /** 新建数据事件，参数1：是否克隆 */
-            createDataEvent: Function;
         }
     }
 }
@@ -3738,8 +4018,6 @@ declare namespace initialfantasy {
             protected viewShowed(): void;
             run(): void;
             run(data: bo.ApplicationElement): void;
-            /** 待编辑的数据 */
-            protected editData: bo.ApplicationElement;
             /** 保存数据 */
             protected saveData(): void;
             /** 删除数据 */
@@ -3833,8 +4111,6 @@ declare namespace initialfantasy {
             /** 运行,覆盖原方法 */
             run(): void;
             run(data: bo.ApplicationModule): void;
-            /** 待编辑的数据 */
-            protected editData: bo.ApplicationModule;
             /** 保存数据 */
             protected saveData(): void;
             /** 删除数据 */
@@ -3994,8 +4270,6 @@ declare namespace initialfantasy {
             /** 运行,覆盖原方法 */
             run(): void;
             run(data: bo.ApplicationPlatform): void;
-            /** 待编辑的数据 */
-            protected editData: bo.ApplicationPlatform;
             /** 保存数据 */
             protected saveData(): void;
             /** 删除数据 */
@@ -4155,8 +4429,6 @@ declare namespace initialfantasy {
             /** 运行,覆盖原方法 */
             run(): void;
             run(data: bo.BOCriteria): void;
-            /** 待编辑的数据 */
-            protected editData: bo.BOCriteria;
             /** 保存数据 */
             protected saveData(): void;
             /** 删除数据 */
@@ -4334,8 +4606,6 @@ declare namespace initialfantasy {
             /** 运行,覆盖原方法 */
             run(): void;
             run(data: bo.BOFiltering): void;
-            /** 待编辑的数据 */
-            protected editData: bo.BOFiltering;
             /** 保存数据 */
             protected saveData(): void;
             /** 删除数据 */
@@ -4513,8 +4783,6 @@ declare namespace initialfantasy {
             /** 运行,覆盖原方法 */
             run(): void;
             run(data: bo.BOInformation): void;
-            /** 待编辑的数据 */
-            protected editData: bo.BOInformation;
             /** 保存数据 */
             protected saveData(): void;
             /** 删除数据 */
@@ -4853,8 +5121,6 @@ declare namespace initialfantasy {
             /** 运行,覆盖原方法 */
             run(): void;
             run(data: bo.Organization): void;
-            /** 待编辑的数据 */
-            protected editData: bo.Organization;
             /** 保存数据 */
             protected saveData(): void;
             /** 删除数据 */
@@ -5014,8 +5280,6 @@ declare namespace initialfantasy {
             /** 运行,覆盖原方法 */
             run(): void;
             run(data: bo.Privilege): void;
-            /** 待编辑的数据 */
-            protected editData: bo.Privilege;
             /** 保存数据 */
             protected saveData(): void;
             /** 删除数据 */
@@ -5591,8 +5855,6 @@ declare namespace initialfantasy {
             /** 运行,覆盖原方法 */
             run(): void;
             run(data: bo.User): void;
-            /** 待编辑的数据 */
-            protected editData: bo.User;
             /** 保存数据 */
             protected saveData(): void;
             /** 删除数据 */
@@ -5854,8 +6116,6 @@ declare namespace initialfantasy {
             protected viewShowed(): void;
             run(): void;
             run(data: bo.Identity): void;
-            /** 待编辑的数据 */
-            protected editData: bo.Identity;
             /** 保存数据 */
             protected saveData(): void;
             /** 删除数据 */
@@ -6017,8 +6277,6 @@ declare namespace initialfantasy {
             protected viewShowed(): void;
             run(): void;
             run(data: bo.UserIdentity): void;
-            /** 待编辑的数据 */
-            protected editData: bo.UserIdentity;
             /** 保存数据 */
             protected saveData(): void;
             /** 删除数据 */
