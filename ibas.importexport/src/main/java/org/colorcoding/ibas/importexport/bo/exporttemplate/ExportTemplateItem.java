@@ -1643,7 +1643,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 		this.setItemVisible(emYesNo.YES);
 		this.setTextStyle(emTextStyle.REGULAR);
 		this.setTextSegment(emTextSegment.WORD);
-		this.setJustificationHorizontal(emJustificationHorizontal.CENTER);
+		this.setJustificationHorizontal(emJustificationHorizontal.LEFT);
 		this.setJustificationVertical(emJustificationVertical.CENTER);
 	}
 

@@ -1357,7 +1357,7 @@ namespace importexport {
                 this.itemVisible = ibas.emYesNo.YES;
                 this.textStyle = emTextStyle.REGULAR;
                 this.textSegment = emTextSegment.WORD;
-                this.justificationHorizontal = emJustificationHorizontal.CENTER;
+                this.justificationHorizontal = emJustificationHorizontal.LEFT;
                 this.justificationVertical = emJustificationVertical.CENTER;
             }
         }
@@ -1383,6 +1383,44 @@ namespace importexport {
                 let item: ExportTemplateAppendix = new ExportTemplateAppendix();
                 this.add(item);
                 return item;
+            }
+            protected afterAdd(item: ExportTemplateAppendix): void {
+                if (item.isNew === true) {
+                    if (this.parent.height > 0) {
+                        item.contentHeight = this.parent.height;
+                        if (item.pageHeader === ibas.emYesNo.YES && this.parent.pageHeaderHeight > 0) {
+                            item.contentTop = ibas.numbers.valueOf(this.parent.pageHeaderTop)
+                                + ibas.numbers.valueOf(this.parent.pageHeaderHeight) + ibas.numbers.valueOf(this.parent.marginArea)
+                            item.contentHeight = item.contentHeight - item.contentTop;
+                        }
+                        if (item.pageFooter === ibas.emYesNo.YES && this.parent.pageFooterHeight > 0) {
+                            item.contentHeight = item.contentHeight - this.parent.pageFooterHeight - ibas.numbers.valueOf(this.parent.marginArea);
+                        }
+                    }
+                    if (this.parent.width > 0) {
+                        item.contentWidth = this.parent.width;
+                        if (item.pageHeader === ibas.emYesNo.YES && this.parent.pageHeaderHeight > 0) {
+                            if (this.parent.pageHeaderLeft > 0) {
+                                item.contentLeft = this.parent.pageHeaderLeft;
+                            }
+                            if (this.parent.pageHeaderWidth > 0) {
+                                item.contentWidth = this.parent.pageHeaderWidth;
+                            }
+                        }
+                        if (item.pageFooter === ibas.emYesNo.YES && this.parent.pageFooterHeight > 0) {
+                            if (!(item.contentLeft > 0)) {
+                                if (this.parent.pageFooterLeft > 0) {
+                                    item.contentLeft = this.parent.pageFooterLeft;
+                                }
+                            }
+                            if (item.contentWidth === this.parent.width) {
+                                if (this.parent.pageFooterWidth > 0) {
+                                    item.contentWidth = this.parent.pageFooterWidth;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 

@@ -69,18 +69,6 @@ public class ExportTemplateAppendixs extends BusinessObjects<IExportTemplateAppe
 	@Override
 	protected void afterAddItem(IExportTemplateAppendix item) {
 		super.afterAddItem(item);
-		item.setContentHeight(this.getParent().getHeight());
-		item.setContentWidth(this.getParent().getWidth());
-		if (item.getPageHeader() == emYesNo.YES) {
-			item.setContentTop(this.getParent().getPageHeaderTop() + this.getParent().getPageHeaderHeight()
-					+ this.getParent().getMarginArea());
-			item.setContentHeight(item.getContentHeight() - this.getParent().getPageHeaderHeight()
-					- this.getParent().getMarginArea());
-		}
-		if (item.getPageFooter() == emYesNo.YES) {
-			item.setContentHeight(item.getContentHeight() - this.getParent().getMarginArea()
-					- this.getParent().getPageFooterHeight());
-		}
 	}
 
 	@Override

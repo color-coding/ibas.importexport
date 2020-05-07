@@ -563,9 +563,14 @@ public class TransformerHtml extends TemplateTransformer {
 				writer.write("padding-right:2px;");
 			}
 			if (template.getJustificationVertical() == emJustificationVertical.CENTER) {
-				writer.write("line-height:");
-				writer.write(String.valueOf((height)));
-				writer.write("px;");
+				if (template.getTextSegment() == emTextSegment.CELL) {
+					writer.write("display: table-cell;");
+					writer.write("vertical-align: middle;");
+				} else {
+					writer.write("line-height:");
+					writer.write(String.valueOf((height)));
+					writer.write("px;");
+				}
 			} else if (template.getJustificationVertical() == emJustificationVertical.BOTTOM) {
 				writer.write("position:relative;");
 				writer.write("line-height:");
