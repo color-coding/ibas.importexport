@@ -250,6 +250,9 @@ public class ExcelReader extends FileReader {
 					.createRow();
 			for (Object object : this.getTemplate().getObjects()) {
 				for (Property property : object.getProperties()) {
+					if (property == null) {
+						continue;
+					}
 					Cell sheetCell = sheetRow.getCell(property.getStartingColumn());
 					if (sheetCell == null) {
 						continue;

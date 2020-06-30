@@ -108,10 +108,8 @@ public class Template extends Area<Area<?>> {
 	 * 
 	 * 解析的对象isNew时，不处理IBOStorageTag相关属性，生成模板时应如此
 	 * 
-	 * @param bo
-	 *            待解析对象
-	 * @throws ResolvingException
-	 *             无法识别异常
+	 * @param bo 待解析对象
+	 * @throws ResolvingException 无法识别异常
 	 */
 	public final void resolving(IBusinessObject bo) throws ResolvingException {
 		if (bo == null) {
@@ -339,14 +337,18 @@ public class Template extends Area<Area<?>> {
 					boolean matched = false;
 					Cell[] row = rows.next();
 					for (Property property : object.getProperties()) {
+						if (property == null || property.getName() == null || property.getName().isEmpty()) {
+							continue;
+						}
 						IFieldData field = boFields.getField(property.getName());
-						if (field != null) {
-							Cell cell = row[property.getStartingColumn()];
-							if (cell != null && cell.getValue() != null) {
-								field.setValue(cell.getValue());
-								if (!matched) {
-									matched = true;
-								}
+						if (field == null) {
+							continue;
+						}
+						Cell cell = row[property.getStartingColumn()];
+						if (cell != null && cell.getValue() != null) {
+							field.setValue(cell.getValue());
+							if (!matched) {
+								matched = true;
 							}
 						}
 					}
@@ -444,10 +446,8 @@ public class Template extends Area<Area<?>> {
 	/**
 	 * 解析文件，形成模板
 	 * 
-	 * @param file
-	 *            待分析文件
-	 * @throws ResolvingException
-	 *             无法识别异常
+	 * @param file 待分析文件
+	 * @throws ResolvingException 无法识别异常
 	 */
 	public final void resolving(File file) throws ResolvingException {
 		if (this.head != null) {
