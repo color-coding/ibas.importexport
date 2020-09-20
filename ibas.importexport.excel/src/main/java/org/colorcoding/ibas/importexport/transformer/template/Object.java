@@ -20,6 +20,7 @@ import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.bo.IBusinessObjects;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
 import org.colorcoding.ibas.bobas.core.fields.IManagedFields;
+import org.colorcoding.ibas.bobas.ownership.IDataOwnership;
 
 /**
  * 模板-对象区，类
@@ -68,10 +69,8 @@ public class Object extends BindingArea<Template> {
 	/**
 	 * 解析对象，形成模板
 	 * 
-	 * @param bo
-	 *            待解析对象
-	 * @throws ResolvingException
-	 *             无法识别异常
+	 * @param bo 待解析对象
+	 * @throws ResolvingException 无法识别异常
 	 */
 	public final void resolving(IBusinessObject bo) throws ResolvingException {
 		this.setBindingClass(bo.getClass());
@@ -127,6 +126,10 @@ public class Object extends BindingArea<Template> {
 				}
 				if (isSkip.apply(IApprovalData.class)) {
 					// 审批标记跳过
+					continue;
+				}
+				if (isSkip.apply(IDataOwnership.class)) {
+					// 数据所有者跳过
 					continue;
 				}
 				if (field.getName().equals(IBOSimple.MASTER_PRIMARY_KEY_NAME)) {
