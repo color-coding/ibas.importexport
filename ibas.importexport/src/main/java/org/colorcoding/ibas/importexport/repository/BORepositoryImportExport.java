@@ -181,10 +181,12 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 				throw new Exception(I18N.prop("msg_bobas_invalid_data"));
 			}
 			// 创建转换者
-			String type = String
-					.format(FileTransformer.GROUP_TEMPLATE,
-							data.getOriginalName().substring(data.getOriginalName().lastIndexOf(".") + 1))
-					.toUpperCase();
+			String type = data.getOriginalName().substring(data.getOriginalName().lastIndexOf(".") + 1);
+			if (type != null && type.equalsIgnoreCase("xlsm")) {
+				// 带宏的excel文件，识别为普通问
+				type = "xlsx";
+			}
+			type = String.format(FileTransformer.GROUP_TEMPLATE, type).toUpperCase();
 			ITransformer<?, ?> transformer = TransformerFactory.create().create(type);
 			if (!(transformer instanceof IFileTransformer)) {
 				throw new Exception(I18N.prop("msg_ie_not_found_transformer", type));
