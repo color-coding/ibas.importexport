@@ -17,12 +17,12 @@ namespace importexport {
                 /** 绘制视图 */
                 draw(): any {
                     let that: this = this;
-                    let check: sap.m.CheckBox, uploader: sap.ui.unified.FileUploader;
+                    let check: sap.m.CheckBox;
                     let form: sap.ui.layout.form.SimpleForm = new sap.ui.layout.form.SimpleForm("", {
                         editable: true,
                         content: [
                             new sap.ui.core.Title("", { text: ibas.i18n.prop("importexport_import_data") }),
-                            uploader = new sap.ui.unified.FileUploader("", {
+                            this.uploader = new sap.ui.unified.FileUploader("", {
                                 name: ibas.strings.format("FILE_{0}", ibas.uuids.random().toUpperCase()),
                                 width: "100%",
                                 placeholder: ibas.i18n.prop("importexport_please_choose_file"),
@@ -62,7 +62,7 @@ namespace importexport {
                                     type: sap.m.ButtonType.Transparent,
                                     icon: "sap-icon://toaster-up",
                                     press: function (): void {
-                                        let elements: NodeListOf<HTMLElement> = document.getElementsByName(uploader.getName());
+                                        let elements: NodeListOf<HTMLElement> = document.getElementsByName(that.uploader.getName());
                                         if (ibas.objects.isNull(elements) || elements.length === 0) {
                                             return;
                                         }
@@ -84,9 +84,17 @@ namespace importexport {
                     });
                 }
                 private table: sap.ui.table.Table;
+                private uploader: sap.ui.unified.FileUploader;
                 /** 显示结果 */
-                showResults(results: any[]): void {
-                    this.table.setModel(new sap.ui.model.json.JSONModel(results));
+                showResults(results: any[] | Error): void {
+                    if (results instanceof Error) {
+                        if (!ibas.objects.isNull(this.uploader)) {
+                            this.uploader.clear();
+                        }
+                        this.table.setModel(null);
+                    } else {
+                        this.table.setModel(new sap.ui.model.json.JSONModel(results));
+                    }
                 }
             }
         }

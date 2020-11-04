@@ -57,6 +57,7 @@ namespace importexport {
                             that.view.showResults(opRslt.resultObjects);
                         } catch (error) {
                             that.messages(error);
+                            that.view.showResults(error);
                         }
                     }
                 });
@@ -68,7 +69,7 @@ namespace importexport {
             /** 导入 */
             importEvent: Function;
             /** 显示结果 */
-            showResults(results: any[]): void;
+            showResults(results: any[] | Error): void;
         }
     }
 }

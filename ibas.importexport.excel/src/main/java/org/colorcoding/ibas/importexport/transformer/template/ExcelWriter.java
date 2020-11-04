@@ -216,7 +216,9 @@ public class ExcelWriter extends FileWriter {
 				if (dataCell.getValue() != null) {
 					if (dataCell.getParent().getBindingClass() == DateTime.class) {
 						// 日期类型值
-						sheetCell.setCellValue((Date) dataCell.getValue());
+						if (!DateTime.MIN_VALUE.equals(dataCell.getValue())) {
+							sheetCell.setCellValue((Date) dataCell.getValue());
+						}
 					} else if (dataCell.getParent().getBindingClass() == Decimal.class
 							|| dataCell.getParent().getBindingClass() == Float.class
 							|| dataCell.getParent().getBindingClass() == Double.class
