@@ -1,0 +1,1 @@
+/// <reference path="xlsx.d.ts" />

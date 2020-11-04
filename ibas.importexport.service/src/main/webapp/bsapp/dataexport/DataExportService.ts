@@ -170,6 +170,7 @@ namespace importexport {
                     let exporters: ibas.IList<bo.IDataExporter> = new ibas.ArrayList();
                     exporters.add(new bo.DataTableExporterJson());
                     exporters.add(new bo.DataTableExporterCSV());
+                    exporters.add(new bo.DataTableExporterXLSX());
                     this.show();
                     this.view.showExporters(exporters);
                 } else {

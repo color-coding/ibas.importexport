@@ -20,6 +20,7 @@ namespace importexport {
                     this.table = new sap.extension.table.Table("", {
                         enableSelectAll: false,
                         visibleRowCount: 5,
+                        chooseType: ibas.emChooseType.SINGLE,
                         rows: "{/rows}",
                         columns: [
                             new sap.extension.table.Column("", {
@@ -81,11 +82,7 @@ namespace importexport {
                             let content: any = result.content,
                                 fileName: string = result.fileName.substring(0, result.fileName.lastIndexOf(".")),
                                 extension: string = result.fileName.substring(result.fileName.lastIndexOf(".") + 1);
-                            if (extension === "csv") {
-                                sap.ui.core.util.File.save(content, fileName, extension, "text/csv", "utf-8", true);
-                            } else {
-                                sap.ui.core.util.File.save(content, fileName, extension, "text/plain", "utf-8");
-                            }
+                            sap.ui.core.util.File.save(content, fileName, extension, "text/plain", "utf-8");
                         } else if (result instanceof bo.DataExportResultBlob) {
                             ibas.files.save(result.content, result.fileName);
                         }

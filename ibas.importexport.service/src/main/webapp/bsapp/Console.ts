@@ -10,6 +10,7 @@
 /// <reference path="./exporttemplate/index.ts" />
 /// <reference path="./dataimport/index.ts" />
 /// <reference path="./dataprint/index.ts" />
+/// <reference path="./dataparsing/index.ts" />
 namespace importexport {
     export namespace app {
         /** 属性-导航 */
@@ -40,6 +41,7 @@ namespace importexport {
                 this.register(new ExportTemplateChooseServiceMapping());
                 this.register(new DataPrintServiceMapping());
                 this.register(new DataTablePrintServiceMapping());
+                this.register(new FileParsingServiceMapping());
                 // 注册常驻应用
 
 

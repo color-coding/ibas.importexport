@@ -10,6 +10,7 @@
 /// <reference path="./dataexport/index.ts" />
 /// <reference path="./dataimport/index.ts" />
 /// <reference path="./dataprint/index.ts" />
+/// <reference path="./dataparsing/index.ts" />
 namespace importexport {
     export namespace ui {
         /**
@@ -50,6 +51,9 @@ namespace importexport {
                         break;
                     case app.DataTablePrintService.APPLICATION_ID:
                         view = new c.DataPrintServiceView();
+                        break;
+                    case app.FileParsingService.APPLICATION_ID:
+                        view = new c.FileParsingServiceView();
                         break;
                     default:
                         break;

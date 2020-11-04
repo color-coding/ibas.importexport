@@ -166,5 +166,22 @@ namespace importexport {
             /** 内容 */
             content?: string;
         }
+        /**
+         * DataTable服务代理
+         */
+        export class DataTableServiceProxy extends ibas.DataTableServiceProxy {
+        }
+        /** 文件解析服务契约 */
+        export interface IFileParsingServiceContract extends ibas.IServiceContract {
+            /** 文件 */
+            file?: string | File;
+            /** 输出类型 */
+            outType: "json" | "table" | "array" | "string" | "blob";
+        }
+        /**
+         * 文件解析服务代理
+         */
+        export class FileParsingServiceProxy extends ibas.ServiceProxy<IFileParsingServiceContract> {
+        }
     }
 }

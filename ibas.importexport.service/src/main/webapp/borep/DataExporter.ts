@@ -155,111 +155,95 @@ namespace importexport {
                 }
             }
         }
-        class StringBuilder extends ibas.StringBuilder {
-            static NEW_LINE: string = function (): string {
-                if (navigator.appVersion) {
-                    if (navigator.appVersion.indexOf("Windows") > 0) {
-                        return "\r\n";
-                    } else if (navigator.appVersion.indexOf("Mac OS") > 0) {
-                        return "\r";
-                    }
-                    return "\n";
-                }
-            }();
-            static SEPARATOR: string = ",";
-
+        /** 数据表导出者-Excel */
+        export abstract class DataTableExporterSheetJS extends DataExporter<DataExportResultBlob> {
+            static MODE_SIGN: string = "TO_FILE_XLSX";
             constructor() {
                 super();
-                this.map(undefined, "");
-                this.map(null, "");
+                this.name = DataTableExporterXLSX.MODE_SIGN;
+                this.description = ibas.i18n.prop("importexport_export_xlsx");
             }
-            /**
-             * 添加字符
-             */
-            append(value: any): void {
-                if (typeof value === "string") {
-                    if (value.indexOf("\"") >= 0) {
-                        value = ibas.strings.replace(value, "\"", "\"\"");
-                    }
-                    value = "\"" + value + "\"";
-                } else if (value instanceof Date) {
-                    value = "\"" + ibas.dates.toString(value) + "\"";
-                }
-                super.append(value);
-            }
-            /**
-             * 新行
-             */
-            newLine(): void {
-                super.append(StringBuilder.NEW_LINE);
-            }
-            /**
-             * 分隔
-             */
-            separator(): void {
-                super.append(StringBuilder.SEPARATOR);
-            }
-        }
-        /** 数据表导出者-csv */
-        export class DataTableExporterCSV extends DataExporter<DataExportResultString> {
-            static MODE_SIGN: string = "TO_FILE_CSV";
-            constructor() {
-                super();
-                this.name = DataTableExporterCSV.MODE_SIGN;
-                this.description = ibas.i18n.prop("importexport_export_csv");
-            }
-            /** 导出 */
-            export(caller: bo.IDataExportCaller<DataExportResultString>): void {
+            export(caller: IDataExportCaller<DataExportResultBlob>): void {
                 if (ibas.objects.isNull(caller)) {
                     throw new Error(ibas.i18n.prop("sys_invalid_parameter", "caller"));
                 }
                 if (!(caller.data instanceof ibas.DataTable)) {
                     throw new Error(ibas.i18n.prop("sys_invalid_parameter", "caller.data"));
                 }
-                let stringBuilders: StringBuilder = new StringBuilder();
-                for (let item of caller.data.convert({ format: true, nameAs: "description" })) {
-                    if (stringBuilders.length === 0) {
-                        // 初始化标题
-                        let stringBuilder: StringBuilder = new StringBuilder();
-                        for (let name in item) {
-                            if (name !== null && name !== undefined) {
-                                if (stringBuilder.length > 0) {
-                                    stringBuilder.separator();
-                                }
-                                let tmp: string = ibas.i18n.prop(name);
-                                if (ibas.strings.isWith(tmp, "[", "]")) {
-                                    stringBuilder.append(name);
-                                } else {
-                                    stringBuilder.append(tmp);
-                                }
-                            }
-                        }
-                        stringBuilders.append(stringBuilder);
-                        stringBuilders.newLine();
-                    } else {
-                        stringBuilders.newLine();
-                    }
-                    let stringBuilder: StringBuilder = new StringBuilder();
-                    for (let name in item) {
-                        if (name !== null && name !== undefined) {
-                            if (stringBuilder.length > 0) {
-                                stringBuilder.separator();
-                            }
-                            stringBuilder.append(item[name]);
-                        }
-                    }
-                    stringBuilders.append(stringBuilder);
+                let table: ibas.DataTable = caller.data;
+                let sheetDatas: Array<any> = new Array<any>();
+                let row: Array<any> = new Array<any>();
+                for (let item of table.columns) {
+                    row.push(!ibas.strings.isEmpty(item.description) ? item.description : item.name);
                 }
-                let name: string = caller.data.description;
-                if (ibas.strings.isEmpty(name)) {
-                    name = "datatable";
+                if (row.length > 0) {
+                    sheetDatas.push(row);
                 }
-                name = ibas.strings.format("{0}_{1}.csv", name, ibas.dates.toString(ibas.dates.now(), "yyyyMMddHHss"));
+                for (let rItem of table.rows) {
+                    row = new Array<any>();
+                    for (let cItem of table.columns) {
+                        row.push(rItem.cells[table.columns.indexOf(cItem)]);
+                    }
+                    sheetDatas.push(row);
+                }
                 if (caller.onCompleted instanceof Function) {
-                    let opRslt: ibas.OperationResult<DataExportResultString> = new ibas.OperationResult<DataExportResultString>();
-                    opRslt.addResults(new DataExportResultString(name, stringBuilders.toString()));
-                    caller.onCompleted(opRslt);
+                    ibas.requires.create({
+                        context: ibas.requires.naming(importexport.CONSOLE_NAME),
+                    })([
+                        "3rdparty/sheetjs/xlsx.full.min"
+                    ], (sheetjs: any) => {
+                        let workBook: XLSX.WorkBook = XLSX.utils.book_new();
+                        let sheet: XLSX.Sheet = XLSX.utils.aoa_to_sheet(sheetDatas);
+                        XLSX.utils.book_append_sheet(workBook, sheet, !ibas.strings.isEmpty(table.description) ? table.description : table.name);
+                        let outWorkBook: any = XLSX.write(workBook, this.writingOptions());
+                        let result: DataExportResultBlob = new DataExportResultBlob(new Blob([outWorkBook], { type: "application/octet-stream" }));
+                        result.fileName = table.description;
+                        if (ibas.strings.isEmpty(result.fileName)) {
+                            result.fileName = "datatable";
+                        }
+                        result.fileName = ibas.strings.format("{0}_{1}.{2}",
+                            result.fileName, ibas.dates.toString(ibas.dates.now(), "yyyyMMddHHss"), this.writingOptions().bookType);
+                        caller.onCompleted(new ibas.OperationResult<DataExportResultBlob>().addResults(result));
+                    }, (error: RequireError) => {
+                        caller.onCompleted(new ibas.OperationResult<DataExportResultBlob>(error));
+                    });
                 }
+            }
+            protected abstract writingOptions(): any;
+        }
+        /** 数据表导出者-csv */
+        export class DataTableExporterCSV extends DataTableExporterSheetJS {
+            static MODE_SIGN: string = "TO_FILE_CSV";
+            constructor() {
+                super();
+                this.name = DataTableExporterCSV.MODE_SIGN;
+                this.description = ibas.i18n.prop("importexport_export_csv");
+            }
+            protected writingOptions(): any {
+                return {
+                    bookType: "csv",
+                    bookSST: false,
+                    type: "array",
+                    compression: false,
+                };
+            }
+
+        }
+        /** 数据表导出者-Excel */
+        export class DataTableExporterXLSX extends DataTableExporterSheetJS {
+            static MODE_SIGN: string = "TO_FILE_XLSX";
+            constructor() {
+                super();
+                this.name = DataTableExporterXLSX.MODE_SIGN;
+                this.description = ibas.i18n.prop("importexport_export_xlsx");
+            }
+            protected writingOptions(): any {
+                return {
+                    bookType: "xlsx",
+                    bookSST: false,
+                    type: "array",
+                    compression: true,
+                };
             }
         }
     }
