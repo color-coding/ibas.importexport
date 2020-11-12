@@ -7,6 +7,7 @@ import org.colorcoding.ibas.importexport.data.emAreaType;
 import org.colorcoding.ibas.importexport.data.emDataSourceType;
 import org.colorcoding.ibas.importexport.data.emJustificationHorizontal;
 import org.colorcoding.ibas.importexport.data.emJustificationVertical;
+import org.colorcoding.ibas.importexport.data.emLineStyle;
 import org.colorcoding.ibas.importexport.data.emTextSegment;
 import org.colorcoding.ibas.importexport.data.emTextStyle;
 
@@ -423,60 +424,74 @@ public interface IExportTemplateItem extends IBOSimpleLine {
 	void setMarginBottom(Integer value);
 
 	/**
-	 * 获取-左线长度
+	 * 获取-左线宽度
 	 * 
 	 * @return 值
 	 */
 	Integer getLineLeft();
 
 	/**
-	 * 设置-左线长度
+	 * 设置-左线宽度
 	 * 
 	 * @param value 值
 	 */
 	void setLineLeft(Integer value);
 
 	/**
-	 * 获取-右线长度
+	 * 获取-右线宽度
 	 * 
 	 * @return 值
 	 */
 	Integer getLineRight();
 
 	/**
-	 * 设置-右线长度
+	 * 设置-右线宽度
 	 * 
 	 * @param value 值
 	 */
 	void setLineRight(Integer value);
 
 	/**
-	 * 获取-上线长度
+	 * 获取-上线宽度
 	 * 
 	 * @return 值
 	 */
 	Integer getLineTop();
 
 	/**
-	 * 设置-上线长度
+	 * 设置-上线宽度
 	 * 
 	 * @param value 值
 	 */
 	void setLineTop(Integer value);
 
 	/**
-	 * 获取-下线长度
+	 * 获取-下线宽度
 	 * 
 	 * @return 值
 	 */
 	Integer getLineBottom();
 
 	/**
-	 * 设置-下线长度
+	 * 设置-下线宽度
 	 * 
 	 * @param value 值
 	 */
 	void setLineBottom(Integer value);
+
+	/**
+	 * 获取-线框样式
+	 * 
+	 * @return 值
+	 */
+	emLineStyle getLineStyle();
+
+	/**
+	 * 设置-线框样式
+	 * 
+	 * @param value 值
+	 */
+	void setLineStyle(emLineStyle value);
 
 	/**
 	 * 获取-字体名称

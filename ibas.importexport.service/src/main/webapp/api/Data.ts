@@ -133,6 +133,27 @@ namespace importexport {
              */
             CELL,
         }
+        /**
+         * 框线样式
+         */
+        export enum emLineStyle {
+            /**
+             * 实线
+             */
+            SOLID,
+            /**
+             * 虚线
+             */
+            DASHED,
+            /**
+             * 点状
+             */
+            DOTTED,
+            /**
+             * 双线
+             */
+            DOUBLE
+        }
         /** 数据导出调用者 */
         export interface IDataExportCaller<T> extends ibas.IMethodCaller<T> {
             /** 导出的数据 */

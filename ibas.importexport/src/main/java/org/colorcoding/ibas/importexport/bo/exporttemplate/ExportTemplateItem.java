@@ -16,6 +16,7 @@ import org.colorcoding.ibas.importexport.data.emAreaType;
 import org.colorcoding.ibas.importexport.data.emDataSourceType;
 import org.colorcoding.ibas.importexport.data.emJustificationHorizontal;
 import org.colorcoding.ibas.importexport.data.emJustificationVertical;
+import org.colorcoding.ibas.importexport.data.emLineStyle;
 import org.colorcoding.ibas.importexport.data.emTextSegment;
 import org.colorcoding.ibas.importexport.data.emTextStyle;
 
@@ -952,19 +953,19 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	}
 
 	/**
-	 * 属性名称-左线长度
+	 * 属性名称-左线宽度
 	 */
 	private static final String PROPERTY_LINELEFT_NAME = "LineLeft";
 
 	/**
-	 * 左线长度 属性
+	 * 左线宽度 属性
 	 */
 	@DbField(name = "LeftLine", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
 	public static final IPropertyInfo<Integer> PROPERTY_LINELEFT = registerProperty(PROPERTY_LINELEFT_NAME,
 			Integer.class, MY_CLASS);
 
 	/**
-	 * 获取-左线长度
+	 * 获取-左线宽度
 	 * 
 	 * @return 值
 	 */
@@ -974,7 +975,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	}
 
 	/**
-	 * 设置-左线长度
+	 * 设置-左线宽度
 	 * 
 	 * @param value 值
 	 */
@@ -983,19 +984,19 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	}
 
 	/**
-	 * 属性名称-右线长度
+	 * 属性名称-右线宽度
 	 */
 	private static final String PROPERTY_LINERIGHT_NAME = "LineRight";
 
 	/**
-	 * 右线长度 属性
+	 * 右线宽度 属性
 	 */
 	@DbField(name = "RightLine", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
 	public static final IPropertyInfo<Integer> PROPERTY_LINERIGHT = registerProperty(PROPERTY_LINERIGHT_NAME,
 			Integer.class, MY_CLASS);
 
 	/**
-	 * 获取-右线长度
+	 * 获取-右线宽度
 	 * 
 	 * @return 值
 	 */
@@ -1005,7 +1006,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	}
 
 	/**
-	 * 设置-右线长度
+	 * 设置-右线宽度
 	 * 
 	 * @param value 值
 	 */
@@ -1014,19 +1015,19 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	}
 
 	/**
-	 * 属性名称-上线长度
+	 * 属性名称-上线宽度
 	 */
 	private static final String PROPERTY_LINETOP_NAME = "LineTop";
 
 	/**
-	 * 上线长度 属性
+	 * 上线宽度 属性
 	 */
 	@DbField(name = "TopLine", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
 	public static final IPropertyInfo<Integer> PROPERTY_LINETOP = registerProperty(PROPERTY_LINETOP_NAME, Integer.class,
 			MY_CLASS);
 
 	/**
-	 * 获取-上线长度
+	 * 获取-上线宽度
 	 * 
 	 * @return 值
 	 */
@@ -1036,7 +1037,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	}
 
 	/**
-	 * 设置-上线长度
+	 * 设置-上线宽度
 	 * 
 	 * @param value 值
 	 */
@@ -1045,19 +1046,19 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	}
 
 	/**
-	 * 属性名称-下线长度
+	 * 属性名称-下线宽度
 	 */
 	private static final String PROPERTY_LINEBOTTOM_NAME = "LineBottom";
 
 	/**
-	 * 下线长度 属性
+	 * 下线宽度 属性
 	 */
 	@DbField(name = "BottomLine", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
 	public static final IPropertyInfo<Integer> PROPERTY_LINEBOTTOM = registerProperty(PROPERTY_LINEBOTTOM_NAME,
 			Integer.class, MY_CLASS);
 
 	/**
-	 * 获取-下线长度
+	 * 获取-下线宽度
 	 * 
 	 * @return 值
 	 */
@@ -1067,12 +1068,43 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	}
 
 	/**
-	 * 设置-下线长度
+	 * 设置-下线宽度
 	 * 
 	 * @param value 值
 	 */
 	public final void setLineBottom(Integer value) {
 		this.setProperty(PROPERTY_LINEBOTTOM, value);
+	}
+
+	/**
+	 * 属性名称-线框样式
+	 */
+	private static final String PROPERTY_LINESTYLE_NAME = "LineStyle";
+
+	/**
+	 * 线框样式 属性
+	 */
+	@DbField(name = "LineStyle", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
+	public static final IPropertyInfo<emLineStyle> PROPERTY_LINESTYLE = registerProperty(PROPERTY_LINESTYLE_NAME,
+			emLineStyle.class, MY_CLASS);
+
+	/**
+	 * 获取-线框样式
+	 * 
+	 * @return 值
+	 */
+	@XmlElement(name = PROPERTY_LINESTYLE_NAME)
+	public final emLineStyle getLineStyle() {
+		return this.getProperty(PROPERTY_LINESTYLE);
+	}
+
+	/**
+	 * 设置-线框样式
+	 * 
+	 * @param value 值
+	 */
+	public final void setLineStyle(emLineStyle value) {
+		this.setProperty(PROPERTY_LINESTYLE, value);
 	}
 
 	/**

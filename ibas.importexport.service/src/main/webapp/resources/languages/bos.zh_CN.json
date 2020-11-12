@@ -96,10 +96,11 @@
         "bo_exporttemplateitem_marginright": "右边距",
         "bo_exporttemplateitem_margintop": "上边距",
         "bo_exporttemplateitem_marginbottom": "下边距",
-        "bo_exporttemplateitem_lineleft": "左线长度",
-        "bo_exporttemplateitem_lineright": "右线长度",
-        "bo_exporttemplateitem_linetop": "上线长度",
-        "bo_exporttemplateitem_linebottom": "下线长度",
+        "bo_exporttemplateitem_lineleft": "左线宽度",
+        "bo_exporttemplateitem_lineright": "右线宽度",
+        "bo_exporttemplateitem_linetop": "上线宽度",
+        "bo_exporttemplateitem_linebottom": "下线宽度",
+        "bo_exporttemplateitem_linestyle": "线框样式",
         "bo_exporttemplateitem_fontname": "字体名称",
         "bo_exporttemplateitem_fontsize": "字体大小",
         "bo_exporttemplateitem_textstyle": "文本样式",
@@ -191,5 +192,11 @@
         "em_datasourcetype_text": "文本",
         "em_datasourcetype_path": "路径",
         "em_datasourcetype_query": "查询"
+    },
+    {
+        "em_linestyle_solid": "实线",
+        "em_linestyle_dashed": "虚线",
+        "em_linestyle_dotted": "点状",
+        "em_linestyle_double": "双线"
     }
 ]

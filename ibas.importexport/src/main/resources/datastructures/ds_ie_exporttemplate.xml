@@ -92,10 +92,11 @@
     <Property Name="MarginRight" Description="右边距" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="RMargin"/>
     <Property Name="MarginTop" Description="上边距" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="TMargin"/>
     <Property Name="MarginBottom" Description="下边距" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="BMargin"/>
-    <Property Name="LineLeft" Description="左线长度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="LeftLine"/>
-    <Property Name="LineRight" Description="右线长度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="RightLine"/>
-    <Property Name="LineTop" Description="上线长度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="TopLine"/>
-    <Property Name="LineBottom" Description="下线长度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="BottomLine"/>
+    <Property Name="LineLeft" Description="左线宽度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="LeftLine"/>
+    <Property Name="LineRight" Description="右线宽度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="RightLine"/>
+    <Property Name="LineTop" Description="上线宽度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="TopLine"/>
+    <Property Name="LineBottom" Description="下线宽度" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="BottomLine"/>
+    <Property Name="LineStyle" Description="线框样式" DataType="Alphanumeric" DataSubType="Default" EditSize="2" DeclaredType="emLineStyle" Mapped="LineStyle"/>
     <Property Name="FontName" Description="字体名称" DataType="Alphanumeric" DataSubType="Default" EditSize="50" Mapped="FontName"/>
     <Property Name="FontSize" Description="字体大小" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="FontSize"/>
     <Property Name="TextStyle" Description="文本样式" DataType="Alphanumeric" DataSubType="Default" EditSize="2" DeclaredType="emTextStyle" Mapped="TextStyle"/>

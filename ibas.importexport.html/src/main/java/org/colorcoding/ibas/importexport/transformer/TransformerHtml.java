@@ -23,6 +23,7 @@ import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplateItem;
 import org.colorcoding.ibas.importexport.data.emDataSourceType;
 import org.colorcoding.ibas.importexport.data.emJustificationHorizontal;
 import org.colorcoding.ibas.importexport.data.emJustificationVertical;
+import org.colorcoding.ibas.importexport.data.emLineStyle;
 import org.colorcoding.ibas.importexport.data.emTextSegment;
 import org.colorcoding.ibas.importexport.data.emTextStyle;
 
@@ -430,6 +431,12 @@ public class TransformerHtml extends TemplateTransformer {
 	}
 
 	protected void startDiv(Writer writer, String id, int left, int top, int width, int height) throws IOException {
+		this.startDiv(writer, id, left, top, width, height, null, -1, -1, -1, -1, -1, -1, -1);
+	}
+
+	protected void startDiv(Writer writer, String id, int left, int top, int width, int height, emLineStyle lineStyle,
+			int lineLeft, int lineTop, int lineRight, int lineBottom, int borderRed, int borderGreen, int borderBlue)
+			throws IOException {
 		writer.write("<div");
 		writer.write(" ");
 		if (id != null) {
@@ -457,6 +464,35 @@ public class TransformerHtml extends TemplateTransformer {
 			writer.write(String.valueOf(height));
 			writer.write("px;");
 		}
+		// 边框线条
+		if (lineTop > 0 || lineTop > 0 || lineRight > 0 || lineBottom > 0) {
+			writer.write("border-style:");
+			writer.write(String.valueOf(lineStyle != null ? lineStyle : emLineStyle.SOLID).toLowerCase());
+			writer.write(";");
+			if (borderRed > 0 || borderGreen > 0 || borderBlue > 0) {
+				writer.write("border-color:rgb(");
+				writer.write(String.valueOf(borderRed));
+				writer.write(",");
+				writer.write(String.valueOf(borderGreen));
+				writer.write(",");
+				writer.write(String.valueOf(borderBlue));
+				writer.write(");");
+			} else {
+				writer.write("border-color:black;");
+			}
+			writer.write("border-left-width:");
+			writer.write(String.valueOf(lineLeft));
+			writer.write("px;");
+			writer.write("border-top-width:");
+			writer.write(String.valueOf(lineTop));
+			writer.write("px;");
+			writer.write("border-right-width:");
+			writer.write(String.valueOf(lineRight));
+			writer.write("px;");
+			writer.write("border-bottom-width:");
+			writer.write(String.valueOf(lineBottom));
+			writer.write("px;");
+		}
 		writer.write("\"");
 		writer.write(" ");
 		writer.write(">");
@@ -482,7 +518,9 @@ public class TransformerHtml extends TemplateTransformer {
 				continue;
 			}
 			this.startDiv(writer, null, item.getItemLeft(), item.getItemTop(), item.getItemWidth(),
-					item.getItemHeight());
+					item.getItemHeight(), item.getLineStyle(), item.getLineLeft(), item.getLineTop(),
+					item.getLineRight(), item.getLineBottom(), item.getBorderRed(), item.getBorderGreen(),
+					item.getBorderBlue());
 			this.drawElement(writer, item);
 			this.endDiv(writer);
 		}
@@ -503,6 +541,9 @@ public class TransformerHtml extends TemplateTransformer {
 			writer.write("src=\"");
 			writer.write(this.templateValue(template));
 			writer.write("\"");
+			writer.write(" ");
+			writer.write(
+					"onerror=\"this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSI+Cjwvc3ZnPiA=';\"");
 			writer.write(" ");
 			writer.write(">");
 			writer.write("</img>");

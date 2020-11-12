@@ -1078,6 +1078,57 @@ namespace importexport {
                                     })
                                 }),
                             }),
+                            new sap.extension.table.DataColumn("", {
+                                label: ibas.i18n.prop("bo_exporttemplateitem_lineleft"),
+                                template: new sap.extension.m.Input("", {
+                                    type: sap.m.InputType.Number
+                                }).bindProperty("bindingValue", {
+                                    path: "lineLeft",
+                                    type: new sap.extension.data.Numeric(),
+                                }),
+                                width: "6rem",
+                            }),
+                            new sap.extension.table.DataColumn("", {
+                                label: ibas.i18n.prop("bo_exporttemplateitem_lineright"),
+                                template: new sap.extension.m.Input("", {
+                                    type: sap.m.InputType.Number
+                                }).bindProperty("bindingValue", {
+                                    path: "lineRight",
+                                    type: new sap.extension.data.Numeric(),
+                                }),
+                                width: "6rem",
+                            }),
+                            new sap.extension.table.DataColumn("", {
+                                label: ibas.i18n.prop("bo_exporttemplateitem_linetop"),
+                                template: new sap.extension.m.Input("", {
+                                    type: sap.m.InputType.Number
+                                }).bindProperty("bindingValue", {
+                                    path: "lineTop",
+                                    type: new sap.extension.data.Numeric(),
+                                }),
+                                width: "6rem",
+                            }),
+                            new sap.extension.table.DataColumn("", {
+                                label: ibas.i18n.prop("bo_exporttemplateitem_linebottom"),
+                                template: new sap.extension.m.Input("", {
+                                    type: sap.m.InputType.Number
+                                }).bindProperty("bindingValue", {
+                                    path: "lineBottom",
+                                    type: new sap.extension.data.Numeric(),
+                                }),
+                                width: "6rem",
+                            }),
+                            new sap.extension.table.DataColumn("", {
+                                label: ibas.i18n.prop("bo_exporttemplateitem_linestyle"),
+                                template: new sap.extension.m.EnumSelect("", {
+                                    enumType: bo.emLineStyle
+                                }).bindProperty("bindingValue", {
+                                    path: "lineStyle",
+                                    type: new sap.extension.data.Enum({
+                                        enumType: bo.emLineStyle
+                                    }),
+                                }),
+                            }),
                         ]
                     });
                     return table;

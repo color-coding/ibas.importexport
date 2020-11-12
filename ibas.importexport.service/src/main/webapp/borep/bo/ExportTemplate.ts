@@ -1110,48 +1110,59 @@ namespace importexport {
                 this.setProperty(ExportTemplateItem.PROPERTY_MARGINBOTTOM_NAME, value);
             }
 
-            /** 映射的属性名称-左线长度 */
+            /** 映射的属性名称-左线宽度 */
             static PROPERTY_LINELEFT_NAME: string = "LineLeft";
-            /** 获取-左线长度 */
+            /** 获取-左线宽度 */
             get lineLeft(): number {
                 return this.getProperty<number>(ExportTemplateItem.PROPERTY_LINELEFT_NAME);
             }
-            /** 设置-左线长度 */
+            /** 设置-左线宽度 */
             set lineLeft(value: number) {
                 this.setProperty(ExportTemplateItem.PROPERTY_LINELEFT_NAME, value);
             }
 
-            /** 映射的属性名称-右线长度 */
+            /** 映射的属性名称-右线宽度 */
             static PROPERTY_LINERIGHT_NAME: string = "LineRight";
-            /** 获取-右线长度 */
+            /** 获取-右线宽度 */
             get lineRight(): number {
                 return this.getProperty<number>(ExportTemplateItem.PROPERTY_LINERIGHT_NAME);
             }
-            /** 设置-右线长度 */
+            /** 设置-右线宽度 */
             set lineRight(value: number) {
                 this.setProperty(ExportTemplateItem.PROPERTY_LINERIGHT_NAME, value);
             }
 
-            /** 映射的属性名称-上线长度 */
+            /** 映射的属性名称-上线宽度 */
             static PROPERTY_LINETOP_NAME: string = "LineTop";
-            /** 获取-上线长度 */
+            /** 获取-上线宽度 */
             get lineTop(): number {
                 return this.getProperty<number>(ExportTemplateItem.PROPERTY_LINETOP_NAME);
             }
-            /** 设置-上线长度 */
+            /** 设置-上线宽度 */
             set lineTop(value: number) {
                 this.setProperty(ExportTemplateItem.PROPERTY_LINETOP_NAME, value);
             }
 
-            /** 映射的属性名称-下线长度 */
+            /** 映射的属性名称-下线宽度 */
             static PROPERTY_LINEBOTTOM_NAME: string = "LineBottom";
-            /** 获取-下线长度 */
+            /** 获取-下线宽度 */
             get lineBottom(): number {
                 return this.getProperty<number>(ExportTemplateItem.PROPERTY_LINEBOTTOM_NAME);
             }
-            /** 设置-下线长度 */
+            /** 设置-下线宽度 */
             set lineBottom(value: number) {
                 this.setProperty(ExportTemplateItem.PROPERTY_LINEBOTTOM_NAME, value);
+            }
+
+            /** 映射的属性名称-线框样式 */
+            static PROPERTY_LINESTYLE_NAME: string = "LineStyle";
+            /** 获取-线框样式 */
+            get lineStyle(): emLineStyle {
+                return this.getProperty<emLineStyle>(ExportTemplateItem.PROPERTY_LINESTYLE_NAME);
+            }
+            /** 设置-线框样式 */
+            set lineStyle(value: emLineStyle) {
+                this.setProperty(ExportTemplateItem.PROPERTY_LINESTYLE_NAME, value);
             }
 
             /** 映射的属性名称-字体名称 */

@@ -210,14 +210,16 @@ namespace importexport {
             marginTop: number;
             /** 下边距 */
             marginBottom: number;
-            /** 左线长度 */
+            /** 左线宽度 */
             lineLeft: number;
-            /** 右线长度 */
+            /** 右线宽度 */
             lineRight: number;
-            /** 上线长度 */
+            /** 上线宽度 */
             lineTop: number;
-            /** 下线长度 */
+            /** 下线宽度 */
             lineBottom: number;
+            /** 线框样式 */
+            lineStyle: emLineStyle;
             /** 字体名称 */
             fontName: string;
             /** 字体大小 */
