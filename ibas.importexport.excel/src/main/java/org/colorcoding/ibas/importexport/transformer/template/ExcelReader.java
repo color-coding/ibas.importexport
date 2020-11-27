@@ -274,6 +274,12 @@ public class ExcelReader extends FileReader {
 							} else if (property.getBindingClass() == DateTime.class) {
 								dataCell = this.createCell(property, sheetRow.getRowNum(),
 										DataConvert.convert(property.getBindingClass(), sheetCell.getDateCellValue()));
+							} else if (property.getBindingClass() == String.class
+									&& sheetCell.getCellStyle().getDataFormat() >= 0xe
+									&& sheetCell.getCellStyle().getDataFormat() <= 0x16) {
+								// 字符串类型时，判断下单元格是否是日期类型
+								dataCell = this.createCell(property, sheetRow.getRowNum(),
+										DataConvert.convert(String.class, sheetCell.getDateCellValue()));
 							} else {
 								dataCell = this.createCell(property, sheetRow.getRowNum(), DataConvert
 										.convert(property.getBindingClass(), sheetCell.getNumericCellValue()));
