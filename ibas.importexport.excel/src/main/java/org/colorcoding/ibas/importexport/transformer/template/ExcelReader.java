@@ -279,7 +279,8 @@ public class ExcelReader extends FileReader {
 									&& sheetCell.getCellStyle().getDataFormat() <= 0x16) {
 								// 字符串类型时，判断下单元格是否是日期类型
 								dataCell = this.createCell(property, sheetRow.getRowNum(),
-										DataConvert.convert(String.class, sheetCell.getDateCellValue()));
+										sheetCell.getDateCellValue() == null ? ""
+												: DateTime.valueOf(sheetCell.getDateCellValue()).toString());
 							} else {
 								dataCell = this.createCell(property, sheetRow.getRowNum(), DataConvert
 										.convert(property.getBindingClass(), sheetCell.getNumericCellValue()));

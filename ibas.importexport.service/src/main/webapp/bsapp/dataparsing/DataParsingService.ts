@@ -33,7 +33,7 @@ namespace importexport {
                             this.view.showFileDialog("application/json");
                         } else if (ibas.strings.equalsIgnoreCase(this.outType, "table")
                             || ibas.strings.equalsIgnoreCase(this.outType, "array")) {
-                            this.view.showFileDialog("text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                            this.view.showFileDialog("text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel.sheet.macroenabled.12");
                         } else {
                             this.view.showFileDialog("");
                         }
