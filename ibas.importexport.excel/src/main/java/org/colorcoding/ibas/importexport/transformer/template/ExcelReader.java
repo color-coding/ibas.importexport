@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -275,11 +276,13 @@ public class ExcelReader extends FileReader {
 								dataCell = this.createCell(property, sheetRow.getRowNum(),
 										DataConvert.convert(property.getBindingClass(), sheetCell.getDateCellValue()));
 							} else if (property.getBindingClass() == String.class
-									&& sheetCell.getCellStyle().getDataFormat() >= 0xe
-									&& sheetCell.getCellStyle().getDataFormat() <= 0x16) {
+									&& (HSSFDateUtil.isCellDateFormatted(sheetCell) // 日期类型数据
+											|| sheetCell.getCellStyle().getDataFormat() == 31 // yyyy年m月d日
+											|| sheetCell.getCellStyle().getDataFormat() == 58 // m月d日
+									)) {
 								// 字符串类型时，判断下单元格是否是日期类型
 								dataCell = this.createCell(property, sheetRow.getRowNum(),
-										sheetCell.getDateCellValue() == null ? ""
+										sheetCell.getNumericCellValue() == 0 ? DataConvert.STRING_VALUE_EMPTY
 												: DateTime.valueOf(sheetCell.getDateCellValue()).toString());
 							} else {
 								dataCell = this.createCell(property, sheetRow.getRowNum(), DataConvert
