@@ -465,7 +465,7 @@ public class TransformerHtml extends TemplateTransformer {
 			writer.write("px;");
 		}
 		// 边框线条
-		if (lineTop > 0 || lineTop > 0 || lineRight > 0 || lineBottom > 0) {
+		if (lineTop > 0 || lineBottom > 0 || lineLeft > 0 || lineRight > 0) {
 			writer.write("border-style:");
 			writer.write(String.valueOf(lineStyle != null ? lineStyle : emLineStyle.SOLID).toLowerCase());
 			writer.write(";");
@@ -640,10 +640,9 @@ public class TransformerHtml extends TemplateTransformer {
 		writer.write(" ");
 		writer.write("cellspacing=\"0\" cellpadding=\"0\"");
 		writer.write(" ");
-		writer.write("border=\"1px\" solid=\"black\"");
-		writer.write(" ");
 		writer.write("style=\"");
 		writer.write("table-layout:fixed;border-collapse:collapse;");
+		writer.write("border:1px solid black;");
 		writer.write("\"");
 		writer.write(" ");
 		writer.write(">");
@@ -669,6 +668,7 @@ public class TransformerHtml extends TemplateTransformer {
 			writer.write("height:");
 			writer.write(String.valueOf(item.getItemHeight() - item.getLineTop() - item.getLineBottom()));
 			writer.write("px;");
+			writer.write("border:1px solid black;");
 			writer.write("\"");
 			writer.write(" ");
 			writer.write(">");
@@ -697,6 +697,7 @@ public class TransformerHtml extends TemplateTransformer {
 		writer.write("height:");
 		writer.write(String.valueOf(this.getTemplate().getRepetitionFooterHeight()));
 		writer.write("px;");
+		writer.write("border:1px solid black;");
 		writer.write("\"");
 		writer.write(" ");
 		writer.write("colspan=\"");
@@ -750,6 +751,7 @@ public class TransformerHtml extends TemplateTransformer {
 			writer.write("height:");
 			writer.write(String.valueOf(item.getItemHeight() - item.getLineTop() - item.getLineBottom()));
 			writer.write("px;");
+			writer.write("border:1px solid black;");
 			writer.write("\"");
 			writer.write(" ");
 			writer.write(">");

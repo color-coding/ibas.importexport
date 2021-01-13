@@ -128,6 +128,9 @@ namespace importexport {
                                             if (ibas.strings.isEmpty(item)) {
                                                 continue;
                                             }
+                                            if (ibas.strings.isWith(item, "border-", undefined)) {
+                                                continue;
+                                            }
                                             let value: any = element.style[item];
                                             if (typeof value === "string" && value.endsWith("px")) {
                                                 element.style[item] = revisePx(value, dpi);
