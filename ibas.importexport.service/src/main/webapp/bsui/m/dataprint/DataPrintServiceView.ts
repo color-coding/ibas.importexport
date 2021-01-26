@@ -7,7 +7,7 @@
  */
 namespace importexport {
     export namespace ui {
-        export namespace c {
+        export namespace m {
             const DPI: { x: number, y: number } = function (): { x: number, y: number } {
                 let dpi: { x: number, y: number } = { x: NaN, y: NaN };
                 if ((<any>window.screen).deviceXDPI) {
@@ -47,27 +47,19 @@ namespace importexport {
                         title: this.title,
                         type: sap.m.DialogType.Standard,
                         state: sap.ui.core.ValueState.None,
+                        stretch: ibas.config.get(ibas.CONFIG_ITEM_PLANTFORM) === ibas.emPlantform.PHONE ? true : false,
                         horizontalScrolling: false,
                         verticalScrolling: false,
                         content: [
                         ],
                         buttons: [
                             new sap.m.Button("", {
-                                text: ibas.i18n.prop("importexport_preview"),
+                                text: ibas.i18n.prop("importexport_print"),
                                 type: sap.m.ButtonType.Transparent,
+                                visible: false,
                                 press: function (oControlEvent: sap.ui.base.Event): void {
                                     if (!ibas.objects.isNull(that.html)) {
                                         that.fireViewEvents(that.printEvent, that.html.getFrameId());
-                                    } else if (!ibas.objects.isNull(that.select)) {
-                                        let item: sap.ui.core.Item = that.select.getSelectedItem();
-                                        if (ibas.objects.isNull(item)) {
-                                            return;
-                                        }
-                                        that.fireViewEvents(that.previewEvent, (<any>item.getModel()).getData());
-                                        if (oControlEvent.getSource() instanceof sap.m.Button) {
-                                            let button: sap.m.Button = <sap.m.Button>oControlEvent.getSource();
-                                            button.setText(ibas.i18n.prop("importexport_print"));
-                                        }
                                     }
                                 }
                             }),
@@ -82,12 +74,10 @@ namespace importexport {
                     });
                 }
                 private dialog: sap.m.Dialog;
-                private select: sap.m.Select;
                 private html: sap.extension.core.FrameHTML;
 
                 /** 显示内容 */
                 showContent(content: Blob, width: string, height: string): void {
-                    this.select = null;
                     this.dialog.destroyContent();
                     if (!ibas.strings.isEmpty(width)) {
                         this.dialog.setContentWidth(revisePx(width));
@@ -139,36 +129,42 @@ namespace importexport {
                             }
                         }
                     }));
+                    this.dialog.getButtons()[0].setVisible(true);
                 }
                 /** 显示数据导出者 */
                 showExporters(exporters: bo.IDataExporter[]): void {
-                    this.html = null;
-                    this.dialog.destroyContent();
-                    this.select = new sap.m.Select("", {
-                        width: "100%",
-                    });
-                    for (let item of exporters) {
-                        let sItem: sap.ui.core.Item = new sap.ui.core.Item("", {
-                            key: item.name,
-                            text: ibas.strings.isEmpty(item.description) ? item.name : item.description.substring(
-                                item.description.indexOf("[") + 1, item.description.lastIndexOf("]")
-                            ),
-                        });
-                        sItem.setModel(new sap.ui.model.json.JSONModel(item));
-                        this.select.addItem(sItem);
-                    }
-                    this.dialog.addContent(
-                        new sap.ui.layout.form.SimpleForm("", {
-                            editable: true,
+                    let that: this = this;
+                    let list: any = new sap.extension.m.List("", {
+                        inset: false,
+                        growing: false,
+                        mode: sap.m.ListMode.None,
+                        backgroundDesign: sap.m.BackgroundDesign.Transparent,
+                        headerToolbar: new sap.m.Toolbar("", {
                             content: [
                                 new sap.m.Label("", {
-                                    width: "100%",
-                                    text: ibas.i18n.prop("importexport_please_template"),
+                                    text: ibas.i18n.prop("importexport_please_template")
                                 }),
-                                this.select,
                             ]
-                        })
-                    );
+                        }),
+                        showNoData: true,
+                        items: {
+                            path: "/rows",
+                            template: new sap.m.ObjectListItem("", {
+                                title: {
+                                    path: "description",
+                                    formatter(data: string): string {
+                                        return data.substring(data.indexOf("[") + 1, data.lastIndexOf("]"));
+                                    }
+                                },
+                                type: sap.m.ListType.Active,
+                                press: function (oEvent: sap.ui.base.Event): void {
+                                    that.fireViewEvents(that.previewEvent, this.getBindingContext().getObject());
+                                },
+                            })
+                        }
+                    });
+                    list.setModel(new sap.extension.model.JSONModel({ rows: exporters }));
+                    this.dialog.addContent(list);
                 }
             }
         }

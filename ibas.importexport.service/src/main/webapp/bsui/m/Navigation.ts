@@ -6,6 +6,7 @@
  * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
  */
 /// <reference path="../../index.d.ts" />
+/// <reference path="./dataprint/index.ts" />
 namespace importexport {
     export namespace ui {
         /**
@@ -19,6 +20,12 @@ namespace importexport {
             protected newView(id: string): ibas.IView {
                 let view: ibas.IView = null;
                 switch (id) {
+                    case app.DataPrintService.APPLICATION_ID:
+                        view = new m.DataPrintServiceView();
+                        break;
+                    case app.DataTablePrintService.APPLICATION_ID:
+                        view = new m.DataPrintServiceView();
+                        break;
                     default:
                         break;
                 }
