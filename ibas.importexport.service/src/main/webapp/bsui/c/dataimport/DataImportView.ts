@@ -71,7 +71,7 @@ namespace importexport {
                                             return;
                                         }
                                         let fileData: FormData = new FormData();
-                                        fileData.append("file", element.files[0]);
+                                        fileData.append("file", element.files[0], encodeURI(element.files[0].name));
                                         fileData.append("update", check.getSelected().toString());
                                         that.fireViewEvents(that.importEvent, fileData);
                                     }

@@ -101,25 +101,30 @@ namespace importexport {
                             return;
                         }
                         let opRsltRS: ibas.OperationResult<IDataExportResult> = new ibas.OperationResult<IDataExportResult>();
-                        for (let item of opRslt.resultObjects) {
-                            let result: DataExportResultBlob = new DataExportResultBlob(item);
-                            for (let item of opRslt.informations) {
-                                if (ibas.strings.isEmpty(item.content)) {
-                                    continue;
-                                }
-                                let index: number = item.content.indexOf("filename");
-                                if (index >= 0) {
-                                    let value: string = item.content.substring(index + 8);
-                                    if (value.startsWith("=")) {
-                                        value = value.substring(1);
+                        if (opRslt.resultCode === 0) {
+                            for (let item of opRslt.resultObjects) {
+                                let result: DataExportResultBlob = new DataExportResultBlob(item);
+                                for (let item of opRslt.informations) {
+                                    if (ibas.strings.isEmpty(item.content)) {
+                                        continue;
                                     }
-                                    result.fileName = value;
+                                    let index: number = item.content.indexOf("filename");
+                                    if (index >= 0) {
+                                        let value: string = item.content.substring(index + 8);
+                                        if (value.startsWith("=")) {
+                                            value = value.substring(1);
+                                        }
+                                        result.fileName = value;
+                                    }
                                 }
+                                if (ibas.strings.isEmpty(result.fileName)) {
+                                    result.fileName = ibas.strings.format("{0}.{1}", ibas.uuids.random(), that.name.substring(that.name.lastIndexOf("_") + 1).toLowerCase());
+                                }
+                                opRsltRS.resultObjects.add(result);
                             }
-                            if (ibas.strings.isEmpty(result.fileName)) {
-                                result.fileName = ibas.strings.format("{0}.{1}", ibas.uuids.random(), that.name.substring(that.name.lastIndexOf("_") + 1).toLowerCase());
-                            }
-                            opRsltRS.resultObjects.add(result);
+                        } else {
+                            opRsltRS.resultCode = opRslt.resultCode;
+                            opRsltRS.message = opRslt.message;
                         }
                         caller.onCompleted(opRsltRS);
                     }

@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import org.colorcoding.ibas.bobas.bo.IBOUserFields;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.bo.IBusinessObjects;
+import org.colorcoding.ibas.bobas.bo.UserField;
 import org.colorcoding.ibas.bobas.core.BOFactory;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
 import org.colorcoding.ibas.bobas.core.fields.IManagedFields;
@@ -186,6 +188,7 @@ public class Template extends Area<Area<?>> {
 	private void resolvingObject(IBusinessObject bo, String name) throws ResolvingException {
 		// 根对象
 		Object object = new Object();
+		object.setParent(this);
 		object.setName(name);
 		object.setStartingRow(Object.OBJECT_STARTING_ROW);
 		object.setEndingRow(object.getStartingRow());
@@ -342,7 +345,18 @@ public class Template extends Area<Area<?>> {
 						}
 						IFieldData field = boFields.getField(property.getName());
 						if (field == null) {
-							continue;
+							if (property.getName().startsWith(UserField.USER_FIELD_PREFIX_SIGN)
+									&& boFields instanceof IBOUserFields) {
+								// 自定义字段
+								IBOUserFields userFields = (IBOUserFields) boFields;
+								userFields.getUserFields().register(property.getName(), property.getBindingClass());
+								field = boFields.getField(property.getName());
+								if (field == null) {
+									continue;
+								}
+							} else {
+								continue;
+							}
 						}
 						Cell cell = row[property.getStartingColumn()];
 						if (cell != null && cell.getValue() != null) {

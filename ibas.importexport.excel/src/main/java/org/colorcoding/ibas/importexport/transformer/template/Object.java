@@ -16,11 +16,29 @@ import org.colorcoding.ibas.bobas.bo.IBOStorageTag;
 import org.colorcoding.ibas.bobas.bo.IBOTagCanceled;
 import org.colorcoding.ibas.bobas.bo.IBOTagDeleted;
 import org.colorcoding.ibas.bobas.bo.IBOTagReferenced;
+import org.colorcoding.ibas.bobas.bo.IBOUserFields;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.bo.IBusinessObjects;
+import org.colorcoding.ibas.bobas.bo.IUserField;
+import org.colorcoding.ibas.bobas.bo.UserField;
+import org.colorcoding.ibas.bobas.bo.UserFieldManager;
+import org.colorcoding.ibas.bobas.common.ConditionOperation;
+import org.colorcoding.ibas.bobas.common.Criteria;
+import org.colorcoding.ibas.bobas.common.IChildCriteria;
+import org.colorcoding.ibas.bobas.common.ICondition;
+import org.colorcoding.ibas.bobas.common.OperationResult;
+import org.colorcoding.ibas.bobas.core.BOFactory;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
 import org.colorcoding.ibas.bobas.core.fields.IManagedFields;
+import org.colorcoding.ibas.bobas.data.emYesNo;
+import org.colorcoding.ibas.bobas.mapping.DbFieldType;
+import org.colorcoding.ibas.bobas.message.Logger;
+import org.colorcoding.ibas.bobas.organization.OrganizationFactory;
 import org.colorcoding.ibas.bobas.ownership.IDataOwnership;
+import org.colorcoding.ibas.initialfantasy.bo.boinformation.BOInformation;
+import org.colorcoding.ibas.initialfantasy.bo.boinformation.BOPropertyInformation;
+import org.colorcoding.ibas.initialfantasy.bo.boinformation.IBOPropertyInformation;
+import org.colorcoding.ibas.initialfantasy.repository.BORepositoryInitialFantasy;
 
 /**
  * 模板-对象区，类
@@ -160,6 +178,72 @@ public class Object extends BindingArea<Template> {
 			property.setStartingColumn(property.getParent().getStartingColumn() + properties.size());
 			property.setEndingColumn(property.getStartingColumn());
 			properties.add(property);
+		}
+		if (bo.isNew() && bo instanceof IBOUserFields) {
+			// 新建时，注册自定义字段
+			String boCode = BOFactory.create().getCode(this.getBindingClass());
+			if (boCode == null) {
+				boCode = BOFactory.create().getCode(this.getParent().getHead().getBindingClass());
+			}
+			if (boCode != null && !boCode.isEmpty()) {
+				Criteria criteria = new Criteria();
+				ICondition condition = criteria.getConditions().create();
+				condition.setAlias(BOInformation.PROPERTY_CODE.getName());
+				condition.setOperation(ConditionOperation.START);
+				condition.setValue(boCode);
+				condition = criteria.getConditions().create();
+				condition.setAlias(BOInformation.PROPERTY_NAME.getName());
+				condition.setValue(bo.getClass().getSimpleName());
+				IChildCriteria childCriteria = criteria.getChildCriterias().create();
+				childCriteria.setPropertyPath(BOInformation.PROPERTY_BOPROPERTYINFORMATIONS.getName());
+				childCriteria.setOnlyHasChilds(true);
+				condition = childCriteria.getConditions().create();
+				condition.setAlias(BOPropertyInformation.PROPERTY_SYSTEMED.getName());
+				condition.setOperation(ConditionOperation.EQUAL);
+				condition.setValue(emYesNo.NO);
+				BORepositoryInitialFantasy boRepository = new BORepositoryInitialFantasy();
+				OperationResult<BOInformation> opRslt = boRepository.fetchBOInformation(criteria,
+						OrganizationFactory.SYSTEM_USER.getToken());
+				Boolean done;
+				IBOUserFields boFields = (IBOUserFields) bo;
+				for (BOInformation boItem : opRslt.getResultObjects()) {
+					for (IBOPropertyInformation ptyItem : boItem.getBOPropertyInformations()) {
+						if (ptyItem.getPropertyName() == null) {
+							continue;
+						}
+						if (!ptyItem.getPropertyName().startsWith(UserField.USER_FIELD_PREFIX_SIGN)) {
+							continue;
+						}
+
+						if (boFields.getUserFields() != null) {
+							done = false;
+							for (IUserField userField : boFields.getUserFields()) {
+								if (userField.getName().equals(ptyItem.getPropertyName())) {
+									done = true;
+									break;
+								}
+							}
+							if (done) {
+								continue;
+							}
+						}
+						try {
+							Property property = new Property();
+							property.setParent(this);
+							property.setName(ptyItem.getPropertyName());
+							property.setBindingClass(
+									UserFieldManager.getFieldType(DbFieldType.valueOf(ptyItem.getDataType(), true)));
+							property.setStartingRow(property.getParent().getEndingRow() + 1);
+							property.setEndingRow(property.getStartingRow());
+							property.setStartingColumn(property.getParent().getStartingColumn() + properties.size());
+							property.setEndingColumn(property.getStartingColumn());
+							properties.add(property);
+						} catch (Exception e) {
+							Logger.log(e);
+						}
+					}
+				}
+			}
 		}
 		this.setProperties(properties.toArray(new Property[] {}));
 	}

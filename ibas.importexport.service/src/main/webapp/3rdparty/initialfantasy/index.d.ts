@@ -5019,7 +5019,7 @@ declare namespace initialfantasy {
             /** 待编辑的数据 */
             protected editData: bo.BONumbering;
             /** 保存数据 */
-            protected saveBOSeriesNumbering(data: bo.BOSeriesNumbering): void;
+            protected saveBOSeriesNumbering(data: bo.BOSeriesNumbering | bo.BOSeriesNumbering[]): void;
             /** 查询数据 */
             protected fetchBOSeriesNumbering(): void;
         }
