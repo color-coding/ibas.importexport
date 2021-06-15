@@ -195,7 +195,7 @@ namespace importexport {
         /** 文件解析服务契约 */
         export interface IFileParsingServiceContract extends ibas.IServiceContract {
             /** 文件 */
-            file?: string | File;
+            file?: string | Blob;
             /** 输出类型 */
             outType: "json" | "table" | "array" | "string" | "blob";
         }

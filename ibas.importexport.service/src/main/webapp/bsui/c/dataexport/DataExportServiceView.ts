@@ -18,7 +18,6 @@ namespace importexport {
                 draw(): any {
                     let that: this = this;
                     this.table = new sap.extension.table.Table("", {
-                        enableSelectAll: false,
                         visibleRowCount: 5,
                         chooseType: ibas.emChooseType.SINGLE,
                         rows: "{/rows}",
@@ -33,7 +32,7 @@ namespace importexport {
                             }),
                             new sap.extension.table.Column("", {
                                 label: ibas.i18n.prop("importexport_export_mode_description"),
-                                width: "20rem",
+                                width: "100%",
                                 template: new sap.extension.m.Text("", {
                                 }).bindProperty("bindingValue", {
                                     path: "description",
@@ -48,6 +47,7 @@ namespace importexport {
                         state: sap.ui.core.ValueState.None,
                         horizontalScrolling: true,
                         verticalScrolling: true,
+                        contentWidth: "40%",
                         content: [
                             this.table
                         ],

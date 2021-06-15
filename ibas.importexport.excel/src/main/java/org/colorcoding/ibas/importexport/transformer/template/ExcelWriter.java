@@ -110,7 +110,9 @@ public class ExcelWriter extends FileWriter {
 		Head head = this.getTemplate().getHead();
 		CellRangeAddress range = new CellRangeAddress(head.getStartingRow(), head.getEndingRow(),
 				head.getStartingColumn(), head.getEndingColumn());
-		sheet.addMergedRegion(range);
+		if (head.getEndingColumn() > head.getStartingColumn()) {
+			sheet.addMergedRegion(range);
+		}
 		Row row = sheet.createRow(head.getStartingRow());
 		row.setHeight((short) (row.getHeight() * 2));
 		Cell cell = row.createCell(head.getStartingColumn());
@@ -148,7 +150,9 @@ public class ExcelWriter extends FileWriter {
 		for (Object object : this.getTemplate().getObjects()) {
 			range = new CellRangeAddress(object.getStartingRow(), object.getEndingRow(), object.getStartingColumn(),
 					object.getEndingColumn());
-			sheet.addMergedRegion(range);
+			if (object.getEndingColumn() > object.getStartingColumn()) {
+				sheet.addMergedRegion(range);
+			}
 		}
 		Row oRow = sheet.createRow(this.getTemplate().getHead().getEndingRow() + 1);
 		oRow.setHeight((short) (oRow.getHeight() * 1.4));

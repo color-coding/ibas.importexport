@@ -6018,6 +6018,11 @@ declare namespace initialfantasy {
             /** 显示用户信息 */
             showUser(user: bo.User): void;
         }
+        class UserProfileApplicationMapping extends ibas.ResidentApplicationMapping {
+            /** 构造函数 */
+            constructor();
+            create(): ibas.ResidentApplication<ibas.IResidentView>;
+        }
     }
 }
 /**

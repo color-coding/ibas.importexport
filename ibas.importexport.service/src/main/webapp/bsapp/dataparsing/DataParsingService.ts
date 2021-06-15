@@ -26,7 +26,7 @@ namespace importexport {
                         contract.outType = "json";
                     }
                     this.outType = contract.outType;
-                    if (contract.file instanceof File) {
+                    if (contract.file instanceof Blob) {
                         this.parsing(contract.file);
                     } else {
                         if (ibas.strings.equalsIgnoreCase(this.outType, "json")) {
@@ -54,7 +54,7 @@ namespace importexport {
             protected viewShowed(): void {
                 // 视图加载完成
             }
-            protected parsing(file: File): void {
+            protected parsing(file: Blob): void {
                 if (ibas.strings.equalsIgnoreCase(this.outType, "json")) {
                     let reader: FileReader = new FileReader();
                     reader.onload = (event) => {
