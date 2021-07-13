@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.function.Consumer;
 
+import org.colorcoding.ibas.bobas.bo.BusinessObject;
 import org.colorcoding.ibas.bobas.bo.IBOStorageTag;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.common.ConditionOperation;
@@ -78,7 +79,10 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 								if (namesapce != null && !namesapce.isEmpty()) {
 									Logger.log(MessageLevel.INFO, "import export: load [%s]'s classes.", namesapce);
 									for (Class<?> item : boFactory.loadClasses(namesapce)) {
-										boFactory.register(item);
+										// 仅注册业务对象
+										if (BusinessObject.class.isAssignableFrom(item)) {
+											boFactory.register(item);
+										}
 									}
 								}
 							}

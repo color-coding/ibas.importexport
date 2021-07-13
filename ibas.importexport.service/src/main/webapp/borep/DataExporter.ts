@@ -187,7 +187,13 @@ namespace importexport {
                 for (let rItem of table.rows) {
                     row = new Array<any>();
                     for (let cItem of table.columns) {
-                        row.push(rItem.cells[table.columns.indexOf(cItem)]);
+                        let cellValue: string = rItem.cells[table.columns.indexOf(cItem)];
+                        if (cItem.definedDataType() === ibas.emTableDataType.DECIMAL
+                            || cItem.definedDataType() === ibas.emTableDataType.NUMERIC) {
+                            row.push(ibas.numbers.valueOf(cellValue));
+                        } else {
+                            row.push(cellValue);
+                        }
                     }
                     sheetDatas.push(row);
                 }
