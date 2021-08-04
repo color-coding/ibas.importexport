@@ -27,6 +27,8 @@ namespace importexport {
                         exporter.description = exporter.name;
                     }
                     return exporter;
+                } else if (data.type === "DataWrapping") {
+                    return JSON.parse(data.Content);
                 }
                 return super.parsing(data, sign);
             }

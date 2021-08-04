@@ -1,5 +1,7 @@
 package org.colorcoding.ibas.importexport.service.rest;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
@@ -14,16 +16,25 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.data.FileData;
+import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
+import org.colorcoding.ibas.bobas.message.MessageLevel;
 import org.colorcoding.ibas.bobas.repository.jersey.FileRepositoryService;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
+import org.colorcoding.ibas.bobas.serialization.ISerializerManager;
 import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
 import org.colorcoding.ibas.importexport.MyConfiguration;
 import org.colorcoding.ibas.importexport.data.DataExportInfo;
+import org.colorcoding.ibas.importexport.data.DataWrapping;
 import org.colorcoding.ibas.importexport.repository.BORepositoryImportExport;
+import org.colorcoding.ibas.importexport.transformer.FileTransformer;
+import org.colorcoding.ibas.importexport.transformer.FileTransformerSerialization;
+import org.colorcoding.ibas.importexport.transformer.IFileTransformer;
+import org.colorcoding.ibas.importexport.transformer.TransformerFactory;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -74,6 +85,59 @@ public class FileService extends FileRepositoryService {
 			}
 		} catch (Exception e) {
 			opRslt = new OperationResult<String>(e);
+		}
+		return opRslt;
+	}
+
+	@POST
+	@Path("parse")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	public OperationResult<DataWrapping> parseData(FormDataMultiPart formData, @QueryParam("token") String token) {
+		OperationResult<DataWrapping> opRslt = null;
+		try {
+			opRslt = new OperationResult<DataWrapping>();
+			// 保存文件
+			OperationResult<FileData> opRsltFile = super.save(formData.getField("file"), token);
+			if (opRsltFile.getError() != null) {
+				throw opRsltFile.getError();
+			}
+			// 解析文件
+			IFileTransformer transformer;
+			ISerializer<?> serializer = SerializerFactory.create().createManager().create(ISerializerManager.TYPE_JSON);
+			for (FileData data : opRsltFile.getResultObjects()) {
+				try {
+					if (data == null || data.getOriginalName().indexOf(".") < 0) {
+						throw new Exception(I18N.prop("msg_bobas_invalid_data"));
+					}
+					// 创建转换者
+					String type = data.getOriginalName().substring(data.getOriginalName().lastIndexOf(".") + 1);
+					if (type != null && type.equalsIgnoreCase("xlsm")) {
+						// 带宏的excel文件，识别为普通问
+						type = "xlsx";
+					}
+					type = String.format(FileTransformer.GROUP_TEMPLATE, type).toUpperCase();
+					transformer = TransformerFactory.create().create(type);
+					if (transformer instanceof FileTransformerSerialization) {
+						((FileTransformerSerialization) transformer)
+								.setBOFactory(BORepositoryImportExport.getBOFactory());
+					}
+					Logger.log(MessageLevel.DEBUG, BORepositoryImportExport.MSG_TRANSFORMER_IMPORT_DATA,
+							transformer.getClass().getName());
+					// 转换文件数据到业务对象
+					transformer.setInputData(new File(data.getLocation()));
+					transformer.transform();
+					for (IBusinessObject object : transformer.getOutputData()) {
+						ByteArrayOutputStream writer = new ByteArrayOutputStream();
+						serializer.serialize(object, writer);
+						opRslt.addResultObjects(new DataWrapping(writer.toString()));
+					}
+				} catch (Exception e) {
+					Logger.log(e);
+				}
+			}
+		} catch (Exception e) {
+			opRslt = new OperationResult<DataWrapping>(e);
 		}
 		return opRslt;
 	}

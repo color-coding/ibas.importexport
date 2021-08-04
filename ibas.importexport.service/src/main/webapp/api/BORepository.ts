@@ -57,6 +57,13 @@ namespace importexport {
         export interface IImportFileCaller extends ibas.IUploadFileCaller<string> {
         }
         /**
+         * 文件解析调用者
+         */
+        export interface IParseFileCaller<T> extends ibas.IUploadFileCaller<T> {
+            /** 数据转换者 */
+            converter: ibas.IDataConverter;
+        }
+        /**
          * 数据导出调用者
          */
         export interface IExportFileCaller extends ibas.IMethodCaller<Blob> {

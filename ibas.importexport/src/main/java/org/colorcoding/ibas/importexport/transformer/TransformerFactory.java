@@ -71,7 +71,8 @@ public final class TransformerFactory {
 		return transformers;
 	}
 
-	public final ITransformer<?, ?> create(String sign) throws TransformException {
+	@SuppressWarnings("unchecked")
+	public final <T extends ITransformer<?, ?>> T create(String sign) throws TransformException {
 		if (sign == null) {
 			throw new TransformException(I18N.prop("msg_ie_invaild_data"));
 		}
@@ -85,7 +86,7 @@ public final class TransformerFactory {
 			throw new TransformException(I18N.prop("msg_ie_not_found_transformer", sign));
 		}
 		try {
-			return (ITransformer<?, ?>) clazz.newInstance();
+			return (T) clazz.newInstance();
 		} catch (Exception e) {
 			throw new TransformException(e);
 		}

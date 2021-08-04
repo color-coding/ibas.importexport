@@ -56,7 +56,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	 * 
 	 * @return
 	 */
-	protected static IBOFactory getBOFactory() {
+	public static IBOFactory getBOFactory() {
 		if (boFactory == null) {
 			synchronized (BORepositoryImportExport.class) {
 				if (boFactory == null) {
@@ -191,28 +191,24 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 				type = "xlsx";
 			}
 			type = String.format(FileTransformer.GROUP_TEMPLATE, type).toUpperCase();
-			ITransformer<?, ?> transformer = TransformerFactory.create().create(type);
-			if (!(transformer instanceof IFileTransformer)) {
-				throw new Exception(I18N.prop("msg_ie_not_found_transformer", type));
-			}
+			IFileTransformer transformer = TransformerFactory.create().create(type);
 			if (transformer instanceof FileTransformerSerialization) {
 				((FileTransformerSerialization) transformer).setBOFactory(getBOFactory());
 			}
 			Logger.log(MessageLevel.DEBUG, MSG_TRANSFORMER_IMPORT_DATA, transformer.getClass().getName());
-			IFileTransformer fileTransformer = (IFileTransformer) transformer;
 			// 转换文件数据到业务对象
-			fileTransformer.setInputData(new File(data.getLocation()));
-			fileTransformer.transform();
+			transformer.setInputData(new File(data.getLocation()));
+			transformer.transform();
 			boolean myTrans = this.beginTransaction();
 			try {
 				opRslt = new OperationResult<String>();
 				// 返回存储事务标记
-				opRslt.addInformations("IDENTIFY_DATA_COUNT", String.valueOf(fileTransformer.getOutputData().size()),
+				opRslt.addInformations("IDENTIFY_DATA_COUNT", String.valueOf(transformer.getOutputData().size()),
 						"DATA_IMPORT");
 				opRslt.addInformations("REPOSITORY_TRANSACTION_ID", this.getRepository().getTransactionId(),
 						"DATA_IMPORT");
 				// 保存业务对象
-				for (IBusinessObject object : fileTransformer.getOutputData()) {
+				for (IBusinessObject object : transformer.getOutputData()) {
 					// 调试模式，输出识别对象
 					if (MyConfiguration.isDebugMode()) {
 						StringBuilder stringBuilder = new StringBuilder();

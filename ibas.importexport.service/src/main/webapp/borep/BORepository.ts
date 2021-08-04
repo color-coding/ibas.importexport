@@ -63,6 +63,28 @@ namespace importexport {
                 });
             }
             /**
+             * 解析
+             * @param caller 调用者
+             */
+            parse<T>(caller: IParseFileCaller<T>): void {
+                if (!this.address.endsWith("/")) { this.address += "/"; }
+                let fileRepository: ibas.FileRepositoryUploadAjax = new ibas.FileRepositoryUploadAjax();
+                fileRepository.address = this.address.replace("/services/rest/data/", "/services/rest/file/");
+                fileRepository.token = this.token;
+                fileRepository.converter = this.createConverter();
+                fileRepository.upload("parse", {
+                    fileData: caller.fileData,
+                    onCompleted: (opRslt) => {
+                        if (opRslt.resultObjects instanceof Array) {
+                            for (let i: number = 0; i < opRslt.resultObjects.length; i++) {
+                                opRslt.resultObjects[i] = caller.converter.parsing(opRslt.resultObjects[i], "READ");
+                            }
+                        }
+                        caller.onCompleted.call(ibas.objects.isNull(caller.caller) ? caller : caller.caller, opRslt);
+                    }
+                });
+            }
+            /**
              * 获取业务对象架构
              * @param caller 调用者
              */
