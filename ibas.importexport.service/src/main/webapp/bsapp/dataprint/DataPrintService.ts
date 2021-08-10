@@ -209,7 +209,7 @@ namespace importexport {
                     }
                 }
                 let criteria: ibas.ICriteria = new ibas.Criteria();
-                criteria.businessObject = ibas.DataTable.name;
+                criteria.businessObject = ibas.config.applyVariables(bo.BO_CODE_DATA_TABLE);
                 let condition: ibas.ICondition = criteria.conditions.create();
                 condition.alias = bo.ExportTemplate.PROPERTY_ACTIVATED_NAME;
                 condition.value = ibas.emYesNo.YES.toString();

@@ -63,7 +63,7 @@ namespace importexport {
                                         if (ibas.objects.isNull(item)) {
                                             return;
                                         }
-                                        that.fireViewEvents(that.previewEvent, (<any>item.getModel()).getData());
+                                        that.fireViewEvents(that.previewEvent, item.getBindingContext().getObject());
                                         if (oControlEvent.getSource() instanceof sap.m.Button) {
                                             let button: sap.m.Button = <sap.m.Button>oControlEvent.getSource();
                                             button.setText(ibas.i18n.prop("importexport_print"));
@@ -145,18 +145,33 @@ namespace importexport {
                     this.html = null;
                     this.dialog.destroyContent();
                     this.select = new sap.m.Select("", {
-                        width: "100%",
+                        items: {
+                            path: "/",
+                            template: new sap.ui.core.Item("", {
+                                key: {
+                                    path: "template",
+                                    type: new sap.extension.data.Alphanumeric(),
+                                },
+                                text: {
+                                    parts: [
+                                        {
+                                            path: "name",
+                                            type: new sap.extension.data.Alphanumeric(),
+                                        },
+                                        {
+                                            path: "description",
+                                            type: new sap.extension.data.Alphanumeric(),
+                                        }
+                                    ],
+                                    formatter(name: string, description: string): string {
+                                        return ibas.strings.isEmpty(description) ? name : description.substring(
+                                            description.indexOf("[") + 1, description.lastIndexOf("]"));
+                                    }
+                                },
+                            })
+                        }
                     });
-                    for (let item of exporters) {
-                        let sItem: sap.ui.core.Item = new sap.ui.core.Item("", {
-                            key: item.name,
-                            text: ibas.strings.isEmpty(item.description) ? item.name : item.description.substring(
-                                item.description.indexOf("[") + 1, item.description.lastIndexOf("]")
-                            ),
-                        });
-                        sItem.setModel(new sap.ui.model.json.JSONModel(item));
-                        this.select.addItem(sItem);
-                    }
+                    this.select.setModel(new sap.ui.model.json.JSONModel(exporters));
                     this.dialog.addContent(
                         new sap.ui.layout.form.SimpleForm("", {
                             editable: true,

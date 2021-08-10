@@ -77,7 +77,11 @@ namespace importexport {
                     onCompleted: (opRslt) => {
                         if (opRslt.resultObjects instanceof Array) {
                             for (let i: number = 0; i < opRslt.resultObjects.length; i++) {
-                                opRslt.resultObjects[i] = caller.converter.parsing(opRslt.resultObjects[i], "READ");
+                                let data: any = caller.converter.parsing(opRslt.resultObjects[i], "PARSE");
+                                if (data instanceof ibas.BusinessObject) {
+                                    data.reset();
+                                }
+                                opRslt.resultObjects[i] = data;
                             }
                         }
                         caller.onCompleted.call(ibas.objects.isNull(caller.caller) ? caller : caller.caller, opRslt);

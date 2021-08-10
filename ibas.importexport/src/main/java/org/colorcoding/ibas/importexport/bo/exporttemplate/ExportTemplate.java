@@ -2116,7 +2116,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	 * 导出模板-附录的集合属性
 	 * 
 	 */
-	public static final IPropertyInfo<IExportTemplateAppendixs> PROPERTY_EXPORTTEMPLATEAPPENDIXS = registerProperty(
+	public static final IPropertyInfo<IExportTemplateAppendixs> PROPERTY_APPENDIXS = registerProperty(
 			PROPERTY_APPENDIXS_NAME, IExportTemplateAppendixs.class, MY_CLASS);
 
 	/**
@@ -2127,7 +2127,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	@XmlElementWrapper(name = PROPERTY_APPENDIXS_NAME)
 	@XmlElement(name = ExportTemplateAppendix.BUSINESS_OBJECT_NAME, type = ExportTemplateAppendix.class)
 	public final IExportTemplateAppendixs getAppendixs() {
-		return this.getProperty(PROPERTY_EXPORTTEMPLATEAPPENDIXS);
+		return this.getProperty(PROPERTY_APPENDIXS);
 	}
 
 	/**
@@ -2136,7 +2136,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	 * @param value 值
 	 */
 	public final void setAppendixs(IExportTemplateAppendixs value) {
-		this.setProperty(PROPERTY_EXPORTTEMPLATEAPPENDIXS, value);
+		this.setProperty(PROPERTY_APPENDIXS, value);
 	}
 
 	@Override

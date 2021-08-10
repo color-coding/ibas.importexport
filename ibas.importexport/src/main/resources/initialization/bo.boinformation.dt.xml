@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE BOInformation>
+<ns2:BOInformation
+	xmlns:ns2="http://colorcoding.org/ibas/initialfantasy/bo">
+	<Code>${Company}_IE_DATATABLE</Code>
+	<Description>数据表格（导出）</Description>
+	<Name>DataTable</Name>
+</ns2:BOInformation>

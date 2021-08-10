@@ -143,34 +143,6 @@ namespace importexport {
                                 path: "dpi",
                                 type: new sap.extension.data.Numeric(),
                             }),
-                            new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_marginleft") }),
-                            new sap.extension.m.Input("", {
-                                type: sap.m.InputType.Number
-                            }).bindProperty("bindingValue", {
-                                path: "marginLeft",
-                                type: new sap.extension.data.Numeric()
-                            }),
-                            new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_marginright") }),
-                            new sap.extension.m.Input("", {
-                                type: sap.m.InputType.Number
-                            }).bindProperty("bindingValue", {
-                                path: "marginRight",
-                                type: new sap.extension.data.Numeric()
-                            }),
-                            new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_margintop") }),
-                            new sap.extension.m.Input("", {
-                                type: sap.m.InputType.Number
-                            }).bindProperty("bindingValue", {
-                                path: "marginTop",
-                                type: new sap.extension.data.Numeric()
-                            }),
-                            new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_marginbottom") }),
-                            new sap.extension.m.Input("", {
-                                type: sap.m.InputType.Number
-                            }).bindProperty("bindingValue", {
-                                path: "marginBottom",
-                                type: new sap.extension.data.Numeric()
-                            }),
                             new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_marginarea") }),
                             new sap.extension.m.Input("", {
                                 type: sap.m.InputType.Number
@@ -852,14 +824,13 @@ namespace importexport {
                             }),
                             new sap.extension.table.DataColumn("", {
                                 label: ibas.i18n.prop("bo_exporttemplateitem_itemtype"),
-                                template: new sap.extension.m.Input("", {
-                                    showSuggestion: true,
-                                    suggestionItems: [
-                                        new sap.ui.core.ListItem("", {
+                                template: new sap.extension.m.ComboBox("", {
+                                    items: [
+                                        new sap.extension.m.SelectItem("", {
                                             key: "TEXT",
                                             text: ibas.i18n.prop("template_item_type_text"),
                                         }),
-                                        new sap.ui.core.ListItem("", {
+                                        new sap.extension.m.SelectItem("", {
                                             key: "IMG",
                                             text: ibas.i18n.prop("template_item_type_image"),
                                         })

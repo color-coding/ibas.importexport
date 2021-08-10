@@ -28,6 +28,8 @@ namespace importexport {
         export const BO_REPOSITORY_IMPORTEXPORT: string = ibas.strings.format(ibas.MODULE_REPOSITORY_NAME_TEMPLATE, CONSOLE_NAME);
         /** 业务对象编码-数据导出模板 */
         export const BO_CODE_EXPORTTEMPLATE: string = "${Company}_IE_EXPORTTEMPLATE";
+        /** 业务对象编码-数据表格对象 */
+        export const BO_CODE_DATA_TABLE: string = "${Company}_IE_DATATABLE";
 
         export enum emAreaType {
             /**
