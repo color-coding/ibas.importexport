@@ -652,6 +652,8 @@ declare namespace initialfantasy {
             searched: ibas.emYesNo;
             /** 系统的 */
             systemed: ibas.emYesNo;
+            /** 链接的对象 */
+            linkedObject: string;
             /** 业务对象属性值集合 */
             boPropertyValues: IBOPropertyValues;
         }
@@ -2390,6 +2392,12 @@ declare namespace initialfantasy {
             get systemed(): ibas.emYesNo;
             /** 设置-系统的 */
             set systemed(value: ibas.emYesNo);
+            /** 映射的属性名称-链接的对象 */
+            static PROPERTY_LINKEDOBJECT_NAME: string;
+            /** 获取-链接的对象 */
+            get linkedObject(): string;
+            /** 设置-链接的对象 */
+            set linkedObject(value: string);
             /** 映射的属性名称-业务对象属性值集合 */
             static PROPERTY_BOPROPERTYVALUES_NAME: string;
             /** 获取-业务对象属性信息集合 */
@@ -4803,6 +4811,7 @@ declare namespace initialfantasy {
             /** 删除属性值事件 */
             removeBOPropertyValue(items: bo.BOPropertyValue[]): void;
             private boNumbering;
+            private chooseLinkedObject;
         }
         /** 视图-业务对象信息 */
         interface IBOInformationEditView extends ibas.IBOEditView {
@@ -4828,6 +4837,8 @@ declare namespace initialfantasy {
             showBOPropertyValues(datas: bo.BOPropertyValue[]): void;
             /** 业务对象编号 */
             boNumberingEvent: Function;
+            /** 选择链接的对象事件 */
+            chooseLinkedObjectEvent: Function;
         }
     }
 }

@@ -200,6 +200,13 @@ namespace importexport {
             file?: string | Blob;
             /** 输出类型 */
             outType: "json" | "table" | "array" | "string" | "blob";
+            /**
+             * 返回的页签名称
+             * 默认仅第一个页签
+             * 空数组时，返回全部页签
+             * 指定页签的名称
+             */
+            sheets?: [];
         }
         /**
          * 文件解析服务代理

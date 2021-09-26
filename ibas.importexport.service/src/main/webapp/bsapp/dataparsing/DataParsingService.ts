@@ -26,6 +26,7 @@ namespace importexport {
                         contract.outType = "json";
                     }
                     this.outType = contract.outType;
+                    this.sheets = contract.sheets;
                     if (contract.file instanceof Blob) {
                         this.parsing(contract.file);
                     } else {
@@ -33,7 +34,8 @@ namespace importexport {
                             this.view.showFileDialog("application/json");
                         } else if (ibas.strings.equalsIgnoreCase(this.outType, "table")
                             || ibas.strings.equalsIgnoreCase(this.outType, "array")) {
-                            this.view.showFileDialog("text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel.sheet.macroenabled.12");
+                            // 文件过大，可能导致浏览器崩溃
+                            this.view.showFileDialog("text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel.sheet.macroenabled.12");
                         } else {
                             this.view.showFileDialog("");
                         }
@@ -50,6 +52,7 @@ namespace importexport {
                 this.view.parsingEvent = this.parsing;
             }
             private outType: string;
+            private sheets: string[];
             /** 视图显示后 */
             protected viewShowed(): void {
                 // 视图加载完成
@@ -81,46 +84,79 @@ namespace importexport {
                         try {
                             let reader: FileReader = new FileReader();
                             reader.onload = (event) => {
-                                let workbook: XLSX.WorkBook = XLSX.read(event.target.result, { type: "array" });
+                                let workbook: XLSX.WorkBook;
+                                let data: any = event.target.result;
+                                if (file.type === "text/csv") {
+                                    let sData: string = cptable.utils.decode(936, data);
+                                    workbook = XLSX.read(sData, { type: "string" });
+                                } else {
+                                    workbook = XLSX.read(data, { type: "array" });
+                                }
                                 if (workbook.SheetNames.length > 0) {
-                                    let sheetName: string = workbook.SheetNames[0];
-                                    let sheet: XLSX.WorkSheet = workbook.Sheets[sheetName];
-                                    if (ibas.strings.equalsIgnoreCase(this.outType, "array")) {
-                                        // 直接表格输出
-                                        let datas: any[] = XLSX.utils.sheet_to_json(sheet, {
-                                            header: 1,
-                                            blankrows: true,
-                                            defval: null,
-                                        });
-                                        this.fireCompleted(datas);
-                                    } else {
-                                        // 转为table
-                                        let datas: any[] = XLSX.utils.sheet_to_json(sheet);
-                                        let table: ibas.DataTable = new ibas.DataTable();
-                                        for (let data of datas) {
-                                            if (table.columns.length === 0) {
-                                                for (let item in data) {
-                                                    if (item) {
-                                                        let column: ibas.DataTableColumn = new ibas.DataTableColumn();
-                                                        column.name = item;
-                                                        table.columns.add(column);
+                                    let sheetNames: string[] = this.sheets;
+                                    if (ibas.objects.isNull(sheetNames)) {
+                                        sheetNames = [
+                                            workbook.SheetNames[0]
+                                        ];
+                                    }
+                                    if (sheetNames instanceof Array && sheetNames.length === 0) {
+                                        for (let item of workbook.SheetNames) {
+                                            sheetNames.push(item);
+                                        }
+                                    }
+                                    let results: Map<string, any> = new Map<string, any>();
+                                    for (let sheetName of sheetNames) {
+                                        let sheet: XLSX.WorkSheet = workbook.Sheets[sheetName];
+                                        if (ibas.strings.equalsIgnoreCase(this.outType, "array")) {
+                                            // 直接表格输出
+                                            results.set(sheetName, XLSX.utils.sheet_to_json(sheet, {
+                                                header: 1,
+                                                blankrows: true,
+                                                defval: null,
+                                            }));
+                                        } else {
+                                            // 转为table
+                                            let datas: any[] = XLSX.utils.sheet_to_json(sheet);
+                                            let table: ibas.DataTable = new ibas.DataTable();
+                                            for (let data of datas) {
+                                                if (table.columns.length === 0) {
+                                                    for (let item in data) {
+                                                        if (item) {
+                                                            let column: ibas.DataTableColumn = new ibas.DataTableColumn();
+                                                            column.name = item;
+                                                            table.columns.add(column);
+                                                        }
                                                     }
                                                 }
+                                                let row: ibas.DataTableRow = new ibas.DataTableRow();
+                                                for (let item of table.columns) {
+                                                    row.cells.add(data[item.name]);
+                                                }
+                                                table.rows.add(row);
                                             }
-                                            let row: ibas.DataTableRow = new ibas.DataTableRow();
-                                            for (let item of table.columns) {
-                                                row.cells.add(data[item.name]);
-                                            }
-                                            table.rows.add(row);
+                                            results.set(sheetName, table);
                                         }
-                                        this.fireCompleted(table);
+                                    }
+                                    if (ibas.objects.isNull(this.sheets)) {
+                                        // 没有指定页签时，仅返回第一个数据
+                                        if (results.size > 0) {
+                                            this.fireCompleted(results.values().next().value);
+                                        } else {
+                                            this.fireCompleted(null);
+                                        }
+                                    } else {
+                                        this.fireCompleted(results);
                                     }
                                 }
                             };
                             reader.onerror = (event) => {
                                 this.messages(new Error(event.target?.error?.message));
                             };
-                            reader.readAsArrayBuffer(file);
+                            if (file.type === "text/csv") {
+                                reader.readAsBinaryString(file);
+                            } else {
+                                reader.readAsArrayBuffer(file);
+                            }
                         } catch (error) {
                             this.messages(error);
                         }

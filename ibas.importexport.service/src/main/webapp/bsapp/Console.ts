@@ -87,6 +87,7 @@ namespace importexport {
             protected registers(): void {
                 this.register(new DataPrintServiceMapping());
                 this.register(new DataTablePrintServiceMapping());
+                this.register(new FileParsingServiceMapping());
             }
         }
     }

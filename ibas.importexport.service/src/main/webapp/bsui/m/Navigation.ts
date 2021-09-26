@@ -7,13 +7,14 @@
  */
 /// <reference path="../../index.d.ts" />
 /// <reference path="./dataprint/index.ts" />
+/// <reference path="./dataparsing/index.ts" />
 namespace importexport {
     export namespace ui {
         /**
          * 视图导航
          */
         export class Navigation extends ibas.ViewNavigation {
-            /** 
+            /**
              * 创建实例
              * @param id 应用id
              */
@@ -25,6 +26,9 @@ namespace importexport {
                         break;
                     case app.DataTablePrintService.APPLICATION_ID:
                         view = new m.DataPrintServiceView();
+                        break;
+                    case app.FileParsingService.APPLICATION_ID:
+                        view = new m.FileParsingServiceView();
                         break;
                     default:
                         break;
