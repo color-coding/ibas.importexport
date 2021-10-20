@@ -240,11 +240,23 @@ public class ExcelReader extends FileReader {
 		return dataCell;
 	}
 
+	protected boolean isEmptyRow(Row row) {
+		for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
+			Cell cell = row.getCell(c);
+			if (cell != null && cell.getCellTypeEnum() != CellType.BLANK)
+				return false;
+		}
+		return true;
+	}
+
 	protected void resolvingDatas(Sheet sheet) throws ResolvingException {
 		for (int iRow = this.getTemplate().getDatas().getStartingRow(); iRow <= this.getTemplate()
 				.getEndingRow(); iRow++) {
 			Row sheetRow = sheet.getRow(iRow);
 			if (sheetRow == null) {
+				continue;
+			}
+			if (this.isEmptyRow(sheetRow) == true) {
 				continue;
 			}
 			org.colorcoding.ibas.importexport.transformer.template.Cell[] dataRow = this.getTemplate().getDatas()

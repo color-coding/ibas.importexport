@@ -27,9 +27,12 @@ public class TestTransformer extends TestCase {
 	public void testExcelTransform() throws TransformException {
 		// 测试excel文件到对象
 		ExcelTransformer transformer = new ExcelTransformer();
-		File file = new File("");
+		File file = new File("/Users/Niuren.Zhu/Downloads/CC_SL_SALESORDER_9138523C-6D8E-6AB9-7A83-43490B678235.XLSX");
 		transformer.setInputData(file);
 		transformer.transform();
 		System.out.println(String.format("got bo: %s", transformer.getOutputData().size()));
+		for (IBusinessObject item : transformer.getOutputData()) {
+			System.out.println(item.toString("json"));
+		}
 	}
 }

@@ -1401,7 +1401,7 @@ namespace importexport {
                         item.contentHeight = this.parent.height;
                         if (item.pageHeader === ibas.emYesNo.YES && this.parent.pageHeaderHeight > 0) {
                             item.contentTop = ibas.numbers.valueOf(this.parent.pageHeaderTop)
-                                + ibas.numbers.valueOf(this.parent.pageHeaderHeight) + ibas.numbers.valueOf(this.parent.marginArea)
+                                + ibas.numbers.valueOf(this.parent.pageHeaderHeight) + ibas.numbers.valueOf(this.parent.marginArea);
                             item.contentHeight = item.contentHeight - item.contentTop;
                         }
                         if (item.pageFooter === ibas.emYesNo.YES && this.parent.pageFooterHeight > 0) {

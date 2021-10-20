@@ -13,6 +13,8 @@ import org.colorcoding.ibas.bobas.bo.UserField;
 import org.colorcoding.ibas.bobas.core.BOFactory;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
 import org.colorcoding.ibas.bobas.core.fields.IManagedFields;
+import org.colorcoding.ibas.bobas.data.DataConvert;
+import org.colorcoding.ibas.importexport.MyConfiguration;
 
 /**
  * 模板（sheet）
@@ -444,11 +446,26 @@ public class Template extends Area<Area<?>> {
 		this.getWriter().write(file);
 	}
 
+	public static final String CONFIG_ITEM_TEMPLATE_EXCEL_READER = "TemplateExcelReader";
+
 	private FileReader reader;
 
 	protected final FileReader getReader() {
 		if (this.reader == null) {
-			this.reader = new ExcelReader();
+			String reader = MyConfiguration.getConfigValue(CONFIG_ITEM_TEMPLATE_EXCEL_READER);
+			if (DataConvert.isNullOrEmpty(reader)) {
+				this.reader = new ExcelReaderEx();
+			} else {
+				if (reader.indexOf(".") < 0) {
+					reader = this.getClass().getName().replace(this.getClass().getSimpleName(), reader);
+				}
+				try {
+					Class<?> clazz = Class.forName(reader);
+					this.reader = (FileReader) clazz.newInstance();
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
 		}
 		return reader;
 	}
