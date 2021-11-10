@@ -114,7 +114,22 @@ namespace importexport {
                                 })
                             }),
                             new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_applicationid") }),
-                            new sap.extension.m.Input("", {
+                            new sap.extension.m.SelectionInput("", {
+                                showValueHelp: true,
+                                valueHelpOnly: false,
+                                repository: initialfantasy.bo.BORepositoryInitialFantasy,
+                                dataInfo: {
+                                    type: initialfantasy.bo.ApplicationElement,
+                                    key: initialfantasy.bo.ApplicationElement.PROPERTY_ELEMENTID_NAME,
+                                    text: initialfantasy.bo.ApplicationElement.PROPERTY_ELEMENTNAME_NAME
+                                },
+                                criteria: [
+                                    new ibas.Condition(
+                                        initialfantasy.bo.ApplicationElement.PROPERTY_ELEMENTTYPE_NAME,
+                                        ibas.emConditionOperation.NOT_EQUAL,
+                                        initialfantasy.bo.emElementType.MODULE
+                                    )
+                                ],
                             }).bindProperty("bindingValue", {
                                 path: "applicationId",
                                 type: new sap.extension.data.Alphanumeric({
@@ -962,9 +977,7 @@ namespace importexport {
                                     }
                                 }).bindProperty("bindingValue", {
                                     path: "itemString",
-                                    type: new sap.extension.data.Alphanumeric({
-                                        maxLength: 800
-                                    })
+                                    type: new sap.extension.data.Alphanumeric()
                                 }),
                             }),
                             new sap.extension.table.DataColumn("", {

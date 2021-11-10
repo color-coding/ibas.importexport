@@ -1,5 +1,6 @@
 package org.colorcoding.ibas.importexport.transformer;
 
+import org.colorcoding.ibas.bobas.bo.BusinessObject;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.importexport.transformer.template.ResolvingException;
 import org.colorcoding.ibas.importexport.transformer.template.Template;
@@ -23,6 +24,13 @@ public class ExcelTransformer extends FileTransformer {
 			// 解析输入数据
 			template.resolving(this.getInputData());
 			IBusinessObject[] businessObjects = template.resolving();
+			// 重置状态
+			for (IBusinessObject item : businessObjects) {
+				if (item instanceof BusinessObject<?>) {
+					BusinessObject<?> bo = (BusinessObject<?>) item;
+					bo.reset();
+				}
+			}
 			this.setOutputData(businessObjects);
 		} catch (ResolvingException e) {
 			throw new TransformException(e);

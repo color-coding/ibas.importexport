@@ -5,6 +5,8 @@ import java.io.File;
 import java.util.function.Consumer;
 
 import org.colorcoding.ibas.bobas.bo.BusinessObject;
+import org.colorcoding.ibas.bobas.bo.IBOMasterData;
+import org.colorcoding.ibas.bobas.bo.IBOMasterDataLine;
 import org.colorcoding.ibas.bobas.bo.IBOStorageTag;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.common.ConditionOperation;
@@ -17,12 +19,14 @@ import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.common.SortType;
 import org.colorcoding.ibas.bobas.core.BOFactory;
 import org.colorcoding.ibas.bobas.core.IBOFactory;
+import org.colorcoding.ibas.bobas.core.ITrackStatusOperator;
 import org.colorcoding.ibas.bobas.core.RepositoryException;
 import org.colorcoding.ibas.bobas.data.FileData;
 import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.message.MessageLevel;
+import org.colorcoding.ibas.bobas.ownership.IDataOwnership;
 import org.colorcoding.ibas.bobas.repository.BORepositoryServiceApplication;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
 import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
@@ -225,6 +229,16 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 						IBOStorageTag tag = (IBOStorageTag) object;
 						tag.setDataSource(MyConfiguration.SIGN_DATA_SOURCE);
 					}
+					// 设置数据所有者
+					if (object instanceof IDataOwnership) {
+						IDataOwnership ownership = (IDataOwnership) object;
+						if (ownership.getDataOwner() == null || ownership.getDataOwner() == 0) {
+							ownership.setDataOwner(this.getCurrentUser().getId());
+						}
+						if (ownership.getOrganization() == null || ownership.getOrganization().isEmpty()) {
+							ownership.setOrganization(this.getCurrentUser().getBelong());
+						}
+					}
 					// 判断对象是否存在
 					ICriteria criteria = object.getCriteria();
 					if (criteria != null && !criteria.getConditions().isEmpty()) {
@@ -232,9 +246,26 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 						if (!opRsltExists.getResultObjects().isEmpty()) {
 							// 已存在数据
 							if (update) {
-								// 强制保存，删除旧数据
 								for (Object item : opRsltExists.getResultObjects()) {
-									if (item instanceof IBusinessObject) {
+									if (item instanceof IBOMasterData && object instanceof IBOMasterData
+											&& object instanceof ITrackStatusOperator) {
+										// 主数据则保留DocEntry值，否则丢失关联关系
+										IBOMasterData objMaster = (IBOMasterData) object;
+										IBOMasterData itemMaster = (IBOMasterData) item;
+										((ITrackStatusOperator) objMaster).markOld();
+										objMaster.setDocEntry(itemMaster.getDocEntry());
+										if (item instanceof IBOStorageTag && object instanceof IBOStorageTag) {
+											((IBOStorageTag) object).setLogInst(((IBOStorageTag) item).getLogInst());
+										}
+									} else if (item instanceof IBOMasterDataLine && object instanceof IBOMasterDataLine
+											&& object instanceof ITrackStatusOperator) {
+										// 主数据则保留LineId值，否则丢失关联关系
+										IBOMasterDataLine objMaster = (IBOMasterDataLine) object;
+										IBOMasterDataLine itemMaster = (IBOMasterDataLine) item;
+										((ITrackStatusOperator) objMaster).markOld();
+										objMaster.setLineId(itemMaster.getLineId());
+									} else if (item instanceof IBusinessObject) {
+										// 强制保存，删除旧数据
 										IBusinessObject boItem = (IBusinessObject) item;
 										boItem.delete();
 										IOperationResult<?> opRsltDelete = this.save(boItem, token);

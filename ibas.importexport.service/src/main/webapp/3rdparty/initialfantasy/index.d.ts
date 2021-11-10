@@ -501,6 +501,8 @@ declare namespace initialfantasy {
             updateActionId: string;
             /** 数据所属组织 */
             organization: string;
+            /** 备注 */
+            remarks: string;
         }
     }
 }
@@ -557,6 +559,8 @@ declare namespace initialfantasy {
             dataOwner: number;
             /** 数据所属组织 */
             organization: string;
+            /** 备注 */
+            remarks: string;
             /** 业务对象筛选-条件集合 */
             boFilteringConditions: IBOFilteringConditions;
         }
@@ -600,6 +604,8 @@ declare namespace initialfantasy {
             bracketOpen: number;
             /** 闭括号数 */
             bracketClose: number;
+            /** 备注 */
+            remarks: string;
         }
         /** 业务对象筛选-条件 集合 */
         interface IBOFilteringConditions extends ibas.IBusinessObjects<IBOFilteringCondition> {
@@ -727,6 +733,8 @@ declare namespace initialfantasy {
             updateActionId: string;
             /** 数据所有者 */
             dataOwner: number;
+            /** 备注 */
+            remarks: string;
         }
     }
 }
@@ -841,6 +849,8 @@ declare namespace initialfantasy {
             dataOwner: number;
             /** 数据所属组织 */
             organization: string;
+            /** 备注 */
+            remarks: string;
         }
     }
 }
@@ -1993,6 +2003,12 @@ declare namespace initialfantasy {
             get organization(): string;
             /** 设置-数据所属组织 */
             set organization(value: string);
+            /** 映射的属性名称-备注 */
+            static PROPERTY_REMARKS_NAME: string;
+            /** 获取-备注 */
+            get remarks(): string;
+            /** 设置-备注 */
+            set remarks(value: string);
             /** 初始化数据 */
             protected init(): void;
         }
@@ -2139,6 +2155,12 @@ declare namespace initialfantasy {
             get organization(): string;
             /** 设置-数据所属组织 */
             set organization(value: string);
+            /** 映射的属性名称-备注 */
+            static PROPERTY_REMARKS_NAME: string;
+            /** 获取-备注 */
+            get remarks(): string;
+            /** 设置-备注 */
+            set remarks(value: string);
             /** 映射的属性名称-业务对象筛选-条件集合 */
             static PROPERTY_BOFILTERINGCONDITIONS_NAME: string;
             /** 获取-业务对象筛选-条件集合 */
@@ -2266,6 +2288,12 @@ declare namespace initialfantasy {
             get bracketClose(): number;
             /** 设置-闭括号数 */
             set bracketClose(value: number);
+            /** 映射的属性名称-备注 */
+            static PROPERTY_REMARKS_NAME: string;
+            /** 获取-备注 */
+            get remarks(): string;
+            /** 设置-备注 */
+            set remarks(value: string);
             /** 初始化数据 */
             protected init(): void;
         }
@@ -2664,6 +2692,12 @@ declare namespace initialfantasy {
             get dataOwner(): number;
             /** 设置-数据所有者 */
             set dataOwner(value: number);
+            /** 映射的属性名称-备注 */
+            static PROPERTY_REMARKS_NAME: string;
+            /** 获取-备注 */
+            get remarks(): string;
+            /** 设置-备注 */
+            set remarks(value: string);
             /** 初始化数据 */
             protected init(): void;
         }
@@ -2962,6 +2996,12 @@ declare namespace initialfantasy {
             get organization(): string;
             /** 设置-数据所属组织 */
             set organization(value: string);
+            /** 映射的属性名称-备注 */
+            static PROPERTY_REMARKS_NAME: string;
+            /** 获取-备注 */
+            get remarks(): string;
+            /** 设置-备注 */
+            set remarks(value: string);
             /** 初始化数据 */
             protected init(): void;
         }
