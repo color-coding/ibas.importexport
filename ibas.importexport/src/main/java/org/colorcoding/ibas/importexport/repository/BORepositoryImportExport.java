@@ -5,8 +5,6 @@ import java.io.File;
 import java.util.function.Consumer;
 
 import org.colorcoding.ibas.bobas.bo.BusinessObject;
-import org.colorcoding.ibas.bobas.bo.IBOMasterData;
-import org.colorcoding.ibas.bobas.bo.IBOMasterDataLine;
 import org.colorcoding.ibas.bobas.bo.IBOStorageTag;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.common.ConditionOperation;
@@ -42,6 +40,7 @@ import org.colorcoding.ibas.importexport.transformer.ITransformer;
 import org.colorcoding.ibas.importexport.transformer.ITransformerFile;
 import org.colorcoding.ibas.importexport.transformer.TransformerFactory;
 import org.colorcoding.ibas.importexport.transformer.TransformerInfo;
+import org.colorcoding.ibas.initialfantasy.bo.organization.IUser;
 
 /**
  * ImportExport仓库
@@ -247,23 +246,18 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 							// 已存在数据
 							if (update) {
 								for (Object item : opRsltExists.getResultObjects()) {
-									if (item instanceof IBOMasterData && object instanceof IBOMasterData
-											&& object instanceof ITrackStatusOperator) {
-										// 主数据则保留DocEntry值，否则丢失关联关系
-										IBOMasterData objMaster = (IBOMasterData) object;
-										IBOMasterData itemMaster = (IBOMasterData) item;
-										((ITrackStatusOperator) objMaster).markOld();
-										objMaster.setDocEntry(itemMaster.getDocEntry());
-										if (item instanceof IBOStorageTag && object instanceof IBOStorageTag) {
-											((IBOStorageTag) object).setLogInst(((IBOStorageTag) item).getLogInst());
+									if (item instanceof IUser && object instanceof IUser) {
+										// 是用户时保留DocEntry值，否则丢失数据所有者关系
+										IUser objUser = (IUser) object;
+										IUser itemUser = (IUser) item;
+										if (objUser instanceof ITrackStatusOperator) {
+											((ITrackStatusOperator) objUser).markOld();
 										}
-									} else if (item instanceof IBOMasterDataLine && object instanceof IBOMasterDataLine
-											&& object instanceof ITrackStatusOperator) {
-										// 主数据则保留LineId值，否则丢失关联关系
-										IBOMasterDataLine objMaster = (IBOMasterDataLine) object;
-										IBOMasterDataLine itemMaster = (IBOMasterDataLine) item;
-										((ITrackStatusOperator) objMaster).markOld();
-										objMaster.setLineId(itemMaster.getLineId());
+										objUser.setDocEntry(itemUser.getDocEntry());
+										if (itemUser instanceof IBOStorageTag && objUser instanceof IBOStorageTag) {
+											((IBOStorageTag) objUser)
+													.setLogInst(((IBOStorageTag) itemUser).getLogInst());
+										}
 									} else if (item instanceof IBusinessObject) {
 										// 强制保存，删除旧数据
 										IBusinessObject boItem = (IBusinessObject) item;
