@@ -390,10 +390,10 @@ public class TransformerHtml extends TemplateTransformer {
 					this.startTable(writer, areaName, this.getTemplate().getRepetitionHeaders());
 					top += this.getTemplate().getRepetitionHeaderHeight();
 				}
-				if (this.getTemplate().getRepetitionHeight() > 0) {
-					this.drawTableRow(writer, this.getTemplate().getRepetitions());
-					top += this.getTemplate().getRepetitionHeight();
-				}
+				// if (this.getTemplate().getRepetitionHeight() > 0) {
+				this.drawTableRow(writer, this.getTemplate().getRepetitions());
+				top += this.getTemplate().getRepetitionHeight();
+				// }
 				if (this.paramValue(String.format(PARAM_TEMPLATE_PAGE_DATA_INDEX, page), -1) == i) {
 					if (this.getTemplate().getRepetitionFooterHeight() > 0) {
 						this.endTable(writer, this.getTemplate().getRepetitionFooters());

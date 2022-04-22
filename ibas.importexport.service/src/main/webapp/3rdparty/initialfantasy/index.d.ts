@@ -74,7 +74,9 @@ declare namespace initialfantasy {
             /** 用户 */
             USER = 0,
             /** 角色 */
-            ROLE = 1
+            ROLE = 1,
+            /** 全部 */
+            ALL = 2
         }
         /**
          * 筛选类型
@@ -178,17 +180,20 @@ declare namespace initialfantasy {
             /** 没有 */
             NONE = 3
         }
-        /**
-         * 配置种类
-         *
-         * @author Niuren.Zhu
-         *
-         */
+        /** 配置种类 */
         enum emConfigCategory {
             /** 服务端 */
             SERVER = 0,
             /** 客户端 */
             CLIENT = 1
+        }
+        enum emRequiredValue {
+            /** 默认值 */
+            DEFAULT = 0,
+            /** 否 */
+            NO = 1,
+            /** 是 */
+            YES = 2
         }
     }
     namespace app {
@@ -1031,6 +1036,8 @@ declare namespace initialfantasy {
             searched: emSearchedValue;
             /** 权限 */
             authorised: emAuthorisedValue;
+            /** 必填的 */
+            required: emRequiredValue;
             /** 对象编号 */
             objectKey: number;
             /** 对象类型 */
@@ -2009,6 +2016,7 @@ declare namespace initialfantasy {
             get remarks(): string;
             /** 设置-备注 */
             set remarks(value: string);
+            protected onPropertyChanged(name: string): void;
             /** 初始化数据 */
             protected init(): void;
         }
@@ -3454,6 +3462,12 @@ declare namespace initialfantasy {
             get authorised(): emAuthorisedValue;
             /** 设置-权限 */
             set authorised(value: emAuthorisedValue);
+            /** 映射的属性名称-必填 */
+            static PROPERTY_REQUIRED_NAME: string;
+            /** 获取-必填 */
+            get required(): emRequiredValue;
+            /** 设置-必填 */
+            set required(value: emRequiredValue);
             /** 映射的属性名称-对象编号 */
             static PROPERTY_OBJECTKEY_NAME: string;
             /** 获取-对象编号 */
@@ -4485,8 +4499,6 @@ declare namespace initialfantasy {
             protected deleteData(): void;
             /** 新建数据，参数1：是否克隆 */
             protected createData(clone: boolean): void;
-            /** 选择应用 */
-            private chooseApplication;
             /** 选择业务对象编码 */
             private chooseBusinessObject;
             /** 选择用户或角色 */
@@ -4502,8 +4514,6 @@ declare namespace initialfantasy {
             deleteDataEvent: Function;
             /** 新建数据事件，参数1：是否克隆 */
             createDataEvent: Function;
-            /** 选择应用 */
-            chooseApplicationEvent: Function;
             /** 选择查询目标 */
             chooseBusinessObjectEvent: Function;
             /** 选择用户或角色 */
@@ -6497,6 +6507,8 @@ declare namespace initialfantasy {
             set authorised(value: bo.emAuthorisedValue);
             get position(): number;
             set position(value: number);
+            get required(): bo.emRequiredValue;
+            set required(value: bo.emRequiredValue);
             protected firePropertyChanged(property: string): void;
             delete(): void;
             reset(setting?: bo.BOPropertySetting): void;
