@@ -391,6 +391,7 @@ public class TransformerHtml extends TemplateTransformer {
 					top += this.getTemplate().getRepetitionHeaderHeight();
 				}
 				// if (this.getTemplate().getRepetitionHeight() > 0) {
+				// 去除重复限制，以实现结束区顶格
 				this.drawTableRow(writer, this.getTemplate().getRepetitions());
 				top += this.getTemplate().getRepetitionHeight();
 				// }
