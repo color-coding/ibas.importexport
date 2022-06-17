@@ -495,12 +495,12 @@ public class TransformerHtml extends TemplateTransformer {
 	}
 
 	protected void startDiv(Writer writer, String id, int left, int top, int width, int height) throws IOException {
-		this.startDiv(writer, id, left, top, width, height, null, -1, -1, -1, -1, -1, -1, -1);
+		this.startDiv(writer, id, left, top, width, height, null, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
 	}
 
 	protected void startDiv(Writer writer, String id, int left, int top, int width, int height, emLineStyle lineStyle,
-			int lineLeft, int lineTop, int lineRight, int lineBottom, int borderRed, int borderGreen, int borderBlue)
-			throws IOException {
+			int lineLeft, int lineTop, int lineRight, int lineBottom, int borderRed, int borderGreen, int borderBlue,
+			int bgRed, int bgGreen, int bgBlue) throws IOException {
 		writer.write("<div");
 		writer.write(" ");
 		if (id != null) {
@@ -557,6 +557,15 @@ public class TransformerHtml extends TemplateTransformer {
 			writer.write(String.valueOf(lineBottom));
 			writer.write("px;");
 		}
+		if (bgRed > 0 || bgGreen > 0 || bgBlue > 0) {
+			writer.write("background-color:rgb(");
+			writer.write(String.valueOf(bgRed));
+			writer.write(",");
+			writer.write(String.valueOf(bgGreen));
+			writer.write(",");
+			writer.write(String.valueOf(bgBlue));
+			writer.write(");");
+		}
 		writer.write("\"");
 		writer.write(" ");
 		writer.write(">");
@@ -584,7 +593,7 @@ public class TransformerHtml extends TemplateTransformer {
 			this.startDiv(writer, null, item.getItemLeft(), item.getItemTop(), item.getItemWidth(),
 					item.getItemHeight(), item.getLineStyle(), item.getLineLeft(), item.getLineTop(),
 					item.getLineRight(), item.getLineBottom(), item.getBorderRed(), item.getBorderGreen(),
-					item.getBorderBlue());
+					item.getBorderBlue(), item.getBackgroundRed(), item.getBackgroundGreen(), item.getBackgroundBlue());
 			this.drawElement(writer, item);
 			this.endDiv(writer);
 		}
@@ -707,6 +716,7 @@ public class TransformerHtml extends TemplateTransformer {
 		writer.write("style=\"");
 		writer.write("table-layout:fixed;border-collapse:collapse;");
 		writer.write("border:1px solid black;");
+
 		writer.write("\"");
 		writer.write(" ");
 		writer.write(">");
@@ -732,7 +742,47 @@ public class TransformerHtml extends TemplateTransformer {
 			writer.write("height:");
 			writer.write(String.valueOf(item.getItemHeight() - item.getLineTop() - item.getLineBottom()));
 			writer.write("px;");
-			writer.write("border:1px solid black;");
+			if (item.getLineLeft() > 0 || item.getLineTop() > 0 || item.getLineRight() > 0
+					|| item.getLineBottom() > 0) {
+				writer.write("border-style:");
+				writer.write(String.valueOf(item.getLineStyle() != null ? item.getLineStyle() : emLineStyle.SOLID)
+						.toLowerCase());
+				writer.write(";");
+				writer.write("border-left-width:");
+				writer.write(String.valueOf(item.getLineLeft()));
+				writer.write("px;");
+				writer.write("border-top-width:");
+				writer.write(String.valueOf(item.getLineTop()));
+				writer.write("px;");
+				writer.write("border-right-width:");
+				writer.write(String.valueOf(item.getLineRight()));
+				writer.write("px;");
+				writer.write("border-bottom-width:");
+				writer.write(String.valueOf(item.getLineBottom()));
+				writer.write("px;");
+				if (item.getBorderRed() > 0 || item.getBorderGreen() > 0 || item.getBorderBlue() > 0) {
+					writer.write("border-color:rgb(");
+					writer.write(String.valueOf(item.getBorderRed()));
+					writer.write(",");
+					writer.write(String.valueOf(item.getBorderGreen()));
+					writer.write(",");
+					writer.write(String.valueOf(item.getBorderBlue()));
+					writer.write(");");
+				} else {
+					writer.write("border-color:black;");
+				}
+			} else {
+				writer.write("border:1px solid black;");
+			}
+			if (item.getBackgroundRed() > 0 || item.getBackgroundGreen() > 0 || item.getBackgroundBlue() > 0) {
+				writer.write("background-color:rgb(");
+				writer.write(String.valueOf(item.getBackgroundRed()));
+				writer.write(",");
+				writer.write(String.valueOf(item.getBackgroundGreen()));
+				writer.write(",");
+				writer.write(String.valueOf(item.getBackgroundBlue()));
+				writer.write(");");
+			}
 			writer.write("\"");
 			writer.write(" ");
 			writer.write(">");
@@ -815,7 +865,47 @@ public class TransformerHtml extends TemplateTransformer {
 			writer.write("height:");
 			writer.write(String.valueOf(item.getItemHeight() - item.getLineTop() - item.getLineBottom()));
 			writer.write("px;");
-			writer.write("border:1px solid black;");
+			if (item.getLineLeft() > 0 || item.getLineTop() > 0 || item.getLineRight() > 0
+					|| item.getLineBottom() > 0) {
+				writer.write("border-style:");
+				writer.write(String.valueOf(item.getLineStyle() != null ? item.getLineStyle() : emLineStyle.SOLID)
+						.toLowerCase());
+				writer.write(";");
+				writer.write("border-left-width:");
+				writer.write(String.valueOf(item.getLineLeft()));
+				writer.write("px;");
+				writer.write("border-top-width:");
+				writer.write(String.valueOf(item.getLineTop()));
+				writer.write("px;");
+				writer.write("border-right-width:");
+				writer.write(String.valueOf(item.getLineRight()));
+				writer.write("px;");
+				writer.write("border-bottom-width:");
+				writer.write(String.valueOf(item.getLineBottom()));
+				writer.write("px;");
+				if (item.getBorderRed() > 0 || item.getBorderGreen() > 0 || item.getBorderBlue() > 0) {
+					writer.write("border-color:rgb(");
+					writer.write(String.valueOf(item.getBorderRed()));
+					writer.write(",");
+					writer.write(String.valueOf(item.getBorderGreen()));
+					writer.write(",");
+					writer.write(String.valueOf(item.getBorderBlue()));
+					writer.write(");");
+				} else {
+					writer.write("border-color:black;");
+				}
+			} else {
+				writer.write("border:1px solid black;");
+			}
+			if (item.getBackgroundRed() > 0 || item.getBackgroundGreen() > 0 || item.getBackgroundBlue() > 0) {
+				writer.write("background-color:rgb(");
+				writer.write(String.valueOf(item.getBackgroundRed()));
+				writer.write(",");
+				writer.write(String.valueOf(item.getBackgroundGreen()));
+				writer.write(",");
+				writer.write(String.valueOf(item.getBackgroundBlue()));
+				writer.write(");");
+			}
 			writer.write("\"");
 			writer.write(" ");
 			writer.write(">");

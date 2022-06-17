@@ -807,6 +807,10 @@ namespace importexport {
                 private createTableTemplateItem(eventAdd: Function, eventRemove: Function): sap.extension.table.Table {
                     let that: this = this;
                     let table: sap.extension.table.DataTable = new sap.extension.table.DataTable("", {
+                        dataInfo: {
+                            code: bo.ExportTemplate.BUSINESS_OBJECT_CODE,
+                            name: bo.ExportTemplateItem.name
+                        },
                         toolbar: new sap.m.Toolbar("", {
                             content: [
                                 new sap.m.Button("", {

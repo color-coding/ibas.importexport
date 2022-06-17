@@ -87,6 +87,8 @@ namespace importexport {
                         return ibas.enums.toString(emJustificationVertical, value);
                     } else if (property === bo.ExportTemplateItem.PROPERTY_ITEMVISIBLE_NAME) {
                         return ibas.enums.toString(ibas.emYesNo, value);
+                    } else if (property === bo.ExportTemplateItem.PROPERTY_LINESTYLE_NAME) {
+                        return ibas.enums.toString(emLineStyle, value);
                     }
                 } else if (boName === bo.ExportTemplateAppendix.name) {
                     if (property === bo.ExportTemplateAppendix.PROPERTY_PAGEHEADER_NAME) {
@@ -121,6 +123,8 @@ namespace importexport {
                         return ibas.enums.valueOf(emJustificationVertical, value);
                     } else if (property === bo.ExportTemplateItem.PROPERTY_ITEMVISIBLE_NAME) {
                         return ibas.enums.valueOf(ibas.emYesNo, value);
+                    } else if (property === bo.ExportTemplateItem.PROPERTY_LINESTYLE_NAME) {
+                        return ibas.enums.valueOf(emLineStyle, value);
                     }
                 } else if (boName === bo.ExportTemplateAppendix.name) {
                     if (property === bo.ExportTemplateAppendix.PROPERTY_PAGEHEADER_NAME) {
