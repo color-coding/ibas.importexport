@@ -87,10 +87,11 @@ public class Object extends BindingArea<Template> {
 	/**
 	 * 解析对象，形成模板
 	 * 
-	 * @param bo 待解析对象
+	 * @param bo    待解析对象
+	 * @param skips 跳过不解析的属性
 	 * @throws ResolvingException 无法识别异常
 	 */
-	public final void resolving(IBusinessObject bo) throws ResolvingException {
+	public final void resolving(IBusinessObject bo, String[] skips) throws ResolvingException {
 		this.setBindingClass(bo.getClass());
 		List<Property> properties = new ArrayList<>();
 		IManagedFields fields = (IManagedFields) bo;
@@ -106,6 +107,19 @@ public class Object extends BindingArea<Template> {
 			// 对象不再处理
 			if (IBusinessObject.class.isInstance(field.getValue())) {
 				continue;
+			}
+			// 跳过不解析的属性
+			if (skips != null) {
+				boolean done = false;
+				for (String property : skips) {
+					if (field.getName().equals(property)) {
+						done = true;
+						break;
+					}
+				}
+				if (done) {
+					continue;
+				}
 			}
 			// 过滤属性
 			if (bo.isNew()) {

@@ -10,6 +10,7 @@ import org.colorcoding.ibas.bobas.bo.IBOUserFields;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.bo.IBusinessObjects;
 import org.colorcoding.ibas.bobas.bo.UserField;
+import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.core.BOFactory;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
 import org.colorcoding.ibas.bobas.core.fields.IManagedFields;
@@ -123,7 +124,7 @@ public class Template extends Area<Area<?>> {
 		if (this.head == null) {
 			// 未解析头
 			this.resolvingHead(bo);
-			this.resolvingObject(bo, this.getHead().getName());
+			this.resolvingObject(bo, this.getHead().getName(), null);
 			// 填充模板信息
 			this.setStartingColumn(this.getHead().getStartingColumn());
 			this.setStartingRow(this.getHead().getStartingRow());
@@ -187,7 +188,7 @@ public class Template extends Area<Area<?>> {
 	 * @return
 	 * @throws ResolvingException
 	 */
-	private void resolvingObject(IBusinessObject bo, String name) throws ResolvingException {
+	private void resolvingObject(IBusinessObject bo, String name, String[] skips) throws ResolvingException {
 		// 根对象
 		Object object = new Object();
 		object.setParent(this);
@@ -197,7 +198,7 @@ public class Template extends Area<Area<?>> {
 		object.setStartingColumn(
 				this.getObjects().length > 0 ? this.getObjects()[this.getObjects().length - 1].getEndingColumn() + 1
 						: Object.OBJECT_STARTING_COLUMN);
-		object.resolving(bo);
+		object.resolving(bo, skips);
 		object.setEndingColumn(object.getStartingColumn() + object.getProperties().length - 1);
 		this.addObject(object);
 		// 集合对象
@@ -215,14 +216,23 @@ public class Template extends Area<Area<?>> {
 					}
 				}
 				if (subItem != null && !bo.getClass().isInstance(subItem)) {
+					String[] sSkips = null;
+					ICriteria criteria = list.getElementCriteria();
+					if (criteria != null) {
+						sSkips = new String[criteria.getConditions().size()];
+						for (int i = 0; i < sSkips.length; i++) {
+							sSkips[i] = criteria.getConditions().get(i).getAlias();
+						}
+					}
 					// 非本身类型，不做处理，防止嵌套
-					this.resolvingObject(subItem, String.format(LIST_PROPERTY_PATH_FORMAT, name, field.getName()));
+					this.resolvingObject(subItem, String.format(LIST_PROPERTY_PATH_FORMAT, name, field.getName()),
+							sSkips);
 				}
 			} else if (IBusinessObject.class.isInstance(field.getValue())
 					&& !bo.getClass().isInstance(field.getValue())) {
 				// 解析对象属性
 				this.resolvingObject((IBusinessObject) field.getValue(),
-						String.format(PROPERTY_PATH_FORMAT, name, field.getName()));
+						String.format(PROPERTY_PATH_FORMAT, name, field.getName()), null);
 			}
 		}
 	}
