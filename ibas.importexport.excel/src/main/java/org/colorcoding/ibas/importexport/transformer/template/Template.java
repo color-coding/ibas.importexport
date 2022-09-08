@@ -12,6 +12,7 @@ import org.colorcoding.ibas.bobas.bo.IBusinessObjects;
 import org.colorcoding.ibas.bobas.bo.UserField;
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.core.BOFactory;
+import org.colorcoding.ibas.bobas.core.TrackableBase;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
 import org.colorcoding.ibas.bobas.core.fields.IManagedFields;
 import org.colorcoding.ibas.bobas.data.DataConvert;
@@ -341,6 +342,10 @@ public class Template extends Area<Area<?>> {
 
 	private boolean resolving(IManagedFields boFields, String level, Iterator<Cell[]> rows) {
 		boolean done = false;
+		// 不实时执行业务逻辑
+		if (boFields instanceof TrackableBase) {
+			((TrackableBase) boFields).setLoading(true);
+		}
 		for (Object object : this.getObjects()) {
 			if (!object.getName().startsWith(level)) {
 				// 非此类，不做处理
@@ -427,6 +432,9 @@ public class Template extends Area<Area<?>> {
 					}
 				}
 			}
+		}
+		if (boFields instanceof TrackableBase) {
+			((TrackableBase) boFields).setLoading(false);
 		}
 		return done;
 	}
