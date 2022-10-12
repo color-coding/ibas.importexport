@@ -173,6 +173,7 @@ namespace importexport {
                         content: [
                             new sap.m.IconTabBar("", {
                                 headerBackgroundDesign: sap.m.BackgroundDesign.Transparent,
+                                backgroundDesign: sap.m.BackgroundDesign.Transparent,
                                 expandable: false,
                                 items: [
                                     new sap.m.IconTabFilter("", {
