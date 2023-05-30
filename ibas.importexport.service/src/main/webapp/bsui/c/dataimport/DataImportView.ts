@@ -14,86 +14,392 @@ namespace importexport {
             export class DataImportView extends ibas.View implements app.IDataImportView {
                 /** 导入 */
                 importEvent: Function;
+                /** 选择文件 */
+                addFilesEvent: Function;
+                /** 移除文件 */
+                removeFilesEvent: Function;
                 /** 绘制视图 */
                 draw(): any {
                     let that: this = this;
-                    let check: sap.m.CheckBox;
-                    let form: sap.ui.layout.form.SimpleForm = new sap.ui.layout.form.SimpleForm("", {
-                        editable: true,
-                        content: [
-                            new sap.ui.core.Title("", { text: ibas.i18n.prop("importexport_import_data") }),
-                            this.uploader = new sap.ui.unified.FileUploader("", {
-                                name: ibas.strings.format("FILE_{0}", ibas.uuids.random().toUpperCase()),
-                                width: "100%",
-                                placeholder: ibas.i18n.prop("importexport_please_choose_file"),
+                    this.listMethod = new sap.extension.m.List("", {
+                        headerToolbar: new sap.m.Toolbar("", {
+                            content: [
+                                new sap.m.Text("", {
+                                    text: ibas.i18n.prop("importexport_update_exists_data"),
+                                }),
+                                new sap.m.ToolbarSpacer(),
+                            ]
+                        }),
+                        mode: sap.m.ListMode.SingleSelectLeft,
+                        items: [
+                            new sap.m.StandardListItem("", {
+                                selected: true,
+                                counter: bo.emDataUpdateMethod.SKIP,
+                                icon: "sap-icon://sys-next-page",
+                                title: ibas.enums.describe(bo.emDataUpdateMethod, bo.emDataUpdateMethod.SKIP),
                             }),
-                            check = new sap.m.CheckBox("", {
-                                width: "100%",
-                                selected: false,
-                                text: ibas.i18n.prop("importexport_update_exists_data"),
-                                textAlign: sap.ui.core.TextAlign.Right,
+                            new sap.m.StandardListItem("", {
+                                counter: bo.emDataUpdateMethod.REPLACE,
+                                icon: "sap-icon://documents",
+                                title: ibas.enums.describe(bo.emDataUpdateMethod, bo.emDataUpdateMethod.REPLACE),
+
                             }),
-                            new sap.ui.core.Title("", { text: ibas.i18n.prop("importexport_import_result") }),
-                            this.table = new sap.ui.table.Table("", {
-                                enableSelectAll: false,
-                                selectionBehavior: sap.ui.table.SelectionBehavior.Row,
-                                visibleRowCount: 10,
-                                visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Interactive,
-                                rows: "{/}",
-                                columns: [
-                                    new sap.ui.table.Column("", {
-                                        label: ibas.i18n.prop("importexport_businessobject_key"),
-                                        template: new sap.m.Text("", {
-                                            wrapping: false
-                                        }).bindProperty("text", {
-                                            path: ""
-                                        })
-                                    }),
-                                ]
+                            new sap.m.StandardListItem("", {
+                                visible: false,
+                                counter: bo.emDataUpdateMethod.MODIFY,
+                                icon: " sap-icon://request",
+                                title: ibas.enums.describe(bo.emDataUpdateMethod, bo.emDataUpdateMethod.MODIFY),
+                            }),
+                        ],
+                    });
+                    this.listFiles = new sap.extension.m.List("", {
+                        headerToolbar: new sap.m.Toolbar("", {
+                            content: [
+                                new sap.m.Text("", {
+                                    text: ibas.i18n.prop("importexport_import_files"),
+                                }),
+                                new sap.m.ToolbarSpacer(),
+                                new sap.m.Button("", {
+                                    icon: "sap-icon://sys-cancel",
+                                    type: sap.m.ButtonType.Reject,
+                                    press(): void {
+                                        that.fireViewEvents(that.removeFilesEvent);
+                                    }
+                                }),
+                                new sap.m.ToolbarSeparator(),
+                                new sap.m.Button("", {
+                                    icon: "sap-icon://add-document",
+                                    type: sap.m.ButtonType.Accept,
+                                    press(): void {
+                                        that.fireViewEvents(that.addFilesEvent);
+                                    }
+                                }),
+                            ]
+                        }),
+                        mode: sap.m.ListMode.None,
+                        items: {
+                            path: "/",
+                            template: new sap.extension.m.CustomListItem("", {
+                                type: sap.m.ListType.Detail,
+                                detailIcon: "sap-icon://sys-cancel",
+                                detailPress(this: sap.m.ListItemBase): void {
+                                    let data: any = this.getBindingContext().getObject();
+                                    if (data instanceof app.FileItem) {
+                                        that.fireViewEvents(that.removeFilesEvent, data);
+                                    }
+                                },
+                                content: [
+                                    new sap.m.HBox("", {
+                                        width: "100%",
+                                        items: [
+                                            new sap.m.Avatar("", {
+                                                displayShape: sap.m.AvatarShape.Square,
+                                                // backgroundColor: sap.m.AvatarColor.Random,
+                                                displaySize: sap.m.AvatarSize.S,
+                                                src: {
+                                                    path: "file/type",
+                                                    type: new sap.extension.data.Alphanumeric(),
+                                                    formatter(data: string): string {
+                                                        if ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" === data) {
+                                                            return "sap-icon://excel-attachment";
+                                                        } else if ("application/json" === data) {
+                                                            return "sap-icon://attachment-html";
+                                                        }
+                                                        return "sap-icon://document";
+                                                    }
+                                                },
+                                            }),
+                                            new sap.m.VBox("", {
+                                                renderType: sap.m.FlexRendertype.Div,
+                                                justifyContent: sap.m.FlexJustifyContent.Start,
+                                                items: [
+                                                    new sap.m.Title("", {
+                                                        wrapping: true,
+                                                        titleStyle: sap.ui.core.TitleLevel.H5,
+                                                        text: {
+                                                            path: "file/name",
+                                                            type: new sap.extension.data.Alphanumeric(),
+                                                        },
+                                                    }),
+                                                    new sap.m.Title("", {
+                                                        wrapping: true,
+                                                        titleStyle: sap.ui.core.TitleLevel.H6,
+                                                        text: {
+                                                            path: "file/lastModifiedDate",
+                                                            type: new sap.extension.data.DateTime(),
+                                                        },
+                                                    }),
+                                                ]
+                                            }).addStyleClass("sapUiTinyMarginBegin"),
+                                        ]
+                                    }).addStyleClass("sapUiTinyMargin"),
+                                ],
+                                highlight: {
+                                    path: "status",
+                                    formatter(data: string): string {
+                                        switch (data) {
+                                            case "pending":
+                                                return sap.ui.core.MessageType.Information;
+                                            case "processing":
+                                                return sap.ui.core.MessageType.Warning;
+                                            case "completed":
+                                                return sap.ui.core.MessageType.Success;
+                                            case "failed":
+                                                return sap.ui.core.MessageType.Error;
+                                        }
+                                        return sap.ui.core.MessageType.None;
+                                    },
+                                }
+                            }),
+                            sorter: [
+                                new sap.ui.model.Sorter("order", false)
+                            ]
+                        },
+                        dragDropConfig: [
+                            new sap.ui.core.dnd.DragDropInfo("", {
+                                sourceAggregation: "items",
+                                targetAggregation: "items",
+                                dropPosition: sap.ui.core.dnd.DropPosition.Between,
+                                dropLayout: sap.ui.core.dnd.DropLayout.Vertical,
+                                drop(event: sap.ui.base.Event): void {
+                                    let dragged: any = event.getParameter("draggedControl");
+                                    let dropped: any = event.getParameter("droppedControl");
+                                    let dropPosition: string = event.getParameter("dropPosition");
+                                    let table: any = (<any>event.getSource())?.getDropTarget();
+                                    if (table instanceof sap.m.List) {
+                                        let index: number = 1;
+                                        let step: number = 1;
+                                        let draggedData: app.FileItem = dragged.getBindingContext().getObject();
+                                        let droppedData: app.FileItem = dropped.getBindingContext().getObject();
+                                        let rowData: app.FileItem;
+                                        for (let row of table.getItems()) {
+                                            rowData = row.getBindingContext()?.getObject();
+                                            if (ibas.objects.isNull(rowData)) {
+                                                continue;
+                                            }
+                                            if (dragged === row) {
+                                                continue;
+                                            } else if (dropped === row) {
+                                                if (dropPosition === "Before") {
+                                                    draggedData.order = index * step;
+                                                    index++;
+                                                    droppedData.order = index * step;
+                                                    index++;
+                                                } else if (dropPosition === "After") {
+                                                    droppedData.order = index * step;
+                                                    index++;
+                                                    draggedData.order = index * step;
+                                                    index++;
+                                                }
+                                            } else {
+                                                rowData.order = index * step;
+                                                index++;
+                                            }
+                                        }
+                                        if (index > 1) {
+                                            // table.getModel().refresh(true);
+                                            // 刷新不好使，需要重新绑定
+                                            let model: any = table.getModel();
+                                            table.setModel(undefined);
+                                            table.setModel(model);
+                                        }
+                                    }
+                                },
                             })
                         ]
                     });
-                    return new sap.m.Page("", {
-                        showHeader: false,
-                        subHeader: new sap.m.Bar("", {
-                            contentLeft: [
-                                new sap.m.Button("", {
-                                    text: ibas.i18n.prop("importexport_import"),
-                                    type: sap.m.ButtonType.Transparent,
-                                    icon: "sap-icon://toaster-up",
-                                    press: function (): void {
-                                        let elements: NodeListOf<HTMLElement> = document.getElementsByName(that.uploader.getName());
-                                        if (ibas.objects.isNull(elements) || elements.length === 0) {
-                                            return;
-                                        }
-                                        let element: HTMLInputElement = <HTMLInputElement>elements[0];
-                                        if (ibas.objects.isNull(element.files) || element.files.length === 0) {
-                                            return;
-                                        }
-                                        let fileData: FormData = new FormData();
-                                        fileData.append("file", element.files[0], encodeURI(element.files[0].name));
-                                        fileData.append("update", check.getSelected().toString());
-                                        that.fireViewEvents(that.importEvent, fileData);
-                                    }
-                                })
-                            ]
-                        }),
-                        content: [
-                            form
-                        ]
+                    return new sap.m.SplitContainer("", {
+                        masterPages: [
+                            new sap.m.Page("", {
+                                showHeader: true,
+                                customHeader: new sap.m.Toolbar("", {
+                                    content: [
+                                        new sap.m.Title("", {
+                                            text: ibas.i18n.prop("importexport_import_content")
+                                        }),
+                                        new sap.m.ToolbarSpacer(),
+                                        new sap.m.Button("", {
+                                            icon: "sap-icon://toaster-up",
+                                            text: ibas.i18n.prop("importexport_import_data"),
+                                            type: sap.m.ButtonType.Emphasized,
+                                            press(): void {
+                                                let item: any = that.listMethod.getSelectedItem();
+                                                if (item instanceof sap.m.StandardListItem) {
+                                                    that.fireViewEvents(that.importEvent, item.getCounter());
+                                                }
+                                            }
+                                        }),
+                                    ]
+                                }),
+                                content: [
+                                    this.listMethod,
+                                    this.listFiles,
+                                ]
+                            })
+                        ],
+                        detailPages: [
+                            this.pageResult = new sap.m.Page("", {
+                                showHeader: true,
+                                customHeader: new sap.m.Toolbar("", {
+                                    content: [
+                                        new sap.m.Button("", {
+                                            type: sap.m.ButtonType.Transparent,
+                                            icon: "sap-icon://navigation-right-arrow",
+                                            press: function (this: sap.m.Button): void {
+                                                let page: any = this.getParent().getParent();
+                                                if (page instanceof sap.m.Page) {
+                                                    if (this.getIcon() === "sap-icon://navigation-right-arrow") {
+                                                        for (let vItem of page.getContent()) {
+                                                            if (vItem instanceof sap.m.Panel) {
+                                                                vItem.setExpanded(true);
+                                                            }
+                                                        }
+                                                        this.setIcon("sap-icon://navigation-down-arrow");
+                                                    } else {
+                                                        for (let vItem of page.getContent()) {
+                                                            if (vItem instanceof sap.m.Panel) {
+                                                                vItem.setExpanded(false);
+                                                            }
+                                                        }
+                                                        this.setIcon("sap-icon://navigation-right-arrow");
+                                                    }
+                                                }
+                                            }
+                                        }),
+                                        new sap.m.ToolbarSeparator(),
+                                        new sap.m.Title("", {
+                                            text: ibas.i18n.prop("importexport_import_result")
+                                        }),
+                                        new sap.m.ToolbarSpacer(),
+                                        new sap.m.Button("", {
+                                            type: sap.m.ButtonType.Transparent,
+                                            icon: "sap-icon://eraser",
+                                            press(this: sap.m.Button): void {
+                                                that.showResults(undefined, []);
+                                            }
+                                        }),
+                                    ]
+                                }),
+                                enableScrolling: true,
+                                content: [
+                                ]
+                            })
+                        ],
                     });
                 }
-                private table: sap.ui.table.Table;
-                private uploader: sap.ui.unified.FileUploader;
-                /** 显示结果 */
-                showResults(results: any[] | Error): void {
-                    if (results instanceof Error) {
-                        if (!ibas.objects.isNull(this.uploader)) {
-                            this.uploader.clear();
-                        }
-                        this.table.setModel(null);
+
+                private listMethod: sap.m.List;
+                private listFiles: sap.m.List;
+                private pageResult: sap.m.Page;
+
+                /** 显示文件 */
+                showFiles(datas: app.FileItem[]): void {
+                    this.listFiles.setModel(new sap.extension.model.JSONModel(datas));
+                    if (datas.length === 0) {
+                        this.pageResult.destroyContent();
+                        this.pageResult.addContent(
+                            new sap.m.IllustratedMessage("", {
+                                illustrationType: sap.m.IllustratedMessageType.NoData
+                            })
+                        );
                     } else {
-                        this.table.setModel(new sap.ui.model.json.JSONModel(results));
+                        for (let pItem of ibas.arrays.create(this.pageResult.getContent())) {
+                            let done: boolean = false;
+                            let pData: any = (<sap.extension.model.JSONModel>pItem.getModel())?.getData();
+                            for (let data of datas) {
+                                if (pData === data) {
+                                    done = true;
+                                    break;
+                                }
+                            }
+                            if (!done) {
+                                this.pageResult.removeContent(pItem);
+                            }
+                        }
+                        if (this.pageResult.getContent().length === 0) {
+                            this.pageResult.addContent(
+                                new sap.m.IllustratedMessage("", {
+                                    illustrationType: sap.m.IllustratedMessageType.NoData
+                                })
+                            );
+                        }
+                    }
+                }
+                /** 显示结果 */
+                showResults(file: app.FileItem, results: string[]): void {
+                    if (ibas.objects.isNull(file)) {
+                        this.pageResult.destroyContent();
+                        this.pageResult.addContent(
+                            new sap.m.IllustratedMessage("", {
+                                illustrationType: sap.m.IllustratedMessageType.NoData
+                            })
+                        );
+                    } else {
+                        if (this.pageResult.getContent()[0] instanceof sap.m.IllustratedMessage) {
+                            this.pageResult.removeContent(0);
+                        }
+                        this.pageResult.addContent(
+                            new sap.m.Panel("", {
+                                expanded: false,
+                                expandable: true,
+                                headerToolbar: new sap.m.Toolbar("", {
+                                    content: [
+                                        new sap.m.Text("", {
+                                            text: "{/order}.",
+                                        }),
+                                        new sap.m.Text("", {
+                                            text: {
+                                                path: "/file/name",
+                                                type: new sap.extension.data.Alphanumeric(),
+                                            },
+                                        }),
+                                        new sap.m.ToolbarSpacer(),
+                                        new sap.m.GenericTag("", {
+                                            design: sap.m.GenericTagDesign.StatusIconHidden,
+                                            text: {
+                                                parts: [
+                                                    {
+                                                        path: "/identified",
+                                                        type: new sap.extension.data.Numeric(),
+                                                    }, {
+                                                        path: "/saved",
+                                                        type: new sap.extension.data.Numeric(),
+                                                    }
+                                                ],
+                                                formatter(identified: number, saved: number): string {
+                                                    return ibas.i18n.prop("importexport_import_data_information", identified, saved);
+                                                }
+                                            },
+                                            status: {
+                                                path: "/error",
+                                                formatter(error: any): sap.ui.core.ValueState {
+                                                    return error instanceof Error ? sap.ui.core.ValueState.Error : sap.ui.core.ValueState.Success;
+                                                }
+                                            },
+                                        }),
+                                    ],
+                                }),
+                                content: [
+                                    new sap.extension.m.List("", {
+                                        mode: sap.m.ListMode.None,
+                                        items: {
+                                            path: "/",
+                                            template: new sap.m.StandardListItem("", {
+                                                title: {
+                                                    path: "",
+                                                },
+                                                press(this: sap.m.StandardListItem): void {
+                                                    let data: any = this.getBindingContext().getObject();
+                                                    if (!ibas.strings.isEmpty(data)) {
+
+                                                    }
+                                                }
+                                            })
+                                        },
+                                    }).setModel(new sap.extension.model.JSONModel(results))
+                                ]
+                            }).setModel(new sap.extension.model.JSONModel(file))
+                        );
                     }
                 }
             }

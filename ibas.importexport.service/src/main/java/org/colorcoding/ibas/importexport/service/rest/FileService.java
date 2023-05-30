@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
@@ -19,6 +20,7 @@ import javax.ws.rs.core.MediaType;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.OperationResult;
+import org.colorcoding.ibas.bobas.data.DataConvert;
 import org.colorcoding.ibas.bobas.data.FileData;
 import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
@@ -30,6 +32,7 @@ import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
 import org.colorcoding.ibas.importexport.MyConfiguration;
 import org.colorcoding.ibas.importexport.data.DataExportInfo;
 import org.colorcoding.ibas.importexport.data.DataWrapping;
+import org.colorcoding.ibas.importexport.data.emDataUpdateMethod;
 import org.colorcoding.ibas.importexport.repository.BORepositoryImportExport;
 import org.colorcoding.ibas.importexport.transformer.FileTransformer;
 import org.colorcoding.ibas.importexport.transformer.FileTransformerSerialization;
@@ -37,7 +40,6 @@ import org.colorcoding.ibas.importexport.transformer.IFileTransformer;
 import org.colorcoding.ibas.importexport.transformer.TransformerFactory;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.FormDataParam;
 
 @Path("file")
 public class FileService extends FileRepositoryService {
@@ -61,21 +63,36 @@ public class FileService extends FileRepositoryService {
 	@Path("import")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public OperationResult<String> importData(FormDataMultiPart formData, @FormDataParam("update") String sUpdate,
-			@QueryParam("token") String token) {
+	public OperationResult<String> importData(FormDataMultiPart formData, @QueryParam("token") String token) {
 		OperationResult<String> opRslt = null;
 		try {
-			opRslt = new OperationResult<String>();
-			// 保存文件
-			OperationResult<FileData> opRsltFile = super.save(formData.getField("file"), token);
-			if (opRsltFile.getError() != null) {
-				throw opRsltFile.getError();
+			// 处理请求参数
+			OperationResult<FileData> opRsltFile = null;
+			emDataUpdateMethod updateMethod = emDataUpdateMethod.SKIP;
+			for (List<FormDataBodyPart> bodyParts : formData.getFields().values()) {
+				for (FormDataBodyPart bodyPart : bodyParts) {
+					if ("file".equalsIgnoreCase(bodyPart.getName())) {
+						opRsltFile = super.save(bodyPart, token);
+						if (opRsltFile.getError() != null) {
+							throw opRsltFile.getError();
+						}
+					} else if ("updateMethod".equalsIgnoreCase(bodyPart.getName())) {
+						String value = bodyPart.getValue();
+						if (!DataConvert.isNullOrEmpty(value)) {
+							updateMethod = DataConvert.convert(emDataUpdateMethod.class, value.toUpperCase());
+						}
+					}
+				}
+			}
+			if (opRsltFile == null || opRsltFile.getResultObjects().isEmpty()) {
+				throw new Exception(I18N.prop("msg_ie_invaild_data"));
 			}
 			// 导入文件
 			BORepositoryImportExport boRepository = new BORepositoryImportExport();
 			boRepository.setUserToken(token);
+			opRslt = new OperationResult<String>();
 			for (FileData data : opRsltFile.getResultObjects()) {
-				IOperationResult<String> opRsltImport = boRepository.importData(data, Boolean.parseBoolean(sUpdate));
+				IOperationResult<String> opRsltImport = boRepository.importData(data, updateMethod);
 				if (opRsltImport.getError() != null) {
 					throw opRsltImport.getError();
 				}

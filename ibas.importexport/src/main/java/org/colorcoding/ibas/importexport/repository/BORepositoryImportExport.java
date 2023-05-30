@@ -5,6 +5,8 @@ import java.io.File;
 import java.util.function.Consumer;
 
 import org.colorcoding.ibas.bobas.bo.BusinessObject;
+import org.colorcoding.ibas.bobas.bo.IBOMasterData;
+import org.colorcoding.ibas.bobas.bo.IBOMasterDataLine;
 import org.colorcoding.ibas.bobas.bo.IBOStorageTag;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.common.ConditionOperation;
@@ -19,6 +21,8 @@ import org.colorcoding.ibas.bobas.core.BOFactory;
 import org.colorcoding.ibas.bobas.core.IBOFactory;
 import org.colorcoding.ibas.bobas.core.ITrackStatusOperator;
 import org.colorcoding.ibas.bobas.core.RepositoryException;
+import org.colorcoding.ibas.bobas.core.fields.IFieldData;
+import org.colorcoding.ibas.bobas.core.fields.IManagedFields;
 import org.colorcoding.ibas.bobas.data.FileData;
 import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.bobas.i18n.I18N;
@@ -32,6 +36,7 @@ import org.colorcoding.ibas.importexport.MyConfiguration;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.ExportTemplate;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplate;
 import org.colorcoding.ibas.importexport.data.DataExportInfo;
+import org.colorcoding.ibas.importexport.data.emDataUpdateMethod;
 import org.colorcoding.ibas.importexport.transformer.FileTransformer;
 import org.colorcoding.ibas.importexport.transformer.FileTransformerSerialization;
 import org.colorcoding.ibas.importexport.transformer.IFileTransformer;
@@ -40,7 +45,6 @@ import org.colorcoding.ibas.importexport.transformer.ITransformer;
 import org.colorcoding.ibas.importexport.transformer.ITransformerFile;
 import org.colorcoding.ibas.importexport.transformer.TransformerFactory;
 import org.colorcoding.ibas.importexport.transformer.TransformerInfo;
-import org.colorcoding.ibas.initialfantasy.bo.organization.IUser;
 
 /**
  * ImportExport仓库
@@ -175,12 +179,12 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	/**
 	 * 导入数据
 	 * 
-	 * @param data   数据
-	 * @param update 更新数据
-	 * @param token  口令
+	 * @param data         数据
+	 * @param updateMethod 数据更新方式
+	 * @param token        口令
 	 * @return 操作结果
 	 */
-	public OperationResult<String> importData(FileData data, boolean update, String token) {
+	public OperationResult<String> importData(FileData data, emDataUpdateMethod updateMethod, String token) {
 		OperationResult<String> opRslt = null;
 		try {
 			this.setUserToken(token);
@@ -244,22 +248,11 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 						IOperationResult<?> opRsltExists = this.fetch(criteria, token, object.getClass());
 						if (!opRsltExists.getResultObjects().isEmpty()) {
 							// 已存在数据
-							if (update) {
+							if (updateMethod == emDataUpdateMethod.REPLACE) {
+								// 替换数据（旧的删除，保存新的）
 								for (Object item : opRsltExists.getResultObjects()) {
-									if (item instanceof IUser && object instanceof IUser) {
-										// 是用户时保留DocEntry值，否则丢失数据所有者关系
-										IUser objUser = (IUser) object;
-										IUser itemUser = (IUser) item;
-										if (objUser instanceof ITrackStatusOperator) {
-											((ITrackStatusOperator) objUser).markOld();
-										}
-										objUser.setDocEntry(itemUser.getDocEntry());
-										if (itemUser instanceof IBOStorageTag && objUser instanceof IBOStorageTag) {
-											((IBOStorageTag) objUser)
-													.setLogInst(((IBOStorageTag) itemUser).getLogInst());
-										}
-									} else if (item instanceof IBusinessObject) {
-										// 强制保存，删除旧数据
+									// 删除旧数据
+									if (item instanceof IBusinessObject) {
 										IBusinessObject boItem = (IBusinessObject) item;
 										boItem.delete();
 										IOperationResult<?> opRsltDelete = this.save(boItem, token);
@@ -268,9 +261,83 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 										}
 										opRslt.addInformations("DELETED_EXISTS_DATA", boItem.toString(), "DATA_IMPORT");
 									}
+									// 主数据保存
+									if (item instanceof IBOMasterData && object instanceof IBOMasterData) {
+										// 主数据则保留DocEntry值，否则丢失关联关系
+										IBOMasterData objMaster = (IBOMasterData) object;
+										IBOMasterData itemMaster = (IBOMasterData) item;
+										// 对象信息复制
+										objMaster.setDocEntry(itemMaster.getDocEntry());
+										if (objMaster instanceof IBOStorageTag && itemMaster instanceof IBOStorageTag) {
+											IBOStorageTag objTag = (IBOStorageTag) objMaster;
+											IBOStorageTag itemTag = (IBOStorageTag) itemMaster;
+											objTag.setLogInst(itemTag.getLogInst());
+											objTag.setCreateActionId(itemTag.getCreateActionId());
+											objTag.setCreateDate(itemTag.getCreateDate());
+											objTag.setCreateTime(itemTag.getCreateTime());
+											objTag.setCreateUserSign(itemTag.getCreateUserSign());
+											objTag.setDataSource(itemTag.getDataSource());
+										}
+										if (objMaster instanceof ITrackStatusOperator) {
+											ITrackStatusOperator objOptor = (ITrackStatusOperator) objMaster;
+											objOptor.markOld();
+											objOptor.markDirty();
+										}
+									} else if (item instanceof IBOMasterDataLine
+											&& object instanceof IBOMasterDataLine) {
+										// 主数据行保留LineId值，否则丢失关联关系
+										IBOMasterDataLine objMaster = (IBOMasterDataLine) object;
+										IBOMasterDataLine itemMaster = (IBOMasterDataLine) item;
+										// 对象信息复制
+										objMaster.setLineId(itemMaster.getLineId());
+										if (objMaster instanceof IBOStorageTag && itemMaster instanceof IBOStorageTag) {
+											IBOStorageTag objTag = (IBOStorageTag) objMaster;
+											IBOStorageTag itemTag = (IBOStorageTag) itemMaster;
+											objTag.setLogInst(itemTag.getLogInst());
+											objTag.setCreateActionId(itemTag.getCreateActionId());
+											objTag.setCreateDate(itemTag.getCreateDate());
+											objTag.setCreateTime(itemTag.getCreateTime());
+											objTag.setCreateUserSign(itemTag.getCreateUserSign());
+											objTag.setDataSource(itemTag.getDataSource());
+										}
+										if (objMaster instanceof ITrackStatusOperator) {
+											ITrackStatusOperator objOptor = (ITrackStatusOperator) objMaster;
+											objOptor.markOld();
+											objOptor.markDirty();
+										}
+									}
+								}
+							} else if (updateMethod == emDataUpdateMethod.MODIFY) {
+								IFieldData fieldData = null;
+								IManagedFields objFields = null;
+								IManagedFields itemFields = null;
+								for (Object item : opRsltExists.getResultObjects()) {
+									if (!(item instanceof IBusinessObject)) {
+										continue;
+									}
+									if (object instanceof IManagedFields && item instanceof IManagedFields) {
+										objFields = (IManagedFields) object;
+										itemFields = (IManagedFields) item;
+										for (IFieldData objField : objFields.getFields()) {
+											if (!objField.isSavable()) {
+												continue;
+											}
+											fieldData = itemFields.getField(objField.getName());
+											if (fieldData != null) {
+												fieldData.setValue(objField.getValue());
+											}
+										}
+									} else {
+										continue;
+									}
+									object = (IBusinessObject) item;
+								}
+								if (fieldData == null || object.isDirty() == false) {
+									// 无效数据
+									continue;
 								}
 							} else {
-								// 非强制保存，跳过
+								// 跳过已存在数据
 								continue;
 							}
 						}
@@ -306,11 +373,11 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	}
 
 	public IOperationResult<String> importData(FileData data) {
-		return this.importData(data, false);
+		return this.importData(data, emDataUpdateMethod.SKIP);
 	}
 
-	public IOperationResult<String> importData(FileData data, boolean update) {
-		return this.importData(data, update, this.getUserToken());
+	public IOperationResult<String> importData(FileData data, emDataUpdateMethod updateMethod) {
+		return this.importData(data, updateMethod, this.getUserToken());
 	}
 
 	// --------------------------------------------------------------------------------------------//

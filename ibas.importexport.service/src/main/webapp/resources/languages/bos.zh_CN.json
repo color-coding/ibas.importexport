@@ -198,5 +198,10 @@
         "em_linestyle_dashed": "虚线",
         "em_linestyle_dotted": "点状",
         "em_linestyle_double": "双线"
+    },
+    {
+        "em_dataupdatemethod_skip": "跳过",
+        "em_dataupdatemethod_replace": "替换",
+        "em_dataupdatemethod_modify": "修改"
     }
 ]

@@ -135,9 +135,6 @@ namespace importexport {
              */
             CELL,
         }
-        /**
-         * 框线样式
-         */
         export enum emLineStyle {
             /**
              * 实线
@@ -156,6 +153,21 @@ namespace importexport {
              */
             DOUBLE
         }
+        export enum emDataUpdateMethod {
+            /**
+             * 跳过
+             */
+            SKIP,
+            /**
+             * 替换（旧数据删除）
+             */
+            REPLACE,
+            /**
+             * 修改（修改旧数据）
+             */
+            MODIFY,
+        }
+
         /** 数据导出调用者 */
         export interface IDataExportCaller<T> extends ibas.IMethodCaller<T> {
             /** 导出的数据 */
