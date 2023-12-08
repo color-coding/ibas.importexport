@@ -38,6 +38,7 @@
   "importexport_app_dataexport": "数据导出",
   "importexport_app_dataprint": "数据打印",
   "importexport_app_datatableprint": "数据表打印",
+  "importexport_app_viewexport": "表格导出",
   "importexport_print_icon": "sap-icon://print",
   "importexport_exporting": "正在导出请稍后",
   "importexport_export_criteria": "导出条件",

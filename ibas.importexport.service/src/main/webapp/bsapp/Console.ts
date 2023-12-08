@@ -43,7 +43,7 @@ namespace importexport {
                 this.register(new DataTablePrintServiceMapping());
                 this.register(new FileParsingServiceMapping());
                 // 注册常驻应用
-
+                this.register(new ViewExportApplicationMapping());
 
             }
             /** 运行 */

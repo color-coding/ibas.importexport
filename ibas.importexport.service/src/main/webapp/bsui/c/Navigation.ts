@@ -55,6 +55,9 @@ namespace importexport {
                     case app.FileParsingService.APPLICATION_ID:
                         view = new c.FileParsingServiceView();
                         break;
+                    case app.ViewExportApp.APPLICATION_ID:
+                        view = new c.ViewExportView();
+                        break;
                     default:
                         break;
                 }
