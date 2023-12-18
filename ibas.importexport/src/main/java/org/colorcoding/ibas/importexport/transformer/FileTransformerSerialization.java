@@ -98,6 +98,7 @@ public abstract class FileTransformerSerialization extends FileTransformer {
 				} else if (object instanceof IBusinessObject) {
 					outDatas.add((IBusinessObject) object);
 				}
+				/** 不能重置，否则主数据更新逻辑就没有了
 				// 重置状态
 				for (IBusinessObject item : outDatas) {
 					if (item instanceof BusinessObject<?>) {
@@ -105,6 +106,7 @@ public abstract class FileTransformerSerialization extends FileTransformer {
 						bo.reset();
 					}
 				}
+				*/
 				this.setOutputData(outDatas);
 				Logger.log(MessageLevel.INFO, "transformer: [%s] got bo count [%s].", this.getClass().getSimpleName(),
 						this.getOutputData().size());

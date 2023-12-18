@@ -49,6 +49,8 @@ namespace importexport {
                                     for (let item of that.dialog.getContent()) {
                                         if (item instanceof sap.extension.table.Table) {
                                             tables.add(item.toDataTable());
+                                        } else if (item instanceof sap.extension.table.TreeTable) {
+                                            tables.add(item.toDataTable());
                                         }
                                     }
                                     if (tables.length > 0) {

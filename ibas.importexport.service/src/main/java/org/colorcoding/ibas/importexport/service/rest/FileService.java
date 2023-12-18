@@ -16,6 +16,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
@@ -223,7 +224,8 @@ public class FileService extends FileRepositoryService {
 			boRepository.setUserToken(token);
 			IOperationResult<FileData> opRsltExport = boRepository.exportData(info);
 			if (opRsltExport.getError() != null) {
-				throw opRsltExport.getError();
+				throw new WebApplicationException(
+						Response.status(500).type(MediaType.APPLICATION_JSON).entity(opRsltExport).build());
 			}
 			FileData fileData = opRsltExport.getResultObjects().firstOrDefault();
 			if (fileData != null) {
