@@ -78,9 +78,10 @@ namespace importexport {
                     || ibas.strings.equalsIgnoreCase(this.outType, "array")) {
                     ibas.requires.create({
                         context: ibas.requires.naming(importexport.CONSOLE_NAME),
-                    })([
-                        "3rdparty/sheetjs/xlsx.full.min"
-                    ], (sheetjs: any) => {
+                        paths: {
+                            xlsx: ["3rdparty/sheetjs/xlsx.full.min"]
+                        }
+                    })(['xlsx'], (xlsx: any) => {
                         try {
                             let reader: FileReader = new FileReader();
                             reader.onload = (event) => {

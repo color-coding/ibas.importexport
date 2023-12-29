@@ -45,35 +45,47 @@ namespace importexport {
                 // 加载类库
                 ibas.requires.create({
                     context: ibas.requires.naming(importexport.CONSOLE_NAME),
-                })([
-                    "3rdparty/sheetjs/xlsx.full.min"
-                ], (sheetjs: any) => {
+                    paths: {
+                        xlsx: ["3rdparty/sheetjs/xlsx.full.min"]
+                    }
+                })(['xlsx'], (xlsx: any) => {
                     try {
                         let workBook: XLSX.WorkBook = XLSX.utils.book_new();
                         for (let table of <any>tables) {
-                            let sheetDatas: Array<any> = new Array<any>();
-                            let row: Array<any> = new Array<any>();
-                            for (let item of table.columns) {
-                                row.push(!ibas.strings.isEmpty(item.description) ? item.description : item.name);
-                            }
-                            if (row.length > 0) {
-                                sheetDatas.push(row);
-                            }
-                            for (let rItem of table.rows) {
-                                row = new Array<any>();
-                                for (let cItem of table.columns) {
-                                    let cellValue: string = rItem.cells[table.columns.indexOf(cItem)];
-                                    if (cItem.definedDataType() === ibas.emTableDataType.DECIMAL
-                                        || cItem.definedDataType() === ibas.emTableDataType.NUMERIC) {
-                                        row.push(ibas.numbers.valueOf(cellValue));
-                                    } else {
-                                        row.push(cellValue);
+                            if (table instanceof ibas.DataTable) {
+                                let sheetDatas: Array<any> = new Array<any>();
+                                let row: Array<any> = new Array<any>();
+                                for (let item of table.columns) {
+                                    row.push(!ibas.strings.isEmpty(item.description) ? item.description : item.name);
+                                }
+                                if (row.length > 0) {
+                                    sheetDatas.push(row);
+                                }
+                                for (let rItem of table.rows) {
+                                    row = new Array<any>();
+                                    for (let cItem of table.columns) {
+                                        let cellValue: string = rItem.cells[table.columns.indexOf(cItem)];
+                                        if (cItem.definedDataType() === ibas.emTableDataType.DECIMAL
+                                            || cItem.definedDataType() === ibas.emTableDataType.NUMERIC) {
+                                            row.push(ibas.numbers.valueOf(cellValue));
+                                        } else {
+                                            row.push(cellValue);
+                                        }
+                                    }
+                                    sheetDatas.push(row);
+                                }
+                                let sheet: XLSX.Sheet = XLSX.utils.aoa_to_sheet(sheetDatas);
+                                // 树形结构缩进
+                                if (table.columns[0]?.name === "$LEVEL" && table.columns.length > 1) {
+                                    for (let i: number = 2; i <= table.rows.length + 1; i++) {
+                                        if (!sheet["B" + i].s) {
+                                            sheet["B" + i].s = {};
+                                        }
+                                        sheet["B" + i].s.alignment = { indent: table.rows[i - 2].cells[0] };
                                     }
                                 }
-                                sheetDatas.push(row);
+                                XLSX.utils.book_append_sheet(workBook, sheet, !ibas.strings.isEmpty(table.description) ? table.description : table.name);
                             }
-                            let sheet: XLSX.Sheet = XLSX.utils.aoa_to_sheet(sheetDatas);
-                            XLSX.utils.book_append_sheet(workBook, sheet, !ibas.strings.isEmpty(table.description) ? table.description : table.name);
                         }
                         let outWorkBook: any = XLSX.write(workBook, {
                             bookType: "xlsx",

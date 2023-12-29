@@ -116,6 +116,16 @@ namespace importexport {
                         let nTable: sap.ui.table.Table = this.cloneTable(page);
                         if (!ibas.objects.isNull(nTable)) {
                             this.dialog.addContent(nTable);
+                            if (nTable instanceof sap.ui.table.TreeTable) {
+                                nTable.expandToLevel(99);
+                                setTimeout(() => {
+                                    // 半秒后重置显示行数
+                                    let count: number = (<any>nTable)._getTotalRowCount();
+                                    if (count > 0) {
+                                        nTable.setVisibleRowCount(count);
+                                    }
+                                }, 500);
+                            }
                         }
                     }
                 }
