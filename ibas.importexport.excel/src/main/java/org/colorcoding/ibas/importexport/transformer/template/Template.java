@@ -13,6 +13,7 @@ import org.colorcoding.ibas.bobas.bo.UserField;
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.core.BOFactory;
 import org.colorcoding.ibas.bobas.core.TrackableBase;
+import org.colorcoding.ibas.bobas.core.fields.FieldDataBase;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
 import org.colorcoding.ibas.bobas.core.fields.IManagedFields;
 import org.colorcoding.ibas.bobas.data.DataConvert;
@@ -38,6 +39,16 @@ public class Template extends Area<Area<?>> {
 		this.setEndingRow(AREA_AUTO_REGION);
 		this.setStartingColumn(AREA_AUTO_REGION);
 		this.setEndingColumn(AREA_AUTO_REGION);
+	}
+
+	private boolean individualStatus;
+
+	public final boolean isIndividualStatus() {
+		return individualStatus;
+	}
+
+	public final void setIndividualStatus(boolean value) {
+		this.individualStatus = value;
 	}
 
 	@Override
@@ -346,6 +357,14 @@ public class Template extends Area<Area<?>> {
 		if (boFields instanceof TrackableBase) {
 			((TrackableBase) boFields).setLoading(true);
 		}
+		if (this.isIndividualStatus()) {
+			// 个别状态跟踪，初始状态
+			for (IFieldData boField : boFields.getFields()) {
+				if (boField instanceof FieldDataBase) {
+					((FieldDataBase<?>) boField).setSavable(false);
+				}
+			}
+		}
 		for (Object object : this.getObjects()) {
 			if (!object.getName().startsWith(level)) {
 				// 非此类，不做处理
@@ -380,6 +399,11 @@ public class Template extends Area<Area<?>> {
 							field.setValue(cell.getValue());
 							if (!matched) {
 								matched = true;
+							}
+						}
+						if (this.isIndividualStatus()) {
+							if (field instanceof FieldDataBase) {
+								((FieldDataBase<?>) field).setSavable(true);
 							}
 						}
 					}

@@ -21,6 +21,7 @@ public class ExcelTransformer extends FileTransformer {
 		}
 		try {
 			Template template = new Template();
+			template.setIndividualStatus(this.isIndividualStatus());
 			// 解析输入数据
 			template.resolving(this.getInputData());
 			IBusinessObject[] businessObjects = template.resolving();

@@ -202,6 +202,12 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			if (transformer instanceof FileTransformerSerialization) {
 				((FileTransformerSerialization) transformer).setBOFactory(getBOFactory());
 			}
+			if (updateMethod == emDataUpdateMethod.MODIFY) {
+				// 更新时个别管理字段状态
+				if (transformer instanceof FileTransformer) {
+					((FileTransformer) transformer).setIndividualStatus(true);
+				}
+			}
 			Logger.log(MessageLevel.DEBUG, MSG_TRANSFORMER_IMPORT_DATA, transformer.getClass().getName());
 			// 转换文件数据到业务对象
 			transformer.setInputData(new File(data.getLocation()));
@@ -215,7 +221,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 				opRslt.addInformations("REPOSITORY_TRANSACTION_ID", this.getRepository().getTransactionId(),
 						"DATA_IMPORT");
 				// 保存业务对象
-				for (IBusinessObject object : transformer.getOutputData()) {
+				for (IBusinessObject newItem : transformer.getOutputData()) {
 					// 调试模式，输出识别对象
 					if (MyConfiguration.isDebugMode()) {
 						StringBuilder stringBuilder = new StringBuilder();
@@ -224,17 +230,17 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 						stringBuilder.append("be imported data");
 						stringBuilder.append(System.getProperty("line.seperator", "\n"));
 						stringBuilder.append("  ");
-						stringBuilder.append(object.toString("xml"));
+						stringBuilder.append(newItem.toString("xml"));
 						Logger.log(MessageLevel.DEBUG, stringBuilder.toString());
 					}
 					// 导入的数据，源标记为I
-					if (object instanceof IBOStorageTag) {
-						IBOStorageTag tag = (IBOStorageTag) object;
+					if (newItem instanceof IBOStorageTag) {
+						IBOStorageTag tag = (IBOStorageTag) newItem;
 						tag.setDataSource(MyConfiguration.SIGN_DATA_SOURCE);
 					}
 					// 设置数据所有者
-					if (object instanceof IDataOwnership) {
-						IDataOwnership ownership = (IDataOwnership) object;
+					if (newItem instanceof IDataOwnership) {
+						IDataOwnership ownership = (IDataOwnership) newItem;
 						if (ownership.getDataOwner() == null || ownership.getDataOwner() == 0) {
 							ownership.setDataOwner(this.getCurrentUser().getId());
 						}
@@ -243,17 +249,17 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 						}
 					}
 					// 判断对象是否存在
-					ICriteria criteria = object.getCriteria();
+					ICriteria criteria = newItem.getCriteria();
 					if (criteria != null && !criteria.getConditions().isEmpty()) {
-						IOperationResult<?> opRsltExists = this.fetch(criteria, token, object.getClass());
+						IOperationResult<?> opRsltExists = this.fetch(criteria, token, newItem.getClass());
 						if (!opRsltExists.getResultObjects().isEmpty()) {
 							// 已存在数据
 							if (updateMethod == emDataUpdateMethod.REPLACE) {
 								// 替换数据（旧的删除，保存新的）
-								for (Object item : opRsltExists.getResultObjects()) {
+								for (Object oldItem : opRsltExists.getResultObjects()) {
 									// 删除旧数据
-									if (item instanceof IBusinessObject) {
-										IBusinessObject boItem = (IBusinessObject) item;
+									if (oldItem instanceof IBusinessObject) {
+										IBusinessObject boItem = (IBusinessObject) oldItem;
 										boItem.delete();
 										IOperationResult<?> opRsltDelete = this.save(boItem, token);
 										if (opRsltDelete.getError() != null) {
@@ -262,10 +268,10 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 										opRslt.addInformations("DELETED_EXISTS_DATA", boItem.toString(), "DATA_IMPORT");
 									}
 									// 主数据保存
-									if (item instanceof IBOMasterData && object instanceof IBOMasterData) {
+									if (oldItem instanceof IBOMasterData && newItem instanceof IBOMasterData) {
 										// 主数据则保留DocEntry值，否则丢失关联关系
-										IBOMasterData objMaster = (IBOMasterData) object;
-										IBOMasterData itemMaster = (IBOMasterData) item;
+										IBOMasterData objMaster = (IBOMasterData) newItem;
+										IBOMasterData itemMaster = (IBOMasterData) oldItem;
 										// 对象信息复制
 										objMaster.setDocEntry(itemMaster.getDocEntry());
 										if (objMaster instanceof IBOStorageTag && itemMaster instanceof IBOStorageTag) {
@@ -283,11 +289,11 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 											objOptor.markOld();
 											objOptor.markDirty();
 										}
-									} else if (item instanceof IBOMasterDataLine
-											&& object instanceof IBOMasterDataLine) {
+									} else if (oldItem instanceof IBOMasterDataLine
+											&& newItem instanceof IBOMasterDataLine) {
 										// 主数据行保留LineId值，否则丢失关联关系
-										IBOMasterDataLine objMaster = (IBOMasterDataLine) object;
-										IBOMasterDataLine itemMaster = (IBOMasterDataLine) item;
+										IBOMasterDataLine objMaster = (IBOMasterDataLine) newItem;
+										IBOMasterDataLine itemMaster = (IBOMasterDataLine) oldItem;
 										// 对象信息复制
 										objMaster.setLineId(itemMaster.getLineId());
 										if (objMaster instanceof IBOStorageTag && itemMaster instanceof IBOStorageTag) {
@@ -308,31 +314,38 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 									}
 								}
 							} else if (updateMethod == emDataUpdateMethod.MODIFY) {
-								IFieldData fieldData = null;
-								IManagedFields objFields = null;
-								IManagedFields itemFields = null;
-								for (Object item : opRsltExists.getResultObjects()) {
-									if (!(item instanceof IBusinessObject)) {
+								IFieldData oldField = null;
+								IManagedFields newFields = null;
+								IManagedFields oldFields = null;
+								for (Object oldItem : opRsltExists.getResultObjects()) {
+									if (newItem.getClass() != oldItem.getClass()) {
 										continue;
 									}
-									if (object instanceof IManagedFields && item instanceof IManagedFields) {
-										objFields = (IManagedFields) object;
-										itemFields = (IManagedFields) item;
-										for (IFieldData objField : objFields.getFields()) {
-											if (!objField.isSavable()) {
+									if (!(oldItem instanceof IBusinessObject)) {
+										continue;
+									}
+									if (newItem instanceof IManagedFields) {
+										newFields = (IManagedFields) newItem;
+										oldFields = (IManagedFields) oldItem;
+										for (IFieldData newField : newFields.getFields()) {
+											if (!newField.isSavable()) {
 												continue;
 											}
-											fieldData = itemFields.getField(objField.getName());
-											if (fieldData != null) {
-												fieldData.setValue(objField.getValue());
+											oldField = oldFields.getField(newField.getName());
+											if (oldField != null) {
+												oldField.setValue(newField.getValue());
+												if (((IBusinessObject) oldItem).isDirty() == false
+														&& oldItem instanceof ITrackStatusOperator) {
+													((ITrackStatusOperator) oldItem).markDirty();
+												}
 											}
 										}
 									} else {
 										continue;
 									}
-									object = (IBusinessObject) item;
+									newItem = (IBusinessObject) oldItem;
 								}
-								if (fieldData == null || object.isDirty() == false) {
+								if (oldField == null || newItem.isDirty() == false) {
 									// 无效数据
 									continue;
 								}
@@ -342,7 +355,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 							}
 						}
 					}
-					IOperationResult<IBusinessObject> opRsltSave = this.save(object, token);
+					IOperationResult<IBusinessObject> opRsltSave = this.save(newItem, token);
 					if (opRsltSave.getError() != null) {
 						throw opRsltSave.getError();
 					}

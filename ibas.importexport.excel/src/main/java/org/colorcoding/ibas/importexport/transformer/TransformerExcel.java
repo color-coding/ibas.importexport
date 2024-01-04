@@ -44,6 +44,7 @@ public class TransformerExcel extends TransformerFile {
 		}
 		try {
 			Template template = new Template();
+			template.setIndividualStatus(true);
 			// 解析输入数据
 			for (IBusinessObject bo : this.getInputData()) {
 				template.resolving(bo);
