@@ -1,6 +1,9 @@
 package org.colorcoding.ibas.importexport.data;
 
+import javax.xml.bind.annotation.XmlType;
+
 import org.colorcoding.ibas.bobas.mapping.Value;
+import org.colorcoding.ibas.importexport.MyConfiguration;
 
 /**
  * 数据更新方式
@@ -8,6 +11,7 @@ import org.colorcoding.ibas.bobas.mapping.Value;
  * @author Niuren.Zhu
  *
  */
+@XmlType(namespace = MyConfiguration.NAMESPACE_BO)
 public enum emDataUpdateMethod {
 	/**
 	 * 跳过

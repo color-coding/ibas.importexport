@@ -203,7 +203,7 @@ namespace importexport {
                         paths: {
                             xlsx: ["3rdparty/sheetjs/xlsx.full.min"]
                         }
-                    })(['xlsx'], (xlsx: any) => {
+                    })(["xlsx"], (xlsx: any) => {
                         let workBook: XLSX.WorkBook = XLSX.utils.book_new();
                         let sheet: XLSX.Sheet = XLSX.utils.aoa_to_sheet(sheetDatas);
                         XLSX.utils.book_append_sheet(workBook, sheet, !ibas.strings.isEmpty(table.description) ? table.description : table.name);

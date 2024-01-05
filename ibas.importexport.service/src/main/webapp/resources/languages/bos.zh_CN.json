@@ -200,8 +200,8 @@
         "em_linestyle_double": "双线"
     },
     {
-        "em_dataupdatemethod_skip": "跳过",
-        "em_dataupdatemethod_replace": "替换",
-        "em_dataupdatemethod_modify": "修改"
+        "em_dataupdatemethod_skip": "跳过（保留原有）",
+        "em_dataupdatemethod_replace": "替换（原有删除）",
+        "em_dataupdatemethod_modify": "修改（原有上修改）"
     }
 ]

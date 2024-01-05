@@ -182,6 +182,7 @@ public class FileService extends FileRepositoryService {
 
 	@POST
 	@Path("export")
+	@SuppressWarnings("resource")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public void exportData(FormDataMultiPart formData, @Context HttpServletResponse response,

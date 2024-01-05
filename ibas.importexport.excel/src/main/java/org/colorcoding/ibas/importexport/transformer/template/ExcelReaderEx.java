@@ -282,6 +282,8 @@ public class ExcelReaderEx extends FileReader implements SheetContentsHandler {
 	}
 
 	protected void resolvingData(List<Cell> cells) throws ResolvingException {
+		Cell sheetCell = null;
+		org.colorcoding.ibas.importexport.transformer.template.Cell dataCell = null;
 		org.colorcoding.ibas.importexport.transformer.template.Cell[] dataRow = this.getTemplate().getDatas()
 				.createRow();
 		for (Object object : this.getTemplate().getObjects()) {
@@ -296,15 +298,14 @@ public class ExcelReaderEx extends FileReader implements SheetContentsHandler {
 					// 超出范围
 					continue;
 				}
-				Cell sheetCell = cells.get(property.getStartingColumn());
+				sheetCell = cells.get(property.getStartingColumn());
 				if (sheetCell == null) {
 					continue;
 				}
-				if (sheetCell.value == null) {
+				if (DataConvert.isNullOrEmpty(sheetCell.value)) {
 					continue;
 				}
 				try {
-					org.colorcoding.ibas.importexport.transformer.template.Cell dataCell = null;
 					if (property.getBindingClass() == Boolean.class) {
 						dataCell = this.createCell(property, this.currentRow, Boolean.valueOf(sheetCell.value));
 					} else if (property.getBindingClass() == Integer.class || property.getBindingClass() == Short.class

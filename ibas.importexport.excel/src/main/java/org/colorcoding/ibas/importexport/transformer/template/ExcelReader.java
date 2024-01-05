@@ -250,34 +250,48 @@ public class ExcelReader extends FileReader {
 	}
 
 	protected void resolvingDatas(Sheet sheet) throws ResolvingException {
+		Row sheetRow = null;
+		Cell sheetCell = null;
+		CellType cellType = null;
+		org.colorcoding.ibas.importexport.transformer.template.Cell dataCell = null;
+		org.colorcoding.ibas.importexport.transformer.template.Cell[] dataRow = null;
 		for (int iRow = this.getTemplate().getDatas().getStartingRow(); iRow <= this.getTemplate()
 				.getEndingRow(); iRow++) {
-			Row sheetRow = sheet.getRow(iRow);
+			sheetRow = sheet.getRow(iRow);
 			if (sheetRow == null) {
 				continue;
 			}
 			if (this.isEmptyRow(sheetRow) == true) {
 				continue;
 			}
-			org.colorcoding.ibas.importexport.transformer.template.Cell[] dataRow = this.getTemplate().getDatas()
-					.createRow();
+			dataRow = this.getTemplate().getDatas().createRow();
 			for (Object object : this.getTemplate().getObjects()) {
 				for (Property property : object.getProperties()) {
 					if (property == null) {
 						continue;
 					}
-					Cell sheetCell = sheetRow.getCell(property.getStartingColumn());
+					sheetCell = sheetRow.getCell(property.getStartingColumn());
 					if (sheetCell == null) {
 						continue;
 					}
-					org.colorcoding.ibas.importexport.transformer.template.Cell dataCell = null;
+					dataCell = null;
+					cellType = sheetCell.getCellTypeEnum();
 					try {
-						if (sheetCell.getCellTypeEnum() == CellType.BOOLEAN) {
+						// 公式类型的，判断结果类型
+						if (cellType == CellType.FORMULA) {
+							try {
+								sheetCell.getNumericCellValue();
+								cellType = CellType.NUMERIC;
+							} catch (Exception e) {
+								cellType = CellType.STRING;
+							}
+						}
+						if (cellType == CellType.BOOLEAN) {
 							if (property.getBindingClass() == Boolean.class) {
 								dataCell = this.createCell(property, sheetRow.getRowNum(),
 										sheetCell.getBooleanCellValue());
 							}
-						} else if (sheetCell.getCellTypeEnum() == CellType.NUMERIC) {
+						} else if (cellType == CellType.NUMERIC) {
 							if (property.getBindingClass() == Integer.class || property.getBindingClass() == Short.class
 									|| property.getBindingClass() == Long.class
 									|| property.getBindingClass() == BigInteger.class) {
@@ -300,20 +314,17 @@ public class ExcelReader extends FileReader {
 								dataCell = this.createCell(property, sheetRow.getRowNum(), DataConvert
 										.convert(property.getBindingClass(), sheetCell.getNumericCellValue()));
 							}
-						} else if (sheetCell.getCellTypeEnum() == CellType.STRING) {
+						} else if (cellType == CellType.STRING) {
 							String value = sheetCell.getStringCellValue();
-							if (value != null) {
-								if (!value.isEmpty()) {
-									if (property.getBindingClass() == DateTime.class) {
-										dataCell = this.createCell(property, sheetRow.getRowNum(),
-												DateTime.valueOf(value));
-									} else {
-										dataCell = this.createCell(property, sheetRow.getRowNum(),
-												DataConvert.convert(property.getBindingClass(), value));
-									}
-								} else if (property.getBindingClass() == String.class) {
-									dataCell = this.createCell(property, sheetRow.getRowNum(), value);
+							if (!DataConvert.isNullOrEmpty(value)) {
+								if (property.getBindingClass() == DateTime.class) {
+									dataCell = this.createCell(property, sheetRow.getRowNum(), DateTime.valueOf(value));
+								} else {
+									dataCell = this.createCell(property, sheetRow.getRowNum(),
+											DataConvert.convert(property.getBindingClass(), value));
 								}
+							} else if (property.getBindingClass() == String.class) {
+								dataCell = this.createCell(property, sheetRow.getRowNum(), value);
 							}
 						}
 						dataRow[property.getStartingColumn()] = dataCell;

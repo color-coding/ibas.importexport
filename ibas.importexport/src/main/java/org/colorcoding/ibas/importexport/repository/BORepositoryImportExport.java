@@ -221,146 +221,156 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 				opRslt.addInformations("REPOSITORY_TRANSACTION_ID", this.getRepository().getTransactionId(),
 						"DATA_IMPORT");
 				// 保存业务对象
-				for (IBusinessObject newItem : transformer.getOutputData()) {
-					// 调试模式，输出识别对象
-					if (MyConfiguration.isDebugMode()) {
-						StringBuilder stringBuilder = new StringBuilder();
-						stringBuilder.append("transformer:");
-						stringBuilder.append(" ");
-						stringBuilder.append("be imported data");
-						stringBuilder.append(System.getProperty("line.seperator", "\n"));
-						stringBuilder.append("  ");
-						stringBuilder.append(newItem.toString("xml"));
-						Logger.log(MessageLevel.DEBUG, stringBuilder.toString());
-					}
-					// 导入的数据，源标记为I
-					if (newItem instanceof IBOStorageTag) {
-						IBOStorageTag tag = (IBOStorageTag) newItem;
-						tag.setDataSource(MyConfiguration.SIGN_DATA_SOURCE);
-					}
-					// 设置数据所有者
-					if (newItem instanceof IDataOwnership) {
-						IDataOwnership ownership = (IDataOwnership) newItem;
-						if (ownership.getDataOwner() == null || ownership.getDataOwner() == 0) {
-							ownership.setDataOwner(this.getCurrentUser().getId());
+				IBusinessObject newItem;
+				IOperationResult<?> opRsltExists, opRsltDelete, opRsltSave;
+				for (int j = 0; j < transformer.getOutputData().size(); j++) {
+					newItem = transformer.getOutputData().get(j);
+					try {
+						// 调试模式，输出识别对象
+						if (MyConfiguration.isDebugMode()) {
+							StringBuilder stringBuilder = new StringBuilder();
+							stringBuilder.append("transformer:");
+							stringBuilder.append(" ");
+							stringBuilder.append("be imported data");
+							stringBuilder.append(System.getProperty("line.seperator", "\n"));
+							stringBuilder.append("  ");
+							stringBuilder.append(newItem.toString("xml"));
+							Logger.log(MessageLevel.DEBUG, stringBuilder.toString());
 						}
-						if (ownership.getOrganization() == null || ownership.getOrganization().isEmpty()) {
-							ownership.setOrganization(this.getCurrentUser().getBelong());
+						// 导入的数据，源标记为I
+						if (newItem instanceof IBOStorageTag) {
+							IBOStorageTag tag = (IBOStorageTag) newItem;
+							tag.setDataSource(MyConfiguration.SIGN_DATA_SOURCE);
 						}
-					}
-					// 判断对象是否存在
-					ICriteria criteria = newItem.getCriteria();
-					if (criteria != null && !criteria.getConditions().isEmpty()) {
-						IOperationResult<?> opRsltExists = this.fetch(criteria, token, newItem.getClass());
-						if (!opRsltExists.getResultObjects().isEmpty()) {
-							// 已存在数据
-							if (updateMethod == emDataUpdateMethod.REPLACE) {
-								// 替换数据（旧的删除，保存新的）
-								for (Object oldItem : opRsltExists.getResultObjects()) {
-									// 删除旧数据
-									if (oldItem instanceof IBusinessObject) {
-										IBusinessObject boItem = (IBusinessObject) oldItem;
-										boItem.delete();
-										IOperationResult<?> opRsltDelete = this.save(boItem, token);
-										if (opRsltDelete.getError() != null) {
-											throw opRsltDelete.getError();
-										}
-										opRslt.addInformations("DELETED_EXISTS_DATA", boItem.toString(), "DATA_IMPORT");
-									}
-									// 主数据保存
-									if (oldItem instanceof IBOMasterData && newItem instanceof IBOMasterData) {
-										// 主数据则保留DocEntry值，否则丢失关联关系
-										IBOMasterData objMaster = (IBOMasterData) newItem;
-										IBOMasterData itemMaster = (IBOMasterData) oldItem;
-										// 对象信息复制
-										objMaster.setDocEntry(itemMaster.getDocEntry());
-										if (objMaster instanceof IBOStorageTag && itemMaster instanceof IBOStorageTag) {
-											IBOStorageTag objTag = (IBOStorageTag) objMaster;
-											IBOStorageTag itemTag = (IBOStorageTag) itemMaster;
-											objTag.setLogInst(itemTag.getLogInst());
-											objTag.setCreateActionId(itemTag.getCreateActionId());
-											objTag.setCreateDate(itemTag.getCreateDate());
-											objTag.setCreateTime(itemTag.getCreateTime());
-											objTag.setCreateUserSign(itemTag.getCreateUserSign());
-											objTag.setDataSource(itemTag.getDataSource());
-										}
-										if (objMaster instanceof ITrackStatusOperator) {
-											ITrackStatusOperator objOptor = (ITrackStatusOperator) objMaster;
-											objOptor.markOld();
-											objOptor.markDirty();
-										}
-									} else if (oldItem instanceof IBOMasterDataLine
-											&& newItem instanceof IBOMasterDataLine) {
-										// 主数据行保留LineId值，否则丢失关联关系
-										IBOMasterDataLine objMaster = (IBOMasterDataLine) newItem;
-										IBOMasterDataLine itemMaster = (IBOMasterDataLine) oldItem;
-										// 对象信息复制
-										objMaster.setLineId(itemMaster.getLineId());
-										if (objMaster instanceof IBOStorageTag && itemMaster instanceof IBOStorageTag) {
-											IBOStorageTag objTag = (IBOStorageTag) objMaster;
-											IBOStorageTag itemTag = (IBOStorageTag) itemMaster;
-											objTag.setLogInst(itemTag.getLogInst());
-											objTag.setCreateActionId(itemTag.getCreateActionId());
-											objTag.setCreateDate(itemTag.getCreateDate());
-											objTag.setCreateTime(itemTag.getCreateTime());
-											objTag.setCreateUserSign(itemTag.getCreateUserSign());
-											objTag.setDataSource(itemTag.getDataSource());
-										}
-										if (objMaster instanceof ITrackStatusOperator) {
-											ITrackStatusOperator objOptor = (ITrackStatusOperator) objMaster;
-											objOptor.markOld();
-											objOptor.markDirty();
-										}
-									}
-								}
-							} else if (updateMethod == emDataUpdateMethod.MODIFY) {
-								IFieldData oldField = null;
-								IManagedFields newFields = null;
-								IManagedFields oldFields = null;
-								for (Object oldItem : opRsltExists.getResultObjects()) {
-									if (newItem.getClass() != oldItem.getClass()) {
-										continue;
-									}
-									if (!(oldItem instanceof IBusinessObject)) {
-										continue;
-									}
-									if (newItem instanceof IManagedFields) {
-										newFields = (IManagedFields) newItem;
-										oldFields = (IManagedFields) oldItem;
-										for (IFieldData newField : newFields.getFields()) {
-											if (!newField.isSavable()) {
-												continue;
-											}
-											oldField = oldFields.getField(newField.getName());
-											if (oldField != null) {
-												oldField.setValue(newField.getValue());
-												if (((IBusinessObject) oldItem).isDirty() == false
-														&& oldItem instanceof ITrackStatusOperator) {
-													((ITrackStatusOperator) oldItem).markDirty();
-												}
-											}
-										}
-									} else {
-										continue;
-									}
-									newItem = (IBusinessObject) oldItem;
-								}
-								if (oldField == null || newItem.isDirty() == false) {
-									// 无效数据
-									continue;
-								}
-							} else {
-								// 跳过已存在数据
-								continue;
+						// 设置数据所有者
+						if (newItem instanceof IDataOwnership) {
+							IDataOwnership ownership = (IDataOwnership) newItem;
+							if (ownership.getDataOwner() == null || ownership.getDataOwner() == 0) {
+								ownership.setDataOwner(this.getCurrentUser().getId());
+							}
+							if (ownership.getOrganization() == null || ownership.getOrganization().isEmpty()) {
+								ownership.setOrganization(this.getCurrentUser().getBelong());
 							}
 						}
-					}
-					IOperationResult<IBusinessObject> opRsltSave = this.save(newItem, token);
-					if (opRsltSave.getError() != null) {
-						throw opRsltSave.getError();
-					}
-					for (IBusinessObject item : opRsltSave.getResultObjects()) {
-						opRslt.addResultObjects(item.toString());
+						// 判断对象是否存在
+						ICriteria criteria = newItem.getCriteria();
+						if (criteria != null && !criteria.getConditions().isEmpty()) {
+							opRsltExists = this.fetch(criteria, token, newItem.getClass());
+							if (!opRsltExists.getResultObjects().isEmpty()) {
+								// 已存在数据
+								if (updateMethod == emDataUpdateMethod.REPLACE) {
+									// 替换数据（旧的删除，保存新的）
+									for (Object oldItem : opRsltExists.getResultObjects()) {
+										// 删除旧数据
+										if (oldItem instanceof IBusinessObject) {
+											IBusinessObject boItem = (IBusinessObject) oldItem;
+											boItem.delete();
+											opRsltDelete = this.save(boItem, token);
+											if (opRsltDelete.getError() != null) {
+												throw opRsltDelete.getError();
+											}
+											opRslt.addInformations("DELETED_EXISTS_DATA", boItem.toString(),
+													"DATA_IMPORT");
+										}
+										// 主数据保存
+										if (oldItem instanceof IBOMasterData && newItem instanceof IBOMasterData) {
+											// 主数据则保留DocEntry值，否则丢失关联关系
+											IBOMasterData objMaster = (IBOMasterData) newItem;
+											IBOMasterData itemMaster = (IBOMasterData) oldItem;
+											// 对象信息复制
+											objMaster.setDocEntry(itemMaster.getDocEntry());
+											if (objMaster instanceof IBOStorageTag
+													&& itemMaster instanceof IBOStorageTag) {
+												IBOStorageTag objTag = (IBOStorageTag) objMaster;
+												IBOStorageTag itemTag = (IBOStorageTag) itemMaster;
+												objTag.setLogInst(itemTag.getLogInst());
+												objTag.setCreateActionId(itemTag.getCreateActionId());
+												objTag.setCreateDate(itemTag.getCreateDate());
+												objTag.setCreateTime(itemTag.getCreateTime());
+												objTag.setCreateUserSign(itemTag.getCreateUserSign());
+												objTag.setDataSource(itemTag.getDataSource());
+											}
+											if (objMaster instanceof ITrackStatusOperator) {
+												ITrackStatusOperator objOptor = (ITrackStatusOperator) objMaster;
+												objOptor.markOld();
+												objOptor.markDirty();
+											}
+										} else if (oldItem instanceof IBOMasterDataLine
+												&& newItem instanceof IBOMasterDataLine) {
+											// 主数据行保留LineId值，否则丢失关联关系
+											IBOMasterDataLine objMaster = (IBOMasterDataLine) newItem;
+											IBOMasterDataLine itemMaster = (IBOMasterDataLine) oldItem;
+											// 对象信息复制
+											objMaster.setLineId(itemMaster.getLineId());
+											if (objMaster instanceof IBOStorageTag
+													&& itemMaster instanceof IBOStorageTag) {
+												IBOStorageTag objTag = (IBOStorageTag) objMaster;
+												IBOStorageTag itemTag = (IBOStorageTag) itemMaster;
+												objTag.setLogInst(itemTag.getLogInst());
+												objTag.setCreateActionId(itemTag.getCreateActionId());
+												objTag.setCreateDate(itemTag.getCreateDate());
+												objTag.setCreateTime(itemTag.getCreateTime());
+												objTag.setCreateUserSign(itemTag.getCreateUserSign());
+												objTag.setDataSource(itemTag.getDataSource());
+											}
+											if (objMaster instanceof ITrackStatusOperator) {
+												ITrackStatusOperator objOptor = (ITrackStatusOperator) objMaster;
+												objOptor.markOld();
+												objOptor.markDirty();
+											}
+										}
+									}
+								} else if (updateMethod == emDataUpdateMethod.MODIFY) {
+									IFieldData oldField = null;
+									IManagedFields newFields = null;
+									IManagedFields oldFields = null;
+									for (Object oldItem : opRsltExists.getResultObjects()) {
+										if (newItem.getClass() != oldItem.getClass()) {
+											continue;
+										}
+										if (!(oldItem instanceof IBusinessObject)) {
+											continue;
+										}
+										if (newItem instanceof IManagedFields) {
+											newFields = (IManagedFields) newItem;
+											oldFields = (IManagedFields) oldItem;
+											for (IFieldData newField : newFields.getFields()) {
+												if (!newField.isSavable()) {
+													continue;
+												}
+												oldField = oldFields.getField(newField.getName());
+												if (oldField != null) {
+													oldField.setValue(newField.getValue());
+													if (((IBusinessObject) oldItem).isDirty() == false
+															&& oldItem instanceof ITrackStatusOperator) {
+														((ITrackStatusOperator) oldItem).markDirty();
+													}
+												}
+											}
+										} else {
+											continue;
+										}
+										newItem = (IBusinessObject) oldItem;
+									}
+									if (oldField == null || newItem.isDirty() == false) {
+										// 无效数据
+										continue;
+									}
+								} else {
+									// 跳过已存在数据
+									continue;
+								}
+							}
+						}
+						opRsltSave = this.save(newItem, token);
+						if (opRsltSave.getError() != null) {
+							throw opRsltSave.getError();
+						}
+						for (Object item : opRsltSave.getResultObjects()) {
+							opRslt.addResultObjects(item.toString());
+						}
+					} catch (Exception e) {
+						throw new Exception(I18N.prop("msg_ie_input_data_faild", j + 1), e);
 					}
 				}
 				opRslt.addInformations("SAVE_DATA_COUNT", String.valueOf(opRslt.getResultObjects().size()),

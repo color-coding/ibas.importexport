@@ -48,7 +48,7 @@ namespace importexport {
                     paths: {
                         xlsx: ["3rdparty/sheetjs/xlsx.full.min"]
                     }
-                })(['xlsx'], (xlsx: any) => {
+                })(["xlsx"], (xlsx: any) => {
                     try {
                         let workBook: XLSX.WorkBook = XLSX.utils.book_new();
                         for (let table of <any>tables) {
@@ -56,6 +56,10 @@ namespace importexport {
                                 let sheetDatas: Array<any> = new Array<any>();
                                 let row: Array<any> = new Array<any>();
                                 for (let item of table.columns) {
+                                    // 跳过隐藏列
+                                    if (ibas.strings.isWith(item.name, ".", undefined)) {
+                                        continue;
+                                    }
                                     row.push(!ibas.strings.isEmpty(item.description) ? item.description : item.name);
                                 }
                                 if (row.length > 0) {
@@ -64,6 +68,10 @@ namespace importexport {
                                 for (let rItem of table.rows) {
                                     row = new Array<any>();
                                     for (let cItem of table.columns) {
+                                        // 跳过隐藏列
+                                        if (ibas.strings.isWith(cItem.name, ".", undefined)) {
+                                            continue;
+                                        }
                                         let cellValue: string = rItem.cells[table.columns.indexOf(cItem)];
                                         if (cItem.definedDataType() === ibas.emTableDataType.DECIMAL
                                             || cItem.definedDataType() === ibas.emTableDataType.NUMERIC) {
@@ -93,7 +101,9 @@ namespace importexport {
                             type: "array",
                             compression: true,
                         });
-                        ibas.files.save(new Blob([outWorkBook]), ibas.strings.format("table_{0}.xlsx", ibas.dates.toString(ibas.dates.now(), "yyyyMMddHHss")));
+                        ibas.files.save(new Blob([outWorkBook]), ibas.strings.format("{0}_{1}.xlsx", (
+                            this.view.title?.indexOf(" - ") >= 0 ? this.view.title.substring(this.view.title?.lastIndexOf(" - ") + 3) : "table_"
+                        ), ibas.dates.toString(ibas.dates.now(), "yyyyMMddHHss")));
                     } catch (error) {
                         this.messages(error);
                     }

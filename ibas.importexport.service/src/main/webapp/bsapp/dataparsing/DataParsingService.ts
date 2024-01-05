@@ -81,7 +81,7 @@ namespace importexport {
                         paths: {
                             xlsx: ["3rdparty/sheetjs/xlsx.full.min"]
                         }
-                    })(['xlsx'], (xlsx: any) => {
+                    })(["xlsx"], (xlsx: any) => {
                         try {
                             let reader: FileReader = new FileReader();
                             reader.onload = (event) => {
