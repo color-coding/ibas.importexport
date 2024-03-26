@@ -264,14 +264,20 @@ public class ExcelReader extends FileReader {
 			if (this.isEmptyRow(sheetRow) == true) {
 				continue;
 			}
-			dataRow = this.getTemplate().getDatas().createRow();
 			for (Object object : this.getTemplate().getObjects()) {
+				if (object == null) {
+					continue;
+				}
+				dataRow = null;
 				for (Property property : object.getProperties()) {
 					if (property == null) {
 						continue;
 					}
 					sheetCell = sheetRow.getCell(property.getStartingColumn());
 					if (sheetCell == null) {
+						continue;
+					}
+					if (sheetCell.getCellTypeEnum() == CellType.BLANK) {
 						continue;
 					}
 					dataCell = null;
@@ -326,6 +332,13 @@ public class ExcelReader extends FileReader {
 							} else if (property.getBindingClass() == String.class) {
 								dataCell = this.createCell(property, sheetRow.getRowNum(), value);
 							}
+						}
+						if (dataCell == null) {
+							continue;
+						}
+						// 仅有效数据时，新建行
+						if (dataRow == null) {
+							dataRow = this.getTemplate().getDatas().createRow();
 						}
 						dataRow[property.getStartingColumn()] = dataCell;
 					} catch (Exception e) {
