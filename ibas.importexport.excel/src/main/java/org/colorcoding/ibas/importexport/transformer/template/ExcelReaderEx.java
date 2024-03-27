@@ -67,6 +67,7 @@ public class ExcelReaderEx extends FileReader implements SheetContentsHandler {
 	private int currentRow = -1;
 	private int currentCol = -1;
 	private List<Cell> currentCells;
+	private List<Cell> previousCells;
 
 	private class Cell {
 		public String value;
@@ -107,7 +108,76 @@ public class ExcelReaderEx extends FileReader implements SheetContentsHandler {
 				this.resolvingProperty(this.currentCells);
 			} else {
 				// data line
+				boolean changed = true;
+				if (this.previousCells != null && this.previousCells.size() > 0
+						&& this.previousCells.size() == this.currentCells.size()) {
+					// 尝试与上条数据合并
+					Cell curCell, preCell;
+					boolean matched = false;
+					Property preProperty = null;
+					List<Cell> tmpCells = new ArrayList<>(this.currentCells);
+					for (Object object : this.getTemplate().getObjects()) {
+						if (object == null) {
+							continue;
+						}
+						matched = true;
+						for (Property property : object.getProperties()) {
+							if (property == null) {
+								continue;
+							}
+							preProperty = property;
+							if (property.getEndingColumn() >= this.currentCells.size()) {
+								continue;
+							}
+							curCell = this.currentCells.get(property.getStartingColumn());
+							if (curCell == null) {
+								continue;
+							}
+							preCell = this.previousCells.get(property.getStartingColumn());
+							if (preCell == null) {
+								matched = false;
+								break;
+							}
+							if (curCell.value == preCell.value
+									|| String.valueOf(curCell.value).equals(String.valueOf(preCell.value))) {
+								tmpCells.set(property.getStartingColumn(), null);
+							} else {
+								matched = false;
+								break;
+							}
+						}
+						// 对象属性值，不能完全匹配，则恢复
+						if (!matched) {
+							for (Property property : object.getProperties()) {
+								if (property == null) {
+									continue;
+								}
+								if (property.getEndingColumn() >= this.currentCells.size()) {
+									// 超出范围
+									continue;
+								}
+								tmpCells.set(property.getStartingColumn(),
+										this.currentCells.get(property.getStartingColumn()));
+								if (property == preProperty) {
+									break;
+								}
+							}
+							break;
+						} else {
+							// 不改变
+							changed = false;
+						}
+					}
+					// 清理被合并数据
+					for (int i = 0; i < this.currentCells.size(); i++) {
+						this.currentCells.set(i, tmpCells.get(i));
+					}
+				}
 				this.resolvingData(this.currentCells);
+				// 变动比较基础
+				if (changed) {
+					this.previousCells = new ArrayList<>(this.currentCells);
+				}
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -120,7 +190,7 @@ public class ExcelReaderEx extends FileReader implements SheetContentsHandler {
 			return;
 		}
 		if (cellReference == null) {
-			cellReference = new CellAddress(currentRow, currentCol).formatAsString();
+			cellReference = new CellAddress(this.currentRow, this.currentCol).formatAsString();
 		}
 		int thisCol = (new CellReference(cellReference)).getCol();
 		Cell cell = new Cell();

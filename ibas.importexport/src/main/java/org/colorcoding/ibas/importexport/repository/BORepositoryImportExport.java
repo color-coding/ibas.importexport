@@ -233,7 +233,6 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 							stringBuilder.append(" ");
 							stringBuilder.append("be imported data");
 							stringBuilder.append(System.getProperty("line.seperator", "\n"));
-							stringBuilder.append("  ");
 							stringBuilder.append(newItem.toString("xml"));
 							Logger.log(MessageLevel.DEBUG, stringBuilder.toString());
 						}
