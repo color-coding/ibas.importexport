@@ -2,11 +2,15 @@ package org.colorcoding.ibas.importexport.repository;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 import org.colorcoding.ibas.bobas.bo.BusinessObject;
+import org.colorcoding.ibas.bobas.bo.IBODocument;
+import org.colorcoding.ibas.bobas.bo.IBOLine;
 import org.colorcoding.ibas.bobas.bo.IBOMasterData;
 import org.colorcoding.ibas.bobas.bo.IBOMasterDataLine;
+import org.colorcoding.ibas.bobas.bo.IBOSimple;
 import org.colorcoding.ibas.bobas.bo.IBOStorageTag;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.common.ConditionOperation;
@@ -19,6 +23,8 @@ import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.common.SortType;
 import org.colorcoding.ibas.bobas.core.BOFactory;
 import org.colorcoding.ibas.bobas.core.IBOFactory;
+import org.colorcoding.ibas.bobas.core.IBusinessObjectBase;
+import org.colorcoding.ibas.bobas.core.IBusinessObjectsBase;
 import org.colorcoding.ibas.bobas.core.ITrackStatusOperator;
 import org.colorcoding.ibas.bobas.core.RepositoryException;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
@@ -320,40 +326,112 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 										}
 									}
 								} else if (updateMethod == emDataUpdateMethod.MODIFY) {
-									IFieldData oldField = null;
-									IManagedFields newFields = null;
-									IManagedFields oldFields = null;
-									for (Object oldItem : opRsltExists.getResultObjects()) {
-										if (newItem.getClass() != oldItem.getClass()) {
-											continue;
-										}
-										if (!(oldItem instanceof IBusinessObject)) {
-											continue;
-										}
-										if (newItem instanceof IManagedFields) {
-											newFields = (IManagedFields) newItem;
-											oldFields = (IManagedFields) oldItem;
-											for (IFieldData newField : newFields.getFields()) {
-												if (!newField.isSavable()) {
+									BiFunction<Object, Object[], Object> funcModify = new BiFunction<Object, Object[], Object>() {
+
+										@Override
+										@SuppressWarnings("unchecked")
+										public Object apply(Object newData, Object[] oldDatas) {
+											if (oldDatas == null || newData == null) {
+												return null;
+											}
+											if (!(newData instanceof IManagedFields)) {
+												return null;
+											}
+											IManagedFields newFields = (IManagedFields) newData;
+											IFieldData[] newKeys = newFields.getFields(c -> c.isUniqueKey());
+											if (newKeys == null || newKeys.length == 0) {
+												// 无唯一键，无法比较，退出
+												return null;
+											}
+											// 开始匹配
+											boolean matched;
+											IFieldData oldField = null;
+											IManagedFields oldFields = null;
+											for (Object oldData : oldDatas) {
+												if (oldData == null) {
 													continue;
 												}
-												oldField = oldFields.getField(newField.getName());
-												if (oldField != null) {
-													oldField.setValue(newField.getValue());
-													if (((IBusinessObject) oldItem).isDirty() == false
-															&& oldItem instanceof ITrackStatusOperator) {
-														((ITrackStatusOperator) oldItem).markDirty();
+												if (newData.getClass() != oldData.getClass()) {
+													continue;
+												}
+												matched = true;
+												oldFields = (IManagedFields) oldData;
+												for (IFieldData keyField : newKeys) {
+													oldField = oldFields.getField(keyField.getName());
+													if (oldField != null) {
+														if (keyField.getValue() == oldField.getValue()) {
+															continue;
+														}
+														if (String.valueOf(keyField.getValue())
+																.equals(String.valueOf(oldField.getValue()))) {
+															continue;
+														}
 													}
+													matched = false;
+													break;
+												}
+												// 找匹配的数据
+												if (matched) {
+													// 同步主键
+													if (newFields instanceof IBOMasterData) {
+														((IBOMasterData) newFields)
+																.setDocEntry(((IBOMasterData) oldFields).getDocEntry());
+													} else if (newFields instanceof IBODocument) {
+														((IBODocument) newFields)
+																.setDocEntry(((IBODocument) oldFields).getDocEntry());
+													} else if (newFields instanceof IBOSimple) {
+														((IBOSimple) newFields)
+																.setObjectKey(((IBOSimple) oldFields).getObjectKey());
+													} else if (newFields instanceof IBOLine) {
+														((IBOLine) newFields)
+																.setLineId(((IBOLine) oldFields).getLineId());
+													}
+													for (IFieldData newField : newFields.getFields()) {
+														if (newField.getValue() == null) {
+															continue;
+														}
+														if (newField.getValue() instanceof IBusinessObjectsBase<?>) {
+															// 是数组，则子项比较
+															oldField = oldFields.getField(newField.getName());
+															if (oldField != null && oldField
+																	.getValue() instanceof IBusinessObjectsBase<?>) {
+																for (IBusinessObjectBase newItem : ((IBusinessObjectsBase<?>) newField
+																		.getValue())) {
+																	if (this.apply(newItem,
+																			((IBusinessObjectsBase<?>) oldField
+																					.getValue()).toArray()) == null) {
+																		// 子项未匹配到，则添加
+																		((IBusinessObjectsBase<IBusinessObjectBase>) oldField
+																				.getValue()).add(newItem);
+																	}
+																}
+															}
+															continue;
+														} else if (!newField.isSavable()) {
+															// 非保存退出
+															continue;
+														}
+														// 替换原值
+														oldField = oldFields.getField(newField.getName());
+														if (oldField != null) {
+															oldField.setValue(newField.getValue());
+															if (((IBusinessObject) oldData).isDirty() == false
+																	&& oldData instanceof ITrackStatusOperator) {
+																((ITrackStatusOperator) oldData).markDirty();
+															}
+														}
+													}
+													return oldData;
 												}
 											}
-										} else {
-											continue;
+											return null;
 										}
+									};
+									Object oldItem = funcModify.apply(newItem,
+											opRsltExists.getResultObjects().toArray());
+									if (oldItem instanceof IBusinessObject) {
+										// 存在旧数据，替换
 										newItem = (IBusinessObject) oldItem;
-									}
-									if (oldField == null || newItem.isDirty() == false) {
-										// 无效数据
-										continue;
 									}
 								} else {
 									// 跳过已存在数据

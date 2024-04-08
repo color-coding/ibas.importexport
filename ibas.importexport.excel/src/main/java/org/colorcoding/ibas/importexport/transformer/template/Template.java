@@ -13,7 +13,7 @@ import org.colorcoding.ibas.bobas.bo.UserField;
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.core.BOFactory;
 import org.colorcoding.ibas.bobas.core.TrackableBase;
-import org.colorcoding.ibas.bobas.core.fields.FieldDataBase;
+import org.colorcoding.ibas.bobas.core.fields.FieldDataDbBase;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
 import org.colorcoding.ibas.bobas.core.fields.IManagedFields;
 import org.colorcoding.ibas.bobas.data.DataConvert;
@@ -360,8 +360,8 @@ public class Template extends Area<Area<?>> {
 		if (this.isIndividualStatus()) {
 			// 个别状态跟踪，初始状态
 			for (IFieldData boField : boFields.getFields()) {
-				if (boField instanceof FieldDataBase) {
-					((FieldDataBase<?>) boField).setSavable(false);
+				if (boField instanceof FieldDataDbBase) {
+					((FieldDataDbBase<?>) boField).setSavable(false);
 				}
 			}
 		}
@@ -402,8 +402,8 @@ public class Template extends Area<Area<?>> {
 							}
 						}
 						if (this.isIndividualStatus()) {
-							if (field instanceof FieldDataBase) {
-								((FieldDataBase<?>) field).setSavable(true);
+							if (field instanceof FieldDataDbBase) {
+								((FieldDataDbBase<?>) field).setSavable(true);
 							}
 						}
 					}

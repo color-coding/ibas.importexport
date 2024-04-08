@@ -673,6 +673,8 @@ declare namespace initialfantasy {
             systemed: ibas.emYesNo;
             /** 链接的对象 */
             linkedObject: string;
+            /** 值选择方式 */
+            valueChooseType: string;
             /** 业务对象属性值集合 */
             boPropertyValues: IBOPropertyValues;
         }
@@ -2631,6 +2633,12 @@ declare namespace initialfantasy {
             get linkedObject(): string;
             /** 设置-链接的对象 */
             set linkedObject(value: string);
+            /** 映射的属性名称-值选择方式 */
+            static PROPERTY_VALUECHOOSETYPE_NAME: string;
+            /** 获取-值选择方式 */
+            get valueChooseType(): string;
+            /** 设置-值选择方式 */
+            set valueChooseType(value: string);
             /** 映射的属性名称-业务对象属性值集合 */
             static PROPERTY_BOPROPERTYVALUES_NAME: string;
             /** 获取-业务对象属性信息集合 */

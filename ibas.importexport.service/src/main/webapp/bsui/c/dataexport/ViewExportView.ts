@@ -138,6 +138,18 @@ namespace importexport {
                         } else {
                             this.pasingPage(curPage, funcTask);
                         }
+                    } else if (page instanceof sap.ui.layout.cssgrid.CSSGrid) {
+                        for (let item of page.getItems()) {
+                            this.pasingPage(item, funcTask);
+                        }
+                    } else if (page instanceof sap.ui.layout.Splitter) {
+                        for (let item of page.getContentAreas()) {
+                            this.pasingPage(item, funcTask);
+                        }
+                    } else if (page instanceof sap.m.ScrollContainer) {
+                        for (let item of page.getContent()) {
+                            this.pasingPage(item, funcTask);
+                        }
                     } else if (page instanceof sap.m.SplitContainer) {
                         for (let item of page.getDetailPages()) {
                             this.pasingPage(item, funcTask);

@@ -3,6 +3,7 @@ package org.colorcoding.ibas.importexport.transformer.template;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.colorcoding.ibas.bobas.data.DataConvert;
 import org.colorcoding.ibas.bobas.data.DateTime;
+import org.colorcoding.ibas.bobas.data.Decimal;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -109,8 +111,7 @@ public class ExcelReaderEx extends FileReader implements SheetContentsHandler {
 			} else {
 				// data line
 				boolean changed = true;
-				if (this.previousCells != null && this.previousCells.size() > 0
-						&& this.previousCells.size() == this.currentCells.size()) {
+				if (this.previousCells != null && this.previousCells.size() > 0) {
 					// 尝试与上条数据合并
 					Cell curCell, preCell;
 					boolean matched = false;
@@ -132,6 +133,10 @@ public class ExcelReaderEx extends FileReader implements SheetContentsHandler {
 							curCell = this.currentCells.get(property.getStartingColumn());
 							if (curCell == null) {
 								continue;
+							}
+							if (property.getEndingColumn() >= this.previousCells.size()) {
+								matched = false;
+								break;
 							}
 							preCell = this.previousCells.get(property.getStartingColumn());
 							if (preCell == null) {
@@ -393,6 +398,14 @@ public class ExcelReaderEx extends FileReader implements SheetContentsHandler {
 						}
 					} else if (property.getBindingClass() == String.class) {
 						dataCell = this.createCell(property, this.currentRow, sheetCell.value);
+					} else if (property.getBindingClass() == BigDecimal.class) {
+						if (sheetCell.value != null && sheetCell.value.endsWith("%")) {
+							dataCell = this.createCell(property, this.currentRow,
+									Decimal.valueOf(sheetCell.value.replace("%", "")).divide(Decimal.valueOf("100")));
+						} else {
+							dataCell = this.createCell(property, this.currentRow,
+									DataConvert.convert(property.getBindingClass(), sheetCell.value));
+						}
 					} else {
 						dataCell = this.createCell(property, this.currentRow,
 								DataConvert.convert(property.getBindingClass(), sheetCell.value));
