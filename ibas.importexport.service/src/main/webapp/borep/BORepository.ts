@@ -99,7 +99,7 @@ namespace importexport {
                 boRepository.converter = this.createConverter();
                 let method: string =
                     ibas.strings.format("schema?boCode={0}&type={1}&token={2}",
-                        caller.boCode, caller.type, this.token);
+                        caller.boCode, caller.type, ibas.tokens.content(this.token));
                 boRepository.callRemoteMethod(method, undefined, (opRslt) => {
                     caller.onCompleted.call(ibas.objects.isNull(caller.caller) ? caller : caller.caller, opRslt);
                 });
@@ -132,6 +132,11 @@ namespace importexport {
                 let xhr: XMLHttpRequest = new XMLHttpRequest();
                 xhr.open("POST", methodUrl, true);
                 xhr.responseType = "blob";
+                // token为头认证形式
+                if (ibas.strings.isWith(this.token, ibas.HTTP_HEADER_TOKEN_AUTHORIZATION, undefined)) {
+                    // xhr.withCredentials = true;
+                    xhr.setRequestHeader("Authorization", this.token.substring(ibas.HTTP_HEADER_TOKEN_AUTHORIZATION.length));
+                }
                 return xhr;
             }
         }

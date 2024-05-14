@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -56,18 +57,21 @@ public class FileService extends FileRepositoryService {
 	@Path("upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public OperationResult<FileData> upload(FormDataMultiPart formData, @QueryParam("token") String token) {
-		return super.save(formData.getField("file"), token);
+	public OperationResult<FileData> upload(FormDataMultiPart formData,
+			@HeaderParam("authorization") String authorization, @QueryParam("token") String token) {
+		return super.save(formData.getField("file"), MyConfiguration.optToken(authorization, token));
 	}
 
 	@POST
 	@Path("import")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public OperationResult<String> importData(FormDataMultiPart formData, @QueryParam("token") String token) {
+	public OperationResult<String> importData(FormDataMultiPart formData,
+			@HeaderParam("authorization") String authorization, @QueryParam("token") String token) {
 		OperationResult<String> opRslt = null;
 		try {
 			// 处理请求参数
+			token = MyConfiguration.optToken(authorization, token);
 			OperationResult<FileData> opRsltFile = null;
 			emDataUpdateMethod updateMethod = emDataUpdateMethod.SKIP;
 			for (List<FormDataBodyPart> bodyParts : formData.getFields().values()) {
@@ -111,12 +115,14 @@ public class FileService extends FileRepositoryService {
 	@Path("parse")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public OperationResult<DataWrapping> parseData(FormDataMultiPart formData, @QueryParam("token") String token) {
+	public OperationResult<DataWrapping> parseData(FormDataMultiPart formData,
+			@HeaderParam("authorization") String authorization, @QueryParam("token") String token) {
 		OperationResult<DataWrapping> opRslt = null;
 		try {
 			opRslt = new OperationResult<DataWrapping>();
 			// 保存文件
-			OperationResult<FileData> opRsltFile = super.save(formData.getField("file"), token);
+			OperationResult<FileData> opRsltFile = super.save(formData.getField("file"),
+					MyConfiguration.optToken(authorization, token));
 			if (opRsltFile.getError() != null) {
 				throw opRsltFile.getError();
 			}
@@ -186,7 +192,7 @@ public class FileService extends FileRepositoryService {
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public void exportData(FormDataMultiPart formData, @Context HttpServletResponse response,
-			@QueryParam("token") String token) {
+			@HeaderParam("authorization") String authorization, @QueryParam("token") String token) {
 		try {
 			// 获取导出的文件
 			ISerializer<?> serializer = SerializerFactory.create().createManager().create("json");
@@ -221,6 +227,7 @@ public class FileService extends FileRepositoryService {
 					Logger.log(e);
 				}
 			}
+			token = MyConfiguration.optToken(authorization, token);
 			BORepositoryImportExport boRepository = new BORepositoryImportExport();
 			boRepository.setUserToken(token);
 			IOperationResult<FileData> opRsltExport = boRepository.exportData(info);
