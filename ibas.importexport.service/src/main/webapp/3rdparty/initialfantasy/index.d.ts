@@ -189,7 +189,9 @@ declare namespace initialfantasy {
             /** 服务端 */
             SERVER = 0,
             /** 客户端 */
-            CLIENT = 1
+            CLIENT = 1,
+            /** 全部 */
+            ALL = 2
         }
         enum emRequiredValue {
             /** 默认值 */

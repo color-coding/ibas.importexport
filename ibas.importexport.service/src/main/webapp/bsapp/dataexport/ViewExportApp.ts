@@ -7,6 +7,10 @@
  */
 namespace importexport {
     export namespace app {
+        export enum emExportMode {
+            ALL,
+            SELECTED,
+        }
         /** 应用-审批流程 */
         export class ViewExportApp extends ibas.ResidentApplication<IViewExportView> {
             /** 应用标识 */
@@ -30,10 +34,19 @@ namespace importexport {
             run(): void {
                 super.run.apply(this, arguments);
             }
+            exportMode: emExportMode = emExportMode.ALL;
+            protected showFullView(mode?: emExportMode): void {
+                super.showFullView();
+                if (mode > 0) {
+                    this.exportMode = mode;
+                } else {
+                    this.exportMode = emExportMode.ALL;
+                }
+                this.view.showTables(this.exportMode);
+            }
             /** 视图显示后 */
             protected viewShowed(): void {
                 // 视图加载完成
-                this.view.showTables();
             }
             private export(tables: ibas.DataTable[] | ibas.DataTable): void {
                 tables = ibas.arrays.create(tables);
@@ -117,7 +130,7 @@ namespace importexport {
             // 导出
             exportEvent: Function;
             /** 显示表格 */
-            showTables(): void;
+            showTables(mode?: emExportMode): void;
         }
         export class ViewExportApplicationMapping extends ibas.ResidentApplicationMapping {
             /** 构造函数 */

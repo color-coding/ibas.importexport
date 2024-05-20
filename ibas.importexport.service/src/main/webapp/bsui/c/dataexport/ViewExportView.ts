@@ -29,10 +29,19 @@ namespace importexport {
                             items: [
                                 new sap.m.MenuItem("", {
                                     icon: "sap-icon://action",
-                                    text: ibas.i18n.prop("importexport_export_content"),
+                                    text: ibas.i18n.prop("importexport_export_content_all"),
                                     press: function (): void {
                                         if (!that.isDisplayed) {
-                                            that.fireViewEvents(that.showFullViewEvent);
+                                            that.fireViewEvents(that.showFullViewEvent, app.emExportMode.ALL);
+                                        }
+                                    }
+                                }),
+                                new sap.m.MenuItem("", {
+                                    icon: "sap-icon://action",
+                                    text: ibas.i18n.prop("importexport_export_content_selected"),
+                                    press: function (): void {
+                                        if (!that.isDisplayed) {
+                                            that.fireViewEvents(that.showFullViewEvent, app.emExportMode.SELECTED);
                                         }
                                     }
                                 }),
@@ -74,8 +83,27 @@ namespace importexport {
                         ],
                         buttons: [
                             new sap.m.Button("", {
-                                text: ibas.i18n.prop("importexport_export"),
-                                type: sap.m.ButtonType.Transparent,
+                                text: ibas.i18n.prop("importexport_export_selected"),
+                                type: sap.m.ButtonType.Attention,
+                                press: function (): void {
+                                    let table: ibas.DataTable;
+                                    let tables: ibas.IList<ibas.DataTable> = new ibas.ArrayList<ibas.DataTable>();
+                                    for (let item of that.dialog.getContent()) {
+                                        if (item instanceof sap.extension.table.Table ||
+                                            item instanceof sap.extension.table.TreeTable) {
+                                            table = item.toDataTable(true);
+                                            table.description = (<any>item).getToolbar()?.getContent()[0]?.getText();
+                                            tables.add(table);
+                                        }
+                                    }
+                                    if (tables.length > 0) {
+                                        that.fireViewEvents(that.exportEvent, tables);
+                                    }
+                                }
+                            }),
+                            new sap.m.Button("", {
+                                text: ibas.i18n.prop("importexport_export_all"),
+                                type: sap.m.ButtonType.Accept,
                                 press: function (): void {
                                     let table: ibas.DataTable;
                                     let tables: ibas.IList<ibas.DataTable> = new ibas.ArrayList<ibas.DataTable>();
@@ -94,9 +122,21 @@ namespace importexport {
                             }),
                             new sap.m.Button("", {
                                 text: ibas.i18n.prop("shell_exit"),
-                                type: sap.m.ButtonType.Transparent,
+                                type: sap.m.ButtonType.Reject,
                                 press: function (): void {
+                                    for (let item of that.dialog.getContent()) {
+                                        if (item instanceof sap.ui.table.Table) {
+                                            for (let col of item.getColumns()) {
+                                                let menu: any = sap.ui.getCore().byId(col.getId() + "-menu");
+                                                if (menu instanceof sap.ui.core.Element) {
+                                                    menu.destroy();
+                                                }
+                                            }
+                                        }
+                                        item.destroy();
+                                    }
                                     that.fireViewEvents(that.closeEvent);
+                                    that.dialog.destroy();
                                 }
                             }),
                         ],
@@ -104,8 +144,9 @@ namespace importexport {
                 }
                 private dialog: sap.m.Dialog;
                 /** 显示表格 */
-                showTables(): void {
+                showTables(mode: app.emExportMode): void {
                     this.title = this.application.description;
+                    this.exportMode = mode;
                     let app: any = sap.ui.getCore().byId("__UI_APP");
                     if (app instanceof sap.m.App) {
                         let mainPage: any = app.getCurrentPage();
@@ -117,8 +158,9 @@ namespace importexport {
                         }
                     }
                 }
+                protected exportMode: app.emExportMode;
 
-                private pasingPage(page: sap.ui.core.Control, funcTask: (table: sap.ui.table.Table) => any): void {
+                private pasingPage(page: sap.ui.core.Control, funcTask: (table: sap.ui.table.Table, exportMode?: app.emExportMode) => any): void {
                     if (page instanceof sap.m.Page) {
                         for (let item of page.getContent()) {
                             this.pasingPage(item, funcTask);
@@ -164,6 +206,22 @@ namespace importexport {
                                 this.pasingPage(item, funcTask);
                             }
                         }
+                    } else if (page instanceof sap.m.TabContainer) {
+                        let curPage: any = page.getSelectedItem();
+                        for (let item of page.getItems()) {
+                            if (!ibas.strings.isEmpty(curPage) && item.getId() !== curPage) {
+                                continue;
+                            }
+                            if (this.isDisplayed) {
+                                if (!ibas.strings.isEmpty(item.getName()) && this.title.indexOf(" - ") < 0) {
+                                    this.title = ibas.strings.format("{0} - {1}", this.title, item.getName());
+                                    this.dialog.setTitle(this.title);
+                                }
+                            }
+                            for (let cItem of item.getContent()) {
+                                this.pasingPage(cItem, funcTask);
+                            }
+                        }
                     } else if (page instanceof sap.m.IconTabBar) {
                         for (let item of page.getItems()) {
                             if (item instanceof sap.ui.core.Control) {
@@ -175,7 +233,7 @@ namespace importexport {
                             }
                         }
                     } else if (page instanceof sap.ui.table.Table) {
-                        let nTable: sap.ui.table.Table = funcTask(page);
+                        let nTable: sap.ui.table.Table = funcTask.call(this, page, this.exportMode);
                         if (!ibas.objects.isNull(nTable)) {
                             this.dialog.addContent(nTable);
                             if (nTable instanceof sap.ui.table.TreeTable) {
@@ -205,18 +263,59 @@ namespace importexport {
                     }
                     return undefined;
                 }
-                private cloneTable(table: sap.ui.table.Table): sap.ui.table.Table {
+                private cloneTable(table: sap.ui.table.Table, exportMode: app.emExportMode): sap.ui.table.Table {
                     let count: number = (<any>table)._getTotalRowCount();
                     if (count > 0) {
                         let nTable: sap.ui.table.Table = table.clone("_s");
                         let model: any = table.getModel();
                         if (model instanceof sap.ui.model.json.JSONModel) {
-                            nTable.setModel(new sap.extension.model.JSONModel(model.getData()));
+                            if (exportMode === app.emExportMode.SELECTED) {
+                                let selecteds: any[] = [];
+                                for (let i: number = 0; i < table.getRows().length; i++) {
+                                    if (table.isIndexSelected(i)) {
+                                        selecteds.push(table.getRows()[i].getBindingContext().getObject());
+                                    }
+                                }
+                                let nData: any = {};
+                                let path: string = table.getBinding("rows")?.getPath();
+                                if (!ibas.strings.isEmpty(path)) {
+                                    let paths: string[] = [];
+                                    for (let item of path.split("/")) {
+                                        if (ibas.strings.isEmpty(item)) {
+                                            continue;
+                                        }
+                                        paths.push(item);
+                                    }
+                                    if (paths.length > 1) {
+                                        for (let item of paths) {
+                                            if (paths.indexOf(item) === paths.length - 1) {
+                                                nData[item] = selecteds;
+                                            } else {
+                                                nData[item] = {};
+                                            }
+                                        }
+                                    } else {
+                                        nData = selecteds;
+                                    }
+                                } else {
+                                    nData = selecteds;
+                                }
+                                nTable.setModel(new sap.extension.model.JSONModel(nData));
+                            } else {
+                                nTable.setModel(new sap.extension.model.JSONModel(model.getData()));
+                            }
                         }
                         nTable.setVisibleRowCount(count);
                         nTable.destroyExtension();
                         nTable.destroyFooter();
                         (<any>nTable).destroyToolbar();
+                        for (let i: number = 0; i < table.getColumns().length; i++) {
+                            let column: sap.ui.table.Column = table.getColumns()[i];
+                            if (column.getFiltered()) {
+                                let nColumn: sap.ui.table.Column = nTable.getColumns()[i];
+                                nTable.filter(nColumn, column.getFilterValue());
+                            }
+                        }
                         return nTable;
                     }
                     return null;
