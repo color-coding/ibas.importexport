@@ -56,5 +56,9 @@
   "importexport_import_data_information": "操作成功：识别[{0}]条数据，保存[{1}]条数据",
   "importexport_resize_column": "调整列宽",
   "importexport_export_content": "导出内容",
+  "importexport_export_content_all": "导出内容（全部）",
+  "importexport_export_content_selected": "导出内容（选中）",
+  "importexport_export_all": "导出全部",
+  "importexport_export_selected": "导出选中",
   "importexport_closing_delimiter": "----结束----"
 }

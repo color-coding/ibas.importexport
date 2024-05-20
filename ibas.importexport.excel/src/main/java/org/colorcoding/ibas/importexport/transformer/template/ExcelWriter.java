@@ -84,7 +84,9 @@ public class ExcelWriter extends FileWriter {
 		SXSSFWorkbook workBook = null;
 		try (OutputStream stream = new FileOutputStream(file)) {
 			workBook = new SXSSFWorkbook(this.getCacheRows());
-			Sheet sheet = workBook.createSheet(this.getTemplate().getDescription());
+			Sheet sheet = this.getTemplate().getDescription() == null ? workBook.createSheet()
+					: workBook.createSheet(
+							this.getTemplate().getDescription().replaceAll("[\\\\/:*?\\[\\]]", "_").trim());
 			this.setWorkbook(workBook);
 			this.writeHead(sheet);
 			this.writeObjects(sheet);

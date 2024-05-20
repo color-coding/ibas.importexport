@@ -40,7 +40,11 @@ namespace importexport {
             protected fetchData(criteria: ibas.ICriteria): void {
                 this.busy(true);
                 if (!ibas.objects.isNull(criteria)) {
+                    // 默认不查询子项，有条件则查
                     criteria.noChilds = true;
+                    if (criteria.childCriterias.length > 0) {
+                        criteria.noChilds = false;
+                    }
                 }
                 let that: this = this;
                 let boRepository: bo.BORepositoryImportExport = new bo.BORepositoryImportExport();
