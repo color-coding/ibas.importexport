@@ -677,6 +677,8 @@ declare namespace initialfantasy {
             linkedObject: string;
             /** 值选择方式 */
             valueChooseType: string;
+            /** 触发属性 */
+            triggerByProperty: string;
             /** 业务对象属性值集合 */
             boPropertyValues: IBOPropertyValues;
         }
@@ -2641,6 +2643,12 @@ declare namespace initialfantasy {
             get valueChooseType(): string;
             /** 设置-值选择方式 */
             set valueChooseType(value: string);
+            /** 映射的属性名称-触发属性 */
+            static PROPERTY_TRIGGERBYPROPERTY_NAME: string;
+            /** 获取-触发属性 */
+            get triggerByProperty(): string;
+            /** 设置-触发属性 */
+            set triggerByProperty(value: string);
             /** 映射的属性名称-业务对象属性值集合 */
             static PROPERTY_BOPROPERTYVALUES_NAME: string;
             /** 获取-业务对象属性信息集合 */
@@ -6683,10 +6691,12 @@ declare namespace initialfantasy {
             type: any;
         }
         interface IFetchSourceCaller extends ibas.IMethodCaller<ibas.IBODocument> {
-            origin: ibas.IBODocument;
+            origin: DocumentChain;
+            onCompleted(opRslt: ibas.IOperationResult<ibas.IBODocument>, childOrigin?: DocumentChain): void;
         }
         interface IFetchTargetCaller extends ibas.IMethodCaller<ibas.IBODocument> {
-            origin: ibas.IBODocument;
+            origin: DocumentChain;
+            onCompleted(opRslt: ibas.IOperationResult<ibas.IBODocument>, childOrigin?: DocumentChain): void;
         }
         class DocumentRepository {
             constructor();
@@ -6696,7 +6706,7 @@ declare namespace initialfantasy {
             protected boShipMap: ibas.IList<bo.IBORelationship>;
             fetchSources(fetcher: IFetchSourceCaller): void;
             fetchTargets(fetcher: IFetchTargetCaller): void;
-            protected fetchDatas(criterias: ibas.ICriteria[], onCompleted: (opRslt: ibas.IOperationResult<ibas.IBODocument>) => void): void;
+            protected fetchDatas(criterias: ibas.ICriteria[], onCompleted: (opRslt: ibas.IOperationResult<ibas.IBODocument>, childOrigin?: DocumentChain) => void, origin: DocumentChain): void;
         }
         export class DocumentChain {
             constructor(data?: ibas.IBODocument);

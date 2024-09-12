@@ -223,10 +223,14 @@ namespace importexport {
                             }
                         }
                     } else if (page instanceof sap.m.IconTabBar) {
+                        let selected: string = page.getSelectedKey();
                         for (let item of page.getItems()) {
                             if (item instanceof sap.ui.core.Control) {
                                 this.pasingPage(item, funcTask);
                             } else if (item instanceof sap.m.IconTabFilter) {
+                                if (!ibas.strings.isEmpty(selected) && item.getKey() !== selected) {
+                                    continue;
+                                }
                                 for (let sItem of item.getContent()) {
                                     this.pasingPage(sItem, funcTask);
                                 }
