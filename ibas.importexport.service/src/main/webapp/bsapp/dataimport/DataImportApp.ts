@@ -164,7 +164,7 @@ namespace importexport {
                     }
                     this.view.showFiles(this.files);
                 }, {
-                    accept: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/json",
+                    accept: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/json,application/xml",
                     multiple: true
                 });
             }

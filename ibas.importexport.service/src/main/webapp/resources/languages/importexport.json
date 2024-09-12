@@ -54,6 +54,7 @@
     "importexport_page_number": "Page {0}",
     "importexport_remove_page_continue": "Delete {0}, continue?",
     "importexport_import_data_information": "Operation successful: Identified [{0}] data entries, saved [{1}] data entries",
+    "importexport_import_data_information_repetition": "Operation successful: Identified [{0}] data entries, saved [{1}] data entries, repeat [{2}] data entries",
     "importexport_resize_column": "Adjust Column Width",
     "importexport_export_content": "Export Content",
     "importexport_export_content_all": "Export Content (All)",

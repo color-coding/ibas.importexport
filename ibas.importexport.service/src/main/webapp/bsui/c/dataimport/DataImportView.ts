@@ -366,6 +366,9 @@ namespace importexport {
                                                     }
                                                 ],
                                                 formatter(identified: number, saved: number): string {
+                                                    if (identified > saved) {
+                                                        return ibas.i18n.prop("importexport_import_data_information_repetition", identified, saved, identified - saved);
+                                                    }
                                                     return ibas.i18n.prop("importexport_import_data_information", identified, saved);
                                                 }
                                             },

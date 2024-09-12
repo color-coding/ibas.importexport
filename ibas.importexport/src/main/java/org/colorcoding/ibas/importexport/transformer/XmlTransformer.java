@@ -12,6 +12,7 @@ import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.message.MessageLevel;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
 import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
+import org.colorcoding.ibas.importexport.MyConfiguration;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -50,6 +51,7 @@ public class XmlTransformer extends FileTransformerSerialization {
 				if (boCode == null || boCode.isEmpty()) {
 					continue;
 				}
+				boCode = MyConfiguration.applyVariables(boCode);
 				Class<?> boType = this.getBOFactory().getClass(boCode);
 				if (boType == null) {
 					Logger.log(MessageLevel.WARN, "transformer: [%s] not found [%s]'s class.",

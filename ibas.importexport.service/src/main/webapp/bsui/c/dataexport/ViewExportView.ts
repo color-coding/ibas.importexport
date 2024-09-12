@@ -56,6 +56,14 @@ namespace importexport {
                                                 let navContainer: any = mainPage.getMainContents()[0];
                                                 if (navContainer instanceof sap.m.NavContainer) {
                                                     that.pasingPage(navContainer.getCurrentPage(), that.resizeColumn);
+                                                } else if (navContainer instanceof sap.m.TabContainer) {
+                                                    let page: any = sap.ui.getCore().byId(navContainer.getSelectedItem());
+                                                    if (page instanceof sap.m.TabContainerItem) {
+                                                        page = sap.ui.getCore().byId(page.getKey());
+                                                        if (page instanceof sap.ui.core.Control) {
+                                                            that.pasingPage(page, that.resizeColumn);
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -140,6 +148,13 @@ namespace importexport {
                                 }
                             }),
                         ],
+                        afterClose(this: sap.m.Dialog): void {
+                            for (let item of this.getContent()) {
+                                if (item instanceof sap.ui.core.Element) {
+                                    item.destroy();
+                                }
+                            }
+                        }
                     }).addStyleClass("sapUiNoContentPadding");
                 }
                 private dialog: sap.m.Dialog;
@@ -154,6 +169,14 @@ namespace importexport {
                             let navContainer: any = mainPage.getMainContents()[0];
                             if (navContainer instanceof sap.m.NavContainer) {
                                 this.pasingPage(navContainer.getCurrentPage(), this.cloneTable);
+                            } else if (navContainer instanceof sap.m.TabContainer) {
+                                let page: any = sap.ui.getCore().byId(navContainer.getSelectedItem());
+                                if (page instanceof sap.m.TabContainerItem) {
+                                    page = sap.ui.getCore().byId(page.getKey());
+                                    if (page instanceof sap.ui.core.Control) {
+                                        this.pasingPage(page, this.cloneTable);
+                                    }
+                                }
                             }
                         }
                     }
@@ -196,6 +219,14 @@ namespace importexport {
                         for (let item of page.getDetailPages()) {
                             this.pasingPage(item, funcTask);
                         }
+                    } else if (page instanceof sap.m.Panel) {
+                        for (let item of page.getContent()) {
+                            this.pasingPage(item, funcTask);
+                        }
+                    } else if (page instanceof sap.m.FlexBox) {
+                        for (let item of page.getItems()) {
+                            this.pasingPage(item, funcTask);
+                        }
                     } else if (page instanceof sap.ui.layout.DynamicSideContent) {
                         for (let item of page.getMainContent()) {
                             this.pasingPage(item, funcTask);
@@ -223,10 +254,14 @@ namespace importexport {
                             }
                         }
                     } else if (page instanceof sap.m.IconTabBar) {
+                        let selected: string = page.getSelectedKey();
                         for (let item of page.getItems()) {
                             if (item instanceof sap.ui.core.Control) {
                                 this.pasingPage(item, funcTask);
                             } else if (item instanceof sap.m.IconTabFilter) {
+                                if (!ibas.strings.isEmpty(selected) && item.getKey() !== selected) {
+                                    continue;
+                                }
                                 for (let sItem of item.getContent()) {
                                     this.pasingPage(sItem, funcTask);
                                 }
@@ -267,14 +302,15 @@ namespace importexport {
                     let count: number = (<any>table)._getTotalRowCount();
                     if (count > 0) {
                         let nTable: sap.ui.table.Table = table.clone("_s");
+                        if (nTable.getVisibleRowCountMode() === sap.ui.table.VisibleRowCountMode.Auto) {
+                            nTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
+                        }
                         let model: any = table.getModel();
                         if (model instanceof sap.ui.model.json.JSONModel) {
                             if (exportMode === app.emExportMode.SELECTED) {
                                 let selecteds: any[] = [];
-                                for (let i: number = 0; i < table.getRows().length; i++) {
-                                    if (table.isIndexSelected(i)) {
-                                        selecteds.push(table.getRows()[i].getBindingContext().getObject());
-                                    }
+                                for (let i of table.getSelectedIndices()) {
+                                    selecteds.push(table.getContextByIndex(i)?.getObject());
                                 }
                                 let nData: any = {};
                                 let path: string = table.getBinding("rows")?.getPath();
@@ -286,7 +322,7 @@ namespace importexport {
                                         }
                                         paths.push(item);
                                     }
-                                    if (paths.length > 1) {
+                                    if (paths.length >= 1) {
                                         for (let item of paths) {
                                             if (paths.indexOf(item) === paths.length - 1) {
                                                 nData[item] = selecteds;
@@ -301,11 +337,14 @@ namespace importexport {
                                     nData = selecteds;
                                 }
                                 nTable.setModel(new sap.extension.model.JSONModel(nData));
+                                if (selecteds.length > 0) {
+                                    nTable.setVisibleRowCount(selecteds.length);
+                                }
                             } else {
                                 nTable.setModel(new sap.extension.model.JSONModel(model.getData()));
+                                nTable.setVisibleRowCount(count);
                             }
                         }
-                        nTable.setVisibleRowCount(count);
                         nTable.destroyExtension();
                         nTable.destroyFooter();
                         (<any>nTable).destroyToolbar();

@@ -17,6 +17,8 @@ declare namespace initialfantasy {
     /** 配置值-数据权限方式 */
     const CONFIG_VALUE_OWNERSHIP_WAY: string;
     namespace config {
+        /** 配置值-用户密码过期天数 */
+        const CONFIG_VALUE_USER_PASSWORD_EXPIRATION_DAYS: string;
         /**
          * 获取此模块配置
          * @param key 配置项
@@ -677,6 +679,8 @@ declare namespace initialfantasy {
             linkedObject: string;
             /** 值选择方式 */
             valueChooseType: string;
+            /** 触发属性 */
+            triggerByProperty: string;
             /** 业务对象属性值集合 */
             boPropertyValues: IBOPropertyValues;
         }
@@ -697,6 +701,8 @@ declare namespace initialfantasy {
             description: string;
             /** 默认值 */
             default: ibas.emYesNo;
+            /** 显示顺序 */
+            visOrder: number;
         }
         /** 业务对象属性信息 集合 */
         interface IBOPropertyValues extends ibas.IBusinessObjects<IBOPropertyValue> {
@@ -863,6 +869,8 @@ declare namespace initialfantasy {
             validDate: Date;
             /** 失效日期 */
             invalidDate: Date;
+            /** 密码修改日期 */
+            lastPwdSetDate: Date;
             /** 对象编号 */
             docEntry: number;
             /** 对象类型 */
@@ -1107,6 +1115,8 @@ declare namespace initialfantasy {
             createActionId: string;
             /** 更新动作标识 */
             updateActionId: string;
+            /** 宽度 */
+            width: string;
         }
     }
 }
@@ -2641,6 +2651,12 @@ declare namespace initialfantasy {
             get valueChooseType(): string;
             /** 设置-值选择方式 */
             set valueChooseType(value: string);
+            /** 映射的属性名称-触发属性 */
+            static PROPERTY_TRIGGERBYPROPERTY_NAME: string;
+            /** 获取-触发属性 */
+            get triggerByProperty(): string;
+            /** 设置-触发属性 */
+            set triggerByProperty(value: string);
             /** 映射的属性名称-业务对象属性值集合 */
             static PROPERTY_BOPROPERTYVALUES_NAME: string;
             /** 获取-业务对象属性信息集合 */
@@ -2693,6 +2709,12 @@ declare namespace initialfantasy {
             get default(): ibas.emYesNo;
             /** 设置-默认值 */
             set default(value: ibas.emYesNo);
+            /** 映射的属性名称-显示顺序 */
+            static PROPERTY_VISORDER_NAME: string;
+            /** 获取-显示顺序 */
+            get visOrder(): number;
+            /** 设置-显示顺序 */
+            set visOrder(value: number);
             /** 字符串 */
             toString(): string;
             /** 获取查询 */
@@ -3206,6 +3228,12 @@ declare namespace initialfantasy {
             get invalidDate(): Date;
             /** 设置-失效日期 */
             set invalidDate(value: Date);
+            /** 映射的属性名称-密码修改日期 */
+            static PROPERTY_LASTPWDSETDATE_NAME: string;
+            /** 获取-密码修改日期 */
+            get lastPwdSetDate(): Date;
+            /** 设置-密码修改日期 */
+            set lastPwdSetDate(value: Date);
             /** 映射的属性名称-对象编号 */
             static PROPERTY_DOCENTRY_NAME: string;
             /** 获取-对象编号 */
@@ -3860,6 +3888,12 @@ declare namespace initialfantasy {
             get updateActionId(): string;
             /** 设置-更新动作标识 */
             set updateActionId(value: string);
+            /** 映射的属性名称-宽度 */
+            static PROPERTY_WIDTH_NAME: string;
+            /** 获取-宽度 */
+            get width(): string;
+            /** 设置-宽度 */
+            set width(value: string);
             /** 初始化数据 */
             protected init(): void;
         }
@@ -6683,10 +6717,12 @@ declare namespace initialfantasy {
             type: any;
         }
         interface IFetchSourceCaller extends ibas.IMethodCaller<ibas.IBODocument> {
-            origin: ibas.IBODocument;
+            origin: DocumentChain;
+            onCompleted(opRslt: ibas.IOperationResult<ibas.IBODocument>, childOrigin?: DocumentChain): void;
         }
         interface IFetchTargetCaller extends ibas.IMethodCaller<ibas.IBODocument> {
-            origin: ibas.IBODocument;
+            origin: DocumentChain;
+            onCompleted(opRslt: ibas.IOperationResult<ibas.IBODocument>, childOrigin?: DocumentChain): void;
         }
         class DocumentRepository {
             constructor();
@@ -6696,7 +6732,7 @@ declare namespace initialfantasy {
             protected boShipMap: ibas.IList<bo.IBORelationship>;
             fetchSources(fetcher: IFetchSourceCaller): void;
             fetchTargets(fetcher: IFetchTargetCaller): void;
-            protected fetchDatas(criterias: ibas.ICriteria[], onCompleted: (opRslt: ibas.IOperationResult<ibas.IBODocument>) => void): void;
+            protected fetchDatas(criterias: ibas.ICriteria[], onCompleted: (opRslt: ibas.IOperationResult<ibas.IBODocument>, childOrigin?: DocumentChain) => void, origin: DocumentChain): void;
         }
         export class DocumentChain {
             constructor(data?: ibas.IBODocument);
@@ -6952,6 +6988,7 @@ declare namespace initialfantasy {
             private user;
             private fetchUser;
             private editUser;
+            protected barShowed(): void;
         }
         /** 视图-用户配置 */
         interface IUserProfileView extends ibas.IResidentView {
@@ -7635,6 +7672,8 @@ declare namespace initialfantasy {
             set authorised(value: bo.emAuthorisedValue);
             get position(): number;
             set position(value: number);
+            get width(): string;
+            set width(value: string);
             get required(): bo.emRequiredValue;
             set required(value: bo.emRequiredValue);
             protected firePropertyChanged(property: string): void;
