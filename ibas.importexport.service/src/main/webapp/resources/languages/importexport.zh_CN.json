@@ -54,6 +54,7 @@
   "importexport_page_number": "第{0}页",
   "importexport_remove_page_continue": "删除{0}，是否继续?",
   "importexport_import_data_information": "操作成功：识别[{0}]条数据，保存[{1}]条数据",
+  "importexport_import_data_information_repetition": "操作成功：识别[{0}]条数据，保存[{1}]条数据，已存在[{2}]条数据",
   "importexport_resize_column": "调整列宽",
   "importexport_export_content": "导出内容",
   "importexport_export_content_all": "导出内容（全部）",
