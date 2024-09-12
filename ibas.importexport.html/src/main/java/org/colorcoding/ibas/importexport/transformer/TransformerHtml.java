@@ -33,8 +33,6 @@ import org.colorcoding.ibas.importexport.data.emTextStyle;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 
-import net.minidev.json.JSONArray;
-
 /**
  * 业务对象转换html文件
  * 
@@ -90,9 +88,9 @@ public class TransformerHtml extends TemplateTransformer {
 				return defaults;
 			}
 			Logger.log(MessageLevel.DEBUG, "transformer: data [%s], value [%s].", name, value);
-			if (value instanceof JSONArray) {
+			if (value instanceof Iterable) {
 				Double total = null;
-				for (Object item : (JSONArray) value) {
+				for (Object item : (Iterable<Object>) value) {
 					if (item instanceof Integer) {
 						if (total == null) {
 							total = 0.0d;
