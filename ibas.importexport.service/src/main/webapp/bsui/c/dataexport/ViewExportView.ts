@@ -56,6 +56,14 @@ namespace importexport {
                                                 let navContainer: any = mainPage.getMainContents()[0];
                                                 if (navContainer instanceof sap.m.NavContainer) {
                                                     that.pasingPage(navContainer.getCurrentPage(), that.resizeColumn);
+                                                } else if (navContainer instanceof sap.m.TabContainer) {
+                                                    let page: any = sap.ui.getCore().byId(navContainer.getSelectedItem());
+                                                    if (page instanceof sap.m.TabContainerItem) {
+                                                        page = sap.ui.getCore().byId(page.getKey());
+                                                        if (page instanceof sap.ui.core.Control) {
+                                                            that.pasingPage(page, that.resizeColumn);
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -154,6 +162,14 @@ namespace importexport {
                             let navContainer: any = mainPage.getMainContents()[0];
                             if (navContainer instanceof sap.m.NavContainer) {
                                 this.pasingPage(navContainer.getCurrentPage(), this.cloneTable);
+                            } else if (navContainer instanceof sap.m.TabContainer) {
+                                let page: any = sap.ui.getCore().byId(navContainer.getSelectedItem());
+                                if (page instanceof sap.m.TabContainerItem) {
+                                    page = sap.ui.getCore().byId(page.getKey());
+                                    if (page instanceof sap.ui.core.Control) {
+                                        this.pasingPage(page, this.cloneTable);
+                                    }
+                                }
                             }
                         }
                     }
@@ -223,10 +239,14 @@ namespace importexport {
                             }
                         }
                     } else if (page instanceof sap.m.IconTabBar) {
+                        let selected: string = page.getSelectedKey();
                         for (let item of page.getItems()) {
                             if (item instanceof sap.ui.core.Control) {
                                 this.pasingPage(item, funcTask);
                             } else if (item instanceof sap.m.IconTabFilter) {
+                                if (!ibas.strings.isEmpty(selected) && item.getKey() !== selected) {
+                                    continue;
+                                }
                                 for (let sItem of item.getContent()) {
                                     this.pasingPage(sItem, funcTask);
                                 }
