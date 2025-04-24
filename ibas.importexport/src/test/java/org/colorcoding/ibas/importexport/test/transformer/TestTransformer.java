@@ -7,10 +7,10 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.colorcoding.ibas.bobas.core.BOFactory;
-import org.colorcoding.ibas.bobas.data.DateTime;
+import org.colorcoding.ibas.bobas.bo.BOFactory;
+import org.colorcoding.ibas.bobas.common.DateTimes;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
-import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
+import org.colorcoding.ibas.bobas.serialization.SerializationFactory;
 import org.colorcoding.ibas.importexport.MyConfiguration;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.ExportTemplate;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.ExportTemplateItem;
@@ -26,20 +26,20 @@ public class TestTransformer extends TestCase {
 
 	private String createFileData(String type) throws IOException {
 		// 加载命名空间
-		for (Class<?> item : BOFactory.create().loadClasses("org.colorcoding.ibas")) {
-			BOFactory.create().register(item);
+		for (Class<?> item : BOFactory.loadClasses("org.colorcoding.ibas")) {
+			BOFactory.register(item);
 		}
 		// 创建测试数据
 		ExportTemplate template = new ExportTemplate();
 		template.setBOCode(ExportTemplate.BUSINESS_OBJECT_CODE);
 		IExportTemplateItem item = template.getRepetitions().create();
-		item.setItemID(DateTime.getNow().toString());
+		item.setItemID(DateTimes.now().toString());
 		item = template.getRepetitions().create();
-		item.setItemID(DateTime.getNow().toString());
+		item.setItemID(DateTimes.now().toString());
 		item = template.getRepetitions().create();
-		item.setItemID(DateTime.getNow().toString());
+		item.setItemID(DateTimes.now().toString());
 
-		ISerializer<?> serializer = SerializerFactory.create().createManager().create(type);
+		ISerializer serializer = SerializationFactory.createManager().create(type);
 		String filePath = String.format("%s%s~%s.%s", MyConfiguration.getDataFolder(), File.separator,
 				UUID.randomUUID().toString(), type);
 		File file = new File(filePath);

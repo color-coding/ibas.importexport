@@ -1,20 +1,20 @@
 package org.colorcoding.ibas.importexport;
 
 import org.colorcoding.ibas.bobas.configuration.ConfigurationFactory;
-import org.colorcoding.ibas.bobas.configuration.IConfigurationManager;
+import org.colorcoding.ibas.bobas.configuration.ConfigurationManager;
 
 /**
  * 我的配置项
  */
 public class MyConfiguration extends org.colorcoding.ibas.initialfantasy.MyConfiguration {
 
-	private volatile static IConfigurationManager instance;
+	private volatile static ConfigurationManager instance;
 
-	public static IConfigurationManager create() {
+	public static ConfigurationManager create() {
 		if (instance == null) {
 			synchronized (MyConfiguration.class) {
 				if (instance == null) {
-					instance = ConfigurationFactory.create().createManager();
+					instance = ConfigurationFactory.createManager();
 					instance.setConfigSign(MODULE_ID);
 					instance.update();
 				}

@@ -1,6 +1,6 @@
 package org.colorcoding.ibas.importexport.transformer.template;
 
-import org.colorcoding.ibas.bobas.core.BOFactory;
+import org.colorcoding.ibas.bobas.bo.BOFactory;
 
 /**
  * 模板-头，整体信息
@@ -51,7 +51,7 @@ public class Head extends BindingArea<Template> {
 		boolean done = super.resolvingNotes(note);
 		if (done) {
 			if (this.getBindingClass() != null) {
-				String boCode = BOFactory.create().getCode(this.getBindingClass());
+				String boCode = BOFactory.codeOf(this.getBindingClass());
 				if (boCode != null) {
 					this.setCode(boCode);
 				}
