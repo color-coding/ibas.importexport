@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.colorcoding.ibas.bobas.bo.BusinessObject;
 import org.colorcoding.ibas.bobas.core.IPropertyInfo;
-import org.colorcoding.ibas.bobas.data.Decimal;
+import org.colorcoding.ibas.bobas.common.Decimals;
 
 @XmlType()
 public class OrderLine extends BusinessObject<OrderLine> {
@@ -76,15 +76,15 @@ public class OrderLine extends BusinessObject<OrderLine> {
 	}
 
 	public final void setQuantity(String value) {
-		this.setQuantity(Decimal.valueOf(value));
+		this.setQuantity(Decimals.valueOf(value));
 	}
 
 	public final void setQuantity(int value) {
-		this.setQuantity(Decimal.valueOf(value));
+		this.setQuantity(Decimals.valueOf(value));
 	}
 
 	public final void setQuantity(double value) {
-		this.setQuantity(Decimal.valueOf(value));
+		this.setQuantity(Decimals.valueOf(value));
 	}
 
 	private static final String PROPERTY_BATCHITEMS_NAME = "BatchItems";

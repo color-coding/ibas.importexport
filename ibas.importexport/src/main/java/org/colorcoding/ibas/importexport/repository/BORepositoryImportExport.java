@@ -5,14 +5,13 @@ import java.io.File;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
+import org.colorcoding.ibas.bobas.bo.BOFactory;
 import org.colorcoding.ibas.bobas.bo.BusinessObject;
-import org.colorcoding.ibas.bobas.bo.IBODocument;
-import org.colorcoding.ibas.bobas.bo.IBOLine;
 import org.colorcoding.ibas.bobas.bo.IBOMasterData;
 import org.colorcoding.ibas.bobas.bo.IBOMasterDataLine;
-import org.colorcoding.ibas.bobas.bo.IBOSimple;
 import org.colorcoding.ibas.bobas.bo.IBOStorageTag;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
+import org.colorcoding.ibas.bobas.bo.IBusinessObjects;
 import org.colorcoding.ibas.bobas.common.ConditionOperation;
 import org.colorcoding.ibas.bobas.common.Criteria;
 import org.colorcoding.ibas.bobas.common.ICondition;
@@ -21,30 +20,26 @@ import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.ISort;
 import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.common.SortType;
-import org.colorcoding.ibas.bobas.core.BOFactory;
-import org.colorcoding.ibas.bobas.core.IBOFactory;
-import org.colorcoding.ibas.bobas.core.IBusinessObjectBase;
-import org.colorcoding.ibas.bobas.core.IBusinessObjectsBase;
-import org.colorcoding.ibas.bobas.core.ITrackStatusOperator;
-import org.colorcoding.ibas.bobas.core.RepositoryException;
+import org.colorcoding.ibas.bobas.common.Strings;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
 import org.colorcoding.ibas.bobas.core.fields.IManagedFields;
-import org.colorcoding.ibas.bobas.data.FileData;
+import org.colorcoding.ibas.bobas.data.FileItem;
 import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.message.MessageLevel;
 import org.colorcoding.ibas.bobas.ownership.IDataOwnership;
 import org.colorcoding.ibas.bobas.repository.BORepositoryServiceApplication;
+import org.colorcoding.ibas.bobas.repository.RepositoryException;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
-import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
+import org.colorcoding.ibas.bobas.serialization.SerializationFactory;
 import org.colorcoding.ibas.importexport.MyConfiguration;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.ExportTemplate;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplate;
+import org.colorcoding.ibas.importexport.data.DataConvert;
 import org.colorcoding.ibas.importexport.data.DataExportInfo;
 import org.colorcoding.ibas.importexport.data.emDataUpdateMethod;
 import org.colorcoding.ibas.importexport.transformer.FileTransformer;
-import org.colorcoding.ibas.importexport.transformer.FileTransformerSerialization;
 import org.colorcoding.ibas.importexport.transformer.IFileTransformer;
 import org.colorcoding.ibas.importexport.transformer.ITemplateTransformer;
 import org.colorcoding.ibas.importexport.transformer.ITransformer;
@@ -59,21 +54,21 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 		implements IBORepositoryImportExportSvc, IBORepositoryImportExportApp {
 
 	public static final String MSG_TRANSFORMER_IMPORT_DATA = "transformer: using [%s] import data.";
+	public static final String MSG_TRANSFORMER_IMPORT_DATA_SIZE = "transformer: got data count [%s].";
 	public static final String MSG_TRANSFORMER_EXPORT_DATA = "transformer: using [%s] export data.";
 	public static final String MSG_TRANSFORMER_EXPORT_DATA_TO_FILE = "transformer: export data to file [%s].";
 
-	private volatile static IBOFactory boFactory;
+	private volatile static boolean INITIALIZED;
 
 	/**
 	 * 业务对象工厂
 	 * 
 	 * @return
 	 */
-	public static IBOFactory getBOFactory() {
-		if (boFactory == null) {
+	public static boolean initFactory() {
+		if (INITIALIZED == false) {
 			synchronized (BORepositoryImportExport.class) {
-				if (boFactory == null) {
-					boFactory = BOFactory.create();
+				if (INITIALIZED == false) {
 					// 加载可识别命名空间类型
 					Consumer<String> classLoader = new Consumer<String>() {
 
@@ -91,10 +86,10 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 							for (String namesapce : namespaces) {
 								if (namesapce != null && !namesapce.isEmpty()) {
 									Logger.log(MessageLevel.INFO, "import export: load [%s]'s classes.", namesapce);
-									for (Class<?> item : boFactory.loadClasses(namesapce)) {
+									for (Class<?> item : BOFactory.loadClasses(namesapce)) {
 										// 仅注册业务对象
 										if (BusinessObject.class.isAssignableFrom(item)) {
-											boFactory.register(item);
+											BOFactory.register(item);
 										}
 									}
 								}
@@ -103,10 +98,11 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 					};
 					classLoader.accept("org.colorcoding.ibas");
 					classLoader.accept(MyConfiguration.getConfigValue(MyConfiguration.CONFIG_ITEM_SCANING_PACKAGES));
+					INITIALIZED = true;
 				}
 			}
 		}
-		return boFactory;
+		return INITIALIZED;
 	}
 
 	// --------------------------------------------------------------------------------------------//
@@ -118,7 +114,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	 * @return 操作结果
 	 */
 	public OperationResult<ExportTemplate> fetchExportTemplate(ICriteria criteria, String token) {
-		return super.fetch(criteria, token, ExportTemplate.class);
+		return super.fetch(ExportTemplate.class, criteria, token);
 	}
 
 	/**
@@ -160,24 +156,22 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 
 	@Override
 	public OperationResult<String> schema(String boCode, String type, String token) {
-		OperationResult<String> opRslt = new OperationResult<String>();
 		try (ByteArrayOutputStream writer = new ByteArrayOutputStream()) {
 			this.setUserToken(token);
-			Class<?> boType = getBOFactory().getClass(boCode);
+			Class<?> boType = BOFactory.classOf(boCode);
 			if (boType == null) {
 				throw new Exception(I18N.prop("msg_ie_not_found_class", boCode));
 			}
-			ISerializer<?> serializer = SerializerFactory.create().createManager().create(type);
+			ISerializer serializer = SerializationFactory.createManager().create(type);
 			if (serializer == null) {
 				throw new Exception(I18N.prop("msg_ie_not_found_serializer", type));
 			}
-			serializer.getSchema(boType, writer);
-			opRslt.addResultObjects(new String(writer.toByteArray(), "utf-8"));
+			serializer.schema(boType, writer);
+			return new OperationResult<String>().addResultObjects(new String(writer.toByteArray(), "utf-8"));
 		} catch (Exception e) {
-			opRslt = new OperationResult<String>(e);
 			Logger.log(e);
+			return new OperationResult<String>(e);
 		}
-		return opRslt;
 	}
 
 	// --------------------------------------------------------------------------------------------//
@@ -190,24 +184,23 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	 * @param token        口令
 	 * @return 操作结果
 	 */
-	public OperationResult<String> importData(FileData data, emDataUpdateMethod updateMethod, String token) {
+	public OperationResult<String> importData(FileItem data, emDataUpdateMethod updateMethod, String token) {
 		OperationResult<String> opRslt = null;
 		try {
 			this.setUserToken(token);
-			if (data == null || data.getOriginalName().indexOf(".") < 0) {
+			if (data == null || data.getName().indexOf(".") < 0) {
 				throw new Exception(I18N.prop("msg_bobas_invalid_data"));
 			}
+			// 初始化工厂
+			initFactory();
 			// 创建转换者
-			String type = data.getOriginalName().substring(data.getOriginalName().lastIndexOf(".") + 1);
+			String type = data.getName().substring(data.getName().lastIndexOf(".") + 1);
 			if (type != null && type.equalsIgnoreCase("xlsm")) {
 				// 带宏的excel文件，识别为普通问
 				type = "xlsx";
 			}
 			type = String.format(FileTransformer.GROUP_TEMPLATE, type).toUpperCase();
 			IFileTransformer transformer = TransformerFactory.create().create(type);
-			if (transformer instanceof FileTransformerSerialization) {
-				((FileTransformerSerialization) transformer).setBOFactory(getBOFactory());
-			}
 			if (updateMethod == emDataUpdateMethod.MODIFY) {
 				// 更新时个别管理字段状态
 				if (transformer instanceof FileTransformer) {
@@ -216,19 +209,20 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			}
 			Logger.log(MessageLevel.DEBUG, MSG_TRANSFORMER_IMPORT_DATA, transformer.getClass().getName());
 			// 转换文件数据到业务对象
-			transformer.setInputData(new File(data.getLocation()));
+			transformer.setInputData(new File(data.getPath()));
 			transformer.transform();
+			Logger.log(MessageLevel.DEBUG, MSG_TRANSFORMER_IMPORT_DATA_SIZE, transformer.getOutputData().size());
 			boolean myTrans = this.beginTransaction();
 			try {
 				opRslt = new OperationResult<String>();
 				// 返回存储事务标记
 				opRslt.addInformations("IDENTIFY_DATA_COUNT", String.valueOf(transformer.getOutputData().size()),
 						"DATA_IMPORT");
-				opRslt.addInformations("REPOSITORY_TRANSACTION_ID", this.getRepository().getTransactionId(),
-						"DATA_IMPORT");
+				opRslt.addInformations("REPOSITORY_TRANSACTION_ID", this.getTransaction().getId(), "DATA_IMPORT");
 				// 保存业务对象
 				IBusinessObject newItem;
-				IOperationResult<?> opRsltExists, opRsltDelete, opRsltSave;
+				BusinessObject<?> newOne;
+				IOperationResult<IBusinessObject> opRsltExists, opRsltDelete, opRsltSave;
 				for (int j = 0; j < transformer.getOutputData().size(); j++) {
 					newItem = transformer.getOutputData().get(j);
 					try {
@@ -239,7 +233,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 							stringBuilder.append(" ");
 							stringBuilder.append("be imported data");
 							stringBuilder.append(System.getProperty("line.seperator", "\n"));
-							stringBuilder.append(newItem.toString("xml"));
+							stringBuilder.append(Strings.toXmlString(newItem));
 							Logger.log(MessageLevel.DEBUG, stringBuilder.toString());
 						}
 						// 导入的数据，源标记为I
@@ -260,69 +254,47 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 						// 判断对象是否存在
 						ICriteria criteria = newItem.getCriteria();
 						if (criteria != null && !criteria.getConditions().isEmpty()) {
-							opRsltExists = this.fetch(criteria, token, newItem.getClass());
+							opRsltExists = this.fetch(newItem.getClass(), criteria, token);
 							if (!opRsltExists.getResultObjects().isEmpty()) {
 								// 已存在数据
 								if (updateMethod == emDataUpdateMethod.REPLACE) {
 									// 替换数据（旧的删除，保存新的）
-									for (Object oldItem : opRsltExists.getResultObjects()) {
-										// 删除旧数据
-										if (oldItem instanceof IBusinessObject) {
-											IBusinessObject boItem = (IBusinessObject) oldItem;
-											boItem.delete();
-											opRsltDelete = this.save(boItem, token);
-											if (opRsltDelete.getError() != null) {
-												throw opRsltDelete.getError();
-											}
-											opRslt.addInformations("DELETED_EXISTS_DATA", boItem.toString(),
-													"DATA_IMPORT");
-										}
+									for (IBusinessObject oldItem : opRsltExists.getResultObjects()) {
 										// 主数据保存
 										if (oldItem instanceof IBOMasterData && newItem instanceof IBOMasterData) {
 											// 主数据则保留DocEntry值，否则丢失关联关系
-											IBOMasterData objMaster = (IBOMasterData) newItem;
-											IBOMasterData itemMaster = (IBOMasterData) oldItem;
+											IBOMasterData newMaster = (IBOMasterData) newItem;
+											IBOMasterData oldMaster = (IBOMasterData) oldItem;
 											// 对象信息复制
-											objMaster.setDocEntry(itemMaster.getDocEntry());
-											if (objMaster instanceof IBOStorageTag
-													&& itemMaster instanceof IBOStorageTag) {
-												IBOStorageTag objTag = (IBOStorageTag) objMaster;
-												IBOStorageTag itemTag = (IBOStorageTag) itemMaster;
-												objTag.setLogInst(itemTag.getLogInst());
-												objTag.setCreateActionId(itemTag.getCreateActionId());
-												objTag.setCreateDate(itemTag.getCreateDate());
-												objTag.setCreateTime(itemTag.getCreateTime());
-												objTag.setCreateUserSign(itemTag.getCreateUserSign());
-												objTag.setDataSource(itemTag.getDataSource());
-											}
-											if (objMaster instanceof ITrackStatusOperator) {
-												ITrackStatusOperator objOptor = (ITrackStatusOperator) objMaster;
-												objOptor.markOld();
-												objOptor.markDirty();
+											newMaster.setDocEntry(oldMaster.getDocEntry());
+											DataConvert.tagsOf(newMaster, oldMaster);
+											if (newMaster instanceof BusinessObject<?>) {
+												newOne = (BusinessObject<?>) newMaster;
+												newOne.markOld();
+												newOne.markDirty();
 											}
 										} else if (oldItem instanceof IBOMasterDataLine
 												&& newItem instanceof IBOMasterDataLine) {
 											// 主数据行保留LineId值，否则丢失关联关系
-											IBOMasterDataLine objMaster = (IBOMasterDataLine) newItem;
-											IBOMasterDataLine itemMaster = (IBOMasterDataLine) oldItem;
+											IBOMasterDataLine newMaster = (IBOMasterDataLine) newItem;
+											IBOMasterDataLine oldMaster = (IBOMasterDataLine) oldItem;
 											// 对象信息复制
-											objMaster.setLineId(itemMaster.getLineId());
-											if (objMaster instanceof IBOStorageTag
-													&& itemMaster instanceof IBOStorageTag) {
-												IBOStorageTag objTag = (IBOStorageTag) objMaster;
-												IBOStorageTag itemTag = (IBOStorageTag) itemMaster;
-												objTag.setLogInst(itemTag.getLogInst());
-												objTag.setCreateActionId(itemTag.getCreateActionId());
-												objTag.setCreateDate(itemTag.getCreateDate());
-												objTag.setCreateTime(itemTag.getCreateTime());
-												objTag.setCreateUserSign(itemTag.getCreateUserSign());
-												objTag.setDataSource(itemTag.getDataSource());
+											newMaster.setLineId(oldMaster.getLineId());
+											DataConvert.tagsOf(newMaster, oldMaster);
+											if (newMaster instanceof BusinessObject<?>) {
+												newOne = (BusinessObject<?>) newMaster;
+												newOne.markOld();
+												newOne.markDirty();
 											}
-											if (objMaster instanceof ITrackStatusOperator) {
-												ITrackStatusOperator objOptor = (ITrackStatusOperator) objMaster;
-												objOptor.markOld();
-												objOptor.markDirty();
+										} else {
+											// 删除旧数据
+											oldItem.delete();
+											opRsltDelete = this.save(oldItem, token);
+											if (opRsltDelete.getError() != null) {
+												throw opRsltDelete.getError();
 											}
+											opRslt.addInformations("DELETED_EXISTS_DATA", oldItem.toString(),
+													"DATA_IMPORT");
 										}
 									}
 								} else if (updateMethod == emDataUpdateMethod.MODIFY) {
@@ -346,6 +318,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 											// 开始匹配
 											boolean matched;
 											IFieldData oldField = null;
+											IFieldData newField = null;
 											IManagedFields oldFields = null;
 											for (Object oldData : oldDatas) {
 												if (oldData == null) {
@@ -356,13 +329,13 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 												}
 												matched = true;
 												oldFields = (IManagedFields) oldData;
-												for (IFieldData keyField : newKeys) {
-													oldField = oldFields.getField(keyField.getName());
+												for (IFieldData item : newKeys) {
+													oldField = oldFields.getField(item.getName());
 													if (oldField != null) {
-														if (keyField.getValue() == oldField.getValue()) {
+														if (item.getValue() == oldField.getValue()) {
 															continue;
 														}
-														if (String.valueOf(keyField.getValue())
+														if (String.valueOf(item.getValue())
 																.equals(String.valueOf(oldField.getValue()))) {
 															continue;
 														}
@@ -373,52 +346,49 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 												// 找匹配的数据
 												if (matched) {
 													// 同步主键
-													if (newFields instanceof IBOMasterData) {
-														((IBOMasterData) newFields)
-																.setDocEntry(((IBOMasterData) oldFields).getDocEntry());
-													} else if (newFields instanceof IBODocument) {
-														((IBODocument) newFields)
-																.setDocEntry(((IBODocument) oldFields).getDocEntry());
-													} else if (newFields instanceof IBOSimple) {
-														((IBOSimple) newFields)
-																.setObjectKey(((IBOSimple) oldFields).getObjectKey());
-													} else if (newFields instanceof IBOLine) {
-														((IBOLine) newFields)
-																.setLineId(((IBOLine) oldFields).getLineId());
+													for (IFieldData item : oldFields.getFields(c -> c.isPrimaryKey())) {
+														newField = newFields.getField(item.getName());
+														if (newField != null) {
+															newField.setValue(item.getValue());
+														}
 													}
-													for (IFieldData newField : newFields.getFields()) {
-														if (newField.getValue() == null) {
+													DataConvert.tagsOf(newFields, oldFields);
+
+													for (IFieldData item : newFields.getFields()) {
+														if (!item.isSavable()) {
 															continue;
 														}
-														if (newField.getValue() instanceof IBusinessObjectsBase<?>) {
+														if (item.isPrimaryKey()) {
+															continue;
+														}
+														if (item.isUniqueKey()) {
+															continue;
+														}
+														if (!item.isDirty()) {
+															continue;
+														}
+														if (item.getValue() instanceof IBusinessObjects) {
 															// 是数组，则子项比较
-															oldField = oldFields.getField(newField.getName());
+															oldField = oldFields.getField(item.getName());
 															if (oldField != null && oldField
-																	.getValue() instanceof IBusinessObjectsBase<?>) {
-																for (IBusinessObjectBase newItem : ((IBusinessObjectsBase<?>) newField
+																	.getValue() instanceof IBusinessObjects<?, ?>) {
+																for (IBusinessObject newItem : ((IBusinessObjects<?, ?>) item
 																		.getValue())) {
 																	if (this.apply(newItem,
-																			((IBusinessObjectsBase<?>) oldField
+																			((IBusinessObjects<?, ?>) oldField
 																					.getValue()).toArray()) == null) {
 																		// 子项未匹配到，则添加
-																		((IBusinessObjectsBase<IBusinessObjectBase>) oldField
+																		((IBusinessObjects<IBusinessObject, ?>) oldField
 																				.getValue()).add(newItem);
 																	}
 																}
 															}
 															continue;
-														} else if (!newField.isSavable()) {
-															// 非保存退出
-															continue;
 														}
 														// 替换原值
-														oldField = oldFields.getField(newField.getName());
+														oldField = oldFields.getField(item.getName());
 														if (oldField != null) {
-															oldField.setValue(newField.getValue());
-															if (((IBusinessObject) oldData).isDirty() == false
-																	&& oldData instanceof ITrackStatusOperator) {
-																((ITrackStatusOperator) oldData).markDirty();
-															}
+															oldField.setValue(item.getValue());
 														}
 													}
 													return oldData;
@@ -436,6 +406,11 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 								} else {
 									// 跳过已存在数据
 									continue;
+								}
+							} else {
+								// 未查到，则新建
+								if (newItem instanceof BusinessObject) {
+									((BusinessObject<?>) newItem).markNew();
 								}
 							}
 						}
@@ -472,23 +447,23 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 		return opRslt;
 	}
 
-	public IOperationResult<String> importData(FileData data) {
+	public IOperationResult<String> importData(FileItem data) {
 		return this.importData(data, emDataUpdateMethod.SKIP);
 	}
 
-	public IOperationResult<String> importData(FileData data, emDataUpdateMethod updateMethod) {
+	public IOperationResult<String> importData(FileItem data, emDataUpdateMethod updateMethod) {
 		return this.importData(data, updateMethod, this.getUserToken());
 	}
 
 	// --------------------------------------------------------------------------------------------//
 	@Override
-	public IOperationResult<FileData> exportData(DataExportInfo info) {
+	public IOperationResult<FileItem> exportData(DataExportInfo info) {
 		return this.exportData(info, this.getUserToken());
 	}
 
 	@Override
-	public OperationResult<FileData> exportData(DataExportInfo info, String token) {
-		OperationResult<FileData> opRslt = new OperationResult<FileData>();
+	public OperationResult<FileItem> exportData(DataExportInfo info, String token) {
+		OperationResult<FileItem> opRslt = new OperationResult<FileItem>();
 		try {
 			this.setUserToken(token);
 			// 获取导出的模板
@@ -507,7 +482,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 					throw new Exception(I18N.prop("msg_bobas_invaild_criteria"));
 				}
 				// 获取导出的对象类型
-				Class<?> boType = getBOFactory().getClass(criteria.getBusinessObject());
+				Class<?> boType = BOFactory.classOf(criteria.getBusinessObject());
 				if (boType == null) {
 					throw new Exception(I18N.prop("msg_ie_not_found_class", criteria.getBusinessObject()));
 				}
@@ -519,9 +494,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 					}
 				} else {
 					// 查询并返回数据
-					@SuppressWarnings("unchecked")
-					IOperationResult<IBusinessObject> opRsltFetch = this.fetch(criteria, token,
-							(Class<IBusinessObject>) boType);
+					IOperationResult<IBusinessObject> opRsltFetch = this.fetch(boType, criteria, token);
 					if (opRsltFetch.getError() != null) {
 						throw opRsltFetch.getError();
 					}
@@ -534,10 +507,10 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 					throw new Exception(I18N.prop("msg_ie_no_transformed_data"));
 				}
 				Logger.log(MessageLevel.DEBUG, MSG_TRANSFORMER_EXPORT_DATA_TO_FILE, file.getPath());
-				FileData fileData = new FileData();
-				fileData.setFileName(file.getName());
-				fileData.setLocation(file.getPath());
-				opRslt.addResultObjects(fileData);
+				FileItem fileItem = new FileItem();
+				fileItem.setName(file.getName());
+				fileItem.setPath(file.getPath());
+				opRslt.addResultObjects(fileItem);
 			} else if (transformer instanceof ITemplateTransformer) {
 				ICriteria criteria = new Criteria();
 				ICondition condition = criteria.getConditions().create();
@@ -564,13 +537,13 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 					throw new Exception(I18N.prop("msg_ie_no_transformed_data"));
 				}
 				Logger.log(MessageLevel.DEBUG, MSG_TRANSFORMER_EXPORT_DATA_TO_FILE, file.getPath());
-				FileData fileData = new FileData();
-				fileData.setFileName(file.getName());
-				fileData.setLocation(file.getPath());
-				opRslt.addResultObjects(fileData);
+				FileItem fileItem = new FileItem();
+				fileItem.setName(file.getName());
+				fileItem.setPath(file.getPath());
+				opRslt.addResultObjects(fileItem);
 			}
 		} catch (Exception e) {
-			opRslt = new OperationResult<FileData>(e);
+			opRslt = new OperationResult<FileItem>(e);
 			Logger.log(e);
 		}
 		return opRslt;

@@ -3,7 +3,6 @@ package org.colorcoding.ibas.importexport.service.rest;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -22,22 +21,21 @@ import javax.ws.rs.core.Response;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.OperationResult;
-import org.colorcoding.ibas.bobas.data.DataConvert;
-import org.colorcoding.ibas.bobas.data.FileData;
+import org.colorcoding.ibas.bobas.common.Strings;
+import org.colorcoding.ibas.bobas.data.FileItem;
 import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.message.MessageLevel;
 import org.colorcoding.ibas.bobas.repository.jersey.FileRepositoryService;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
-import org.colorcoding.ibas.bobas.serialization.ISerializerManager;
-import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
+import org.colorcoding.ibas.bobas.serialization.SerializationFactory;
 import org.colorcoding.ibas.importexport.MyConfiguration;
+import org.colorcoding.ibas.importexport.data.DataConvert;
 import org.colorcoding.ibas.importexport.data.DataExportInfo;
 import org.colorcoding.ibas.importexport.data.DataWrapping;
 import org.colorcoding.ibas.importexport.data.emDataUpdateMethod;
 import org.colorcoding.ibas.importexport.repository.BORepositoryImportExport;
 import org.colorcoding.ibas.importexport.transformer.FileTransformer;
-import org.colorcoding.ibas.importexport.transformer.FileTransformerSerialization;
 import org.colorcoding.ibas.importexport.transformer.IFileTransformer;
 import org.colorcoding.ibas.importexport.transformer.TransformerFactory;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -49,7 +47,7 @@ public class FileService extends FileRepositoryService {
 	public final static String CONFIG_ITEM_IMPORT_WORK_FOLDER = "ImportWorkFolder";
 
 	public FileService() {
-		this.getRepository().setRepositoryFolder(
+		this.setRepositoryFolder(
 				MyConfiguration.getConfigValue(CONFIG_ITEM_IMPORT_WORK_FOLDER, MyConfiguration.getTempFolder()));
 	}
 
@@ -57,7 +55,7 @@ public class FileService extends FileRepositoryService {
 	@Path("upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public OperationResult<FileData> upload(FormDataMultiPart formData,
+	public OperationResult<FileItem> upload(FormDataMultiPart formData,
 			@HeaderParam("authorization") String authorization, @QueryParam("token") String token) {
 		return super.save(formData.getField("file"), MyConfiguration.optToken(authorization, token));
 	}
@@ -72,7 +70,7 @@ public class FileService extends FileRepositoryService {
 		try {
 			// 处理请求参数
 			token = MyConfiguration.optToken(authorization, token);
-			OperationResult<FileData> opRsltFile = null;
+			OperationResult<FileItem> opRsltFile = null;
 			emDataUpdateMethod updateMethod = emDataUpdateMethod.SKIP;
 			for (List<FormDataBodyPart> bodyParts : formData.getFields().values()) {
 				for (FormDataBodyPart bodyPart : bodyParts) {
@@ -83,7 +81,7 @@ public class FileService extends FileRepositoryService {
 						}
 					} else if ("updateMethod".equalsIgnoreCase(bodyPart.getName())) {
 						String value = bodyPart.getValue();
-						if (!DataConvert.isNullOrEmpty(value)) {
+						if (!Strings.isNullOrEmpty(value)) {
 							updateMethod = DataConvert.convert(emDataUpdateMethod.class, value.toUpperCase());
 						}
 					}
@@ -93,17 +91,18 @@ public class FileService extends FileRepositoryService {
 				throw new Exception(I18N.prop("msg_ie_invaild_data"));
 			}
 			// 导入文件
-			BORepositoryImportExport boRepository = new BORepositoryImportExport();
-			boRepository.setUserToken(token);
-			opRslt = new OperationResult<String>();
-			for (FileData data : opRsltFile.getResultObjects()) {
-				IOperationResult<String> opRsltImport = boRepository.importData(data, updateMethod);
-				if (opRsltImport.getError() != null) {
-					throw opRsltImport.getError();
+			try (BORepositoryImportExport boRepository = new BORepositoryImportExport()) {
+				boRepository.setUserToken(token);
+				opRslt = new OperationResult<String>();
+				for (FileItem data : opRsltFile.getResultObjects()) {
+					IOperationResult<String> opRsltImport = boRepository.importData(data, updateMethod);
+					if (opRsltImport.getError() != null) {
+						throw opRsltImport.getError();
+					}
+					// 记录结果
+					opRslt.addResultObjects(opRsltImport.getResultObjects());
+					opRslt.addInformations(opRsltImport.getInformations());
 				}
-				// 记录结果
-				opRslt.addResultObjects(opRsltImport.getResultObjects());
-				opRslt.addInformations(opRsltImport.getInformations());
 			}
 		} catch (Exception e) {
 			opRslt = new OperationResult<String>(e);
@@ -121,35 +120,31 @@ public class FileService extends FileRepositoryService {
 		try {
 			opRslt = new OperationResult<DataWrapping>();
 			// 保存文件
-			OperationResult<FileData> opRsltFile = super.save(formData.getField("file"),
+			OperationResult<FileItem> opRsltFile = super.save(formData.getField("file"),
 					MyConfiguration.optToken(authorization, token));
 			if (opRsltFile.getError() != null) {
 				throw opRsltFile.getError();
 			}
 			// 解析文件
 			IFileTransformer transformer;
-			ISerializer<?> serializer = SerializerFactory.create().createManager().create(ISerializerManager.TYPE_JSON);
-			for (FileData data : opRsltFile.getResultObjects()) {
+			ISerializer serializer = SerializationFactory.createManager().create(SerializationFactory.TYPE_JSON);
+			for (FileItem data : opRsltFile.getResultObjects()) {
 				try {
-					if (data == null || data.getOriginalName().indexOf(".") < 0) {
+					if (data == null || data.getName().indexOf(".") < 0) {
 						throw new Exception(I18N.prop("msg_bobas_invalid_data"));
 					}
 					// 创建转换者
-					String type = data.getOriginalName().substring(data.getOriginalName().lastIndexOf(".") + 1);
+					String type = data.getName().substring(data.getName().lastIndexOf(".") + 1);
 					if (type != null && type.equalsIgnoreCase("xlsm")) {
 						// 带宏的excel文件，识别为普通问
 						type = "xlsx";
 					}
 					type = String.format(FileTransformer.GROUP_TEMPLATE, type).toUpperCase();
 					transformer = TransformerFactory.create().create(type);
-					if (transformer instanceof FileTransformerSerialization) {
-						((FileTransformerSerialization) transformer)
-								.setBOFactory(BORepositoryImportExport.getBOFactory());
-					}
 					Logger.log(MessageLevel.DEBUG, BORepositoryImportExport.MSG_TRANSFORMER_IMPORT_DATA,
 							transformer.getClass().getName());
 					// 转换文件数据到业务对象
-					transformer.setInputData(new File(data.getLocation()));
+					transformer.setInputData(new File(data.getPath()));
 					transformer.transform();
 					for (IBusinessObject object : transformer.getOutputData()) {
 						ByteArrayOutputStream writer = new ByteArrayOutputStream();
@@ -195,7 +190,7 @@ public class FileService extends FileRepositoryService {
 			@HeaderParam("authorization") String authorization, @QueryParam("token") String token) {
 		try {
 			// 获取导出的文件
-			ISerializer<?> serializer = SerializerFactory.create().createManager().create("json");
+			ISerializer serializer = SerializationFactory.createManager().create("json");
 			DataExportInfo info = new DataExportInfo();
 			for (Method method : DataExportInfo.class.getMethods()) {
 				if (method.getParameterCount() != 1) {
@@ -230,26 +225,24 @@ public class FileService extends FileRepositoryService {
 			token = MyConfiguration.optToken(authorization, token);
 			BORepositoryImportExport boRepository = new BORepositoryImportExport();
 			boRepository.setUserToken(token);
-			IOperationResult<FileData> opRsltExport = boRepository.exportData(info);
+			IOperationResult<FileItem> opRsltExport = boRepository.exportData(info);
 			if (opRsltExport.getError() != null) {
 				throw new WebApplicationException(
 						Response.status(500).type(MediaType.APPLICATION_JSON).entity(opRsltExport).build());
 			}
-			FileData fileData = opRsltExport.getResultObjects().firstOrDefault();
-			if (fileData != null) {
+			FileItem fileItem = opRsltExport.getResultObjects().firstOrDefault();
+			if (fileItem != null) {
 				// 数据存在，尝试转为字节数组
 				// 为文件命名
-				response.setHeader("Content-Disposition",
-						String.format("attachment;filename=%s", fileData.getFileName()));
+				response.setHeader("Content-Disposition", String.format("attachment;filename=%s", fileItem.getName()));
 				// 设置内容类型
 				if (info.getContentType() != null && !info.getContentType().isEmpty()) {
 					response.setContentType(info.getContentType());
 				} else {
 					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 				}
-				OutputStream os = response.getOutputStream();
-				os.write(fileData.getFileBytes());
-				os.flush();
+				fileItem.writeTo(response.getOutputStream());
+				response.getOutputStream().flush();
 			} else {
 				// 无效的导出数据
 				throw new WebApplicationException(500);

@@ -2,7 +2,7 @@ package org.colorcoding.ibas.importexport.repository;
 
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
-import org.colorcoding.ibas.bobas.data.FileData;
+import org.colorcoding.ibas.bobas.data.FileItem;
 import org.colorcoding.ibas.bobas.repository.IBORepositoryApplication;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplate;
 import org.colorcoding.ibas.importexport.data.DataExportInfo;
@@ -20,7 +20,7 @@ public interface IBORepositoryImportExportApp extends IBORepositoryApplication {
 	 * @param data 数据
 	 * @return 操作结果
 	 */
-	IOperationResult<String> importData(FileData data);
+	IOperationResult<String> importData(FileItem data);
 
 	/**
 	 * 导入数据
@@ -29,7 +29,7 @@ public interface IBORepositoryImportExportApp extends IBORepositoryApplication {
 	 * @param update 是否更新
 	 * @return
 	 */
-	IOperationResult<String> importData(FileData data, emDataUpdateMethod updateMethod);
+	IOperationResult<String> importData(FileItem data, emDataUpdateMethod updateMethod);
 
 	/**
 	 * 导出数据
@@ -37,7 +37,7 @@ public interface IBORepositoryImportExportApp extends IBORepositoryApplication {
 	 * @param info 参数
 	 * @return 操作结果
 	 */
-	IOperationResult<FileData> exportData(DataExportInfo info);
+	IOperationResult<FileItem> exportData(DataExportInfo info);
 
 	/**
 	 * 获取业务对象schema

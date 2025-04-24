@@ -2,6 +2,8 @@ package org.colorcoding.ibas.importexport.data;
 
 import java.math.BigDecimal;
 
+import org.colorcoding.ibas.bobas.bo.IBOStorageTag;
+
 /**
  * 数据转换
  * 
@@ -111,5 +113,22 @@ public class DataConvert extends org.colorcoding.ibas.bobas.data.DataConvert {
 			sb.append(CN_FULL);
 		}
 		return sb.toString();
+	}
+
+	public static void tagsOf(Object target, Object source) {
+		if (!(target instanceof IBOStorageTag)) {
+			return;
+		}
+		if (!(source instanceof IBOStorageTag)) {
+			return;
+		}
+		IBOStorageTag sourceTag = (IBOStorageTag) source;
+		IBOStorageTag targetTag = (IBOStorageTag) target;
+		targetTag.setLogInst(sourceTag.getLogInst());
+		targetTag.setCreateActionId(sourceTag.getCreateActionId());
+		targetTag.setCreateDate(sourceTag.getCreateDate());
+		targetTag.setCreateTime(sourceTag.getCreateTime());
+		targetTag.setCreateUserSign(sourceTag.getCreateUserSign());
+		targetTag.setDataSource(sourceTag.getDataSource());
 	}
 }

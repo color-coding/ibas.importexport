@@ -38,24 +38,25 @@ public class TestTransformer extends TestCase {
 		ISort sort = criteria.getSorts().create();
 		sort.setAlias(ExportTemplate.PROPERTY_OBJECTKEY.getName());
 		sort.setSortType(SortType.DESCENDING);
-		BORepositoryImportExport boRepository = new BORepositoryImportExport();
-		boRepository.setUserToken(OrganizationFactory.SYSTEM_USER.getToken());
-		IOperationResult<IExportTemplate> opRstl = boRepository.fetchExportTemplate(criteria);
-		if (opRstl.getError() != null) {
-			throw opRstl.getError();
-		}
+		try (BORepositoryImportExport boRepository = new BORepositoryImportExport()) {
+			boRepository.setUserToken(OrganizationFactory.SYSTEM_USER.getToken());
+			IOperationResult<IExportTemplate> opRstl = boRepository.fetchExportTemplate(criteria);
+			if (opRstl.getError() != null) {
+				throw opRstl.getError();
+			}
 
-		TransformerHtml transformer = new TransformerHtml();
-		transformer.setTemplate(opRstl.getResultObjects().firstOrDefault());
-		transformer.setInputData(new FileInputStream(
-				String.format("%s%stest_salesquote.json", MyConfiguration.getWorkFolder(), File.separator)));
-		transformer.setWorkFolder(MyConfiguration.getWorkFolder());
-		transformer.transform();
-		for (File item : transformer.getOutputData()) {
-			File file = new File(String.format("%s%sout.html", item.getParentFile().getPath(), File.separator));
-			file.delete();
-			item.renameTo(file);
-			System.out.println(String.format("out: %s", file.getPath()));
+			TransformerHtml transformer = new TransformerHtml();
+			transformer.setTemplate(opRstl.getResultObjects().firstOrDefault());
+			transformer.setInputData(new FileInputStream(
+					String.format("%s%stest_salesquote.json", MyConfiguration.getWorkFolder(), File.separator)));
+			transformer.setWorkFolder(MyConfiguration.getWorkFolder());
+			transformer.transform();
+			for (File item : transformer.getOutputData()) {
+				File file = new File(String.format("%s%sout.html", item.getParentFile().getPath(), File.separator));
+				file.delete();
+				item.renameTo(file);
+				System.out.println(String.format("out: %s", file.getPath()));
+			}
 		}
 	}
 

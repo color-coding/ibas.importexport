@@ -15,7 +15,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.colorcoding.ibas.bobas.data.DateTime;
+import org.colorcoding.ibas.bobas.common.DateTimes;
 import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
@@ -181,7 +181,7 @@ public class TransformerHtml extends TemplateTransformer {
 	 */
 	protected void init() throws TransformException {
 		// 初始变量值
-		this.newParam(PARAM_TIME_NOW, DateTime.getNow());
+		this.newParam(PARAM_TIME_NOW, DateTimes.now());
 		this.newParam(PARAM_DATA_INDEX, 0);
 		// 获取数据长度
 		int size = 0;

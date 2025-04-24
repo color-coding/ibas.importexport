@@ -3,6 +3,7 @@ package org.colorcoding.ibas.importexport.excel;
 import java.io.File;
 
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
+import org.colorcoding.ibas.bobas.common.Strings;
 import org.colorcoding.ibas.importexport.MyConfiguration;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.ExportTemplate;
 import org.colorcoding.ibas.importexport.transformer.ExcelTransformer;
@@ -32,7 +33,7 @@ public class TestTransformer extends TestCase {
 		transformer.transform();
 		System.out.println(String.format("got bo: %s", transformer.getOutputData().size()));
 		for (IBusinessObject item : transformer.getOutputData()) {
-			System.out.println(item.toString("json"));
+			System.out.println(Strings.toJsonString(item));
 		}
 	}
 }

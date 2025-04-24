@@ -23,9 +23,12 @@ import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler.SheetContentsHandler;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.colorcoding.ibas.bobas.common.DateTimes;
+import org.colorcoding.ibas.bobas.common.Decimals;
+import org.colorcoding.ibas.bobas.common.Numbers;
+import org.colorcoding.ibas.bobas.common.Strings;
 import org.colorcoding.ibas.bobas.data.DataConvert;
 import org.colorcoding.ibas.bobas.data.DateTime;
-import org.colorcoding.ibas.bobas.data.Decimal;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -377,7 +380,7 @@ public class ExcelReaderEx extends FileReader implements SheetContentsHandler {
 				if (sheetCell == null) {
 					continue;
 				}
-				if (DataConvert.isNullOrEmpty(sheetCell.value)) {
+				if (Strings.isNullOrEmpty(sheetCell.value)) {
 					continue;
 				}
 				try {
@@ -390,18 +393,18 @@ public class ExcelReaderEx extends FileReader implements SheetContentsHandler {
 						dataCell = this.createCell(property, this.currentRow, DataConvert
 								.convert(property.getBindingClass(), Math.round(Double.valueOf(sheetCell.value))));
 					} else if (property.getBindingClass() == DateTime.class) {
-						if (DataConvert.isNumeric(sheetCell.value)) {
+						if (Numbers.isNumeric(sheetCell.value)) {
 							dataCell = this.createCell(property, this.currentRow,
-									DateTime.valueOf(HSSFDateUtil.getJavaDate(Double.valueOf(sheetCell.value))));
+									DateTimes.valueOf(HSSFDateUtil.getJavaDate(Double.valueOf(sheetCell.value))));
 						} else {
-							dataCell = this.createCell(property, this.currentRow, DateTime.valueOf(sheetCell.value));
+							dataCell = this.createCell(property, this.currentRow, DateTimes.valueOf(sheetCell.value));
 						}
 					} else if (property.getBindingClass() == String.class) {
 						dataCell = this.createCell(property, this.currentRow, sheetCell.value);
 					} else if (property.getBindingClass() == BigDecimal.class) {
 						if (sheetCell.value != null && sheetCell.value.endsWith("%")) {
 							dataCell = this.createCell(property, this.currentRow,
-									Decimal.valueOf(sheetCell.value.replace("%", "")).divide(Decimal.valueOf("100")));
+									Decimals.valueOf(sheetCell.value.replace("%", "")).divide(Decimals.valueOf("100")));
 						} else {
 							dataCell = this.createCell(property, this.currentRow,
 									DataConvert.convert(property.getBindingClass(), sheetCell.value));

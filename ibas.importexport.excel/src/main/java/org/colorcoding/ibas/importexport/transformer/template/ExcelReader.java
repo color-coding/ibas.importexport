@@ -13,6 +13,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.colorcoding.ibas.bobas.common.DateTimes;
+import org.colorcoding.ibas.bobas.common.Strings;
 import org.colorcoding.ibas.bobas.data.DataConvert;
 import org.colorcoding.ibas.bobas.data.DateTime;
 
@@ -314,17 +316,18 @@ public class ExcelReader extends FileReader {
 									)) {
 								// 字符串类型时，判断下单元格是否是日期类型
 								dataCell = this.createCell(property, sheetRow.getRowNum(),
-										sheetCell.getNumericCellValue() == 0 ? DataConvert.STRING_VALUE_EMPTY
-												: DateTime.valueOf(sheetCell.getDateCellValue()).toString());
+										sheetCell.getNumericCellValue() == 0 ? Strings.VALUE_EMPTY
+												: DateTimes.valueOf(sheetCell.getDateCellValue()).toString());
 							} else {
 								dataCell = this.createCell(property, sheetRow.getRowNum(), DataConvert
 										.convert(property.getBindingClass(), sheetCell.getNumericCellValue()));
 							}
 						} else if (cellType == CellType.STRING) {
 							String value = sheetCell.getStringCellValue();
-							if (!DataConvert.isNullOrEmpty(value)) {
+							if (!Strings.isNullOrEmpty(value)) {
 								if (property.getBindingClass() == DateTime.class) {
-									dataCell = this.createCell(property, sheetRow.getRowNum(), DateTime.valueOf(value));
+									dataCell = this.createCell(property, sheetRow.getRowNum(),
+											DateTimes.valueOf(value));
 								} else {
 									dataCell = this.createCell(property, sheetRow.getRowNum(),
 											DataConvert.convert(property.getBindingClass(), value));

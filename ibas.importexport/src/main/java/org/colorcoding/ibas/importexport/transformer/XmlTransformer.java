@@ -7,11 +7,12 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.colorcoding.ibas.bobas.bo.BOFactory;
 import org.colorcoding.ibas.bobas.data.ArrayList;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.message.MessageLevel;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
-import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
+import org.colorcoding.ibas.bobas.serialization.SerializationFactory;
 import org.colorcoding.ibas.importexport.MyConfiguration;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -31,8 +32,8 @@ public class XmlTransformer extends FileTransformerSerialization {
 	protected final static String NODE_BO_CODE_NAME = "ObjectCode";
 
 	@Override
-	protected ISerializer<?> createSerializer() {
-		return SerializerFactory.create().createManager().create(TYPE_NAME);
+	protected ISerializer createSerializer() {
+		return SerializationFactory.createManager().create(TYPE_NAME);
 	}
 
 	@Override
@@ -52,7 +53,7 @@ public class XmlTransformer extends FileTransformerSerialization {
 					continue;
 				}
 				boCode = MyConfiguration.applyVariables(boCode);
-				Class<?> boType = this.getBOFactory().getClass(boCode);
+				Class<?> boType = BOFactory.classOf(boCode);
 				if (boType == null) {
 					Logger.log(MessageLevel.WARN, "transformer: [%s] not found [%s]'s class.",
 							this.getClass().getSimpleName(), boCode);

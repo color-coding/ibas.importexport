@@ -5,16 +5,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
+import org.colorcoding.ibas.bobas.bo.BusinessObjectUnit;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.common.Criteria;
+import org.colorcoding.ibas.bobas.common.DateTimes;
 import org.colorcoding.ibas.bobas.common.ICondition;
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
-import org.colorcoding.ibas.bobas.data.DateTime;
 import org.colorcoding.ibas.bobas.i18n.I18N;
-import org.colorcoding.ibas.bobas.mapping.BusinessObjectUnit;
+import org.colorcoding.ibas.bobas.organization.InvalidAuthorizationException;
 import org.colorcoding.ibas.bobas.organization.OrganizationFactory;
-import org.colorcoding.ibas.bobas.repository.InvalidTokenException;
 import org.colorcoding.ibas.importexport.MyConfiguration;
 import org.colorcoding.ibas.importexport.transformer.template.Property;
 import org.colorcoding.ibas.importexport.transformer.template.ResolvingException;
@@ -53,14 +53,14 @@ public class TransformerExcel extends TransformerFile {
 			this.describing(template);
 			// 输出文件
 			File file = new File(this.getWorkFolder() + File.separator + template.getName() + "_"
-					+ DateTime.getNow().getTime() + "." + TYPE_NAME);
+					+ DateTimes.now().getTime() + "." + TYPE_NAME);
 			if (!file.getParentFile().exists()) {
 				file.mkdirs();
 			}
 			template.write(file);
 			this.setOutputData(new ArrayList<>());
 			this.getOutputData().add(file);
-		} catch (ResolvingException | InvalidTokenException | WriteFileException | IOException e) {
+		} catch (ResolvingException | InvalidAuthorizationException | WriteFileException | IOException e) {
 			throw new TransformException(e);
 		}
 	}
@@ -69,10 +69,10 @@ public class TransformerExcel extends TransformerFile {
 	 * 描述模板
 	 * 
 	 * @param template
-	 * @throws InvalidTokenException
+	 * @throws InvalidAuthorizationException
 	 * @throws Exception
 	 */
-	protected void describing(Template template) throws InvalidTokenException {
+	protected void describing(Template template) throws InvalidAuthorizationException {
 		if (template == null) {
 			return;
 		}
@@ -83,95 +83,97 @@ public class TransformerExcel extends TransformerFile {
 		}
 		ICriteria criteria = null;
 		IOperationResult<IBOInformation> opRslt = null;
-		BORepositoryInitialFantasyShell boRepository = new BORepositoryInitialFantasyShell();
-		boRepository.setUserToken(OrganizationFactory.SYSTEM_USER.getToken());
-		// 描述表头
-		criteria = new Criteria();
-		ICondition condition = criteria.getConditions().create();
-		condition.setAlias(BOInformation.PROPERTY_CODE.getName());
-		if (template.getHead().getCode() != null && !template.getHead().getCode().isEmpty()) {
-			// 查编码
-			condition.setValue(template.getHead().getCode());
-		} else {
-			// 查名称
-			condition.setValue(template.getHead().getName());
-		}
-		opRslt = boRepository.fetchBOInformation(criteria);
-		IBOInformation masterInfo = opRslt.getResultObjects().firstOrDefault();
-		if (masterInfo == null) {
-			// 未找到对象描述
-			return;
-		}
-		template.setDescription(masterInfo.getDescription());
-		template.getHead().setDescription(masterInfo.getDescription());
-		// 描述对象方法
-		Consumer<IBOInformation> describingObject = new Consumer<IBOInformation>() {
+		try (BORepositoryInitialFantasyShell boRepository = new BORepositoryInitialFantasyShell()) {
+			boRepository.setUserToken(OrganizationFactory.SYSTEM_USER.getToken());
+			// 描述表头
+			criteria = new Criteria();
+			ICondition condition = criteria.getConditions().create();
+			condition.setAlias(BOInformation.PROPERTY_CODE.getName());
+			if (template.getHead().getCode() != null && !template.getHead().getCode().isEmpty()) {
+				// 查编码
+				condition.setValue(template.getHead().getCode());
+			} else {
+				// 查名称
+				condition.setValue(template.getHead().getName());
+			}
+			opRslt = boRepository.fetchBOInformation(criteria);
+			IBOInformation masterInfo = opRslt.getResultObjects().firstOrDefault();
+			if (masterInfo == null) {
+				// 未找到对象描述
+				return;
+			}
+			template.setDescription(masterInfo.getDescription());
+			template.getHead().setDescription(masterInfo.getDescription());
+			// 描述对象方法
+			Consumer<IBOInformation> describingObject = new Consumer<IBOInformation>() {
 
-			@Override
-			public void accept(IBOInformation t) {
-				if (t == null) {
-					return;
-				}
-				for (org.colorcoding.ibas.importexport.transformer.template.Object object : template.getObjects()) {
-					if (object.getName().equals(t.getName())) {
-						object.setDescription(t.getDescription());
-						for (Property property : object.getProperties()) {
-							IBOPropertyInformation itemInfo = t.getBOPropertyInformations()
-									.firstOrDefault(c -> c.getPropertyName().equals(property.getName()));
-							if (itemInfo == null) {
-								itemInfo = t.getBOPropertyInformations()
-										.firstOrDefault(c -> c.getMapped().equals(property.getName()));
+				@Override
+				public void accept(IBOInformation t) {
+					if (t == null) {
+						return;
+					}
+					for (org.colorcoding.ibas.importexport.transformer.template.Object object : template.getObjects()) {
+						if (object.getName().equals(t.getName())) {
+							object.setDescription(t.getDescription());
+							for (Property property : object.getProperties()) {
+								IBOPropertyInformation itemInfo = t.getBOPropertyInformations()
+										.firstOrDefault(c -> c.getPropertyName().equals(property.getName()));
+								if (itemInfo == null) {
+									itemInfo = t.getBOPropertyInformations()
+											.firstOrDefault(c -> c.getMapped().equals(property.getName()));
+								}
+								if (itemInfo != null) {
+									property.setDescription(itemInfo.getDescription());
+									if (PROPERTY_DATATYPE_ALPHANUMERIC.equalsIgnoreCase(itemInfo.getDataType())) {
+										property.setDescription(String.format("%s (%d)", property.getDescription(),
+												itemInfo.getEditSize()));
+									}
+								}
 							}
+						} else if (object.getName().startsWith(t.getName())) {
+							String name = object.getName().substring(t.getName().length() + 1)
+									.replace(Template.PROPERTY_PATH_LIST_SIGN, "");
+							IBOPropertyInformation itemInfo = t.getBOPropertyInformations()
+									.firstOrDefault(c -> c.getPropertyName().equals(name));
 							if (itemInfo != null) {
-								property.setDescription(itemInfo.getDescription());
-								if (PROPERTY_DATATYPE_ALPHANUMERIC.equalsIgnoreCase(itemInfo.getDataType())) {
-									property.setDescription(String.format("%s (%d)", property.getDescription(),
-											itemInfo.getEditSize()));
+								// 对象定义的属性
+								ICriteria criteria = new Criteria();
+								ICondition condition = criteria.getConditions().create();
+								condition.setAlias(BOInformation.PROPERTY_CODE.getName());
+								condition.setValue(itemInfo.getMapped());
+								IBOInformation childInfo = boRepository.fetchBOInformation(criteria).getResultObjects()
+										.firstOrDefault();
+								if (childInfo != null) {
+									childInfo.setName(object.getName());
+									this.accept(childInfo);
+								}
+							} else {
+								// 对象没有定义的，按类名称查询
+								ICriteria criteria = new Criteria();
+								ICondition condition = criteria.getConditions().create();
+								try {
+									String code = object.getBindingClass().getAnnotation(BusinessObjectUnit.class)
+											.code();
+									condition.setAlias(BOInformation.PROPERTY_CODE.getName());
+									condition.setValue(MyConfiguration.applyVariables(code));
+								} catch (Exception e) {
+									condition.setAlias(BOInformation.PROPERTY_NAME.getName());
+									condition.setValue(object.getBindingClass().getSimpleName());
+								}
+								IBOInformation childInfo = boRepository.fetchBOInformation(criteria).getResultObjects()
+										.firstOrDefault();
+								if (childInfo != null) {
+									childInfo.setName(object.getName());
+									this.accept(childInfo);
 								}
 							}
 						}
-					} else if (object.getName().startsWith(t.getName())) {
-						String name = object.getName().substring(t.getName().length() + 1)
-								.replace(Template.PROPERTY_PATH_LIST_SIGN, "");
-						IBOPropertyInformation itemInfo = t.getBOPropertyInformations()
-								.firstOrDefault(c -> c.getPropertyName().equals(name));
-						if (itemInfo != null) {
-							// 对象定义的属性
-							ICriteria criteria = new Criteria();
-							ICondition condition = criteria.getConditions().create();
-							condition.setAlias(BOInformation.PROPERTY_CODE.getName());
-							condition.setValue(itemInfo.getMapped());
-							IBOInformation childInfo = boRepository.fetchBOInformation(criteria).getResultObjects()
-									.firstOrDefault();
-							if (childInfo != null) {
-								childInfo.setName(object.getName());
-								this.accept(childInfo);
-							}
-						} else {
-							// 对象没有定义的，按类名称查询
-							ICriteria criteria = new Criteria();
-							ICondition condition = criteria.getConditions().create();
-							try {
-								String code = object.getBindingClass().getAnnotation(BusinessObjectUnit.class).code();
-								condition.setAlias(BOInformation.PROPERTY_CODE.getName());
-								condition.setValue(MyConfiguration.applyVariables(code));
-							} catch (Exception e) {
-								condition.setAlias(BOInformation.PROPERTY_NAME.getName());
-								condition.setValue(object.getBindingClass().getSimpleName());
-							}
-							IBOInformation childInfo = boRepository.fetchBOInformation(criteria).getResultObjects()
-									.firstOrDefault();
-							if (childInfo != null) {
-								childInfo.setName(object.getName());
-								this.accept(childInfo);
-							}
-						}
 					}
-				}
 
-			}
-		};
-		describingObject.accept(masterInfo);
+				}
+			};
+			describingObject.accept(masterInfo);
+		}
 	}
 
 }
