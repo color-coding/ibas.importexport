@@ -11,7 +11,7 @@
         <!-- 配置项目-数据库地址 -->
         <add key="MasterDbServer" value="ibas-db-mssql" />
         <!-- 配置项目-数据库名称 -->
-        <add key="MasterDbName" value="ibas_demo" />
+        <add key="MasterDbName" value="ibas_demo_v2" />
         <!-- 配置项目-数据库用户名称 -->
         <add key="MasterDbUserID" value="sa" />
         <!-- 配置项目-数据库用户密码 -->
@@ -28,10 +28,6 @@
         <add key="OwnershipWay" value="initial" />
         <!-- 配置项目-配置方式 -->
         <add key="ConfigurationWay" value="initial" />
-        <!-- 配置项目-组织过期时间（建议600） -->
-        <add key="OrgManagerExpiry" value="-1" />
-        <!-- 配置项目-权限过期时间（建议120） -->
-        <add key="OwnJudgerExpiry" value="-1" />
         <!-- 配置项目-转换者工厂，多个时“;”分隔 -->
         <add key="TransformerFactory" value="JsonTransformer;XmlTransformer;ExcelTransformer;TransformerExcel;TransformerHtml;" />
         <!-- 配置项目-加载的业务对象命名空间，多个时“;”分隔 -->

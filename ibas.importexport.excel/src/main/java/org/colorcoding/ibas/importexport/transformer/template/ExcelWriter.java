@@ -32,10 +32,10 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.colorcoding.ibas.bobas.common.DateTimes;
+import org.colorcoding.ibas.bobas.common.Enums;
 import org.colorcoding.ibas.bobas.data.DateTime;
-import org.colorcoding.ibas.bobas.data.Decimal;
 import org.colorcoding.ibas.bobas.data.KeyValue;
-import org.colorcoding.ibas.importexport.data.DataConvert;
 
 /**
  * excel文件写入
@@ -222,11 +222,10 @@ public class ExcelWriter extends FileWriter {
 				if (dataCell.getValue() != null) {
 					if (dataCell.getParent().getBindingClass() == DateTime.class) {
 						// 日期类型值
-						if (!DateTime.MIN_VALUE.equals(dataCell.getValue())) {
+						if (!DateTimes.VALUE_MIN.equals(dataCell.getValue())) {
 							sheetCell.setCellValue((Date) dataCell.getValue());
 						}
-					} else if (dataCell.getParent().getBindingClass() == Decimal.class
-							|| dataCell.getParent().getBindingClass() == Float.class
+					} else if (dataCell.getParent().getBindingClass() == Float.class
 							|| dataCell.getParent().getBindingClass() == Double.class
 							|| dataCell.getParent().getBindingClass() == BigDecimal.class) {
 						// 小数类型
@@ -243,7 +242,7 @@ public class ExcelWriter extends FileWriter {
 						// 枚举类型
 						if (this.cellStyles == null || !this.cellStyles.containsKey(dataCell.getParent())) {
 							// 此列第一次初始化，设置枚举可选值
-							KeyValue[] values = DataConvert.toKeyValues(dataCell.getParent().getBindingClass());
+							KeyValue[] values = Enums.toKeyValues(dataCell.getParent().getBindingClass());
 							if (values.length > 0) {
 								Function<KeyValue[], String[]> toStrings = new Function<KeyValue[], String[]>() {
 
