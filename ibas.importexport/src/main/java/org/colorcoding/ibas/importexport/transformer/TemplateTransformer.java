@@ -7,14 +7,15 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.colorcoding.ibas.bobas.common.DateTimes;
+import org.colorcoding.ibas.bobas.common.Decimals;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
-import org.colorcoding.ibas.bobas.common.SqlQuery;
-import org.colorcoding.ibas.bobas.data.DateTime;
-import org.colorcoding.ibas.bobas.data.Decimal;
-import org.colorcoding.ibas.bobas.data.SingleValue;
-import org.colorcoding.ibas.bobas.message.Logger;
-import org.colorcoding.ibas.bobas.message.MessageLevel;
-import org.colorcoding.ibas.bobas.repository.BORepository4DbReadonly;
+import org.colorcoding.ibas.bobas.common.OperationResult;
+import org.colorcoding.ibas.bobas.data.IDataTable;
+import org.colorcoding.ibas.bobas.db.DbTransaction;
+import org.colorcoding.ibas.bobas.db.SqlStatement;
+import org.colorcoding.ibas.bobas.logging.Logger;
+import org.colorcoding.ibas.bobas.logging.LoggingLevel;
 import org.colorcoding.ibas.bobas.repository.BORepositoryService;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplate;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplateItem;
@@ -76,7 +77,7 @@ public abstract class TemplateTransformer extends Transformer<InputStream, File>
 			this.params = new HashMap<>();
 		}
 		this.params.put(name, value);
-		Logger.log(MessageLevel.DEBUG, "transformer: new param [%s], value [%s].", name, value);
+		Logger.log(LoggingLevel.DEBUG, "transformer: new param [%s], value [%s].", name, value);
 	}
 
 	/**
@@ -168,11 +169,11 @@ public abstract class TemplateTransformer extends Transformer<InputStream, File>
 			sIndex = format.indexOf("t");
 			if (sIndex > 0 && sIndex > pIndex) {
 				if (value instanceof String) {
-					value = DateTime.valueOf((String) value);
+					value = DateTimes.valueOf((String) value);
 				} else if (value instanceof Long) {
-					value = DateTime.valueOf((Long) value);
+					value = DateTimes.valueOf((Long) value);
 				} else if (value instanceof Integer) {
-					value = DateTime.valueOf(Long.valueOf(value.toString()));
+					value = DateTimes.valueOf(Long.valueOf(value.toString()));
 				}
 			}
 			// 整数类型转换
@@ -188,7 +189,7 @@ public abstract class TemplateTransformer extends Transformer<InputStream, File>
 			// 人民币转换
 			sIndex = format.indexOf("￥");
 			if (sIndex > 0 && sIndex > pIndex) {
-				value = DataConvert.toChineseYuan(Decimal.valueOf(value.toString()));
+				value = DataConvert.toChineseYuan(Decimals.valueOf(value.toString()));
 				format = format.replace("￥", "s");
 			}
 			// 字符串格式化
@@ -209,22 +210,40 @@ public abstract class TemplateTransformer extends Transformer<InputStream, File>
 		if (query == null || query.isEmpty()) {
 			return defaults;
 		}
-		try {
-			BORepository4DbReadonly boRepository = new BORepository4DbReadonly(
-					BORepositoryService.MASTER_REPOSITORY_SIGN);
-			IOperationResult<SingleValue> operationResult = boRepository.fetch(new SqlQuery(query));
+		try (BORepositoryQuery boRepository = new BORepositoryQuery()) {
+			IOperationResult<IDataTable> operationResult = boRepository.query(new SqlStatement(query));
 			if (operationResult.getError() != null) {
 				throw operationResult.getError();
 			}
-			SingleValue value = operationResult.getResultObjects().firstOrDefault();
-			if (value != null) {
-				return (T) value.getValue();
+			IDataTable table = operationResult.getResultObjects().firstOrDefault();
+			if (table != null) {
+				return (T) table.getRows().get(0).getValue(0);
 			}
 		} catch (Exception e) {
-			Logger.log(MessageLevel.WARN, e);
+			Logger.log(LoggingLevel.WARN, e);
 		}
 		return defaults;
 	}
 
 	protected abstract <T> T dataValue(String name, T defaults);
+
+	private class BORepositoryQuery extends BORepositoryService {
+
+		public IOperationResult<IDataTable> query(SqlStatement sqlStatement) {
+			try {
+				if (this.getTransaction() == null) {
+					this.connect();
+				}
+				if (this.getTransaction() instanceof DbTransaction) {
+					DbTransaction transaction = (DbTransaction) this.getTransaction();
+					return new OperationResult<IDataTable>().addResultObjects(transaction.fetch(sqlStatement));
+				} else {
+					return new OperationResult<>();
+				}
+			} catch (Exception e) {
+				return new OperationResult<>(e);
+			}
+		}
+
+	}
 }

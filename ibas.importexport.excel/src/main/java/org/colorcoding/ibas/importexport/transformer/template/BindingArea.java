@@ -2,8 +2,7 @@ package org.colorcoding.ibas.importexport.transformer.template;
 
 import java.math.BigDecimal;
 
-import org.colorcoding.ibas.bobas.core.BOFactory;
-import org.colorcoding.ibas.bobas.data.Decimal;
+import org.colorcoding.ibas.bobas.bo.BOFactory;
 
 public abstract class BindingArea<P extends Area<?>> extends Area<P> {
 
@@ -52,11 +51,11 @@ public abstract class BindingArea<P extends Area<?>> extends Area<P> {
 		if (bind == null || bind.isEmpty()) {
 			return false;
 		}
-		if (Decimal.class.getName().equals(bind)) {
+		if (bind.endsWith("Decimal")) {
 			// 兼容性，重新指定类型
 			bind = BigDecimal.class.getName();
 		}
-		Class<?> bindType = BOFactory.create().loadClass(bind);
+		Class<?> bindType = BOFactory.loadClass(bind);
 		if (type == null) {
 			return false;
 		}

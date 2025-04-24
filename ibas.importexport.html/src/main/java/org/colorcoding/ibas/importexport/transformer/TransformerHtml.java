@@ -15,11 +15,11 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.colorcoding.ibas.bobas.data.DateTime;
+import org.colorcoding.ibas.bobas.common.DateTimes;
 import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.bobas.i18n.I18N;
-import org.colorcoding.ibas.bobas.message.Logger;
-import org.colorcoding.ibas.bobas.message.MessageLevel;
+import org.colorcoding.ibas.bobas.logging.Logger;
+import org.colorcoding.ibas.bobas.logging.LoggingLevel;
 import org.colorcoding.ibas.importexport.MyConfiguration;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplateAppendix;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplateItem;
@@ -87,7 +87,7 @@ public class TransformerHtml extends TemplateTransformer {
 			if (value == null) {
 				return defaults;
 			}
-			Logger.log(MessageLevel.DEBUG, "transformer: data [%s], value [%s].", name, value);
+			Logger.log(LoggingLevel.DEBUG, "transformer: data [%s], value [%s].", name, value);
 			if (value instanceof Iterable) {
 				Double total = null;
 				for (Object item : (Iterable<Object>) value) {
@@ -109,7 +109,7 @@ public class TransformerHtml extends TemplateTransformer {
 			}
 			return (T) value;
 		} catch (Exception e) {
-			Logger.log(MessageLevel.WARN, e);
+			Logger.log(LoggingLevel.WARN, e);
 			return defaults;
 		}
 	}
@@ -181,7 +181,7 @@ public class TransformerHtml extends TemplateTransformer {
 	 */
 	protected void init() throws TransformException {
 		// 初始变量值
-		this.newParam(PARAM_TIME_NOW, DateTime.getNow());
+		this.newParam(PARAM_TIME_NOW, DateTimes.now());
 		this.newParam(PARAM_DATA_INDEX, 0);
 		// 获取数据长度
 		int size = 0;
@@ -351,7 +351,7 @@ public class TransformerHtml extends TemplateTransformer {
 			// 绘制页眉区域
 			String areaName = String.format("%s_header", pageName);
 			if (this.getTemplate().getPageHeaderHeight() > 0) {
-				Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
+				Logger.log(LoggingLevel.DEBUG, "transformer: draw area [%s].", areaName);
 				this.startDiv(writer, areaName, this.getTemplate().getPageHeaderLeft(),
 						this.getTemplate().getPageHeaderTop(), this.getTemplate().getPageHeaderWidth(),
 						this.getTemplate().getPageHeaderHeight());
@@ -364,7 +364,7 @@ public class TransformerHtml extends TemplateTransformer {
 				// 第一页绘制
 				areaName = String.format("%s_startsection", pageName);
 				if (this.getTemplate().getStartSectionHeight() > 0) {
-					Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
+					Logger.log(LoggingLevel.DEBUG, "transformer: draw area [%s].", areaName);
 					top += this.getTemplate().getMarginArea();
 					this.startDiv(writer, areaName, this.getTemplate().getStartSectionLeft(), top,
 							this.getTemplate().getStartSectionWidth(), this.getTemplate().getStartSectionHeight());
@@ -375,14 +375,14 @@ public class TransformerHtml extends TemplateTransformer {
 			}
 			// 绘制重复区域
 			areaName = String.format("%s_repetitions", pageName);
-			Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
+			Logger.log(LoggingLevel.DEBUG, "transformer: draw area [%s].", areaName);
 			int index = this.paramValue(PARAM_DATA_INDEX, 1), size = this.paramValue(PARAM_DATA_SIZE, 0);
 			for (int i = index; i <= size; i++) {
 				this.newParam(PARAM_DATA_INDEX, i);
 				if (i == index) {
 					areaName = String.format("%s_table", pageName);
 					top += this.getTemplate().getMarginArea();
-					Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
+					Logger.log(LoggingLevel.DEBUG, "transformer: draw area [%s].", areaName);
 					this.startDiv(writer, areaName, this.getTemplate().getRepetitionHeaderLeft(), top,
 							this.getTemplate().getRepetitionHeaderWidth(), -1);
 					this.startTable(writer, areaName, this.getTemplate().getRepetitionHeaders());
@@ -419,7 +419,7 @@ public class TransformerHtml extends TemplateTransformer {
 				// 最后一页绘制
 				areaName = String.format("%s_endsection", pageName);
 				if (this.getTemplate().getEndSectionHeight() > 0) {
-					Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
+					Logger.log(LoggingLevel.DEBUG, "transformer: draw area [%s].", areaName);
 					top += this.getTemplate().getMarginArea();
 					this.startDiv(writer, areaName, this.getTemplate().getEndSectionLeft(), top,
 							this.getTemplate().getEndSectionWidth(), this.getTemplate().getEndSectionHeight());
@@ -431,7 +431,7 @@ public class TransformerHtml extends TemplateTransformer {
 			// 绘制页脚区域
 			areaName = String.format("%s_footer", pageName);
 			if (this.getTemplate().getPageFooterHeight() > 0) {
-				Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
+				Logger.log(LoggingLevel.DEBUG, "transformer: draw area [%s].", areaName);
 				top += this.getTemplate().getMarginArea();
 				this.startDiv(writer, areaName, this.getTemplate().getPageFooterLeft(),
 						this.getTemplate().getPageFooterTop(), this.getTemplate().getPageFooterWidth(),
@@ -457,7 +457,7 @@ public class TransformerHtml extends TemplateTransformer {
 			// 绘制页眉区域
 			if (appendix.getPageHeader() == emYesNo.YES) {
 				areaName = String.format("%s_header", pageName);
-				Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
+				Logger.log(LoggingLevel.DEBUG, "transformer: draw area [%s].", areaName);
 				this.startDiv(writer, areaName, this.getTemplate().getPageHeaderLeft(),
 						this.getTemplate().getPageHeaderTop(), this.getTemplate().getPageHeaderWidth(),
 						this.getTemplate().getPageHeaderHeight());
@@ -466,7 +466,7 @@ public class TransformerHtml extends TemplateTransformer {
 			}
 			// 绘制附录
 			areaName = String.format("%s_appendix", pageName);
-			Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
+			Logger.log(LoggingLevel.DEBUG, "transformer: draw area [%s].", areaName);
 			this.startDiv(writer, areaName, appendix.getContentLeft(), appendix.getContentTop(),
 					appendix.getContentWidth(), appendix.getContentHeight());
 			this.drawArea(writer, appendix.getContents());
@@ -474,7 +474,7 @@ public class TransformerHtml extends TemplateTransformer {
 			// 绘制页脚区域
 			if (appendix.getPageFooter() == emYesNo.YES) {
 				areaName = String.format("%s_footer", pageName);
-				Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
+				Logger.log(LoggingLevel.DEBUG, "transformer: draw area [%s].", areaName);
 				this.startDiv(writer, areaName, this.getTemplate().getPageFooterLeft(),
 						this.getTemplate().getPageFooterTop(), this.getTemplate().getPageFooterWidth(),
 						this.getTemplate().getPageFooterHeight());

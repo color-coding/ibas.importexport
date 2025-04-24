@@ -17,7 +17,7 @@
         <!-- 配置项目-数据库用户密码 -->
         <add key="MasterDbUserPassword" value="1q2w3e" />
         <!-- 配置项目-是否格式化输出 -->
-        <add key="FormattedOutput" value="true"  />
+        <add key="FormattedOutput" value="true" />
         <!-- 配置项目-序列化管理方式 -->
         <add key="SerializationWay" value="jersey" />
         <!-- 配置项目-审批方法 -->
@@ -28,9 +28,7 @@
         <add key="OwnershipWay" value="initial" />
         <!-- 配置项目-配置方式 -->
         <add key="ConfigurationWay" value="initial" />
-        <!-- 配置项目-组织过期时间（建议600） -->
-        <add key="OrgManagerExpiry" value="-1" />
-        <!-- 配置项目-权限过期时间（建议120） -->
-        <add key="OwnJudgerExpiry" value="-1" />
+        <!-- 配置项目-自定义字段管理方式 -->
+        <add key="UserFieldsWay" value="initial" />
     </appSettings>
 </ns2:configuration>

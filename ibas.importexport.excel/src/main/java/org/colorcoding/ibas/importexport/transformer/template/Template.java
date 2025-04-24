@@ -6,17 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import org.colorcoding.ibas.bobas.bo.IBOUserFields;
+import org.colorcoding.ibas.bobas.bo.BOFactory;
+import org.colorcoding.ibas.bobas.bo.BusinessObject;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.bo.IBusinessObjects;
-import org.colorcoding.ibas.bobas.bo.UserField;
 import org.colorcoding.ibas.bobas.common.ICriteria;
-import org.colorcoding.ibas.bobas.core.BOFactory;
-import org.colorcoding.ibas.bobas.core.TrackableBase;
-import org.colorcoding.ibas.bobas.core.fields.FieldDataDbBase;
+import org.colorcoding.ibas.bobas.common.Strings;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
 import org.colorcoding.ibas.bobas.core.fields.IManagedFields;
-import org.colorcoding.ibas.bobas.data.DataConvert;
 import org.colorcoding.ibas.importexport.MyConfiguration;
 
 /**
@@ -186,7 +183,7 @@ public class Template extends Area<Area<?>> {
 		Head head = new Head();
 		head.setBindingClass(bo.getClass());
 		head.setName(bo.getClass().getSimpleName());
-		String boCode = BOFactory.create().getCode(bo.getClass());
+		String boCode = BOFactory.codeOf(bo.getClass());
 		if (boCode != null && !boCode.isEmpty()) {
 			head.setCode(boCode);
 		}
@@ -353,17 +350,9 @@ public class Template extends Area<Area<?>> {
 
 	private boolean resolving(IManagedFields boFields, String level, Iterator<Cell[]> rows) {
 		boolean done = false;
-		// 不实时执行业务逻辑
-		if (boFields instanceof TrackableBase) {
-			((TrackableBase) boFields).setLoading(true);
-		}
-		if (this.isIndividualStatus()) {
-			// 个别状态跟踪，初始状态
-			for (IFieldData boField : boFields.getFields()) {
-				if (boField instanceof FieldDataDbBase) {
-					((FieldDataDbBase<?>) boField).setSavable(false);
-				}
-			}
+		// 设置状态是否记录修改属性
+		if (!this.isIndividualStatus() && boFields instanceof BusinessObject) {
+			((BusinessObject<?>) boFields).setLoading(true);
 		}
 		for (Object object : this.getObjects()) {
 			if (!object.getName().startsWith(level)) {
@@ -381,16 +370,18 @@ public class Template extends Area<Area<?>> {
 						}
 						IFieldData field = boFields.getField(property.getName());
 						if (field == null) {
-							if (property.getName().startsWith(UserField.USER_FIELD_PREFIX_SIGN)
-									&& boFields instanceof IBOUserFields) {
-								// 自定义字段
-								IBOUserFields userFields = (IBOUserFields) boFields;
-								userFields.getUserFields().register(property.getName(), property.getBindingClass());
-								field = boFields.getField(property.getName());
-								if (field == null) {
-									continue;
-								}
-							} else {
+							/*
+							 * 自定义字段改为注册制，未注册不加载
+							 * 
+							 * if (property.getName().startsWith(IBOUserFields.USER_FIELD_PREFIX_SIGN) &&
+							 * boFields instanceof IBOUserFields) { // 自定义字段 IBOUserFields userFields =
+							 * (IBOUserFields) boFields;
+							 * userFields.getUserFields().register(property.getName(),
+							 * property.getBindingClass()); field = boFields.getField(property.getName());
+							 * 
+							 * }
+							 */
+							if (field == null) {
 								continue;
 							}
 						}
@@ -399,11 +390,6 @@ public class Template extends Area<Area<?>> {
 							field.setValue(cell.getValue());
 							if (!matched) {
 								matched = true;
-							}
-						}
-						if (this.isIndividualStatus()) {
-							if (field instanceof FieldDataDbBase) {
-								((FieldDataDbBase<?>) field).setSavable(true);
 							}
 						}
 					}
@@ -457,8 +443,8 @@ public class Template extends Area<Area<?>> {
 				}
 			}
 		}
-		if (boFields instanceof TrackableBase) {
-			((TrackableBase) boFields).setLoading(false);
+		if (!this.isIndividualStatus() && boFields instanceof BusinessObject) {
+			((BusinessObject<?>) boFields).setLoading(false);
 		}
 		return done;
 	}
@@ -495,7 +481,7 @@ public class Template extends Area<Area<?>> {
 	protected final FileReader getReader() {
 		if (this.reader == null) {
 			String reader = MyConfiguration.getConfigValue(CONFIG_ITEM_TEMPLATE_EXCEL_READER);
-			if (DataConvert.isNullOrEmpty(reader)) {
+			if (Strings.isNullOrEmpty(reader)) {
 				this.reader = new ExcelReaderEx();
 			} else {
 				if (reader.indexOf(".") < 0) {
