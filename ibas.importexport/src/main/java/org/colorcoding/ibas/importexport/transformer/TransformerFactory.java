@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.colorcoding.ibas.bobas.i18n.I18N;
-import org.colorcoding.ibas.bobas.message.Logger;
+import org.colorcoding.ibas.bobas.logging.Logger;
 import org.colorcoding.ibas.importexport.MyConfiguration;
 
 public final class TransformerFactory {
