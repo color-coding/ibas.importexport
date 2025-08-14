@@ -49,9 +49,9 @@ namespace importexport {
             /** 运行 */
             run(): void {
                 // 加载语言-框架默认
-                ibas.i18n.load([
-                    this.rootUrl + "resources/languages/importexport.json",
-                    this.rootUrl + "resources/languages/bos.json"
+                this.loadResources([
+                    "resources/languages/importexport.json",
+                    "resources/languages/bos.json"
                 ], () => {
                     // 设置资源属性
                     this.description = ibas.i18n.prop(this.name.toLowerCase());
