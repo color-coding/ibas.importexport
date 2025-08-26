@@ -4,6 +4,7 @@ import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.data.FileData;
 import org.colorcoding.ibas.bobas.repository.IBORepositoryApplication;
+import org.colorcoding.ibas.importexport.bo.exportrecord.IExportRecord;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplate;
 import org.colorcoding.ibas.importexport.data.DataExportInfo;
 import org.colorcoding.ibas.importexport.data.emDataUpdateMethod;
@@ -72,6 +73,29 @@ public interface IBORepositoryImportExportApp extends IBORepositoryApplication {
 	 * @return 操作结果
 	 */
 	IOperationResult<IExportTemplate> saveExportTemplate(IExportTemplate bo);
+
+	// --------------------------------------------------------------------------------------------//
+	/**
+	 * 查询-导出日志
+	 * @param criteria 查询
+	 * @return 操作结果
+	 */
+	IOperationResult<IExportRecord> fetchExportRecord(ICriteria criteria);
+
+	/**
+	 * 保存-导出日志
+	 * @param bo 对象实例
+	 * @return 操作结果
+	 */
+	IOperationResult<IExportRecord> saveExportRecord(IExportRecord bo);
+
+	/**
+	 * 记录导出
+	 * @param boKeys 对象标识
+	 * @param cause 原因
+	 * @return 操作结果
+	 */
+	IOperationResult<IExportRecord> writeExportRecord(String boKeys, String cause);
 
 	// --------------------------------------------------------------------------------------------//
 

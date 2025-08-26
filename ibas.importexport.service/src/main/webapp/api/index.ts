@@ -7,4 +7,5 @@
  */
 /// <reference path="./Data.ts" />
 /// <reference path="./BORepository.ts" />
+/// <reference path="./bo/ExportRecord.ts" />
 /// <reference path="./bo/ExportTemplate.ts" />

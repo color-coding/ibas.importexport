@@ -7,6 +7,7 @@
  */
 /// <reference path="../api/index.ts" />
 /// <reference path="./bo/ExportTemplate.ts" />
+/// <reference path="./bo/ExportRecord.ts" />
 /// <reference path="./DataConverter.ts" />
 /// <reference path="./DataExporter.ts" />
 /// <reference path="./BORepository.ts" />
@@ -17,6 +18,7 @@ namespace importexport {
         boFactory.register(BO_REPOSITORY_IMPORTEXPORT, BORepositoryImportExport);
         // 注册业务对象到工厂
         boFactory.register(ExportTemplate.BUSINESS_OBJECT_CODE, ExportTemplate);
+        boFactory.register(ExportRecord.BUSINESS_OBJECT_CODE, ExportRecord);
         // 注册其他
         boFactory.register(ibas.FileData);
     }

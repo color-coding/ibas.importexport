@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Domain>
+<Domain Name="ImportExport" ShortName="IE">
+  <Model Name="ExportRecord" Description="导出日志" ModelType="Simple" Mapped="${Company}_IE_OERD">
+    <Property Name="ObjectKey" Description="编号" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="ObjectKey" PrimaryKey="Yes"/>
+    <Property Name="ObjectCode" Description="类型" DataType="Alphanumeric" DataSubType="Default" EditSize="30" Mapped="Object"/>
+    <Property Name="LogInst" Description="实例号（版本）" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="LogInst"/>
+    <Property Name="DataSource" Description="数据源" DataType="Alphanumeric" DataSubType="Default" EditSize="8" Mapped="DataSource"/>
+    <Property Name="Series" Description="服务系列" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="Series"/>
+    <Property Name="CreateDate" Description="创建日期" DataType="Date" DataSubType="Default" EditSize="8" Mapped="CreateDate"/>
+    <Property Name="CreateTime" Description="创建时间" DataType="Date" DataSubType="Time" EditSize="8" Mapped="CreateTime"/>
+    <Property Name="UpdateDate" Description="修改日期" DataType="Date" DataSubType="Default" EditSize="8" Mapped="UpdateDate"/>
+    <Property Name="UpdateTime" Description="修改时间" DataType="Date" DataSubType="Time" EditSize="8" Mapped="UpdateTime"/>
+    <Property Name="CreateUserSign" Description="创建用户" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="Creator"/>
+    <Property Name="UpdateUserSign" Description="修改用户" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="Updator"/>
+    <Property Name="CreateActionId" Description="创建动作标识" DataType="Alphanumeric" DataSubType="Default" EditSize="36" Mapped="CreateActId"/>
+    <Property Name="UpdateActionId" Description="更新动作标识" DataType="Alphanumeric" DataSubType="Default" EditSize="36" Mapped="UpdateActId"/>
+    <Property Name="BOCode" Description="类型" DataType="Alphanumeric" DataSubType="Default" EditSize="30" Mapped="BOCode"/>
+    <Property Name="BOKeys" Description="主键值" DataType="Alphanumeric" DataSubType="Default" EditSize="100" Mapped="BOKeys"/>
+    <Property Name="BOInst" Description="实例号" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="BOInst"/>
+    <Property Name="ExportUser" Description="导出用户" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="Exporter"/>
+    <Property Name="ExportDate" Description="导出日期" DataType="Date" DataSubType="Default" EditSize="8" Mapped="ExportDate"/>
+    <Property Name="ExportTime" Description="导出时间" DataType="Date" DataSubType="Time" EditSize="8" Mapped="ExportTime"/>
+    <Property Name="Cause" Description="动机" DataType="Alphanumeric" DataSubType="Default" EditSize="30" Mapped="Cause"/>
+    <Property Name="Content" Description="内容" DataType="Memo" DataSubType="Default" EditSize="8" Mapped="Content"/>
+  </Model>
+  <BusinessObject MappedModel="ExportRecord" ShortName="${Company}_IE_EXPORTRECORD"/>
+</Domain>

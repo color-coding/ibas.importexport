@@ -20,6 +20,7 @@ namespace importexport {
                 // 视图加载完成
             }
             protected printData: any[];
+            protected converter: ibas.IDataConverter;
             /** 预览 */
             private preview(exporter: bo.IDataExporter): void {
                 if (ibas.objects.isNull(exporter)) {
@@ -30,8 +31,18 @@ namespace importexport {
                 }
                 this.busy(true);
                 let that: this = this;
+                let printDatas: ibas.ArrayList<any> = new ibas.ArrayList();
+                if (this.printData instanceof Array) {
+                    for (let item of this.printData) {
+                        if (!ibas.objects.isNull(this.converter)) {
+                            printDatas.add(this.converter.convert(item, this.name));
+                        } else {
+                            printDatas.add(item);
+                        }
+                    }
+                }
                 exporter.export({
-                    data: this.printData,
+                    data: printDatas,
                     contentType: "text/html",
                     onCompleted(opRslt: ibas.IOperationResult<bo.IDataExportResult>): void {
                         try {
@@ -69,8 +80,26 @@ namespace importexport {
                 if (ibas.strings.isEmpty(printId)) {
                     throw new Error(ibas.i18n.prop("sys_invalid_parameter", "printId"));
                 }
+                if (this.printData instanceof Array) {
+                    let boRepository: bo.BORepositoryImportExport = new bo.BORepositoryImportExport();
+                    for (let item of this.printData) {
+                        if (item instanceof ibas.BusinessObject) {
+                            boRepository.writeExportRecord({
+                                boKeys: item.toString(),
+                                cause: "PRINT",
+                                onCompleted: (opRslt) => {
+                                    if (opRslt.resultCode !== 0) {
+                                        ibas.logger.log(ibas.emMessageLevel.ERROR, opRslt.message);
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
                 let pWindow: Window = (<any>document.getElementById(printId)).contentWindow;
-                pWindow.print();
+                if (pWindow) {
+                    pWindow.print();
+                }
             }
         }
         /** 数据打印-视图 */
@@ -98,25 +127,17 @@ namespace importexport {
             }
             /** 运行服务 */
             runService(contract: IDataPrintServiceContract): void {
-                this.printData = new ibas.ArrayList();
                 // 处理数据
                 let boCode: string = null;
+                this.printData = new ibas.ArrayList();
                 if (contract.data instanceof Array) {
                     for (let item of contract.data) {
                         boCode = (<ibas.IBOStorageTag><any>item).objectCode;
-                        if (!ibas.objects.isNull(contract.converter)) {
-                            this.printData.push(contract.converter.convert(item, this.name));
-                        } else {
-                            this.printData.push(item);
-                        }
+                        this.printData.push(item);
                     }
                 } else if (!ibas.objects.isNull(contract.data)) {
                     boCode = (<ibas.IBOStorageTag><any>contract.data).objectCode;
-                    if (!ibas.objects.isNull(contract.converter)) {
-                        this.printData.push(contract.converter.convert(contract.data, this.name));
-                    } else {
-                        this.printData.push(contract.data);
-                    }
+                    this.printData.push(contract.data);
                 }
                 if (ibas.strings.isEmpty(contract.businessObject) && !ibas.strings.isEmpty(boCode)) {
                     contract.businessObject = boCode;

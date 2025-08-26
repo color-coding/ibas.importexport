@@ -21,6 +21,8 @@
   "importexport_service_fileparsing": "文件解析",
   "importexport_func_dataimport": "数据导入",
   "importexport_app_dataimport": "数据导入",
+  "importexport_service_exportrecord": "导出记录",
+  "importexport_exportrecord_icon": "sap-icon://document-text",
   "importexport_import": "导入",
   "importexport_import_content": "导入内容：",
   "importexport_import_result": "导入结果：",

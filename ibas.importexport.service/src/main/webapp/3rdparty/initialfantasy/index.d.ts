@@ -7488,13 +7488,14 @@ declare namespace initialfantasy {
             run(data?: bo.BOLogst | bo.BOLogst[]): void;
             onViewShowed: () => void;
             private template;
+            showSummary: boolean;
         }
         /** 视图-业务对象日志 */
         interface IBOLogstViewView extends ibas.IBOViewView {
             /** 绘制窗体 */
             drawView(template: outs.BOType): void;
             /** 显示数据 */
-            showData(datas: object[]): void;
+            showData(datas: object[], summary?: boolean): void;
         }
         namespace outs {
             function template(datas: object[], boInfos: ibas.IList<bo.BOInformation>): BOType;

@@ -2,6 +2,7 @@ package org.colorcoding.ibas.importexport.repository;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.Arrays;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -14,6 +15,7 @@ import org.colorcoding.ibas.bobas.bo.IBOSimple;
 import org.colorcoding.ibas.bobas.bo.IBOStorageTag;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.common.ConditionOperation;
+import org.colorcoding.ibas.bobas.common.ConditionRelationship;
 import org.colorcoding.ibas.bobas.common.Criteria;
 import org.colorcoding.ibas.bobas.common.ICondition;
 import org.colorcoding.ibas.bobas.common.ICriteria;
@@ -29,18 +31,24 @@ import org.colorcoding.ibas.bobas.core.ITrackStatusOperator;
 import org.colorcoding.ibas.bobas.core.RepositoryException;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
 import org.colorcoding.ibas.bobas.core.fields.IManagedFields;
+import org.colorcoding.ibas.bobas.data.ArrayList;
+import org.colorcoding.ibas.bobas.data.DateTime;
 import org.colorcoding.ibas.bobas.data.FileData;
 import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.message.MessageLevel;
+import org.colorcoding.ibas.bobas.organization.OrganizationFactory;
 import org.colorcoding.ibas.bobas.ownership.IDataOwnership;
 import org.colorcoding.ibas.bobas.repository.BORepositoryServiceApplication;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
 import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
 import org.colorcoding.ibas.importexport.MyConfiguration;
+import org.colorcoding.ibas.importexport.bo.exportrecord.ExportRecord;
+import org.colorcoding.ibas.importexport.bo.exportrecord.IExportRecord;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.ExportTemplate;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplate;
+import org.colorcoding.ibas.importexport.data.DataConvert;
 import org.colorcoding.ibas.importexport.data.DataExportInfo;
 import org.colorcoding.ibas.importexport.data.emDataUpdateMethod;
 import org.colorcoding.ibas.importexport.transformer.FileTransformer;
@@ -640,6 +648,137 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 		} catch (Exception e) {
 			Logger.log(e);
 			return new OperationResult<DataExportInfo>(e);
+		}
+	}
+
+	// --------------------------------------------------------------------------------------------//
+	/**
+	 * 查询-导出日志
+	 * @param criteria 查询
+	 * @param token 口令
+	 * @return 操作结果
+	 */
+	public OperationResult<ExportRecord> fetchExportRecord(ICriteria criteria, String token) {
+		return super.fetch(criteria, token, ExportRecord.class);
+	}
+
+	/**
+	 * 查询-导出日志（提前设置用户口令）
+	 * @param criteria 查询
+	 * @return 操作结果
+	 */
+	public IOperationResult<IExportRecord> fetchExportRecord(ICriteria criteria) {
+		return new OperationResult<IExportRecord>(this.fetchExportRecord(criteria, this.getUserToken()));
+	}
+
+	/**
+	 * 保存-导出日志
+	 * @param bo 对象实例
+	 * @param token 口令
+	 * @return 操作结果
+	 */
+	public OperationResult<ExportRecord> saveExportRecord(ExportRecord bo, String token) {
+		return super.save(bo, token);
+	}
+
+	/**
+	 * 保存-导出日志（提前设置用户口令）
+	 * @param bo 对象实例
+	 * @return 操作结果
+	 */
+	public IOperationResult<IExportRecord> saveExportRecord(IExportRecord bo) {
+		return new OperationResult<IExportRecord>(this.saveExportRecord((ExportRecord) bo, this.getUserToken()));
+	}
+
+	@Override
+	public IOperationResult<IExportRecord> writeExportRecord(String boKeys, String cause) {
+		return this.writeExportRecord(boKeys, cause);
+	}
+
+	@Override
+	public OperationResult<ExportRecord> writeExportRecord(String boKeys, String cause, String token) {
+		try {
+			this.setUserToken(token);
+			ICriteria criteria = Criteria.create(boKeys);
+			if (criteria == null || DataConvert.isNullOrEmpty(criteria.getBusinessObject())
+					|| criteria.getConditions().isEmpty()) {
+				throw new Exception(I18N.prop("msg_ie_invaild_bo_keys"));
+			}
+			ExportRecord record = new ExportRecord();
+			record.setCause(cause);
+			record.setBOKeys(boKeys);
+			record.setBOCode(criteria.getBusinessObject());
+			record.setExportDate(DateTime.getToday());
+			record.setExportTime(Short.valueOf(DateTime.getNow().toString("HHmm")));
+			record.setExportUser(this.getCurrentUser().getId());
+			// 获取导出的对象并修改状态
+
+			BORepositoryImportExport boRepository = new BORepositoryImportExport();
+			try {
+				boRepository.beginTransaction();
+				if ("PRINTED".equalsIgnoreCase(cause)) {
+					// 打印导出，尝试修改单据状态
+					Class<?> boType = getBOFactory().getClass(criteria.getBusinessObject());
+					if (boType == null || !IBusinessObject.class.isAssignableFrom(boType)) {
+						throw new Exception(I18N.prop("msg_ie_not_found_class", criteria.getBusinessObject()));
+					}
+					ArrayList<Class<?>> interfaces = new ArrayList<>(Arrays.asList(boType.getInterfaces()));
+					if (interfaces.firstOrDefault(
+							c -> "IDOCUMENTPRINTEDOPERATOR".equalsIgnoreCase(c.getSimpleName())) != null) {
+						criteria.setResultCount(1);
+						ICondition condition = criteria.getConditions().create();
+						condition.setBracketOpen(1);
+						condition.setAlias("Printed");
+						condition.setValue(emYesNo.NO);
+						condition = criteria.getConditions().create();
+						condition.setBracketClose(1);
+						condition.setAlias("Printed");
+						condition.setOperation(ConditionOperation.IS_NULL);
+						condition.setRelationship(ConditionRelationship.OR);
+
+						@SuppressWarnings("unchecked")
+						IOperationResult<IBusinessObject> opRsltFetch = boRepository.fetch(criteria,
+								OrganizationFactory.SYSTEM_USER.getToken(), (Class<IBusinessObject>) boType);
+						if (opRsltFetch.getError() != null) {
+							throw opRsltFetch.getError();
+						}
+						IOperationResult<IBusinessObject> opRsltSave;
+						for (IBusinessObject item : opRsltFetch.getResultObjects()) {
+							if (item instanceof BusinessObject) {
+								IFieldData fieldData = ((BusinessObject<?>) item).getField("Printed");
+								if (fieldData != null && fieldData.getValueType() == emYesNo.class) {
+									if (fieldData.getValue() != emYesNo.YES) {
+										fieldData.setValue(emYesNo.YES);
+										if (!item.isDirty()) {
+											((BusinessObject<?>) item).markDirty();
+										}
+										opRsltSave = boRepository.save(item,
+												OrganizationFactory.SYSTEM_USER.getToken());
+										if (opRsltSave.getError() != null) {
+											throw opRsltSave.getError();
+										}
+										if (item instanceof IBOStorageTag) {
+											record.setBOInst(((IBOStorageTag) item).getLogInst());
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				OperationResult<ExportRecord> opRsltRecord = boRepository.saveExportRecord(record, token);
+				if (boRepository.inTransaction()) {
+					boRepository.commitTransaction();
+				}
+				return opRsltRecord;
+			} catch (Exception e) {
+				if (boRepository.inTransaction()) {
+					boRepository.rollbackTransaction();
+				}
+				throw e;
+			}
+		} catch (Exception e) {
+			return new OperationResult<>(e);
 		}
 	}
 

@@ -156,6 +156,31 @@
         "bo_exporttemplate_closing_delimiter": "----End----"
     },
     {
+        "bo_exportrecord": "Export Record",
+        "bo_exportrecord_objectkey": "Object Key",
+        "bo_exportrecord_objectcode": "Object Type",
+        "bo_exportrecord_loginst": "Instance Number (Version)",
+        "bo_exportrecord_datasource": "Data Source",
+        "bo_exportrecord_series": "Service Series",
+        "bo_exportrecord_createdate": "Creation Date",
+        "bo_exportrecord_createtime": "Creation Time",
+        "bo_exportrecord_updatedate": "Modification Date",
+        "bo_exportrecord_updatetime": "Modification Time",
+        "bo_exportrecord_createusersign": "Created By",
+        "bo_exportrecord_updateusersign": "Last Modified By",
+        "bo_exportrecord_createactionid": "Create Action ID",
+        "bo_exportrecord_updateactionid": "Update Action ID",
+        "bo_exportrecord_bocode": "BO Type",
+        "bo_exportrecord_bokeys": "BO Keys",
+        "bo_exportrecord_boinst": "BO Inst",
+        "bo_exportrecord_exportuser": "User",
+        "bo_exportrecord_exportdate": "Date",
+        "bo_exportrecord_exporttime": "Time",
+        "bo_exportrecord_cause": "Cause",
+        "bo_exportrecord_content": "Content",
+        "bo_exportrecord_closing_delimiter": "----End----"
+    },
+    {
         "template_item_type_text": "Text",
         "template_item_type_image": "Image"
     },

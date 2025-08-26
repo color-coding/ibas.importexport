@@ -125,6 +125,36 @@ namespace importexport {
             saveExportTemplate(saver: ibas.ISaveCaller<bo.ExportTemplate>): void {
                 super.save(bo.ExportTemplate.name, saver);
             }
+            /**
+             * 查询 导出日志
+             * @param fetcher 查询者
+             */
+            fetchExportRecord(fetcher: ibas.IFetchCaller<bo.ExportRecord>): void {
+                super.fetch(bo.ExportRecord.name, fetcher);
+            }
+            /**
+             * 保存 导出日志
+             * @param saver 保存者
+             */
+            saveExportRecord(saver: ibas.ISaveCaller<bo.ExportRecord>): void {
+                super.save(bo.ExportRecord.name, saver);
+            }
+            /**
+             * 记录导出日志
+             * @param caller 调用者
+             */
+            writeExportRecord(caller: IExportRecordCaller<string>): void {
+                let boRepository: ibas.BORepositoryAjax = new ibas.BORepositoryAjax();
+                boRepository.address = this.address;
+                boRepository.token = this.token;
+                boRepository.converter = this.createConverter();
+                let method: string =
+                    ibas.strings.format("writeExportRecord?boKeys={0}&cause={1}&token={2}",
+                        encodeURIComponent(caller.boKeys), encodeURIComponent(caller.cause), ibas.tokens.content(this.token));
+                boRepository.callRemoteMethod(method, undefined, (opRslt) => {
+                    caller.onCompleted.call(ibas.objects.isNull(caller.caller) ? caller : caller.caller, opRslt);
+                });
+            }
         }
         class FileRepositoryDownloadAjax extends ibas.FileRepositoryDownloadAjax {
             protected createHttpRequest(method: string): XMLHttpRequest {

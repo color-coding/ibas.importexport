@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE BOPropertyValue>
+<ns2:BOPropertyValue xmlns:ns2="http://colorcoding.org/ibas/initialfantasy/bo">
+	<Code>${Company}_IE_EXPORTRECORD</Code>
+	<Property>Cause</Property>
+	<Value>E-MAIL</Value>
+	<Description>电子邮件</Description>
+</ns2:BOPropertyValue>
