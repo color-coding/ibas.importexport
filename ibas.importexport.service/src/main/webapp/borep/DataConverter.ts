@@ -23,6 +23,7 @@ namespace importexport {
                     exporter.name = remoteData.Transformer;
                     exporter.template = remoteData.Template;
                     exporter.description = remoteData.Description;
+                    exporter.contentType = remoteData.ContentType;
                     if (ibas.strings.isEmpty(exporter.description)) {
                         exporter.description = exporter.name;
                     }
@@ -45,6 +46,8 @@ namespace importexport {
             Template: string;
             /** 描述 */
             Description: string;
+            /** 输出内容类型 */
+            ContentType: string;
         }
         /** 模块业务对象工厂 */
         export const boFactory: ibas.BOFactory = new ibas.BOFactory();

@@ -33,12 +33,12 @@ namespace importexport {
                             }),
                             new sap.extension.table.DataColumn("", {
                                 label: ibas.i18n.prop("bo_exporttemplate_name"),
-                                width: "20rem",
                                 template: new sap.extension.m.Text("", {
                                 }).bindProperty("bindingValue", {
                                     path: "name",
                                     type: new sap.extension.data.Alphanumeric()
                                 }),
+                                width: "16rem",
                             }),
                             new sap.extension.table.DataColumn("", {
                                 label: ibas.i18n.prop("bo_exporttemplate_activated"),
@@ -49,18 +49,18 @@ namespace importexport {
                                 }),
                             }),
                             new sap.extension.table.DataColumn("", {
-                                label: ibas.i18n.prop("bo_exporttemplate_category"),
+                                label: ibas.i18n.prop("bo_exporttemplate_language"),
                                 template: new sap.extension.m.Text("", {
                                 }).bindProperty("bindingValue", {
-                                    path: "category",
+                                    path: "language",
                                     type: new sap.extension.data.Alphanumeric()
                                 }),
                             }),
                             new sap.extension.table.DataColumn("", {
-                                label: ibas.i18n.prop("bo_exporttemplate_notes"),
+                                label: ibas.i18n.prop("bo_exporttemplate_category"),
                                 template: new sap.extension.m.Text("", {
                                 }).bindProperty("bindingValue", {
-                                    path: "notes",
+                                    path: "category",
                                     type: new sap.extension.data.Alphanumeric()
                                 }),
                             }),
@@ -79,6 +79,15 @@ namespace importexport {
                                     path: "height",
                                     type: new sap.extension.data.Numeric()
                                 }),
+                            }),
+                            new sap.extension.table.DataColumn("", {
+                                label: ibas.i18n.prop("bo_exporttemplate_notes"),
+                                template: new sap.extension.m.Text("", {
+                                }).bindProperty("bindingValue", {
+                                    path: "notes",
+                                    type: new sap.extension.data.Alphanumeric()
+                                }),
+                                width: "20rem",
                             }),
                         ],
                         nextDataSet(event: sap.ui.base.Event): void {

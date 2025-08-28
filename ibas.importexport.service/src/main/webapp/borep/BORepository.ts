@@ -148,11 +148,23 @@ namespace importexport {
                 boRepository.address = this.address;
                 boRepository.token = this.token;
                 boRepository.converter = this.createConverter();
-                let method: string =
-                    ibas.strings.format("writeExportRecord?boKeys={0}&cause={1}&token={2}",
-                        encodeURIComponent(caller.boKeys), encodeURIComponent(caller.cause), ibas.tokens.content(this.token));
-                boRepository.callRemoteMethod(method, undefined, (opRslt) => {
-                    caller.onCompleted.call(ibas.objects.isNull(caller.caller) ? caller : caller.caller, opRslt);
+                let formData: FormData = new FormData();
+                if (!ibas.strings.isEmpty(caller.boKeys)) {
+                    formData.append("boKeys", caller.boKeys);
+                }
+                if (!ibas.strings.isEmpty(caller.cause)) {
+                    formData.append("cause", caller.cause);
+                }
+                if (!ibas.strings.isEmpty(caller.content)) {
+                    formData.append("content", caller.content);
+                }
+                let fileRepository: ibas.FileRepositoryUploadAjax = new ibas.FileRepositoryUploadAjax();
+                fileRepository.address = this.address;
+                fileRepository.token = this.token;
+                fileRepository.converter = this.createConverter();
+                fileRepository.upload("writeExportRecord", {
+                    fileData: formData,
+                    onCompleted: caller.onCompleted,
                 });
             }
         }

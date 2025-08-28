@@ -96,6 +96,8 @@ namespace importexport {
             boKeys: string;
             /** 原因 */
             cause: string;
+            /** 内容 */
+            content?: string;
         }
     }
 }

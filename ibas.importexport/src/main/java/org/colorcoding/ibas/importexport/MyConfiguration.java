@@ -70,4 +70,9 @@ public class MyConfiguration extends org.colorcoding.ibas.initialfantasy.MyConfi
 	 * 标记-数据源
 	 */
 	public static final String SIGN_DATA_SOURCE = "I";
+
+	/**
+	* 配置项目-开启自动标记已打印
+	*/
+	public final static String CONFIG_ITEM_ENABLED_EXPORT_RECORD_TO_PRINTED = "enabledExportRecordToPrinted";
 }

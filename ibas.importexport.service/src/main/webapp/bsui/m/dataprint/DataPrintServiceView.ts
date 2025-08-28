@@ -141,7 +141,7 @@ namespace importexport {
                         backgroundDesign: sap.m.BackgroundDesign.Transparent,
                         headerToolbar: new sap.m.Toolbar("", {
                             content: [
-                                new sap.m.Label("", {
+                                new sap.m.Title("", {
                                     text: ibas.i18n.prop("importexport_please_template")
                                 }),
                             ]
@@ -165,6 +165,16 @@ namespace importexport {
                     });
                     list.setModel(new sap.extension.model.JSONModel({ rows: exporters }));
                     this.dialog.addContent(list);
+                }
+                /** 显示导出日志 */
+                showPrintRecords(records: bo.ExportRecord[]): void {
+                    let form: any = this.dialog.getContent()[0];
+                    if (form instanceof sap.m.List) {
+                        form.getHeaderToolbar().addContent(new sap.m.ToolbarSpacer());
+                        form.getHeaderToolbar().addContent(new sap.m.Text("", {
+                            text: ibas.i18n.prop("importexport_printed_count", records.length),
+                        }));
+                    }
                 }
             }
         }
