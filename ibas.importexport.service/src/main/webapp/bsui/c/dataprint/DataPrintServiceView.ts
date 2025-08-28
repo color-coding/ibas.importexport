@@ -56,8 +56,8 @@ namespace importexport {
                                 text: ibas.i18n.prop("importexport_preview"),
                                 type: sap.m.ButtonType.Transparent,
                                 press: function (oControlEvent: sap.ui.base.Event): void {
-                                    if (!ibas.objects.isNull(that.html)) {
-                                        that.fireViewEvents(that.printEvent, that.html.getFrameId());
+                                    if (that.printing instanceof Function) {
+                                        that.printing();
                                     } else if (!ibas.objects.isNull(that.select)) {
                                         let item: sap.ui.core.Item = that.select.getSelectedItem();
                                         if (ibas.objects.isNull(item)) {
@@ -83,10 +83,10 @@ namespace importexport {
                 }
                 private dialog: sap.m.Dialog;
                 private select: sap.m.Select;
-                private html: sap.extension.core.FrameHTML;
+                private printing: Function;
 
                 /** 显示内容 */
-                showContent(content: Blob, width: string, height: string): void {
+                showContent(content: Blob, contentType: string, width: string, height: string): void {
                     this.select = null;
                     this.dialog.destroyContent();
                     if (!ibas.strings.isEmpty(width)) {
@@ -95,12 +95,36 @@ namespace importexport {
                     if (!ibas.strings.isEmpty(height)) {
                         this.dialog.setContentHeight(revisePx(height));
                     }
-                    this.dialog.addContent(this.html = new sap.extension.core.FrameHTML("", {
+                    if (ibas.strings.equalsIgnoreCase("text/html", contentType)) {
+                        let printArea: any = this.createHTML(content);
+                        this.dialog.addContent(printArea);
+                        let that: this = this;
+                        this.printing = function (): void {
+                            that.fireViewEvents(that.printEvent, printArea.getFrameId());
+                        };
+                    } else if (ibas.strings.equalsIgnoreCase("application/pdf", contentType)) {
+                        this.dialog.setContentHeight("80%");
+                        this.dialog.setContentWidth("80%");
+                        let printArea: any = this.createPDF(content);
+                        this.dialog.addContent(printArea);
+                        let that: this = this;
+                        this.printing = function (): void {
+                            that.fireViewEvents(that.printEvent, printArea.getFrameId());
+                        };
+                    } else {
+                        this.dialog.addContent(new sap.m.IllustratedMessage("", {
+                            illustrationType: sap.m.IllustratedMessageType.UnableToLoad,
+                        }));
+                    }
+                }
+
+                private createHTML(content: Blob): sap.ui.core.Control {
+                    return new sap.extension.core.FrameHTML("", {
                         frameWidth: "100%",
                         frameHeight: "100%",
                         frameSrc: content,
-                        afterRendering: () => {
-                            let frameHTML: HTMLElement = document.getElementById(this.html.getFrameId());
+                        afterRendering(this: sap.extension.core.FrameHTML): void {
+                            let frameHTML: HTMLElement = document.getElementById(this.getFrameId());
                             if (frameHTML instanceof HTMLIFrameElement) {
                                 frameHTML.onload = function (this: HTMLIFrameElement): void {
                                     // 调整大小，以适应当前终端
@@ -138,11 +162,29 @@ namespace importexport {
                                 };
                             }
                         }
-                    }));
+                    });
+                }
+                private createPDF(content: Blob): sap.ui.core.Control {
+                    let that: this = this;
+                    return new sap.extension.core.FrameHTML("", {
+                        frameWidth: "100%",
+                        frameHeight: "100%",
+                        frameSrc: content,
+                        afterRendering(this: sap.extension.core.FrameHTML): void {
+                            /* 跨域问题
+                            let frameHTML: any = document.getElementById(this.getFrameId());
+                            if (frameHTML?.contentWindow) {
+                                frameHTML?.contentWindow.addEventListener("afterprint", () => {
+                                    that.fireViewEvents(that.printEvent, frameHTML.id);
+                                });
+                            }
+                            */
+                        }
+                    });
                 }
                 /** 显示数据导出者 */
                 showExporters(exporters: bo.IDataExporter[]): void {
-                    this.html = null;
+                    delete (this.printing);
                     this.dialog.destroyContent();
                     this.select = new sap.m.Select("", {
                         items: {
@@ -174,7 +216,7 @@ namespace importexport {
                     this.select.setModel(new sap.ui.model.json.JSONModel(exporters));
                     this.dialog.addContent(
                         new sap.ui.layout.form.SimpleForm("", {
-                            editable: true,
+                            editable: false,
                             content: [
                                 new sap.m.Label("", {
                                     width: "100%",
@@ -184,6 +226,17 @@ namespace importexport {
                             ]
                         })
                     );
+                }
+                /** 显示导出日志 */
+                showPrintRecords(records: bo.ExportRecord[]): void {
+                    let form: any = this.dialog.getContent()[0];
+                    if (form instanceof sap.ui.layout.form.SimpleForm) {
+                        form.addContent(new sap.m.Label("", {}));
+                        form.addContent(new sap.m.Text("", {
+                            textAlign: sap.ui.core.TextAlign.End,
+                            text: ibas.i18n.prop("importexport_printed_count", records.length),
+                        }));
+                    }
                 }
             }
         }

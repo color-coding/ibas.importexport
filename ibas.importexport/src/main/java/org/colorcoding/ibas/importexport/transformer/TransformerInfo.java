@@ -22,9 +22,22 @@ public @interface TransformerInfo {
 	String name();
 
 	/**
+	 * 格式
+	 * @return
+	 */
+	String contentType() default "";
+
+	/**
 	 * 是否使用模板
 	 * 
 	 * @return
 	 */
 	boolean template() default false;
+
+	/**
+	 * 可用于打印
+	 * 
+	 * @return
+	 */
+	boolean printable() default false;
 }

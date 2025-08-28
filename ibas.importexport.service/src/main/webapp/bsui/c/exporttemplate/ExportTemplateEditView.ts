@@ -71,24 +71,9 @@ namespace importexport {
                                 path: "activated",
                                 type: new sap.extension.data.YesNo()
                             }),
-                            new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_language") }),
-                            new sap.extension.m.Input("", {
-                            }).bindProperty("bindingValue", {
-                                path: "language",
-                                type: new sap.extension.data.Alphanumeric({
-                                    maxLength: 20
-                                })
-                            }),
-                            new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_category") }),
-                            new sap.extension.m.Input("", {
-                            }).bindProperty("bindingValue", {
-                                path: "category",
-                                type: new sap.extension.data.Alphanumeric({
-                                    maxLength: 16
-                                })
-                            }),
                             new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_notes") }),
-                            new sap.extension.m.Input("", {
+                            new sap.extension.m.TextArea("", {
+                                rows: 2,
                             }).bindProperty("bindingValue", {
                                 path: "notes",
                                 type: new sap.extension.data.Alphanumeric({
@@ -137,6 +122,22 @@ namespace importexport {
                                 })
                             }),
                             new sap.ui.core.Title("", { text: ibas.i18n.prop("importexport_title_size") }),
+                            new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_language") }),
+                            new sap.extension.m.Input("", {
+                            }).bindProperty("bindingValue", {
+                                path: "language",
+                                type: new sap.extension.data.Alphanumeric({
+                                    maxLength: 20
+                                })
+                            }),
+                            new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_category") }),
+                            new sap.extension.m.Input("", {
+                            }).bindProperty("bindingValue", {
+                                path: "category",
+                                type: new sap.extension.data.Alphanumeric({
+                                    maxLength: 16
+                                })
+                            }),
                             new sap.m.Label("", { text: ibas.i18n.prop("bo_exporttemplate_width") }),
                             new sap.extension.m.Input("", {
                                 type: sap.m.InputType.Number

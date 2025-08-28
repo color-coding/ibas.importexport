@@ -39,8 +39,8 @@ import com.jayway.jsonpath.JsonPath;
  * @author Niuren.Zhu
  *
  */
-@TransformerInfo(name = "TO_FILE_HTML", template = true)
-public class TransformerHtml extends TemplateTransformer {
+@TransformerInfo(name = "TO_FILE_HTML", template = true, printable = true, contentType = "text/html")
+public class TransformerHtml extends ExportTemplateTransformer {
 
 	public final static String DISPLAY_ELEMENT_IMAGE = "IMG";
 	public final static String DISPLAY_ELEMENT_TEXT = "TEXT";
@@ -54,7 +54,6 @@ public class TransformerHtml extends TemplateTransformer {
 		return dataContext;
 	}
 
-	@Override
 	@SuppressWarnings("unchecked")
 	protected <T> T dataValue(String name, T defaults) {
 		try {
@@ -185,7 +184,7 @@ public class TransformerHtml extends TemplateTransformer {
 		this.newParam(PARAM_DATA_INDEX, 0);
 		// 获取数据长度
 		int size = 0;
-		for (IExportTemplateItem item : this.getTemplate().getRepetitions()) {
+		for (IExportTemplateItem item : this.getExportTemplate().getRepetitions()) {
 			if (item.getSourceType() != emDataSourceType.PATH) {
 				continue;
 			}
@@ -207,22 +206,23 @@ public class TransformerHtml extends TemplateTransformer {
 		}
 		// 计算页数
 		int count = 1;
-		int pageHeigh = this.getTemplate().getHeight();
-		pageHeigh -= this.getTemplate().getMarginTop();
-		pageHeigh -= this.getTemplate().getMarginBottom();
+		int pageHeigh = this.getExportTemplate().getHeight();
+		pageHeigh -= this.getExportTemplate().getMarginTop();
+		pageHeigh -= this.getExportTemplate().getMarginBottom();
 		// 页眉区
-		if (this.getTemplate().getPageHeaderHeight() > 0) {
-			pageHeigh -= this.getTemplate().getPageHeaderHeight();
-			pageHeigh -= this.getTemplate().getMarginArea();
+		if (this.getExportTemplate().getPageHeaderHeight() > 0) {
+			pageHeigh -= this.getExportTemplate().getPageHeaderHeight();
+			pageHeigh -= this.getExportTemplate().getMarginArea();
 		}
 		// 页脚区
-		if (this.getTemplate().getPageFooterHeight() > 0) {
-			pageHeigh -= this.getTemplate().getMarginArea();
-			pageHeigh -= this.getTemplate().getPageFooterHeight();
+		if (this.getExportTemplate().getPageFooterHeight() > 0) {
+			pageHeigh -= this.getExportTemplate().getMarginArea();
+			pageHeigh -= this.getExportTemplate().getPageFooterHeight();
 		}
 		// 判断是否有空余位置
 		if (pageHeigh < 0) {
-			throw new TransformException(I18N.prop("msg_ie_template_size_not_enough", this.getTemplate().getName()));
+			throw new TransformException(
+					I18N.prop("msg_ie_template_size_not_enough", this.getExportTemplate().getName()));
 		}
 		int content = pageHeigh;
 		for (int i = 1; i <= size; i++) {
@@ -231,22 +231,22 @@ public class TransformerHtml extends TemplateTransformer {
 				// 第一页
 				if (count == 1) {
 					// 开始区
-					if (this.getTemplate().getStartSectionHeight() > 0) {
-						content -= this.getTemplate().getStartSectionHeight();
-						content -= this.getTemplate().getMarginArea();
+					if (this.getExportTemplate().getStartSectionHeight() > 0) {
+						content -= this.getExportTemplate().getStartSectionHeight();
+						content -= this.getExportTemplate().getMarginArea();
 					}
 				}
 				// 重复头区
-				if (this.getTemplate().getRepetitionHeaderHeight() > 0) {
-					content -= this.getTemplate().getRepetitionHeaderHeight();
+				if (this.getExportTemplate().getRepetitionHeaderHeight() > 0) {
+					content -= this.getExportTemplate().getRepetitionHeaderHeight();
 				}
 				// 重复脚区
-				if (this.getTemplate().getRepetitionFooterHeight() > 0) {
-					content -= this.getTemplate().getRepetitionFooterHeight();
+				if (this.getExportTemplate().getRepetitionFooterHeight() > 0) {
+					content -= this.getExportTemplate().getRepetitionFooterHeight();
 				}
 			}
-			content -= this.getTemplate().getRepetitionHeight();
-			if (content <= 0 || content < this.getTemplate().getRepetitionHeight()) {
+			content -= this.getExportTemplate().getRepetitionHeight();
+			if (content <= 0 || content < this.getExportTemplate().getRepetitionHeight()) {
 				// 空间用完，新起页
 				if (i < size) {
 					this.newParam(String.format(PARAM_TEMPLATE_PAGE_DATA_INDEX, count), i);
@@ -257,9 +257,9 @@ public class TransformerHtml extends TemplateTransformer {
 			// 最后数据
 			if (i == size) {
 				// 结束区
-				if (this.getTemplate().getEndSectionHeight() > 0) {
-					content -= this.getTemplate().getMarginArea();
-					content -= this.getTemplate().getEndSectionHeight();
+				if (this.getExportTemplate().getEndSectionHeight() > 0) {
+					content -= this.getExportTemplate().getMarginArea();
+					content -= this.getExportTemplate().getEndSectionHeight();
 				}
 				if (content <= 0) {
 					// 空间用完，新起页
@@ -271,8 +271,8 @@ public class TransformerHtml extends TemplateTransformer {
 		// 正文页数
 		this.newParam(PARAM_PAGE_MAIN_TOTAL, count);
 		// 增加附录页数
-		if (!this.getTemplate().getAppendixs().isEmpty()) {
-			count += this.getTemplate().getAppendixs().size();
+		if (!this.getExportTemplate().getAppendixs().isEmpty()) {
+			count += this.getExportTemplate().getAppendixs().size();
 		}
 		// 总页数
 		this.newParam(PARAM_PAGE_TOTAL, count);
@@ -284,26 +284,26 @@ public class TransformerHtml extends TemplateTransformer {
 		writer.write("<html>");
 
 		writer.write("<head>");
-		writer.write(String.format("<title>%s</title>", this.getTemplate().getName()));
+		writer.write(String.format("<title>%s</title>", this.getExportTemplate().getName()));
 		writer.write("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
 		writer.write("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">");
 		writer.write("<meta charset=\"utf-8\" />");
 		writer.write("<meta name=\"referrer\" content=\"origin\" />");
 		writer.write("<meta name=\"page_template\" content=\"");
-		writer.write(this.getTemplate().getObjectKey().toString());
+		writer.write(this.getExportTemplate().getObjectKey().toString());
 		writer.write("\" ");
 		writer.write("/>");
 		writer.write("<meta name=\"page_width\" content=\"");
-		writer.write(this.getTemplate().getWidth().toString());
+		writer.write(this.getExportTemplate().getWidth().toString());
 		writer.write("\" ");
 		writer.write("/>");
 		writer.write("<meta name=\"page_height\" content=\"");
-		writer.write(this.getTemplate().getHeight().toString());
+		writer.write(this.getExportTemplate().getHeight().toString());
 		writer.write("\" ");
 		writer.write("/>");
-		if (Integer.compare(this.getTemplate().getDpi(), 0) > 0) {
+		if (Integer.compare(this.getExportTemplate().getDpi(), 0) > 0) {
 			writer.write("<meta name=\"page_dpi\" content=\"");
-			writer.write(this.getTemplate().getDpi().toString());
+			writer.write(this.getExportTemplate().getDpi().toString());
 			writer.write("\" ");
 			writer.write("/>");
 		}
@@ -327,8 +327,8 @@ public class TransformerHtml extends TemplateTransformer {
 
 		writer.write("<body>");
 
-		int pageTop = 0, pageLeft = 0, pageWidth = this.getTemplate().getWidth(),
-				pageHeight = this.getTemplate().getHeight();
+		int pageTop = 0, pageLeft = 0, pageWidth = this.getExportTemplate().getWidth(),
+				pageHeight = this.getExportTemplate().getHeight();
 		// 绘制正文
 		for (int page = this.paramValue(PARAM_PAGE_INDEX, 1); page <= this.paramValue(PARAM_PAGE_MAIN_TOTAL,
 				1); page++) {
@@ -350,27 +350,28 @@ public class TransformerHtml extends TemplateTransformer {
 			this.startDiv(writer, pageName, pageLeft, pageTop, pageWidth, pageHeight);
 			// 绘制页眉区域
 			String areaName = String.format("%s_header", pageName);
-			if (this.getTemplate().getPageHeaderHeight() > 0) {
+			if (this.getExportTemplate().getPageHeaderHeight() > 0) {
 				Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
-				this.startDiv(writer, areaName, this.getTemplate().getPageHeaderLeft(),
-						this.getTemplate().getPageHeaderTop(), this.getTemplate().getPageHeaderWidth(),
-						this.getTemplate().getPageHeaderHeight());
-				this.drawArea(writer, this.getTemplate().getPageHeaders());
+				this.startDiv(writer, areaName, this.getExportTemplate().getPageHeaderLeft(),
+						this.getExportTemplate().getPageHeaderTop(), this.getExportTemplate().getPageHeaderWidth(),
+						this.getExportTemplate().getPageHeaderHeight());
+				this.drawArea(writer, this.getExportTemplate().getPageHeaders());
 				this.endDiv(writer);
-				top += this.getTemplate().getPageHeaderHeight();
+				top += this.getExportTemplate().getPageHeaderHeight();
 			}
 			// 绘制开始区域
 			if (page == 1) {
 				// 第一页绘制
 				areaName = String.format("%s_startsection", pageName);
-				if (this.getTemplate().getStartSectionHeight() > 0) {
+				if (this.getExportTemplate().getStartSectionHeight() > 0) {
 					Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
-					top += this.getTemplate().getMarginArea();
-					this.startDiv(writer, areaName, this.getTemplate().getStartSectionLeft(), top,
-							this.getTemplate().getStartSectionWidth(), this.getTemplate().getStartSectionHeight());
-					this.drawArea(writer, this.getTemplate().getStartSections());
+					top += this.getExportTemplate().getMarginArea();
+					this.startDiv(writer, areaName, this.getExportTemplate().getStartSectionLeft(), top,
+							this.getExportTemplate().getStartSectionWidth(),
+							this.getExportTemplate().getStartSectionHeight());
+					this.drawArea(writer, this.getExportTemplate().getStartSections());
 					this.endDiv(writer);
-					top += this.getTemplate().getStartSectionHeight();
+					top += this.getExportTemplate().getStartSectionHeight();
 				}
 			}
 			// 绘制重复区域
@@ -381,22 +382,22 @@ public class TransformerHtml extends TemplateTransformer {
 				this.newParam(PARAM_DATA_INDEX, i);
 				if (i == index) {
 					areaName = String.format("%s_table", pageName);
-					top += this.getTemplate().getMarginArea();
+					top += this.getExportTemplate().getMarginArea();
 					Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
-					this.startDiv(writer, areaName, this.getTemplate().getRepetitionHeaderLeft(), top,
-							this.getTemplate().getRepetitionHeaderWidth(), -1);
-					this.startTable(writer, areaName, this.getTemplate().getRepetitionHeaders());
-					top += this.getTemplate().getRepetitionHeaderHeight();
+					this.startDiv(writer, areaName, this.getExportTemplate().getRepetitionHeaderLeft(), top,
+							this.getExportTemplate().getRepetitionHeaderWidth(), -1);
+					this.startTable(writer, areaName, this.getExportTemplate().getRepetitionHeaders());
+					top += this.getExportTemplate().getRepetitionHeaderHeight();
 				}
-				// if (this.getTemplate().getRepetitionHeight() > 0) {
+				// if (this.getMyTemplate().getRepetitionHeight() > 0) {
 				// 去除重复限制，以实现结束区顶格
-				this.drawTableRow(writer, this.getTemplate().getRepetitions());
-				top += this.getTemplate().getRepetitionHeight();
+				this.drawTableRow(writer, this.getExportTemplate().getRepetitions());
+				top += this.getExportTemplate().getRepetitionHeight();
 				// }
 				if (this.paramValue(String.format(PARAM_TEMPLATE_PAGE_DATA_INDEX, page), -1) == i) {
-					if (this.getTemplate().getRepetitionFooterHeight() > 0) {
-						this.endTable(writer, this.getTemplate().getRepetitionFooters());
-						top += this.getTemplate().getRepetitionFooterHeight();
+					if (this.getExportTemplate().getRepetitionFooterHeight() > 0) {
+						this.endTable(writer, this.getExportTemplate().getRepetitionFooters());
+						top += this.getExportTemplate().getRepetitionFooterHeight();
 					} else {
 						this.endTable(writer);
 					}
@@ -405,9 +406,9 @@ public class TransformerHtml extends TemplateTransformer {
 					break;
 				}
 				if (i == size) {
-					if (this.getTemplate().getRepetitionFooterHeight() > 0) {
-						this.endTable(writer, this.getTemplate().getRepetitionFooters());
-						top += this.getTemplate().getRepetitionFooterHeight();
+					if (this.getExportTemplate().getRepetitionFooterHeight() > 0) {
+						this.endTable(writer, this.getExportTemplate().getRepetitionFooters());
+						top += this.getExportTemplate().getRepetitionFooterHeight();
 					} else {
 						this.endTable(writer);
 					}
@@ -418,25 +419,26 @@ public class TransformerHtml extends TemplateTransformer {
 			if (page == this.paramValue(PARAM_PAGE_MAIN_TOTAL, 1)) {
 				// 最后一页绘制
 				areaName = String.format("%s_endsection", pageName);
-				if (this.getTemplate().getEndSectionHeight() > 0) {
+				if (this.getExportTemplate().getEndSectionHeight() > 0) {
 					Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
-					top += this.getTemplate().getMarginArea();
-					this.startDiv(writer, areaName, this.getTemplate().getEndSectionLeft(), top,
-							this.getTemplate().getEndSectionWidth(), this.getTemplate().getEndSectionHeight());
-					this.drawArea(writer, this.getTemplate().getEndSections());
+					top += this.getExportTemplate().getMarginArea();
+					this.startDiv(writer, areaName, this.getExportTemplate().getEndSectionLeft(), top,
+							this.getExportTemplate().getEndSectionWidth(),
+							this.getExportTemplate().getEndSectionHeight());
+					this.drawArea(writer, this.getExportTemplate().getEndSections());
 					this.endDiv(writer);
-					top += this.getTemplate().getEndSectionHeight();
+					top += this.getExportTemplate().getEndSectionHeight();
 				}
 			}
 			// 绘制页脚区域
 			areaName = String.format("%s_footer", pageName);
-			if (this.getTemplate().getPageFooterHeight() > 0) {
+			if (this.getExportTemplate().getPageFooterHeight() > 0) {
 				Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
-				top += this.getTemplate().getMarginArea();
-				this.startDiv(writer, areaName, this.getTemplate().getPageFooterLeft(),
-						this.getTemplate().getPageFooterTop(), this.getTemplate().getPageFooterWidth(),
-						this.getTemplate().getPageFooterHeight());
-				this.drawArea(writer, this.getTemplate().getPageFooters());
+				top += this.getExportTemplate().getMarginArea();
+				this.startDiv(writer, areaName, this.getExportTemplate().getPageFooterLeft(),
+						this.getExportTemplate().getPageFooterTop(), this.getExportTemplate().getPageFooterWidth(),
+						this.getExportTemplate().getPageFooterHeight());
+				this.drawArea(writer, this.getExportTemplate().getPageFooters());
 				this.endDiv(writer);
 			}
 			// 结束-页
@@ -444,11 +446,11 @@ public class TransformerHtml extends TemplateTransformer {
 		}
 		int page = this.paramValue(PARAM_PAGE_INDEX, 0);
 		// 绘制附录
-		for (int index = 0; index < this.getTemplate().getAppendixs().size(); index++) {
+		for (int index = 0; index < this.getExportTemplate().getAppendixs().size(); index++) {
 			// 设置当前页变量
 			page += 1;
 			this.newParam(PARAM_PAGE_INDEX, page);
-			IExportTemplateAppendix appendix = this.getTemplate().getAppendixs().get(index);
+			IExportTemplateAppendix appendix = this.getExportTemplate().getAppendixs().get(index);
 			// 开始-页
 			String pageName = String.format("page_%s", page), areaName;
 			pageTop = (page - 1) * pageHeight;
@@ -458,10 +460,10 @@ public class TransformerHtml extends TemplateTransformer {
 			if (appendix.getPageHeader() == emYesNo.YES) {
 				areaName = String.format("%s_header", pageName);
 				Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
-				this.startDiv(writer, areaName, this.getTemplate().getPageHeaderLeft(),
-						this.getTemplate().getPageHeaderTop(), this.getTemplate().getPageHeaderWidth(),
-						this.getTemplate().getPageHeaderHeight());
-				this.drawArea(writer, this.getTemplate().getPageHeaders());
+				this.startDiv(writer, areaName, this.getExportTemplate().getPageHeaderLeft(),
+						this.getExportTemplate().getPageHeaderTop(), this.getExportTemplate().getPageHeaderWidth(),
+						this.getExportTemplate().getPageHeaderHeight());
+				this.drawArea(writer, this.getExportTemplate().getPageHeaders());
 				this.endDiv(writer);
 			}
 			// 绘制附录
@@ -475,10 +477,10 @@ public class TransformerHtml extends TemplateTransformer {
 			if (appendix.getPageFooter() == emYesNo.YES) {
 				areaName = String.format("%s_footer", pageName);
 				Logger.log(MessageLevel.DEBUG, "transformer: draw area [%s].", areaName);
-				this.startDiv(writer, areaName, this.getTemplate().getPageFooterLeft(),
-						this.getTemplate().getPageFooterTop(), this.getTemplate().getPageFooterWidth(),
-						this.getTemplate().getPageFooterHeight());
-				this.drawArea(writer, this.getTemplate().getPageFooters());
+				this.startDiv(writer, areaName, this.getExportTemplate().getPageFooterLeft(),
+						this.getExportTemplate().getPageFooterTop(), this.getExportTemplate().getPageFooterWidth(),
+						this.getExportTemplate().getPageFooterHeight());
+				this.drawArea(writer, this.getExportTemplate().getPageFooters());
 				this.endDiv(writer);
 			}
 			// 结束-页
@@ -807,13 +809,13 @@ public class TransformerHtml extends TemplateTransformer {
 		writer.write(" ");
 		writer.write("style=\"");
 		writer.write("height:");
-		writer.write(String.valueOf(this.getTemplate().getRepetitionFooterHeight()));
+		writer.write(String.valueOf(this.getExportTemplate().getRepetitionFooterHeight()));
 		writer.write("px;");
 		writer.write("border:1px solid black;");
 		writer.write("\"");
 		writer.write(" ");
 		writer.write("colspan=\"");
-		writer.write(String.valueOf(this.getTemplate().getRepetitions().size()));
+		writer.write(String.valueOf(this.getExportTemplate().getRepetitions().size()));
 		writer.write("\"");
 		writer.write(" ");
 		writer.write(">");
@@ -936,4 +938,5 @@ public class TransformerHtml extends TemplateTransformer {
 		writer.write(">");
 		writer.write("</div>");
 	}
+
 }
