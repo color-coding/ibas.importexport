@@ -185,6 +185,8 @@ namespace importexport {
             name: string;
             /** 描述 */
             description: string;
+            /** 输出类型 */
+            contentType: string;
             /** 导出 */
             export(caller: IDataExportCaller<any>): void;
         }

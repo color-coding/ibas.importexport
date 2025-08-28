@@ -95,7 +95,7 @@ public interface IBORepositoryImportExportApp extends IBORepositoryApplication {
 	 * @param cause 原因
 	 * @return 操作结果
 	 */
-	IOperationResult<IExportRecord> writeExportRecord(String boKeys, String cause);
+	IOperationResult<IExportRecord> writeExportRecord(String boKeys, String cause, String content);
 
 	// --------------------------------------------------------------------------------------------//
 

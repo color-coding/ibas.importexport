@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.SqlQuery;
@@ -16,35 +14,17 @@ import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.message.MessageLevel;
 import org.colorcoding.ibas.bobas.repository.BORepository4DbReadonly;
 import org.colorcoding.ibas.bobas.repository.BORepositoryService;
-import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplate;
-import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplateItem;
 import org.colorcoding.ibas.importexport.data.DataConvert;
-import org.colorcoding.ibas.importexport.data.emDataSourceType;
 
 public abstract class TemplateTransformer extends Transformer<InputStream, File> implements ITemplateTransformer {
 
-	/**
-	 * 变量样式，(XXXXXX)
-	 */
-	public static final String PARAM_PATTERN = "(?=\\(\\$)[^\\)]+";
-	public static final String PARAM_PATTERN_TEMPLATE = "(%s)";
-	public static final String PARAM_PAGE_INDEX = "${PAGE_INDEX}";
-	public static final String PARAM_PAGE_TOTAL = "${PAGE_TOTAL}";
-	public static final String PARAM_PAGE_MAIN_TOTAL = "${PAGE_MAIN_TOTAL}";
-	public static final String PARAM_DATA_SIZE = "${DATA_SIZE}";
-	public static final String PARAM_DATA_INDEX = "${DATA_INDEX}";
-	public static final String PARAM_TIME_NOW = "${TIME_NOW}";
-	public static final String PARAM_TEMPLATE_PAGE_DATA_INDEX = "${PAGE_%s_DATA_INDEX}";
-	public static final String PARAM_PAGE_DATA_BEGIN = "${PAGE_DATA_BEGIN}";
-	public static final String PARAM_PAGE_DATA_END = "${PAGE_DATA_END}";
+	private String template;
 
-	private IExportTemplate template;
-
-	public final IExportTemplate getTemplate() {
+	public final String getTemplate() {
 		return template;
 	}
 
-	public final void setTemplate(IExportTemplate template) {
+	public final void setTemplate(String template) {
 		this.template = template;
 	}
 
@@ -96,54 +76,6 @@ public abstract class TemplateTransformer extends Transformer<InputStream, File>
 			return defaults;
 		}
 		return (T) value;
-	}
-
-	/**
-	 * 获取模板元素值
-	 * 
-	 * @param template
-	 * @return
-	 */
-	protected String templateValue(IExportTemplateItem template) {
-		String value = template.getItemString();
-		if (value == null) {
-			return "";
-		}
-		if (template.getSourceType() == emDataSourceType.PATH) {
-			Object tmp = null;
-			if (value.startsWith("${") && value.endsWith("}")) {
-				// 变量
-				tmp = this.paramValue(value, null);
-			} else {
-				// 对象属性
-				tmp = this.dataValue(value, null);
-			}
-			if (tmp == null) {
-				return "";
-			}
-			return this.formatValue(tmp, template.getValueFormat());
-		}
-		if (template.getSourceType() == emDataSourceType.QUERY) {
-			// 处理语句中的变量
-			Matcher matcher = Pattern.compile(PARAM_PATTERN).matcher(value);
-			while (matcher.find()) {
-				// 带格式名称${}
-				String pName = matcher.group(0).substring(1);
-				Object pValue = null;
-				if (pName.startsWith("${") && pName.endsWith("}")) {
-					// 变量
-					pValue = this.paramValue(pName, null);
-				} else if (pName.startsWith("$")) {
-					// 对象属性
-					pValue = this.dataValue(pName, null);
-				}
-				if (pValue != null) {
-					value = value.replace(String.format(PARAM_PATTERN_TEMPLATE, pName), String.valueOf(pValue));
-				}
-			}
-			return this.formatValue(this.queryValue(value, null), template.getValueFormat());
-		}
-		return value;
 	}
 
 	/**
@@ -226,5 +158,4 @@ public abstract class TemplateTransformer extends Transformer<InputStream, File>
 		return defaults;
 	}
 
-	protected abstract <T> T dataValue(String name, T defaults);
 }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE ApplicationConfig>
+<ns:ApplicationConfig xmlns:ns="http://colorcoding.org/ibas/initialfantasy/bo">
+	<ConfigKey>enabledExportRecordToPrinted</ConfigKey>
+	<ConfigDescription>开启自动标记已打印</ConfigDescription>
+	<ConfigGroup>cbd4ef0f-ee88-4ea7-96c7-13f974026b58</ConfigGroup>
+	<ConfigValue>false</ConfigValue>
+	<Settings>[{"Key":true,"Text":"是"},{"Key":false,"Text":"否"}]</Settings>
+	<Category>SERVER</Category>
+	<Activated>YES</Activated>
+</ns:ApplicationConfig>

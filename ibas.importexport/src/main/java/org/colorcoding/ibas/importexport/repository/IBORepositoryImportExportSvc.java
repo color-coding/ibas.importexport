@@ -95,7 +95,7 @@ public interface IBORepositoryImportExportSvc extends IBORepositorySmartService 
 	 * @param token 口令
 	 * @return 操作结果
 	 */
-	OperationResult<ExportRecord> writeExportRecord(String boKeys, String cause, String token);
+	OperationResult<ExportRecord> writeExportRecord(String boKeys, String cause, String token, String content);
 	// --------------------------------------------------------------------------------------------//
 
 }

@@ -20,9 +20,7 @@ import org.colorcoding.ibas.bobas.common.Criteria;
 import org.colorcoding.ibas.bobas.common.ICondition;
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
-import org.colorcoding.ibas.bobas.common.ISort;
 import org.colorcoding.ibas.bobas.common.OperationResult;
-import org.colorcoding.ibas.bobas.common.SortType;
 import org.colorcoding.ibas.bobas.core.BOFactory;
 import org.colorcoding.ibas.bobas.core.IBOFactory;
 import org.colorcoding.ibas.bobas.core.IBusinessObjectBase;
@@ -34,6 +32,7 @@ import org.colorcoding.ibas.bobas.core.fields.IManagedFields;
 import org.colorcoding.ibas.bobas.data.ArrayList;
 import org.colorcoding.ibas.bobas.data.DateTime;
 import org.colorcoding.ibas.bobas.data.FileData;
+import org.colorcoding.ibas.bobas.data.KeyText;
 import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
@@ -57,6 +56,7 @@ import org.colorcoding.ibas.importexport.transformer.IFileTransformer;
 import org.colorcoding.ibas.importexport.transformer.ITemplateTransformer;
 import org.colorcoding.ibas.importexport.transformer.ITransformer;
 import org.colorcoding.ibas.importexport.transformer.ITransformerFile;
+import org.colorcoding.ibas.importexport.transformer.TemplateTransformer;
 import org.colorcoding.ibas.importexport.transformer.TransformerFactory;
 import org.colorcoding.ibas.importexport.transformer.TransformerInfo;
 
@@ -496,7 +496,6 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 
 	@Override
 	public OperationResult<FileData> exportData(DataExportInfo info, String token) {
-		OperationResult<FileData> opRslt = new OperationResult<FileData>();
 		try {
 			this.setUserToken(token);
 			// 获取导出的模板
@@ -504,6 +503,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			if (transformer == null) {
 				throw new Exception(I18N.prop("msg_ie_not_found_transformer", info.getTransformer()));
 			}
+			OperationResult<FileData> operationResult = new OperationResult<FileData>();
 			Logger.log(MessageLevel.DEBUG, MSG_TRANSFORMER_EXPORT_DATA, transformer.getClass().getName());
 			if (transformer instanceof ITransformerFile) {
 				// 查询数据
@@ -541,47 +541,33 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 				if (file == null) {
 					throw new Exception(I18N.prop("msg_ie_no_transformed_data"));
 				}
-				Logger.log(MessageLevel.DEBUG, MSG_TRANSFORMER_EXPORT_DATA_TO_FILE, file.getPath());
 				FileData fileData = new FileData();
 				fileData.setFileName(file.getName());
 				fileData.setLocation(file.getPath());
-				opRslt.addResultObjects(fileData);
+				operationResult.addResultObjects(fileData);
 			} else if (transformer instanceof ITemplateTransformer) {
-				ICriteria criteria = new Criteria();
-				ICondition condition = criteria.getConditions().create();
-				condition.setAlias(ExportTemplate.PROPERTY_ACTIVATED.getName());
-				condition.setValue(emYesNo.YES);
-				condition = criteria.getConditions().create();
-				condition.setAlias(ExportTemplate.PROPERTY_OBJECTKEY.getName());
-				condition.setValue(info.getTemplate());
-				IOperationResult<IExportTemplate> opRstlTP = this.fetchExportTemplate(criteria);
-				if (opRstlTP.getError() != null) {
-					throw opRstlTP.getError();
-				}
-				IExportTemplate template = opRstlTP.getResultObjects().firstOrDefault();
-				if (template == null) {
-					throw new Exception(I18N.prop("msg_ie_not_found_template", info.getTemplate()));
-				}
 				ITemplateTransformer templateTransformer = (ITemplateTransformer) transformer;
 				templateTransformer.setWorkFolder(MyConfiguration.getTempFolder());
-				templateTransformer.setTemplate(template);
+				templateTransformer.setTemplate(info.getTemplate());
 				templateTransformer.setInputData(info.getContent());
 				templateTransformer.transform();
 				File file = templateTransformer.getOutputData().firstOrDefault();
 				if (file == null) {
 					throw new Exception(I18N.prop("msg_ie_no_transformed_data"));
 				}
-				Logger.log(MessageLevel.DEBUG, MSG_TRANSFORMER_EXPORT_DATA_TO_FILE, file.getPath());
 				FileData fileData = new FileData();
 				fileData.setFileName(file.getName());
 				fileData.setLocation(file.getPath());
-				opRslt.addResultObjects(fileData);
+				operationResult.addResultObjects(fileData);
 			}
+			for (FileData item : operationResult.getResultObjects()) {
+				Logger.log(MessageLevel.DEBUG, MSG_TRANSFORMER_EXPORT_DATA_TO_FILE, item.getLocation());
+			}
+			return operationResult;
 		} catch (Exception e) {
-			opRslt = new OperationResult<FileData>(e);
 			Logger.log(e);
+			return new OperationResult<FileData>(e);
 		}
-		return opRslt;
 	}
 
 	// --------------------------------------------------------------------------------------------//
@@ -595,46 +581,60 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	public OperationResult<DataExportInfo> fetchDataExporter(ICriteria criteria, String token) {
 		try {
 			this.setUserToken(token);
-			ICondition tCondition = criteria.getConditions()
+			ICondition nCondition = criteria.getConditions()
 					.firstOrDefault(c -> c.getAlias().equalsIgnoreCase(DataExportInfo.CONDITION_ALIAS_TRANSFORMER));
+			ICondition pCondition = criteria.getConditions()
+					.firstOrDefault(c -> c.getAlias().equalsIgnoreCase(DataExportInfo.CONDITION_ALIAS_PRINTABLE));
 			OperationResult<DataExportInfo> operationResult = new OperationResult<>();
 			for (TransformerInfo transformer : TransformerFactory.create().getTransformers().keySet()) {
-				if (tCondition != null) {
-					if (tCondition.getOperation() == ConditionOperation.START) {
-						if (!transformer.name().startsWith(tCondition.getValue())) {
+				if (nCondition != null) {
+					if (nCondition.getOperation() == ConditionOperation.START) {
+						if (!transformer.name().startsWith(nCondition.getValue())) {
+							continue;
+						}
+					} else if (nCondition.getOperation() == ConditionOperation.EQUAL) {
+						if (!transformer.name().equals(nCondition.getValue())) {
 							continue;
 						}
 					} else {
 						throw new Exception(I18N.prop("msg_bobas_invaild_condition_operation"));
 					}
 				}
-				if (transformer.template()) {
-					if (criteria.getBusinessObject() != null && !criteria.getBusinessObject().isEmpty()) {
-						ICriteria tpCriteria = new Criteria();
-						tpCriteria.setNoChilds(true);
-						ICondition condition = tpCriteria.getConditions().create();
-						condition.setAlias(ExportTemplate.PROPERTY_ACTIVATED.getName());
-						condition.setValue(emYesNo.YES);
-						condition = tpCriteria.getConditions().create();
-						condition.setAlias(ExportTemplate.PROPERTY_BOCODE.getName());
-						condition.setValue(criteria.getBusinessObject());
-						ISort sort = tpCriteria.getSorts().create();
-						sort.setAlias(ExportTemplate.PROPERTY_OBJECTKEY.getName());
-						sort.setSortType(SortType.DESCENDING);
-						IOperationResult<IExportTemplate> opRsltET = this.fetchExportTemplate(tpCriteria);
-						if (opRsltET.getError() != null) {
-							throw opRsltET.getError();
+				if (pCondition != null) {
+					emYesNo value = emYesNo.NO;
+					if (DataConvert.isNumeric(pCondition.getValue())) {
+						value = emYesNo.valueOf(Integer.valueOf(pCondition.getValue()));
+					} else {
+						value = emYesNo.valueOf(pCondition.getValue());
+					}
+					if (pCondition.getOperation() == ConditionOperation.EQUAL) {
+						if (value == emYesNo.YES) {
+							if (!transformer.printable()) {
+								continue;
+							}
+						} else {
+							if (transformer.printable()) {
+								continue;
+							}
 						}
+					} else {
+						throw new Exception(I18N.prop("msg_bobas_invaild_condition_operation"));
+					}
+				}
+				if (transformer.template()) {
+					ITransformer<?, ?> instance = TransformerFactory.create().create(transformer.name());
+					if (instance instanceof TemplateTransformer) {
+						TemplateTransformer templateTransformer = (TemplateTransformer) instance;
 						String name = transformer.name();
 						if (name.indexOf("_") > 0) {
 							name = name.substring(name.lastIndexOf("_") + 1).toLowerCase();
 						}
-						for (IExportTemplate template : opRsltET.getResultObjects()) {
+						for (KeyText template : templateTransformer.matchingTemplates(criteria.getBusinessObject())) {
 							DataExportInfo info = new DataExportInfo();
 							info.setTransformer(transformer.name());
-							info.setTemplate(String.valueOf(template.getObjectKey()));
-							info.setDescription(I18N.prop("msg_ie_exporter_description", name, template.getName(),
-									template.getWidth(), template.getHeight()));
+							info.setContentType(transformer.contentType());
+							info.setTemplate(String.valueOf(template.getKey()));
+							info.setDescription(I18N.prop("msg_ie_exporter_description", name, template.getText()));
 							operationResult.addResultObjects(info);
 						}
 					}
@@ -691,12 +691,12 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	}
 
 	@Override
-	public IOperationResult<IExportRecord> writeExportRecord(String boKeys, String cause) {
-		return this.writeExportRecord(boKeys, cause);
+	public IOperationResult<IExportRecord> writeExportRecord(String boKeys, String cause, String content) {
+		return this.writeExportRecord(boKeys, cause, content);
 	}
 
 	@Override
-	public OperationResult<ExportRecord> writeExportRecord(String boKeys, String cause, String token) {
+	public OperationResult<ExportRecord> writeExportRecord(String boKeys, String cause, String content, String token) {
 		try {
 			this.setUserToken(token);
 			ICriteria criteria = Criteria.create(boKeys);
@@ -707,6 +707,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			ExportRecord record = new ExportRecord();
 			record.setCause(cause);
 			record.setBOKeys(boKeys);
+			record.setContent(content);
 			record.setBOCode(criteria.getBusinessObject());
 			record.setExportDate(DateTime.getToday());
 			record.setExportTime(Short.valueOf(DateTime.getNow().toString("HHmm")));
@@ -716,7 +717,8 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			BORepositoryImportExport boRepository = new BORepositoryImportExport();
 			try {
 				boRepository.beginTransaction();
-				if ("PRINTED".equalsIgnoreCase(cause)) {
+				if ("PRINT".equalsIgnoreCase(cause) && MyConfiguration
+						.getConfigValue(MyConfiguration.CONFIG_ITEM_ENABLED_EXPORT_RECORD_TO_PRINTED, true)) {
 					// 打印导出，尝试修改单据状态
 					Class<?> boType = getBOFactory().getClass(criteria.getBusinessObject());
 					if (boType == null || !IBusinessObject.class.isAssignableFrom(boType)) {

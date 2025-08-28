@@ -1,5 +1,7 @@
 package org.colorcoding.ibas.importexport.service.rest;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -10,11 +12,14 @@ import javax.ws.rs.core.MediaType;
 
 import org.colorcoding.ibas.bobas.common.Criteria;
 import org.colorcoding.ibas.bobas.common.OperationResult;
+import org.colorcoding.ibas.bobas.data.DataConvert;
 import org.colorcoding.ibas.importexport.MyConfiguration;
 import org.colorcoding.ibas.importexport.bo.exportrecord.ExportRecord;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.ExportTemplate;
 import org.colorcoding.ibas.importexport.data.DataExportInfo;
 import org.colorcoding.ibas.importexport.repository.BORepositoryImportExport;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 /**
  * ImportExport 数据服务JSON
@@ -128,13 +133,26 @@ public class DataService extends BORepositoryImportExport {
 	 * @return 操作结果
 	 */
 	@POST
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("writeExportRecord")
-	public OperationResult<ExportRecord> writeExportRecord(@QueryParam("boKeys") String boKeys,
-			@QueryParam("cause") String cause, @HeaderParam("authorization") String authorization,
-			@QueryParam("token") String token) {
-		return super.writeExportRecord(boKeys, cause, MyConfiguration.optToken(authorization, token));
+	public OperationResult<ExportRecord> writeExportRecord(FormDataMultiPart formData,
+			@HeaderParam("authorization") String authorization, @QueryParam("token") String token) {
+		String boKeys = DataConvert.STRING_VALUE_EMPTY;
+		String cause = DataConvert.STRING_VALUE_EMPTY;
+		String content = DataConvert.STRING_VALUE_EMPTY;
+		for (List<FormDataBodyPart> bodyParts : formData.getFields().values()) {
+			for (FormDataBodyPart bodyPart : bodyParts) {
+				if ("boKeys".equalsIgnoreCase(bodyPart.getName())) {
+					boKeys = bodyPart.getValue();
+				} else if ("cause".equalsIgnoreCase(bodyPart.getName())) {
+					cause = bodyPart.getValue();
+				} else if ("content".equalsIgnoreCase(bodyPart.getName())) {
+					content = bodyPart.getValue();
+				}
+			}
+		}
+		return super.writeExportRecord(boKeys, cause, content, MyConfiguration.optToken(authorization, token));
 	}
 	// --------------------------------------------------------------------------------------------//
 
