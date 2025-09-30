@@ -174,6 +174,7 @@ declare namespace initialfantasy {
             namespace conditions {
                 namespace operation {
                     function valueOf(value: ibas.emConditionOperation): emConditionOperation;
+                    function toValue(value: emConditionOperation): ibas.emConditionOperation;
                 }
                 namespace relationship {
                     function valueOf(value: ibas.emConditionRelationship): emConditionRelationship;
@@ -2653,6 +2654,8 @@ declare namespace initialfantasy {
         }
         /** 业务对象属性信息 */
         class BOPropertyInformation extends ibas.BusinessObject<BOPropertyInformation> implements IBOPropertyInformation {
+            /** 业务对象编码 */
+            static BUSINESS_OBJECT_CODE: string;
             /** 构造函数 */
             constructor();
             /** 映射的属性名称-编码 */
@@ -4615,6 +4618,11 @@ declare namespace initialfantasy {
              * @param fetcher 查询者
              */
             fetchBOInformation(fetcher: ibas.IFetchCaller<bo.BOInformation>): void;
+            /**
+             * 查询 业务对象信息
+             * @param fetcher 查询者
+             */
+            fetchBOPropertyInformation(fetcher: ibas.IFetchCaller<bo.BOPropertyInformation>): void;
             /**
              * 保存 业务对象信息
              * @param saver 保存者
