@@ -62,6 +62,7 @@
   "importexport_export_content": "导出内容",
   "importexport_export_content_all": "导出内容（全部）",
   "importexport_export_content_selected": "导出内容（选中）",
+  "importexport_export_content_current": "导出内容（当前）",
   "importexport_export_all": "导出全部",
   "importexport_export_selected": "导出选中",
   "importexport_closing_delimiter": "----结束----"

@@ -11,8 +11,12 @@ namespace importexport {
         const CONFIG_ITEM_EXCEL_OUTPUT_LIBRARY: string = "xlsxWriteLibrary";
 
         export enum emExportMode {
-            ALL,
+            /** 当前全部 */
+            CURRENT,
+            /** 选择的 */
             SELECTED,
+            /** 全部 */
+            ALL,
         }
         /** 应用-审批流程 */
         export class ViewExportApp extends ibas.ResidentApplication<IViewExportView> {
@@ -37,13 +41,13 @@ namespace importexport {
             run(): void {
                 super.run.apply(this, arguments);
             }
-            exportMode: emExportMode = emExportMode.ALL;
+            exportMode: emExportMode = emExportMode.CURRENT;
             protected showFullView(mode?: emExportMode): void {
                 super.showFullView();
                 if (mode > 0) {
                     this.exportMode = mode;
                 } else {
-                    this.exportMode = emExportMode.ALL;
+                    this.exportMode = emExportMode.CURRENT;
                 }
                 this.view.showTables(this.exportMode);
             }
