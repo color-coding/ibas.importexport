@@ -24,6 +24,7 @@ import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.data.DataConvert;
 import org.colorcoding.ibas.bobas.data.FileData;
+import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.message.MessageLevel;
@@ -35,7 +36,6 @@ import org.colorcoding.ibas.importexport.MyConfiguration;
 import org.colorcoding.ibas.importexport.data.DataExportInfo;
 import org.colorcoding.ibas.importexport.data.DataWrapping;
 import org.colorcoding.ibas.importexport.data.emDataUpdateMethod;
-import org.colorcoding.ibas.importexport.repository.BORepositoryImportExport;
 import org.colorcoding.ibas.importexport.transformer.FileTransformer;
 import org.colorcoding.ibas.importexport.transformer.FileTransformerSerialization;
 import org.colorcoding.ibas.importexport.transformer.IFileTransformer;
@@ -51,6 +51,18 @@ public class FileService extends FileRepositoryService {
 	public FileService() {
 		this.getRepository().setRepositoryFolder(
 				MyConfiguration.getConfigValue(CONFIG_ITEM_IMPORT_WORK_FOLDER, MyConfiguration.getTempFolder()));
+	}
+
+	private class BORepositoryImportExport
+			extends org.colorcoding.ibas.importexport.repository.BORepositoryImportExport {
+		/**
+		 * 跳过审批流
+		 * @param value
+		 */
+		public final void setSkipApprovalProcess(boolean value) {
+			this.setCheckApprovalProcess(!value);
+		}
+
 	}
 
 	@POST
@@ -74,6 +86,8 @@ public class FileService extends FileRepositoryService {
 			token = MyConfiguration.optToken(authorization, token);
 			OperationResult<FileData> opRsltFile = null;
 			emDataUpdateMethod updateMethod = emDataUpdateMethod.SKIP;
+			emYesNo skipApproval = emYesNo.NO;
+			emYesNo singleTransaction = emYesNo.YES;
 			for (List<FormDataBodyPart> bodyParts : formData.getFields().values()) {
 				for (FormDataBodyPart bodyPart : bodyParts) {
 					if ("file".equalsIgnoreCase(bodyPart.getName())) {
@@ -86,6 +100,16 @@ public class FileService extends FileRepositoryService {
 						if (!DataConvert.isNullOrEmpty(value)) {
 							updateMethod = DataConvert.convert(emDataUpdateMethod.class, value.toUpperCase());
 						}
+					} else if ("skipApproval".equalsIgnoreCase(bodyPart.getName())) {
+						String value = bodyPart.getValue();
+						if (!DataConvert.isNullOrEmpty(value)) {
+							skipApproval = DataConvert.convert(emYesNo.class, value.toUpperCase());
+						}
+					} else if ("singleTransaction".equalsIgnoreCase(bodyPart.getName())) {
+						String value = bodyPart.getValue();
+						if (!DataConvert.isNullOrEmpty(value)) {
+							singleTransaction = DataConvert.convert(emYesNo.class, value.toUpperCase());
+						}
 					}
 				}
 			}
@@ -95,20 +119,33 @@ public class FileService extends FileRepositoryService {
 			// 导入文件
 			BORepositoryImportExport boRepository = new BORepositoryImportExport();
 			boRepository.setUserToken(token);
+			if (skipApproval == emYesNo.YES) {
+				boRepository.setSkipApprovalProcess(true);
+			}
+			boolean myTrans = false;
+			if (singleTransaction == emYesNo.YES) {
+				myTrans = boRepository.beginTransaction();
+			}
 			opRslt = new OperationResult<String>();
 			for (FileData data : opRsltFile.getResultObjects()) {
 				IOperationResult<String> opRsltImport = boRepository.importData(data, updateMethod);
 				if (opRsltImport.getError() != null) {
+					if (singleTransaction == emYesNo.YES && myTrans) {
+						boRepository.rollbackTransaction();
+					}
 					throw opRsltImport.getError();
 				}
 				// 记录结果
 				opRslt.addResultObjects(opRsltImport.getResultObjects());
 				opRslt.addInformations(opRsltImport.getInformations());
 			}
+			if (singleTransaction == emYesNo.YES && myTrans) {
+				boRepository.commitTransaction();
+			}
+			return opRslt;
 		} catch (Exception e) {
-			opRslt = new OperationResult<String>(e);
+			return new OperationResult<String>(e);
 		}
-		return opRslt;
 	}
 
 	@POST
@@ -188,7 +225,6 @@ public class FileService extends FileRepositoryService {
 
 	@POST
 	@Path("export")
-	@SuppressWarnings("resource")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public void exportData(FormDataMultiPart formData, @Context HttpServletResponse response,

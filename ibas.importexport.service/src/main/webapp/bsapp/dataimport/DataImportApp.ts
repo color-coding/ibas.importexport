@@ -95,7 +95,7 @@ namespace importexport {
             }
             private files: ibas.IList<FileItem> = new FileItems();
             /** 导入 */
-            protected import(method?: bo.emDataUpdateMethod): void {
+            protected import(method: bo.emDataUpdateMethod, transcation: ibas.emYesNo, approval: ibas.emYesNo): void {
                 let datas: FileItem[] = this.files.filter(c => c.status === "pending");
                 if (!(datas?.length > 0)) {
                     this.messages(ibas.emMessageType.WARNING, ibas.i18n.prop("importexport_please_choose_file"));
@@ -120,6 +120,12 @@ namespace importexport {
                                     let formData: FormData = new FormData();
                                     formData.append("updateMethod", ibas.enums.toString(
                                         bo.emDataUpdateMethod, method > 0 ? method : bo.emDataUpdateMethod.SKIP)
+                                    );
+                                    formData.append("singleTransaction", ibas.enums.toString(
+                                        ibas.emYesNo, transcation >= 0 ? transcation : ibas.emYesNo.YES)
+                                    );
+                                    formData.append("skipApproval", ibas.enums.toString(
+                                        ibas.emYesNo, approval >= 0 ? approval : ibas.emYesNo.NO)
                                     );
                                     formData.append("file", data.file);
                                     data.status = "processing";
