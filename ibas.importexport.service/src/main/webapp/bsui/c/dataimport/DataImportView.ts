@@ -28,6 +28,20 @@ namespace importexport {
                                     text: ibas.i18n.prop("importexport_update_exists_data"),
                                 }),
                                 new sap.m.ToolbarSpacer(),
+                                new sap.m.Button("", {
+                                    icon: "sap-icon://drill-down",
+                                    press(): void {
+                                        if (this.getIcon() === "sap-icon://drill-down") {
+                                            that.listTransaction.setVisible(true);
+                                            that.listApproval.setVisible(true);
+                                            this.setIcon("sap-icon://drill-up");
+                                        } else {
+                                            that.listTransaction.setVisible(false);
+                                            that.listApproval.setVisible(false);
+                                            this.setIcon("sap-icon://drill-down");
+                                        }
+                                    }
+                                })
                             ]
                         }),
                         mode: sap.m.ListMode.SingleSelectLeft,
@@ -48,6 +62,56 @@ namespace importexport {
                                 counter: bo.emDataUpdateMethod.MODIFY,
                                 icon: " sap-icon://request",
                                 title: ibas.enums.describe(bo.emDataUpdateMethod, bo.emDataUpdateMethod.MODIFY),
+                            }),
+                        ],
+                    });
+                    this.listTransaction = new sap.extension.m.List("", {
+                        visible: false,
+                        headerToolbar: new sap.m.Toolbar("", {
+                            content: [
+                                new sap.m.Text("", {
+                                    text: ibas.i18n.prop("importexport_update_single_transaction"),
+                                }),
+                                new sap.m.ToolbarSpacer(),
+                            ]
+                        }),
+                        mode: sap.m.ListMode.SingleSelectLeft,
+                        items: [
+                            new sap.m.StandardListItem("", {
+                                counter: ibas.emYesNo.NO,
+                                icon: "sap-icon://message-error",
+                                title: ibas.enums.describe(ibas.emYesNo, ibas.emYesNo.NO),
+                            }),
+                            new sap.m.StandardListItem("", {
+                                selected: true,
+                                counter: ibas.emYesNo.YES,
+                                icon: "sap-icon://message-success",
+                                title: ibas.enums.describe(ibas.emYesNo, ibas.emYesNo.YES),
+                            }),
+                        ],
+                    });
+                    this.listApproval = new sap.extension.m.List("", {
+                        visible: false,
+                        headerToolbar: new sap.m.Toolbar("", {
+                            content: [
+                                new sap.m.Text("", {
+                                    text: ibas.i18n.prop("importexport_update_skip_approval"),
+                                }),
+                                new sap.m.ToolbarSpacer(),
+                            ]
+                        }),
+                        mode: sap.m.ListMode.SingleSelectLeft,
+                        items: [
+                            new sap.m.StandardListItem("", {
+                                selected: true,
+                                counter: ibas.emYesNo.NO,
+                                icon: "sap-icon://message-error",
+                                title: ibas.enums.describe(ibas.emYesNo, ibas.emYesNo.NO),
+                            }),
+                            new sap.m.StandardListItem("", {
+                                counter: ibas.emYesNo.YES,
+                                icon: "sap-icon://message-success",
+                                title: ibas.enums.describe(ibas.emYesNo, ibas.emYesNo.YES),
                             }),
                         ],
                     });
@@ -224,7 +288,10 @@ namespace importexport {
                                             press(): void {
                                                 let item: any = that.listMethod.getSelectedItem();
                                                 if (item instanceof sap.m.StandardListItem) {
-                                                    that.fireViewEvents(that.importEvent, item.getCounter());
+                                                    that.fireViewEvents(that.importEvent, item.getCounter(),
+                                                        that.listTransaction.getSelectedItem().getCounter(),
+                                                        that.listApproval.getSelectedItem().getCounter()
+                                                    );
                                                 }
                                             }
                                         }),
@@ -232,6 +299,8 @@ namespace importexport {
                                 }),
                                 content: [
                                     this.listMethod,
+                                    this.listTransaction,
+                                    this.listApproval,
                                     this.listFiles,
                                 ]
                             })
@@ -288,6 +357,8 @@ namespace importexport {
                 }
 
                 private listMethod: sap.m.List;
+                private listApproval: sap.m.List;
+                private listTransaction: sap.m.List;
                 private listFiles: sap.m.List;
                 private pageResult: sap.m.Page;
 
@@ -337,6 +408,15 @@ namespace importexport {
                         if (this.pageResult.getContent()[0] instanceof sap.m.IllustratedMessage) {
                             this.pageResult.removeContent(0);
                         }
+                        let nResults: any[] = new ibas.ArrayList<any>();
+                        for (let i: number = 0; i < results.length; i++) {
+                            nResults.push({
+                                index: ibas.strings.format("{0}/{1}", i + 1, results.length),
+                                message: results[i],
+                                error: !ibas.strings.isWith(results[i], "{", "}")
+                            });
+                        }
+                        let that: this = this;
                         this.pageResult.addContent(
                             new sap.m.Panel("", {
                                 expanded: false,
@@ -383,22 +463,65 @@ namespace importexport {
                                 }),
                                 content: [
                                     new sap.extension.m.List("", {
+                                        growing: true,
+                                        growingScrollToLoad: true,
                                         mode: sap.m.ListMode.None,
                                         items: {
                                             path: "/",
                                             template: new sap.m.StandardListItem("", {
+                                                type: {
+                                                    path: "message",
+                                                    formatter(data: any): sap.m.ListType {
+                                                        if (ibas.strings.isWith(data, "{", "}")) {
+                                                            return sap.m.ListType.Active;
+                                                        }
+                                                        return sap.m.ListType.Inactive;
+                                                    }
+                                                },
                                                 title: {
-                                                    path: "",
+                                                    path: "message",
+                                                    formatter(data: any): string {
+                                                        if (ibas.strings.isWith(data, "{", "}")) {
+                                                            return ibas.businessobjects.describe(data);
+                                                        }
+                                                        return data;
+                                                    }
+                                                },
+                                                highlight: {
+                                                    path: "error",
+                                                    formatter(data: any): sap.ui.core.ValueState {
+                                                        if (data === true) {
+                                                            return sap.ui.core.ValueState.Error;
+                                                        }
+                                                        return sap.ui.core.ValueState.Success;
+                                                    }
+                                                },
+                                                info: {
+                                                    path: "index",
                                                 },
                                                 press(this: sap.m.StandardListItem): void {
                                                     let data: any = this.getBindingContext().getObject();
-                                                    if (!ibas.strings.isEmpty(data)) {
-
+                                                    if (!ibas.strings.isEmpty(data?.message)) {
+                                                        let criteria: ibas.ICriteria = ibas.criterias.valueOf(data.message);
+                                                        if (!ibas.strings.isEmpty(criteria?.businessObject)) {
+                                                            let done: boolean = ibas.servicesManager.runLinkService({
+                                                                boCode: criteria.businessObject,
+                                                                linkValue: criteria
+                                                            });
+                                                            if (!done) {
+                                                                that.application.viewShower.proceeding(
+                                                                    that,
+                                                                    ibas.emMessageType.WARNING,
+                                                                    ibas.i18n.prop("importexport_not_found_link_service",
+                                                                        ibas.businessobjects.describe(criteria.businessObject))
+                                                                );
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             })
                                         },
-                                    }).setModel(new sap.extension.model.JSONModel(results))
+                                    }).setModel(new sap.extension.model.JSONModel(nResults))
                                 ]
                             }).setModel(new sap.extension.model.JSONModel(file))
                         );

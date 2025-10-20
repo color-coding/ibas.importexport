@@ -199,7 +199,6 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	 * @return 操作结果
 	 */
 	public OperationResult<String> importData(FileData data, emDataUpdateMethod updateMethod, String token) {
-		OperationResult<String> opRslt = null;
 		try {
 			this.setUserToken(token);
 			if (data == null || data.getOriginalName().indexOf(".") < 0) {
@@ -226,46 +225,140 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			// 转换文件数据到业务对象
 			transformer.setInputData(new File(data.getLocation()));
 			transformer.transform();
-			boolean myTrans = this.beginTransaction();
-			try {
-				opRslt = new OperationResult<String>();
-				// 返回存储事务标记
-				opRslt.addInformations("IDENTIFY_DATA_COUNT", String.valueOf(transformer.getOutputData().size()),
-						"DATA_IMPORT");
-				opRslt.addInformations("REPOSITORY_TRANSACTION_ID", this.getRepository().getTransactionId(),
-						"DATA_IMPORT");
-				// 保存业务对象
-				IBusinessObject newItem;
-				IOperationResult<?> opRsltExists, opRsltDelete, opRsltSave;
-				for (int j = 0; j < transformer.getOutputData().size(); j++) {
-					newItem = transformer.getOutputData().get(j);
+			OperationResult<String> operationResult = new OperationResult<String>();
+			// 返回存储事务标记
+			operationResult.addInformations("IDENTIFY_DATA_COUNT", String.valueOf(transformer.getOutputData().size()),
+					"DATA_IMPORT");
+			operationResult.addInformations("REPOSITORY_TRANSACTION_ID", this.getRepository().getTransactionId(),
+					"DATA_IMPORT");
+			// 保存业务对象
+			IBusinessObject newItem;
+			IOperationResult<?> opRsltExists, opRsltDelete, opRsltSave;
+			BiFunction<Object, Object[], Object> funcModify = new BiFunction<Object, Object[], Object>() {
+
+				@Override
+				@SuppressWarnings("unchecked")
+				public Object apply(Object newData, Object[] oldDatas) {
+					if (oldDatas == null || newData == null) {
+						return null;
+					}
+					if (!(newData instanceof IManagedFields)) {
+						return null;
+					}
+					IManagedFields newFields = (IManagedFields) newData;
+					IFieldData[] newKeys = newFields.getFields(c -> c.isUniqueKey());
+					if (newKeys == null || newKeys.length == 0) {
+						// 无唯一键，无法比较，退出
+						return null;
+					}
+					// 开始匹配
+					boolean matched;
+					IFieldData oldField = null;
+					IManagedFields oldFields = null;
+					for (Object oldData : oldDatas) {
+						if (oldData == null) {
+							continue;
+						}
+						if (newData.getClass() != oldData.getClass()) {
+							continue;
+						}
+						matched = true;
+						oldFields = (IManagedFields) oldData;
+						for (IFieldData keyField : newKeys) {
+							oldField = oldFields.getField(keyField.getName());
+							if (oldField != null) {
+								if (keyField.getValue() == oldField.getValue()) {
+									continue;
+								}
+								if (String.valueOf(keyField.getValue()).equals(String.valueOf(oldField.getValue()))) {
+									continue;
+								}
+							}
+							matched = false;
+							break;
+						}
+						// 找匹配的数据
+						if (matched) {
+							// 同步主键
+							if (newFields instanceof IBOMasterData) {
+								((IBOMasterData) newFields).setDocEntry(((IBOMasterData) oldFields).getDocEntry());
+							} else if (newFields instanceof IBODocument) {
+								((IBODocument) newFields).setDocEntry(((IBODocument) oldFields).getDocEntry());
+							} else if (newFields instanceof IBOSimple) {
+								((IBOSimple) newFields).setObjectKey(((IBOSimple) oldFields).getObjectKey());
+							} else if (newFields instanceof IBOLine) {
+								((IBOLine) newFields).setLineId(((IBOLine) oldFields).getLineId());
+							}
+							for (IFieldData newField : newFields.getFields()) {
+								if (newField.getValue() == null) {
+									continue;
+								}
+								if (newField.getValue() instanceof IBusinessObjectsBase<?>) {
+									// 是数组，则子项比较
+									oldField = oldFields.getField(newField.getName());
+									if (oldField != null && oldField.getValue() instanceof IBusinessObjectsBase<?>) {
+										for (IBusinessObjectBase newItem : ((IBusinessObjectsBase<?>) newField
+												.getValue())) {
+											if (this.apply(newItem, ((IBusinessObjectsBase<?>) oldField.getValue())
+													.toArray()) == null) {
+												// 子项未匹配到，则添加
+												((IBusinessObjectsBase<IBusinessObjectBase>) oldField.getValue())
+														.add(newItem);
+											}
+										}
+									}
+									continue;
+								} else if (!newField.isSavable()) {
+									// 非保存退出
+									continue;
+								}
+								// 替换原值
+								oldField = oldFields.getField(newField.getName());
+								if (oldField != null) {
+									oldField.setValue(newField.getValue());
+									if (((IBusinessObject) oldData).isDirty() == false
+											&& oldData instanceof ITrackStatusOperator) {
+										((ITrackStatusOperator) oldData).markDirty();
+									}
+								}
+							}
+							return oldData;
+						}
+					}
+					return null;
+				}
+			};
+			for (int i = 0; i < transformer.getOutputData().size(); i++) {
+				newItem = transformer.getOutputData().get(i);
+				try {
+					// 调试模式，输出识别对象
+					if (MyConfiguration.isDebugMode()) {
+						StringBuilder stringBuilder = new StringBuilder();
+						stringBuilder.append("transformer:");
+						stringBuilder.append(" ");
+						stringBuilder.append("be imported data");
+						stringBuilder.append(System.getProperty("line.seperator", "\n"));
+						stringBuilder.append(newItem.toString("xml"));
+						Logger.log(MessageLevel.DEBUG, stringBuilder.toString());
+					}
+					// 导入的数据，源标记为I
+					if (newItem instanceof IBOStorageTag) {
+						IBOStorageTag tag = (IBOStorageTag) newItem;
+						tag.setDataSource(MyConfiguration.SIGN_DATA_SOURCE);
+					}
+					// 设置数据所有者
+					if (newItem instanceof IDataOwnership) {
+						IDataOwnership ownership = (IDataOwnership) newItem;
+						if (ownership.getDataOwner() == null || ownership.getDataOwner() == 0) {
+							ownership.setDataOwner(this.getCurrentUser().getId());
+						}
+						if (ownership.getOrganization() == null || ownership.getOrganization().isEmpty()) {
+							ownership.setOrganization(this.getCurrentUser().getBelong());
+						}
+					}
+					boolean myTrans = this.beginTransaction();
 					try {
-						// 调试模式，输出识别对象
-						if (MyConfiguration.isDebugMode()) {
-							StringBuilder stringBuilder = new StringBuilder();
-							stringBuilder.append("transformer:");
-							stringBuilder.append(" ");
-							stringBuilder.append("be imported data");
-							stringBuilder.append(System.getProperty("line.seperator", "\n"));
-							stringBuilder.append(newItem.toString("xml"));
-							Logger.log(MessageLevel.DEBUG, stringBuilder.toString());
-						}
-						// 导入的数据，源标记为I
-						if (newItem instanceof IBOStorageTag) {
-							IBOStorageTag tag = (IBOStorageTag) newItem;
-							tag.setDataSource(MyConfiguration.SIGN_DATA_SOURCE);
-						}
-						// 设置数据所有者
-						if (newItem instanceof IDataOwnership) {
-							IDataOwnership ownership = (IDataOwnership) newItem;
-							if (ownership.getDataOwner() == null || ownership.getDataOwner() == 0) {
-								ownership.setDataOwner(this.getCurrentUser().getId());
-							}
-							if (ownership.getOrganization() == null || ownership.getOrganization().isEmpty()) {
-								ownership.setOrganization(this.getCurrentUser().getBelong());
-							}
-						}
-						// 判断对象是否存在
+						// 处理已存在的对象实例
 						ICriteria criteria = newItem.getCriteria();
 						if (criteria != null && !criteria.getConditions().isEmpty()) {
 							opRsltExists = this.fetch(criteria, token, newItem.getClass());
@@ -282,7 +375,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 											if (opRsltDelete.getError() != null) {
 												throw opRsltDelete.getError();
 											}
-											opRslt.addInformations("DELETED_EXISTS_DATA", boItem.toString(),
+											operationResult.addInformations("DELETED_EXISTS_DATA", boItem.toString(),
 													"DATA_IMPORT");
 										}
 										// 主数据保存
@@ -334,107 +427,6 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 										}
 									}
 								} else if (updateMethod == emDataUpdateMethod.MODIFY) {
-									BiFunction<Object, Object[], Object> funcModify = new BiFunction<Object, Object[], Object>() {
-
-										@Override
-										@SuppressWarnings("unchecked")
-										public Object apply(Object newData, Object[] oldDatas) {
-											if (oldDatas == null || newData == null) {
-												return null;
-											}
-											if (!(newData instanceof IManagedFields)) {
-												return null;
-											}
-											IManagedFields newFields = (IManagedFields) newData;
-											IFieldData[] newKeys = newFields.getFields(c -> c.isUniqueKey());
-											if (newKeys == null || newKeys.length == 0) {
-												// 无唯一键，无法比较，退出
-												return null;
-											}
-											// 开始匹配
-											boolean matched;
-											IFieldData oldField = null;
-											IManagedFields oldFields = null;
-											for (Object oldData : oldDatas) {
-												if (oldData == null) {
-													continue;
-												}
-												if (newData.getClass() != oldData.getClass()) {
-													continue;
-												}
-												matched = true;
-												oldFields = (IManagedFields) oldData;
-												for (IFieldData keyField : newKeys) {
-													oldField = oldFields.getField(keyField.getName());
-													if (oldField != null) {
-														if (keyField.getValue() == oldField.getValue()) {
-															continue;
-														}
-														if (String.valueOf(keyField.getValue())
-																.equals(String.valueOf(oldField.getValue()))) {
-															continue;
-														}
-													}
-													matched = false;
-													break;
-												}
-												// 找匹配的数据
-												if (matched) {
-													// 同步主键
-													if (newFields instanceof IBOMasterData) {
-														((IBOMasterData) newFields)
-																.setDocEntry(((IBOMasterData) oldFields).getDocEntry());
-													} else if (newFields instanceof IBODocument) {
-														((IBODocument) newFields)
-																.setDocEntry(((IBODocument) oldFields).getDocEntry());
-													} else if (newFields instanceof IBOSimple) {
-														((IBOSimple) newFields)
-																.setObjectKey(((IBOSimple) oldFields).getObjectKey());
-													} else if (newFields instanceof IBOLine) {
-														((IBOLine) newFields)
-																.setLineId(((IBOLine) oldFields).getLineId());
-													}
-													for (IFieldData newField : newFields.getFields()) {
-														if (newField.getValue() == null) {
-															continue;
-														}
-														if (newField.getValue() instanceof IBusinessObjectsBase<?>) {
-															// 是数组，则子项比较
-															oldField = oldFields.getField(newField.getName());
-															if (oldField != null && oldField
-																	.getValue() instanceof IBusinessObjectsBase<?>) {
-																for (IBusinessObjectBase newItem : ((IBusinessObjectsBase<?>) newField
-																		.getValue())) {
-																	if (this.apply(newItem,
-																			((IBusinessObjectsBase<?>) oldField
-																					.getValue()).toArray()) == null) {
-																		// 子项未匹配到，则添加
-																		((IBusinessObjectsBase<IBusinessObjectBase>) oldField
-																				.getValue()).add(newItem);
-																	}
-																}
-															}
-															continue;
-														} else if (!newField.isSavable()) {
-															// 非保存退出
-															continue;
-														}
-														// 替换原值
-														oldField = oldFields.getField(newField.getName());
-														if (oldField != null) {
-															oldField.setValue(newField.getValue());
-															if (((IBusinessObject) oldData).isDirty() == false
-																	&& oldData instanceof ITrackStatusOperator) {
-																((ITrackStatusOperator) oldData).markDirty();
-															}
-														}
-													}
-													return oldData;
-												}
-											}
-											return null;
-										}
-									};
 									Object oldItem = funcModify.apply(newItem,
 											opRsltExists.getResultObjects().toArray());
 									if (oldItem instanceof IBusinessObject) {
@@ -447,37 +439,40 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 								}
 							}
 						}
+						// 保存新对象实例
 						opRsltSave = this.save(newItem, token);
 						if (opRsltSave.getError() != null) {
 							throw opRsltSave.getError();
 						}
 						for (Object item : opRsltSave.getResultObjects()) {
-							opRslt.addResultObjects(item.toString());
+							operationResult.addResultObjects(item.toString());
+						}
+						if (myTrans) {
+							this.commitTransaction();
 						}
 					} catch (Exception e) {
-						throw new Exception(I18N.prop("msg_ie_input_data_faild", j + 1), e);
+						operationResult.addResultObjects(e.getMessage());
+						if (myTrans) {
+							try {
+								this.rollbackTransaction();
+							} catch (RepositoryException e1) {
+								Logger.log(e1);
+							}
+							continue;
+						}
+						throw e;
 					}
+				} catch (Exception e) {
+					throw new Exception(I18N.prop("msg_ie_input_data_faild", i + 1), e);
 				}
-				opRslt.addInformations("SAVE_DATA_COUNT", String.valueOf(opRslt.getResultObjects().size()),
-						"DATA_IMPORT");
-				if (myTrans) {
-					this.commitTransaction();
-				}
-			} catch (Exception e) {
-				if (myTrans) {
-					try {
-						this.rollbackTransaction();
-					} catch (RepositoryException e1) {
-						Logger.log(e1);
-					}
-				}
-				throw e;
 			}
+			operationResult.addInformations("SAVE_DATA_COUNT",
+					String.valueOf(operationResult.getResultObjects().size()), "DATA_IMPORT");
+			return operationResult;
 		} catch (Exception e) {
-			opRslt = new OperationResult<String>(e);
 			Logger.log(e);
+			return new OperationResult<String>(e);
 		}
-		return opRslt;
 	}
 
 	public IOperationResult<String> importData(FileData data) {
