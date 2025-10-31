@@ -73,6 +73,8 @@ declare namespace initialfantasy {
         const BO_CODE_BORELATIONSHIP: string;
         /** 业务对象编码-重组功能 */
         const BO_CODE_REFUNCTION: string;
+        /** 业务对象编码-用户动作日志 */
+        const BO_CODE_USERACTIONLOG: string;
         /**
          * 分配类型
          */
@@ -167,6 +169,17 @@ declare namespace initialfantasy {
             AND = 1,
             /** 或者 */
             OR = 2
+        }
+        namespace emums {
+            namespace conditions {
+                namespace operation {
+                    function valueOf(value: ibas.emConditionOperation): emConditionOperation;
+                    function toValue(value: emConditionOperation): ibas.emConditionOperation;
+                }
+                namespace relationship {
+                    function valueOf(value: ibas.emConditionRelationship): emConditionRelationship;
+                }
+            }
         }
         enum emSearchedValue {
             /** 默认值 */
@@ -1253,6 +1266,64 @@ declare namespace initialfantasy {
             remarks: string;
             /** 重组功能-项目集合 */
             refunctionItems: IRefunctionItems;
+        }
+    }
+}
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+declare namespace initialfantasy {
+    namespace bo {
+        /** 用户动作日志 */
+        interface IUserActionLog extends ibas.IBOSimple {
+            /** 对象编号 */
+            objectKey: number;
+            /** 对象类型 */
+            objectCode: string;
+            /** 实例号 */
+            logInst: number;
+            /** 服务系列 */
+            series: number;
+            /** 数据源 */
+            dataSource: string;
+            /** 创建日期 */
+            createDate: Date;
+            /** 创建时间 */
+            createTime: number;
+            /** 更新日期 */
+            updateDate: Date;
+            /** 更新时间 */
+            updateTime: number;
+            /** 创建用户 */
+            createUserSign: number;
+            /** 更新用户 */
+            updateUserSign: number;
+            /** 创建动作标识 */
+            createActionId: string;
+            /** 更新动作标识 */
+            updateActionId: string;
+            /** 数据所有者 */
+            dataOwner: number;
+            /** 动作 */
+            action: string;
+            /** 用户编号 */
+            userId: number;
+            /** 用户名称 */
+            userName: string;
+            /** 开始日期 */
+            startDate: Date;
+            /** 开始时间 */
+            startTime: number;
+            /** 结束日期 */
+            endDate: Date;
+            /** 结束时间 */
+            endTime: number;
+            /** 内容 */
+            content: string;
         }
     }
 }
@@ -2583,6 +2654,8 @@ declare namespace initialfantasy {
         }
         /** 业务对象属性信息 */
         class BOPropertyInformation extends ibas.BusinessObject<BOPropertyInformation> implements IBOPropertyInformation {
+            /** 业务对象编码 */
+            static BUSINESS_OBJECT_CODE: string;
             /** 构造函数 */
             constructor();
             /** 映射的属性名称-编码 */
@@ -4261,6 +4334,158 @@ declare namespace initialfantasy {
  */
 declare namespace initialfantasy {
     namespace bo {
+        /** 用户动作日志 */
+        class UserActionLog extends ibas.BOSimple<UserActionLog> implements IUserActionLog {
+            /** 业务对象编码 */
+            static BUSINESS_OBJECT_CODE: string;
+            /** 构造函数 */
+            constructor();
+            /** 映射的属性名称-对象编号 */
+            static PROPERTY_OBJECTKEY_NAME: string;
+            /** 获取-对象编号 */
+            get objectKey(): number;
+            /** 设置-对象编号 */
+            set objectKey(value: number);
+            /** 映射的属性名称-对象类型 */
+            static PROPERTY_OBJECTCODE_NAME: string;
+            /** 获取-对象类型 */
+            get objectCode(): string;
+            /** 设置-对象类型 */
+            set objectCode(value: string);
+            /** 映射的属性名称-实例号 */
+            static PROPERTY_LOGINST_NAME: string;
+            /** 获取-实例号 */
+            get logInst(): number;
+            /** 设置-实例号 */
+            set logInst(value: number);
+            /** 映射的属性名称-服务系列 */
+            static PROPERTY_SERIES_NAME: string;
+            /** 获取-服务系列 */
+            get series(): number;
+            /** 设置-服务系列 */
+            set series(value: number);
+            /** 映射的属性名称-数据源 */
+            static PROPERTY_DATASOURCE_NAME: string;
+            /** 获取-数据源 */
+            get dataSource(): string;
+            /** 设置-数据源 */
+            set dataSource(value: string);
+            /** 映射的属性名称-创建日期 */
+            static PROPERTY_CREATEDATE_NAME: string;
+            /** 获取-创建日期 */
+            get createDate(): Date;
+            /** 设置-创建日期 */
+            set createDate(value: Date);
+            /** 映射的属性名称-创建时间 */
+            static PROPERTY_CREATETIME_NAME: string;
+            /** 获取-创建时间 */
+            get createTime(): number;
+            /** 设置-创建时间 */
+            set createTime(value: number);
+            /** 映射的属性名称-更新日期 */
+            static PROPERTY_UPDATEDATE_NAME: string;
+            /** 获取-更新日期 */
+            get updateDate(): Date;
+            /** 设置-更新日期 */
+            set updateDate(value: Date);
+            /** 映射的属性名称-更新时间 */
+            static PROPERTY_UPDATETIME_NAME: string;
+            /** 获取-更新时间 */
+            get updateTime(): number;
+            /** 设置-更新时间 */
+            set updateTime(value: number);
+            /** 映射的属性名称-创建用户 */
+            static PROPERTY_CREATEUSERSIGN_NAME: string;
+            /** 获取-创建用户 */
+            get createUserSign(): number;
+            /** 设置-创建用户 */
+            set createUserSign(value: number);
+            /** 映射的属性名称-更新用户 */
+            static PROPERTY_UPDATEUSERSIGN_NAME: string;
+            /** 获取-更新用户 */
+            get updateUserSign(): number;
+            /** 设置-更新用户 */
+            set updateUserSign(value: number);
+            /** 映射的属性名称-创建动作标识 */
+            static PROPERTY_CREATEACTIONID_NAME: string;
+            /** 获取-创建动作标识 */
+            get createActionId(): string;
+            /** 设置-创建动作标识 */
+            set createActionId(value: string);
+            /** 映射的属性名称-更新动作标识 */
+            static PROPERTY_UPDATEACTIONID_NAME: string;
+            /** 获取-更新动作标识 */
+            get updateActionId(): string;
+            /** 设置-更新动作标识 */
+            set updateActionId(value: string);
+            /** 映射的属性名称-数据所有者 */
+            static PROPERTY_DATAOWNER_NAME: string;
+            /** 获取-数据所有者 */
+            get dataOwner(): number;
+            /** 设置-数据所有者 */
+            set dataOwner(value: number);
+            /** 映射的属性名称-动作 */
+            static PROPERTY_ACTION_NAME: string;
+            /** 获取-动作 */
+            get action(): string;
+            /** 设置-动作 */
+            set action(value: string);
+            /** 映射的属性名称-用户编号 */
+            static PROPERTY_USERID_NAME: string;
+            /** 获取-用户编号 */
+            get userId(): number;
+            /** 设置-用户编号 */
+            set userId(value: number);
+            /** 映射的属性名称-用户名称 */
+            static PROPERTY_USERNAME_NAME: string;
+            /** 获取-用户名称 */
+            get userName(): string;
+            /** 设置-用户名称 */
+            set userName(value: string);
+            /** 映射的属性名称-开始日期 */
+            static PROPERTY_STARTDATE_NAME: string;
+            /** 获取-开始日期 */
+            get startDate(): Date;
+            /** 设置-开始日期 */
+            set startDate(value: Date);
+            /** 映射的属性名称-开始时间 */
+            static PROPERTY_STARTTIME_NAME: string;
+            /** 获取-开始时间 */
+            get startTime(): number;
+            /** 设置-开始时间 */
+            set startTime(value: number);
+            /** 映射的属性名称-结束日期 */
+            static PROPERTY_ENDDATE_NAME: string;
+            /** 获取-结束日期 */
+            get endDate(): Date;
+            /** 设置-结束日期 */
+            set endDate(value: Date);
+            /** 映射的属性名称-结束时间 */
+            static PROPERTY_ENDTIME_NAME: string;
+            /** 获取-结束时间 */
+            get endTime(): number;
+            /** 设置-结束时间 */
+            set endTime(value: number);
+            /** 映射的属性名称-内容 */
+            static PROPERTY_CONTENT_NAME: string;
+            /** 获取-内容 */
+            get content(): string;
+            /** 设置-内容 */
+            set content(value: string);
+            /** 初始化数据 */
+            protected init(): void;
+        }
+    }
+}
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+declare namespace initialfantasy {
+    namespace bo {
         /** 数据转换者 */
         class DataConverter extends ibas.DataConverter4j {
             /** 创建业务对象转换者 */
@@ -4394,6 +4619,11 @@ declare namespace initialfantasy {
              */
             fetchBOInformation(fetcher: ibas.IFetchCaller<bo.BOInformation>): void;
             /**
+             * 查询 业务对象信息
+             * @param fetcher 查询者
+             */
+            fetchBOPropertyInformation(fetcher: ibas.IFetchCaller<bo.BOPropertyInformation>): void;
+            /**
              * 保存 业务对象信息
              * @param saver 保存者
              */
@@ -4483,6 +4713,16 @@ declare namespace initialfantasy {
              * @param saver 保存者
              */
             saveRefunction(saver: ibas.ISaveCaller<bo.Refunction>): void;
+            /**
+             * 查询 用户动作日志
+             * @param fetcher 查询者
+             */
+            fetchUserActionLog(fetcher: ibas.IFetchCaller<bo.UserActionLog>): void;
+            /**
+             * 保存 用户动作日志
+             * @param saver 保存者
+             */
+            saveUserActionLog(saver: ibas.ISaveCaller<bo.UserActionLog>): void;
         }
     }
 }
@@ -7488,13 +7728,14 @@ declare namespace initialfantasy {
             run(data?: bo.BOLogst | bo.BOLogst[]): void;
             onViewShowed: () => void;
             private template;
+            showSummary: boolean;
         }
         /** 视图-业务对象日志 */
         interface IBOLogstViewView extends ibas.IBOViewView {
             /** 绘制窗体 */
             drawView(template: outs.BOType): void;
             /** 显示数据 */
-            showData(datas: object[]): void;
+            showData(datas: object[], summary?: boolean): void;
         }
         namespace outs {
             function template(datas: object[], boInfos: ibas.IList<bo.BOInformation>): BOType;

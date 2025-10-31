@@ -46,6 +46,7 @@
     "importexport_export_template": "Export Template",
     "importexport_please_template": "Please select a template",
     "importexport_print": "Print",
+    "importexport_printed_count": "Printed {0} ",
     "importexport_preview": "Preview",
     "importexport_code_pretty": "Code Beautify",
     "importexport_export_conditions": "Query conditions for export (template only if no conditions)",

@@ -2,6 +2,7 @@ package org.colorcoding.ibas.importexport.repository;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.Arrays;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -13,27 +14,35 @@ import org.colorcoding.ibas.bobas.bo.IBOStorageTag;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.bo.IBusinessObjects;
 import org.colorcoding.ibas.bobas.common.ConditionOperation;
+import org.colorcoding.ibas.bobas.common.ConditionRelationship;
 import org.colorcoding.ibas.bobas.common.Criteria;
+import org.colorcoding.ibas.bobas.common.DateTimes;
+import org.colorcoding.ibas.bobas.common.Enums;
 import org.colorcoding.ibas.bobas.common.ICondition;
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
-import org.colorcoding.ibas.bobas.common.ISort;
+import org.colorcoding.ibas.bobas.common.Numbers;
 import org.colorcoding.ibas.bobas.common.OperationResult;
-import org.colorcoding.ibas.bobas.common.SortType;
 import org.colorcoding.ibas.bobas.common.Strings;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
 import org.colorcoding.ibas.bobas.core.fields.IManagedFields;
+import org.colorcoding.ibas.bobas.data.ArrayList;
 import org.colorcoding.ibas.bobas.data.FileItem;
+import org.colorcoding.ibas.bobas.data.KeyText;
+import org.colorcoding.ibas.bobas.data.List;
 import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.message.MessageLevel;
+import org.colorcoding.ibas.bobas.organization.OrganizationFactory;
 import org.colorcoding.ibas.bobas.ownership.IDataOwnership;
 import org.colorcoding.ibas.bobas.repository.BORepositoryServiceApplication;
 import org.colorcoding.ibas.bobas.repository.RepositoryException;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
 import org.colorcoding.ibas.bobas.serialization.SerializationFactory;
 import org.colorcoding.ibas.importexport.MyConfiguration;
+import org.colorcoding.ibas.importexport.bo.exportrecord.ExportRecord;
+import org.colorcoding.ibas.importexport.bo.exportrecord.IExportRecord;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.ExportTemplate;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplate;
 import org.colorcoding.ibas.importexport.data.DataConvert;
@@ -44,6 +53,7 @@ import org.colorcoding.ibas.importexport.transformer.IFileTransformer;
 import org.colorcoding.ibas.importexport.transformer.ITemplateTransformer;
 import org.colorcoding.ibas.importexport.transformer.ITransformer;
 import org.colorcoding.ibas.importexport.transformer.ITransformerFile;
+import org.colorcoding.ibas.importexport.transformer.TemplateTransformer;
 import org.colorcoding.ibas.importexport.transformer.TransformerFactory;
 import org.colorcoding.ibas.importexport.transformer.TransformerInfo;
 
@@ -185,7 +195,6 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	 * @return 操作结果
 	 */
 	public OperationResult<String> importData(FileItem data, emDataUpdateMethod updateMethod, String token) {
-		OperationResult<String> opRslt = null;
 		try {
 			this.setUserToken(token);
 			if (data == null || data.getName().indexOf(".") < 0) {
@@ -211,56 +220,153 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			// 转换文件数据到业务对象
 			transformer.setInputData(new File(data.getPath()));
 			transformer.transform();
-			Logger.log(MessageLevel.DEBUG, MSG_TRANSFORMER_IMPORT_DATA_SIZE, transformer.getOutputData().size());
-			boolean myTrans = this.beginTransaction();
-			try {
-				opRslt = new OperationResult<String>();
-				// 返回存储事务标记
-				opRslt.addInformations("IDENTIFY_DATA_COUNT", String.valueOf(transformer.getOutputData().size()),
+			OperationResult<String> operationResult = new OperationResult<String>();
+			// 返回存储事务标记
+			operationResult.addInformations("IDENTIFY_DATA_COUNT", String.valueOf(transformer.getOutputData().size()),
+					"DATA_IMPORT");
+			if (this.getTransaction() != null) {
+				// 整体保存时，记录事务ID
+				operationResult.addInformations("REPOSITORY_TRANSACTION_ID", this.getTransaction().getId(),
 						"DATA_IMPORT");
-				opRslt.addInformations("REPOSITORY_TRANSACTION_ID", this.getTransaction().getId(), "DATA_IMPORT");
-				// 保存业务对象
-				IBusinessObject newItem;
-				BusinessObject<?> newOne;
-				IOperationResult<IBusinessObject> opRsltExists, opRsltDelete, opRsltSave;
-				for (int j = 0; j < transformer.getOutputData().size(); j++) {
-					newItem = transformer.getOutputData().get(j);
+			}
+			// 保存业务对象
+			BusinessObject<?> newOne;
+			IBusinessObject newItem;
+			IOperationResult<IBusinessObject> opRsltExists, opRsltDelete, opRsltSave;
+			BiFunction<IBusinessObject, List<IBusinessObject>, IBusinessObject> funcModify = new BiFunction<IBusinessObject, List<IBusinessObject>, IBusinessObject>() {
+
+				@Override
+				@SuppressWarnings("unchecked")
+				public IBusinessObject apply(IBusinessObject newData, List<IBusinessObject> oldDatas) {
+					if (oldDatas == null || newData == null) {
+						return null;
+					}
+					if (!(newData instanceof IManagedFields)) {
+						return null;
+					}
+					IManagedFields newFields = (IManagedFields) newData;
+					IFieldData[] newKeys = newFields.getFields(c -> c.isUniqueKey());
+					if (newKeys == null || newKeys.length == 0) {
+						// 无唯一键，无法比较，退出
+						return null;
+					}
+					// 开始匹配
+					boolean matched;
+					IFieldData oldField = null;
+					IFieldData newField = null;
+					IManagedFields oldFields = null;
+					for (IBusinessObject oldData : oldDatas) {
+						if (oldData == null) {
+							continue;
+						}
+						if (newData.getClass() != oldData.getClass()) {
+							continue;
+						}
+						matched = true;
+						oldFields = (IManagedFields) oldData;
+						for (IFieldData item : newKeys) {
+							oldField = oldFields.getField(item.getName());
+							if (oldField != null) {
+								if (item.getValue() == oldField.getValue()) {
+									continue;
+								}
+								if (String.valueOf(item.getValue()).equals(String.valueOf(oldField.getValue()))) {
+									continue;
+								}
+							}
+							matched = false;
+							break;
+						}
+						// 找匹配的数据
+						if (matched) {
+							// 同步主键
+							for (IFieldData item : oldFields.getFields(c -> c.isPrimaryKey())) {
+								newField = newFields.getField(item.getName());
+								if (newField != null) {
+									newField.setValue(item.getValue());
+								}
+							}
+							DataConvert.tagsOf(newFields, oldFields);
+
+							for (IFieldData item : newFields.getFields()) {
+								if (!item.isSavable()) {
+									continue;
+								}
+								if (item.isPrimaryKey()) {
+									continue;
+								}
+								if (item.isUniqueKey()) {
+									continue;
+								}
+								if (!item.isDirty()) {
+									continue;
+								}
+								if (item.getValue() instanceof IBusinessObjects) {
+									// 是数组，则子项比较
+									oldField = oldFields.getField(item.getName());
+									if (oldField != null && oldField.getValue() instanceof IBusinessObjects<?, ?>) {
+										for (IBusinessObject newItem : ((IBusinessObjects<?, ?>) item.getValue())) {
+											if (this.apply(newItem,
+													((List<IBusinessObject>) oldField.getValue())) == null) {
+												// 子项未匹配到，则添加
+												((IBusinessObjects<IBusinessObject, ?>) oldField.getValue())
+														.add(newItem);
+											}
+										}
+									}
+									continue;
+								}
+								// 替换原值
+								oldField = oldFields.getField(item.getName());
+								if (oldField != null) {
+									oldField.setValue(item.getValue());
+								}
+							}
+							return oldData;
+						}
+					}
+					return null;
+				}
+			};
+			for (int i = 0; i < transformer.getOutputData().size(); i++) {
+				try {
+					newItem = transformer.getOutputData().get(i);
+					// 调试模式，输出识别对象
+					if (MyConfiguration.isDebugMode()) {
+						StringBuilder stringBuilder = new StringBuilder();
+						stringBuilder.append("transformer:");
+						stringBuilder.append(" ");
+						stringBuilder.append("be imported data");
+						stringBuilder.append(System.getProperty("line.seperator", "\n"));
+						stringBuilder.append(Strings.toXmlString(newItem));
+						Logger.log(MessageLevel.DEBUG, stringBuilder.toString());
+					}
+					// 导入的数据，源标记为I
+					if (newItem instanceof IBOStorageTag) {
+						IBOStorageTag tag = (IBOStorageTag) newItem;
+						tag.setDataSource(MyConfiguration.SIGN_DATA_SOURCE);
+					}
+					// 设置数据所有者
+					if (newItem instanceof IDataOwnership) {
+						IDataOwnership ownership = (IDataOwnership) newItem;
+						if (ownership.getDataOwner() == null || ownership.getDataOwner() == 0) {
+							ownership.setDataOwner(this.getCurrentUser().getId());
+						}
+						if (ownership.getOrganization() == null || ownership.getOrganization().isEmpty()) {
+							ownership.setOrganization(this.getCurrentUser().getBelong());
+						}
+					}
+					boolean myTrans = this.beginTransaction();
 					try {
-						// 调试模式，输出识别对象
-						if (MyConfiguration.isDebugMode()) {
-							StringBuilder stringBuilder = new StringBuilder();
-							stringBuilder.append("transformer:");
-							stringBuilder.append(" ");
-							stringBuilder.append("be imported data");
-							stringBuilder.append(System.getProperty("line.seperator", "\n"));
-							stringBuilder.append(Strings.toXmlString(newItem));
-							Logger.log(MessageLevel.DEBUG, stringBuilder.toString());
-						}
-						// 导入的数据，源标记为I
-						if (newItem instanceof IBOStorageTag) {
-							IBOStorageTag tag = (IBOStorageTag) newItem;
-							tag.setDataSource(MyConfiguration.SIGN_DATA_SOURCE);
-						}
-						// 设置数据所有者
-						if (newItem instanceof IDataOwnership) {
-							IDataOwnership ownership = (IDataOwnership) newItem;
-							if (ownership.getDataOwner() == null || ownership.getDataOwner() == 0) {
-								ownership.setDataOwner(this.getCurrentUser().getId());
-							}
-							if (ownership.getOrganization() == null || ownership.getOrganization().isEmpty()) {
-								ownership.setOrganization(this.getCurrentUser().getBelong());
-							}
-						}
-						// 判断对象是否存在
+						// 处理已存在的对象实例
 						ICriteria criteria = newItem.getCriteria();
 						if (criteria != null && !criteria.getConditions().isEmpty()) {
 							opRsltExists = this.fetch(newItem.getClass(), criteria, token);
 							if (!opRsltExists.getResultObjects().isEmpty()) {
-								// 已存在数据
 								if (updateMethod == emDataUpdateMethod.REPLACE) {
 									// 替换数据（旧的删除，保存新的）
 									for (IBusinessObject oldItem : opRsltExists.getResultObjects()) {
-										// 主数据保存
+										// 主数据类型，保留核心字段
 										if (oldItem instanceof IBOMasterData && newItem instanceof IBOMasterData) {
 											// 主数据则保留DocEntry值，否则丢失关联关系
 											IBOMasterData newMaster = (IBOMasterData) newItem;
@@ -293,158 +399,64 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 											if (opRsltDelete.getError() != null) {
 												throw opRsltDelete.getError();
 											}
-											opRslt.addInformations("DELETED_EXISTS_DATA", oldItem.toString(),
+											operationResult.addInformations("DELETED_EXISTS_DATA", oldItem.toString(),
 													"DATA_IMPORT");
 										}
 									}
 								} else if (updateMethod == emDataUpdateMethod.MODIFY) {
-									BiFunction<Object, Object[], Object> funcModify = new BiFunction<Object, Object[], Object>() {
-
-										@Override
-										@SuppressWarnings("unchecked")
-										public Object apply(Object newData, Object[] oldDatas) {
-											if (oldDatas == null || newData == null) {
-												return null;
-											}
-											if (!(newData instanceof IManagedFields)) {
-												return null;
-											}
-											IManagedFields newFields = (IManagedFields) newData;
-											IFieldData[] newKeys = newFields.getFields(c -> c.isUniqueKey());
-											if (newKeys == null || newKeys.length == 0) {
-												// 无唯一键，无法比较，退出
-												return null;
-											}
-											// 开始匹配
-											boolean matched;
-											IFieldData oldField = null;
-											IFieldData newField = null;
-											IManagedFields oldFields = null;
-											for (Object oldData : oldDatas) {
-												if (oldData == null) {
-													continue;
-												}
-												if (newData.getClass() != oldData.getClass()) {
-													continue;
-												}
-												matched = true;
-												oldFields = (IManagedFields) oldData;
-												for (IFieldData item : newKeys) {
-													oldField = oldFields.getField(item.getName());
-													if (oldField != null) {
-														if (item.getValue() == oldField.getValue()) {
-															continue;
-														}
-														if (String.valueOf(item.getValue())
-																.equals(String.valueOf(oldField.getValue()))) {
-															continue;
-														}
-													}
-													matched = false;
-													break;
-												}
-												// 找匹配的数据
-												if (matched) {
-													// 同步主键
-													for (IFieldData item : oldFields.getFields(c -> c.isPrimaryKey())) {
-														newField = newFields.getField(item.getName());
-														if (newField != null) {
-															newField.setValue(item.getValue());
-														}
-													}
-													DataConvert.tagsOf(newFields, oldFields);
-
-													for (IFieldData item : newFields.getFields()) {
-														if (!item.isSavable()) {
-															continue;
-														}
-														if (item.isPrimaryKey()) {
-															continue;
-														}
-														if (item.isUniqueKey()) {
-															continue;
-														}
-														if (!item.isDirty()) {
-															continue;
-														}
-														if (item.getValue() instanceof IBusinessObjects) {
-															// 是数组，则子项比较
-															oldField = oldFields.getField(item.getName());
-															if (oldField != null && oldField
-																	.getValue() instanceof IBusinessObjects<?, ?>) {
-																for (IBusinessObject newItem : ((IBusinessObjects<?, ?>) item
-																		.getValue())) {
-																	if (this.apply(newItem,
-																			((IBusinessObjects<?, ?>) oldField
-																					.getValue()).toArray()) == null) {
-																		// 子项未匹配到，则添加
-																		((IBusinessObjects<IBusinessObject, ?>) oldField
-																				.getValue()).add(newItem);
-																	}
-																}
-															}
-															continue;
-														}
-														// 替换原值
-														oldField = oldFields.getField(item.getName());
-														if (oldField != null) {
-															oldField.setValue(item.getValue());
-														}
-													}
-													return oldData;
-												}
-											}
-											return null;
-										}
-									};
-									Object oldItem = funcModify.apply(newItem,
-											opRsltExists.getResultObjects().toArray());
-									if (oldItem instanceof IBusinessObject) {
-										// 存在旧数据，替换
-										newItem = (IBusinessObject) oldItem;
-									}
+									// 修改数据属性
+									newItem = funcModify.apply(newItem, opRsltExists.getResultObjects());
 								} else {
 									// 跳过已存在数据
-									continue;
+									newItem = null;
 								}
 							} else {
 								// 未查到，则新建
-								if (newItem instanceof BusinessObject) {
+								if (newItem.isNew() == false && newItem instanceof BusinessObject) {
 									((BusinessObject<?>) newItem).markNew();
 								}
 							}
 						}
+						if (newItem == null) {
+							if (myTrans) {
+								this.commitTransaction();
+							}
+							continue;
+						}
+						// 保存新对象实例
 						opRsltSave = this.save(newItem, token);
 						if (opRsltSave.getError() != null) {
 							throw opRsltSave.getError();
 						}
 						for (Object item : opRsltSave.getResultObjects()) {
-							opRslt.addResultObjects(item.toString());
+							operationResult.addResultObjects(item.toString());
+						}
+						if (myTrans) {
+							this.commitTransaction();
 						}
 					} catch (Exception e) {
-						throw new Exception(I18N.prop("msg_ie_input_data_faild", j + 1), e);
+						operationResult.addResultObjects(e.getMessage());
+						if (myTrans) {
+							try {
+								this.rollbackTransaction();
+							} catch (RepositoryException e1) {
+								Logger.log(e1);
+							}
+							continue;
+						}
+						throw e;
 					}
+				} catch (Exception e) {
+					throw new Exception(I18N.prop("msg_ie_input_data_faild", i + 1), e);
 				}
-				opRslt.addInformations("SAVE_DATA_COUNT", String.valueOf(opRslt.getResultObjects().size()),
-						"DATA_IMPORT");
-				if (myTrans) {
-					this.commitTransaction();
-				}
-			} catch (Exception e) {
-				if (myTrans) {
-					try {
-						this.rollbackTransaction();
-					} catch (RepositoryException e1) {
-						Logger.log(e1);
-					}
-				}
-				throw e;
 			}
+			operationResult.addInformations("SAVE_DATA_COUNT",
+					String.valueOf(operationResult.getResultObjects().size()), "DATA_IMPORT");
+			return operationResult;
 		} catch (Exception e) {
-			opRslt = new OperationResult<String>(e);
 			Logger.log(e);
+			return new OperationResult<String>(e);
 		}
-		return opRslt;
 	}
 
 	public IOperationResult<String> importData(FileItem data) {
@@ -463,7 +475,6 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 
 	@Override
 	public OperationResult<FileItem> exportData(DataExportInfo info, String token) {
-		OperationResult<FileItem> opRslt = new OperationResult<FileItem>();
 		try {
 			this.setUserToken(token);
 			// 获取导出的模板
@@ -471,6 +482,10 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			if (transformer == null) {
 				throw new Exception(I18N.prop("msg_ie_not_found_transformer", info.getTransformer()));
 			}
+			// 初始化工厂
+			initFactory();
+
+			OperationResult<FileItem> operationResult = new OperationResult<FileItem>();
 			Logger.log(MessageLevel.DEBUG, MSG_TRANSFORMER_EXPORT_DATA, transformer.getClass().getName());
 			if (transformer instanceof ITransformerFile) {
 				// 查询数据
@@ -510,26 +525,11 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 				FileItem fileItem = new FileItem();
 				fileItem.setName(file.getName());
 				fileItem.setPath(file.getPath());
-				opRslt.addResultObjects(fileItem);
+				operationResult.addResultObjects(fileItem);
 			} else if (transformer instanceof ITemplateTransformer) {
-				ICriteria criteria = new Criteria();
-				ICondition condition = criteria.getConditions().create();
-				condition.setAlias(ExportTemplate.PROPERTY_ACTIVATED.getName());
-				condition.setValue(emYesNo.YES);
-				condition = criteria.getConditions().create();
-				condition.setAlias(ExportTemplate.PROPERTY_OBJECTKEY.getName());
-				condition.setValue(info.getTemplate());
-				IOperationResult<IExportTemplate> opRstlTP = this.fetchExportTemplate(criteria);
-				if (opRstlTP.getError() != null) {
-					throw opRstlTP.getError();
-				}
-				IExportTemplate template = opRstlTP.getResultObjects().firstOrDefault();
-				if (template == null) {
-					throw new Exception(I18N.prop("msg_ie_not_found_template", info.getTemplate()));
-				}
 				ITemplateTransformer templateTransformer = (ITemplateTransformer) transformer;
 				templateTransformer.setWorkFolder(MyConfiguration.getTempFolder());
-				templateTransformer.setTemplate(template);
+				templateTransformer.setTemplate(info.getTemplate());
 				templateTransformer.setInputData(info.getContent());
 				templateTransformer.transform();
 				File file = templateTransformer.getOutputData().firstOrDefault();
@@ -540,13 +540,16 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 				FileItem fileItem = new FileItem();
 				fileItem.setName(file.getName());
 				fileItem.setPath(file.getPath());
-				opRslt.addResultObjects(fileItem);
+				operationResult.addResultObjects(fileItem);
 			}
+			for (FileItem item : operationResult.getResultObjects()) {
+				Logger.log(MessageLevel.DEBUG, MSG_TRANSFORMER_EXPORT_DATA_TO_FILE, item.getPath());
+			}
+			return operationResult;
 		} catch (Exception e) {
-			opRslt = new OperationResult<FileItem>(e);
 			Logger.log(e);
+			return new OperationResult<FileItem>(e);
 		}
-		return opRslt;
 	}
 
 	// --------------------------------------------------------------------------------------------//
@@ -560,46 +563,60 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	public OperationResult<DataExportInfo> fetchDataExporter(ICriteria criteria, String token) {
 		try {
 			this.setUserToken(token);
-			ICondition tCondition = criteria.getConditions()
+			ICondition nCondition = criteria.getConditions()
 					.firstOrDefault(c -> c.getAlias().equalsIgnoreCase(DataExportInfo.CONDITION_ALIAS_TRANSFORMER));
+			ICondition pCondition = criteria.getConditions()
+					.firstOrDefault(c -> c.getAlias().equalsIgnoreCase(DataExportInfo.CONDITION_ALIAS_PRINTABLE));
 			OperationResult<DataExportInfo> operationResult = new OperationResult<>();
 			for (TransformerInfo transformer : TransformerFactory.create().getTransformers().keySet()) {
-				if (tCondition != null) {
-					if (tCondition.getOperation() == ConditionOperation.START) {
-						if (!transformer.name().startsWith(tCondition.getValue())) {
+				if (nCondition != null) {
+					if (nCondition.getOperation() == ConditionOperation.START) {
+						if (!transformer.name().startsWith(nCondition.getValue())) {
+							continue;
+						}
+					} else if (nCondition.getOperation() == ConditionOperation.EQUAL) {
+						if (!transformer.name().equals(nCondition.getValue())) {
 							continue;
 						}
 					} else {
 						throw new Exception(I18N.prop("msg_bobas_invaild_condition_operation"));
 					}
 				}
-				if (transformer.template()) {
-					if (criteria.getBusinessObject() != null && !criteria.getBusinessObject().isEmpty()) {
-						ICriteria tpCriteria = new Criteria();
-						tpCriteria.setNoChilds(true);
-						ICondition condition = tpCriteria.getConditions().create();
-						condition.setAlias(ExportTemplate.PROPERTY_ACTIVATED.getName());
-						condition.setValue(emYesNo.YES);
-						condition = tpCriteria.getConditions().create();
-						condition.setAlias(ExportTemplate.PROPERTY_BOCODE.getName());
-						condition.setValue(criteria.getBusinessObject());
-						ISort sort = tpCriteria.getSorts().create();
-						sort.setAlias(ExportTemplate.PROPERTY_OBJECTKEY.getName());
-						sort.setSortType(SortType.DESCENDING);
-						IOperationResult<IExportTemplate> opRsltET = this.fetchExportTemplate(tpCriteria);
-						if (opRsltET.getError() != null) {
-							throw opRsltET.getError();
+				if (pCondition != null) {
+					emYesNo value = emYesNo.NO;
+					if (Numbers.isNumeric(pCondition.getValue())) {
+						value = Enums.valueOf(emYesNo.class, Integer.valueOf(pCondition.getValue()));
+					} else {
+						value = Enums.valueOf(emYesNo.class, pCondition.getValue());
+					}
+					if (pCondition.getOperation() == ConditionOperation.EQUAL) {
+						if (value == emYesNo.YES) {
+							if (!transformer.printable()) {
+								continue;
+							}
+						} else {
+							if (transformer.printable()) {
+								continue;
+							}
 						}
+					} else {
+						throw new Exception(I18N.prop("msg_bobas_invaild_condition_operation"));
+					}
+				}
+				if (transformer.template()) {
+					ITransformer<?, ?> instance = TransformerFactory.create().create(transformer.name());
+					if (instance instanceof TemplateTransformer) {
+						TemplateTransformer templateTransformer = (TemplateTransformer) instance;
 						String name = transformer.name();
 						if (name.indexOf("_") > 0) {
 							name = name.substring(name.lastIndexOf("_") + 1).toLowerCase();
 						}
-						for (IExportTemplate template : opRsltET.getResultObjects()) {
+						for (KeyText template : templateTransformer.matchingTemplates(criteria.getBusinessObject())) {
 							DataExportInfo info = new DataExportInfo();
 							info.setTransformer(transformer.name());
-							info.setTemplate(String.valueOf(template.getObjectKey()));
-							info.setDescription(I18N.prop("msg_ie_exporter_description", name, template.getName(),
-									template.getWidth(), template.getHeight()));
+							info.setContentType(transformer.contentType());
+							info.setTemplate(String.valueOf(template.getKey()));
+							info.setDescription(I18N.prop("msg_ie_exporter_description", name, template.getText()));
 							operationResult.addResultObjects(info);
 						}
 					}
@@ -613,6 +630,142 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 		} catch (Exception e) {
 			Logger.log(e);
 			return new OperationResult<DataExportInfo>(e);
+		}
+	}
+
+	// --------------------------------------------------------------------------------------------//
+	/**
+	 * 查询-导出日志
+	 * 
+	 * @param criteria 查询
+	 * @param token    口令
+	 * @return 操作结果
+	 */
+	public OperationResult<ExportRecord> fetchExportRecord(ICriteria criteria, String token) {
+		return super.fetch(ExportRecord.class, criteria, token);
+	}
+
+	/**
+	 * 查询-导出日志（提前设置用户口令）
+	 * 
+	 * @param criteria 查询
+	 * @return 操作结果
+	 */
+	public IOperationResult<IExportRecord> fetchExportRecord(ICriteria criteria) {
+		return new OperationResult<IExportRecord>(this.fetchExportRecord(criteria, this.getUserToken()));
+	}
+
+	/**
+	 * 保存-导出日志
+	 * 
+	 * @param bo    对象实例
+	 * @param token 口令
+	 * @return 操作结果
+	 */
+	public OperationResult<ExportRecord> saveExportRecord(ExportRecord bo, String token) {
+		return super.save(bo, token);
+	}
+
+	/**
+	 * 保存-导出日志（提前设置用户口令）
+	 * 
+	 * @param bo 对象实例
+	 * @return 操作结果
+	 */
+	public IOperationResult<IExportRecord> saveExportRecord(IExportRecord bo) {
+		return new OperationResult<IExportRecord>(this.saveExportRecord((ExportRecord) bo, this.getUserToken()));
+	}
+
+	@Override
+	public IOperationResult<IExportRecord> writeExportRecord(String boKeys, String cause, String content) {
+		return this.writeExportRecord(boKeys, cause, content);
+	}
+
+	@Override
+	public OperationResult<ExportRecord> writeExportRecord(String boKeys, String cause, String content, String token) {
+		try (BORepositoryImportExport boRepository = new BORepositoryImportExport()) {
+			this.setUserToken(token);
+			ICriteria criteria = Criteria.create(boKeys);
+			if (criteria == null || Strings.isNullOrEmpty(criteria.getBusinessObject())
+					|| criteria.getConditions().isEmpty()) {
+				throw new Exception(I18N.prop("msg_ie_invaild_bo_keys"));
+			}
+			ExportRecord record = new ExportRecord();
+			record.setCause(cause);
+			record.setBOKeys(boKeys);
+			record.setContent(content);
+			record.setBOCode(criteria.getBusinessObject());
+			record.setExportDate(DateTimes.today());
+			record.setExportTime(Short.valueOf(DateTimes.now().toString("HHmm")));
+			record.setExportUser(this.getCurrentUser().getId());
+			// 获取导出的对象并修改状态
+			try {
+				boRepository.beginTransaction();
+				if ("PRINT".equalsIgnoreCase(cause) && MyConfiguration
+						.getConfigValue(MyConfiguration.CONFIG_ITEM_ENABLED_EXPORT_RECORD_TO_PRINTED, true)) {
+					// 打印导出，尝试修改单据状态
+					initFactory(); // 初始化工厂
+					Class<?> boType = BOFactory.classOf(criteria.getBusinessObject());
+					if (boType == null || !IBusinessObject.class.isAssignableFrom(boType)) {
+						throw new Exception(I18N.prop("msg_ie_not_found_class", criteria.getBusinessObject()));
+					}
+					ArrayList<Class<?>> interfaces = new ArrayList<>(Arrays.asList(boType.getInterfaces()));
+					if (interfaces.firstOrDefault(
+							c -> "IDOCUMENTPRINTEDOPERATOR".equalsIgnoreCase(c.getSimpleName())) != null) {
+						criteria.setResultCount(1);
+						ICondition condition = criteria.getConditions().create();
+						condition.setBracketOpen(1);
+						condition.setAlias("Printed");
+						condition.setValue(emYesNo.NO);
+						condition = criteria.getConditions().create();
+						condition.setBracketClose(1);
+						condition.setAlias("Printed");
+						condition.setOperation(ConditionOperation.IS_NULL);
+						condition.setRelationship(ConditionRelationship.OR);
+
+						@SuppressWarnings("unchecked")
+						IOperationResult<IBusinessObject> opRsltFetch = boRepository.fetch(
+								(Class<IBusinessObject>) boType, criteria, OrganizationFactory.SYSTEM_USER.getToken());
+						if (opRsltFetch.getError() != null) {
+							throw opRsltFetch.getError();
+						}
+						IOperationResult<IBusinessObject> opRsltSave;
+						for (IBusinessObject item : opRsltFetch.getResultObjects()) {
+							if (item instanceof BusinessObject) {
+								IFieldData fieldData = ((BusinessObject<?>) item).getField("Printed");
+								if (fieldData != null && fieldData.getValueType() == emYesNo.class) {
+									if (fieldData.getValue() != emYesNo.YES) {
+										fieldData.setValue(emYesNo.YES);
+										if (!item.isDirty()) {
+											((BusinessObject<?>) item).markDirty();
+										}
+										opRsltSave = boRepository.save(item,
+												OrganizationFactory.SYSTEM_USER.getToken());
+										if (opRsltSave.getError() != null) {
+											throw opRsltSave.getError();
+										}
+										if (item instanceof IBOStorageTag) {
+											record.setBOInst(((IBOStorageTag) item).getLogInst());
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				OperationResult<ExportRecord> opRsltRecord = boRepository.saveExportRecord(record, token);
+				if (boRepository.inTransaction()) {
+					boRepository.commitTransaction();
+				}
+				return opRsltRecord;
+			} catch (Exception e) {
+				if (boRepository.inTransaction()) {
+					boRepository.rollbackTransaction();
+				}
+				throw e;
+			}
+		} catch (Exception e) {
+			return new OperationResult<>(e);
 		}
 	}
 

@@ -58,6 +58,9 @@ namespace importexport {
                     case app.ViewExportApp.APPLICATION_ID:
                         view = new c.ViewExportView();
                         break;
+                    case app.ExportRecordService.APPLICATION_ID:
+                        view = new c.ExportRecordServiceView();
+                        break;
                     default:
                         break;
                 }

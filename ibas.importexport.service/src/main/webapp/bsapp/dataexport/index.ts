@@ -9,3 +9,4 @@
 /// <reference path="./DataExportFunc.ts" />
 /// <reference path="./DataExportService.ts" />
 /// <reference path="./ViewExportApp.ts" />
+/// <reference path="./ExportRecordService.ts" />

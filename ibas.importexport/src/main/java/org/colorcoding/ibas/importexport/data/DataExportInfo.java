@@ -23,6 +23,7 @@ import org.colorcoding.ibas.bobas.core.Serializable;
 public class DataExportInfo extends Serializable {
 
 	public static final String CONDITION_ALIAS_TRANSFORMER = "Transformer";
+	public static final String CONDITION_ALIAS_PRINTABLE = "Printable";
 
 	private static final long serialVersionUID = 2424238078421045124L;
 

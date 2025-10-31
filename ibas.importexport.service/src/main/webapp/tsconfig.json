@@ -13,6 +13,7 @@
     "./3rdparty/shell/index.d.ts",
     "./3rdparty/openui5/index.d.ts",
     "./3rdparty/sheetjs/index.d.ts",
+    "./3rdparty/exceljs/index.d.ts",
     "./3rdparty/initialfantasy/index.d.ts"
   ],
   "files": [

@@ -13,6 +13,8 @@ namespace importexport {
             name: string;
             /** 描述 */
             description: string;
+            /** 输出类型 */
+            contentType: string;
             /** 导出 */
             abstract export(caller: bo.IDataExportCaller<T>): void;
         }
@@ -54,6 +56,7 @@ namespace importexport {
                 super();
                 this.name = DataExporterJson.MODE_SIGN;
                 this.description = ibas.i18n.prop("importexport_export_json");
+                this.contentType = "application/json";
             }
             /** 导出 */
             export(caller: bo.IDataExportCaller<DataExportResultString>): void {
@@ -138,6 +141,7 @@ namespace importexport {
                 super();
                 this.name = DataTableExporterJson.MODE_SIGN;
                 this.description = ibas.i18n.prop("importexport_export_json");
+                this.contentType = "application/json";
             }
             /** 导出 */
             export(caller: bo.IDataExportCaller<DataExportResultString>): void {
@@ -167,6 +171,7 @@ namespace importexport {
                 super();
                 this.name = DataTableExporterXLSX.MODE_SIGN;
                 this.description = ibas.i18n.prop("importexport_export_xlsx");
+                this.contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             }
             export(caller: IDataExportCaller<DataExportResultBlob>): void {
                 if (ibas.objects.isNull(caller)) {
@@ -230,6 +235,7 @@ namespace importexport {
                 super();
                 this.name = DataTableExporterCSV.MODE_SIGN;
                 this.description = ibas.i18n.prop("importexport_export_csv");
+                this.contentType = "text/csv";
             }
             protected writingOptions(): any {
                 return {
@@ -248,6 +254,7 @@ namespace importexport {
                 super();
                 this.name = DataTableExporterXLSX.MODE_SIGN;
                 this.description = ibas.i18n.prop("importexport_export_xlsx");
+                this.contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             }
             protected writingOptions(): any {
                 return {

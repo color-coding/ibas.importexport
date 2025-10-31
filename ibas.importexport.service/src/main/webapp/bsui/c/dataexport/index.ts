@@ -8,3 +8,4 @@
 /// <reference path="./DataExportServiceView.ts" />
 /// <reference path="./DataExportView.ts" />
 /// <reference path="./ViewExportView.ts" />
+/// <reference path="./ExportRecordServiceView.ts" />

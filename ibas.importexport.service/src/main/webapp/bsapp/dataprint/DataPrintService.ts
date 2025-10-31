@@ -18,8 +18,36 @@ namespace importexport {
             /** 视图显示后 */
             protected viewShowed(): void {
                 // 视图加载完成
+                let criteria: ibas.Criteria = new ibas.Criteria();
+                let condition: ibas.ICondition = criteria.conditions.create();
+                condition.alias = bo.ExportRecord.PROPERTY_CAUSE_NAME;
+                condition.value = "PRINT";
+                for (let item of ibas.arrays.create(this.printData)) {
+                    if (item instanceof ibas.BusinessObject) {
+                        condition = criteria.conditions.create();
+                        condition.alias = bo.ExportRecord.PROPERTY_BOKEYS_NAME;
+                        condition.value = item.toString();
+                        if (criteria.conditions.length > 2) {
+                            condition.relationship = ibas.emConditionRelationship.OR;
+                        }
+                    }
+                }
+                if (criteria.conditions.length > 2) {
+                    criteria.conditions[1].bracketOpen = 1;
+                    criteria.conditions.lastOrDefault().bracketClose = 1;
+                }
+                if (criteria.conditions.length > 1) {
+                    let boRepository: bo.BORepositoryImportExport = new bo.BORepositoryImportExport();
+                    boRepository.fetchExportRecord({
+                        criteria: criteria,
+                        onCompleted: (opRslt) => {
+                            this.view.showPrintRecords(opRslt.resultObjects);
+                        }
+                    });
+                }
             }
             protected printData: any[];
+            protected converter: ibas.IDataConverter;
             /** 预览 */
             private preview(exporter: bo.IDataExporter): void {
                 if (ibas.objects.isNull(exporter)) {
@@ -30,12 +58,21 @@ namespace importexport {
                 }
                 this.busy(true);
                 let that: this = this;
+                let printDatas: ibas.ArrayList<any> = new ibas.ArrayList();
+                if (this.printData instanceof Array) {
+                    for (let item of this.printData) {
+                        if (!ibas.objects.isNull(this.converter)) {
+                            printDatas.add(this.converter.convert(item, this.name));
+                        } else {
+                            printDatas.add(item);
+                        }
+                    }
+                }
                 exporter.export({
-                    data: this.printData,
-                    contentType: "text/html",
+                    data: printDatas,
+                    contentType: exporter.contentType,
                     onCompleted(opRslt: ibas.IOperationResult<bo.IDataExportResult>): void {
                         try {
-                            that.busy(false);
                             if (opRslt.resultCode !== 0) {
                                 throw new Error(opRslt.message);
                             }
@@ -54,11 +91,12 @@ namespace importexport {
                             } catch (error) {
                             }
                             for (let item of opRslt.resultObjects) {
-                                that.view.showContent(item.content, width, height);
+                                that.view.showContent(item.content, exporter.contentType, width, height);
                             }
                         } catch (error) {
                             that.messages(error);
                         }
+                        that.busy(false);
                     }
                 });
                 this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("importexport_export_is_running",
@@ -69,8 +107,26 @@ namespace importexport {
                 if (ibas.strings.isEmpty(printId)) {
                     throw new Error(ibas.i18n.prop("sys_invalid_parameter", "printId"));
                 }
+                if (this.printData instanceof Array) {
+                    let boRepository: bo.BORepositoryImportExport = new bo.BORepositoryImportExport();
+                    for (let item of this.printData) {
+                        if (item instanceof ibas.BusinessObject) {
+                            boRepository.writeExportRecord({
+                                boKeys: item.toString(),
+                                cause: "PRINT",
+                                onCompleted: (opRslt) => {
+                                    if (opRslt.resultCode !== 0) {
+                                        ibas.logger.log(ibas.emMessageLevel.ERROR, opRslt.message);
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
                 let pWindow: Window = (<any>document.getElementById(printId)).contentWindow;
-                pWindow.print();
+                if (pWindow) {
+                    pWindow.print();
+                }
             }
         }
         /** 数据打印-视图 */
@@ -82,7 +138,9 @@ namespace importexport {
             /** 显示数据导出者 */
             showExporters(exporters: bo.IDataExporter[]): void;
             /** 显示内容 */
-            showContent(content: Blob, width: string, height: string): void;
+            showContent(content: Blob, contentType: string, width: string, height: string): void;
+            /** 显示导出日志 */
+            showPrintRecords(records: bo.ExportRecord[]): void;
         }
         /** 数据打印 */
         export class DataPrintService extends AbstractDataPrintService<IDataPrintServiceContract>  {
@@ -98,25 +156,17 @@ namespace importexport {
             }
             /** 运行服务 */
             runService(contract: IDataPrintServiceContract): void {
-                this.printData = new ibas.ArrayList();
                 // 处理数据
                 let boCode: string = null;
+                this.printData = new ibas.ArrayList();
                 if (contract.data instanceof Array) {
                     for (let item of contract.data) {
                         boCode = (<ibas.IBOStorageTag><any>item).objectCode;
-                        if (!ibas.objects.isNull(contract.converter)) {
-                            this.printData.push(contract.converter.convert(item, this.name));
-                        } else {
-                            this.printData.push(item);
-                        }
+                        this.printData.push(item);
                     }
                 } else if (!ibas.objects.isNull(contract.data)) {
                     boCode = (<ibas.IBOStorageTag><any>contract.data).objectCode;
-                    if (!ibas.objects.isNull(contract.converter)) {
-                        this.printData.push(contract.converter.convert(contract.data, this.name));
-                    } else {
-                        this.printData.push(contract.data);
-                    }
+                    this.printData.push(contract.data);
                 }
                 if (ibas.strings.isEmpty(contract.businessObject) && !ibas.strings.isEmpty(boCode)) {
                     contract.businessObject = boCode;
@@ -126,7 +176,7 @@ namespace importexport {
                     // 直接显示打印内容
                     this.show();
                     let blob: Blob = new Blob([contract.content], { type: "text/html; charset=utf-8" });
-                    this.view.showContent(blob, null, null);
+                    this.view.showContent(blob, "text/html", null, null);
                 } else if (!ibas.objects.isNull(contract.template) || !ibas.objects.isNull(contract.businessObject)) {
                     let criteria: ibas.ICriteria = new ibas.Criteria();
                     if (!ibas.strings.isEmpty(contract.businessObject)) {
@@ -148,8 +198,12 @@ namespace importexport {
                     }
                     condition = criteria.conditions.create();
                     condition.alias = "Transformer";
-                    condition.value = "TO_FILE_HTML";
                     condition.operation = ibas.emConditionOperation.START;
+                    condition.value = "TO_FILE_";
+                    condition = criteria.conditions.create();
+                    condition.alias = "Printable";
+                    condition.operation = ibas.emConditionOperation.EQUAL;
+                    condition.value = ibas.emYesNo.YES.toString();
                     let that: this = this;
                     let boRepository: bo.BORepositoryImportExport = new bo.BORepositoryImportExport();
                     boRepository.fetchDataExporter({

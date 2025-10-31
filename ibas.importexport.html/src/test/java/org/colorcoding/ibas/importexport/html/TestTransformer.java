@@ -46,7 +46,7 @@ public class TestTransformer extends TestCase {
 			}
 
 			TransformerHtml transformer = new TransformerHtml();
-			transformer.setTemplate(opRstl.getResultObjects().firstOrDefault());
+			transformer.setExportTemplate(opRstl.getResultObjects().firstOrDefault());
 			transformer.setInputData(new FileInputStream(
 					String.format("%s%stest_salesquote.json", MyConfiguration.getWorkFolder(), File.separator)));
 			transformer.setWorkFolder(MyConfiguration.getWorkFolder());

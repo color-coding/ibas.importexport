@@ -41,6 +41,16 @@ namespace importexport {
              * @param saver 保存者
              */
             saveExportTemplate(saver: ibas.ISaveCaller<bo.IExportTemplate>): void;
+            /**
+             * 查询 导出日志
+             * @param fetcher 查询者
+             */
+            fetchExportRecord(fetcher: ibas.IFetchCaller<bo.IExportRecord>): void;
+            /**
+             * 保存 导出日志
+             * @param saver 保存者
+             */
+            saveExportRecord(saver: ibas.ISaveCaller<bo.IExportRecord>): void;
         }
         /**
          * 业务对象架构相关调用者
@@ -77,6 +87,17 @@ namespace importexport {
             contentType?: string;
             /** 内容 */
             content?: any;
+        }
+        /**
+         * 导出日志调用者
+         */
+        export interface IExportRecordCaller<P> extends ibas.IMethodCaller<P> {
+            /** 业务对象标识 */
+            boKeys: string;
+            /** 原因 */
+            cause: string;
+            /** 内容 */
+            content?: string;
         }
     }
 }

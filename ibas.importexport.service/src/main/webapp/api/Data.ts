@@ -30,6 +30,8 @@ namespace importexport {
         export const BO_CODE_EXPORTTEMPLATE: string = "${Company}_IE_EXPORTTEMPLATE";
         /** 业务对象编码-数据表格对象 */
         export const BO_CODE_DATA_TABLE: string = "${Company}_IE_DATATABLE";
+        /** 业务对象编码-导出日志 */
+        export const BO_CODE_EXPORTRECORD: string = "${Company}_IE_EXPORTRECORD";
 
         export enum emAreaType {
             /**
@@ -183,6 +185,8 @@ namespace importexport {
             name: string;
             /** 描述 */
             description: string;
+            /** 输出类型 */
+            contentType: string;
             /** 导出 */
             export(caller: IDataExportCaller<any>): void;
         }

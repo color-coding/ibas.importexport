@@ -156,6 +156,31 @@
         "bo_exporttemplate_closing_delimiter": "----结束----"
     },
     {
+        "bo_exportrecord": "导出日志",
+        "bo_exportrecord_objectkey": "编号",
+        "bo_exportrecord_objectcode": "类型",
+        "bo_exportrecord_loginst": "实例号（版本）",
+        "bo_exportrecord_datasource": "数据源",
+        "bo_exportrecord_series": "服务系列",
+        "bo_exportrecord_createdate": "创建日期",
+        "bo_exportrecord_createtime": "创建时间",
+        "bo_exportrecord_updatedate": "修改日期",
+        "bo_exportrecord_updatetime": "修改时间",
+        "bo_exportrecord_createusersign": "创建用户",
+        "bo_exportrecord_updateusersign": "修改用户",
+        "bo_exportrecord_createactionid": "创建动作标识",
+        "bo_exportrecord_updateactionid": "更新动作标识",
+        "bo_exportrecord_bocode": "类型",
+        "bo_exportrecord_bokeys": "主键值",
+        "bo_exportrecord_boinst": "实例号",
+        "bo_exportrecord_exportuser": "导出用户",
+        "bo_exportrecord_exportdate": "导出日期",
+        "bo_exportrecord_exporttime": "导出时间",
+        "bo_exportrecord_cause": "动机",
+        "bo_exportrecord_content": "内容",
+        "bo_exportrecord_closing_delimiter": "----结束----"
+    },
+    {
         "template_item_type_text": "文本",
         "template_item_type_image": "图片"
     },

@@ -125,6 +125,48 @@ namespace importexport {
             saveExportTemplate(saver: ibas.ISaveCaller<bo.ExportTemplate>): void {
                 super.save(bo.ExportTemplate.name, saver);
             }
+            /**
+             * 查询 导出日志
+             * @param fetcher 查询者
+             */
+            fetchExportRecord(fetcher: ibas.IFetchCaller<bo.ExportRecord>): void {
+                super.fetch(bo.ExportRecord.name, fetcher);
+            }
+            /**
+             * 保存 导出日志
+             * @param saver 保存者
+             */
+            saveExportRecord(saver: ibas.ISaveCaller<bo.ExportRecord>): void {
+                super.save(bo.ExportRecord.name, saver);
+            }
+            /**
+             * 记录导出日志
+             * @param caller 调用者
+             */
+            writeExportRecord(caller: IExportRecordCaller<string>): void {
+                let boRepository: ibas.BORepositoryAjax = new ibas.BORepositoryAjax();
+                boRepository.address = this.address;
+                boRepository.token = this.token;
+                boRepository.converter = this.createConverter();
+                let formData: FormData = new FormData();
+                if (!ibas.strings.isEmpty(caller.boKeys)) {
+                    formData.append("boKeys", caller.boKeys);
+                }
+                if (!ibas.strings.isEmpty(caller.cause)) {
+                    formData.append("cause", caller.cause);
+                }
+                if (!ibas.strings.isEmpty(caller.content)) {
+                    formData.append("content", caller.content);
+                }
+                let fileRepository: ibas.FileRepositoryUploadAjax = new ibas.FileRepositoryUploadAjax();
+                fileRepository.address = this.address;
+                fileRepository.token = this.token;
+                fileRepository.converter = this.createConverter();
+                fileRepository.upload("writeExportRecord", {
+                    fileData: formData,
+                    onCompleted: caller.onCompleted,
+                });
+            }
         }
         class FileRepositoryDownloadAjax extends ibas.FileRepositoryDownloadAjax {
             protected createHttpRequest(method: string): XMLHttpRequest {

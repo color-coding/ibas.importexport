@@ -23,7 +23,9 @@ import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.common.Strings;
 import org.colorcoding.ibas.bobas.data.FileItem;
+import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.bobas.i18n.I18N;
+import org.colorcoding.ibas.bobas.logic.common.IBOApprovalContract;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.message.MessageLevel;
 import org.colorcoding.ibas.bobas.repository.jersey.FileRepositoryService;
@@ -34,7 +36,6 @@ import org.colorcoding.ibas.importexport.data.DataConvert;
 import org.colorcoding.ibas.importexport.data.DataExportInfo;
 import org.colorcoding.ibas.importexport.data.DataWrapping;
 import org.colorcoding.ibas.importexport.data.emDataUpdateMethod;
-import org.colorcoding.ibas.importexport.repository.BORepositoryImportExport;
 import org.colorcoding.ibas.importexport.transformer.FileTransformer;
 import org.colorcoding.ibas.importexport.transformer.IFileTransformer;
 import org.colorcoding.ibas.importexport.transformer.TransformerFactory;
@@ -49,6 +50,23 @@ public class FileService extends FileRepositoryService {
 	public FileService() {
 		this.setRepositoryFolder(
 				MyConfiguration.getConfigValue(CONFIG_ITEM_IMPORT_WORK_FOLDER, MyConfiguration.getTempFolder()));
+	}
+
+	private class BORepositoryImportExport
+			extends org.colorcoding.ibas.importexport.repository.BORepositoryImportExport {
+		/**
+		 * 跳过审批流
+		 * 
+		 * @param value
+		 */
+		public final void setSkipApprovalProcess(boolean value) {
+			if (value == true) {
+				this.addSkipLogics(IBOApprovalContract.class);
+			} else {
+				super.setSkipLogics(false);
+			}
+		}
+
 	}
 
 	@POST
@@ -66,12 +84,13 @@ public class FileService extends FileRepositoryService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public OperationResult<String> importData(FormDataMultiPart formData,
 			@HeaderParam("authorization") String authorization, @QueryParam("token") String token) {
-		OperationResult<String> opRslt = null;
 		try {
 			// 处理请求参数
 			token = MyConfiguration.optToken(authorization, token);
 			OperationResult<FileItem> opRsltFile = null;
 			emDataUpdateMethod updateMethod = emDataUpdateMethod.SKIP;
+			emYesNo skipApproval = emYesNo.NO;
+			emYesNo singleTransaction = emYesNo.YES;
 			for (List<FormDataBodyPart> bodyParts : formData.getFields().values()) {
 				for (FormDataBodyPart bodyPart : bodyParts) {
 					if ("file".equalsIgnoreCase(bodyPart.getName())) {
@@ -84,6 +103,16 @@ public class FileService extends FileRepositoryService {
 						if (!Strings.isNullOrEmpty(value)) {
 							updateMethod = DataConvert.convert(emDataUpdateMethod.class, value.toUpperCase());
 						}
+					} else if ("skipApproval".equalsIgnoreCase(bodyPart.getName())) {
+						String value = bodyPart.getValue();
+						if (!Strings.isNullOrEmpty(value)) {
+							skipApproval = DataConvert.convert(emYesNo.class, value.toUpperCase());
+						}
+					} else if ("singleTransaction".equalsIgnoreCase(bodyPart.getName())) {
+						String value = bodyPart.getValue();
+						if (!Strings.isNullOrEmpty(value)) {
+							singleTransaction = DataConvert.convert(emYesNo.class, value.toUpperCase());
+						}
 					}
 				}
 			}
@@ -91,23 +120,36 @@ public class FileService extends FileRepositoryService {
 				throw new Exception(I18N.prop("msg_ie_invaild_data"));
 			}
 			// 导入文件
+			OperationResult<String> operationResult = new OperationResult<String>();
 			try (BORepositoryImportExport boRepository = new BORepositoryImportExport()) {
 				boRepository.setUserToken(token);
-				opRslt = new OperationResult<String>();
+				if (skipApproval == emYesNo.YES) {
+					boRepository.setSkipApprovalProcess(true);
+				}
+				boolean myTrans = false;
+				if (singleTransaction == emYesNo.YES) {
+					myTrans = boRepository.beginTransaction();
+				}
 				for (FileItem data : opRsltFile.getResultObjects()) {
 					IOperationResult<String> opRsltImport = boRepository.importData(data, updateMethod);
 					if (opRsltImport.getError() != null) {
+						if (singleTransaction == emYesNo.YES && myTrans) {
+							boRepository.rollbackTransaction();
+						}
 						throw opRsltImport.getError();
 					}
 					// 记录结果
-					opRslt.addResultObjects(opRsltImport.getResultObjects());
-					opRslt.addInformations(opRsltImport.getInformations());
+					operationResult.addResultObjects(opRsltImport.getResultObjects());
+					operationResult.addInformations(opRsltImport.getInformations());
+				}
+				if (singleTransaction == emYesNo.YES && myTrans) {
+					boRepository.commitTransaction();
 				}
 			}
+			return operationResult;
 		} catch (Exception e) {
-			opRslt = new OperationResult<String>(e);
+			return new OperationResult<String>(e);
 		}
-		return opRslt;
 	}
 
 	@POST
@@ -116,9 +158,7 @@ public class FileService extends FileRepositoryService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public OperationResult<DataWrapping> parseData(FormDataMultiPart formData,
 			@HeaderParam("authorization") String authorization, @QueryParam("token") String token) {
-		OperationResult<DataWrapping> opRslt = null;
 		try {
-			opRslt = new OperationResult<DataWrapping>();
 			// 保存文件
 			OperationResult<FileItem> opRsltFile = super.save(formData.getField("file"),
 					MyConfiguration.optToken(authorization, token));
@@ -127,7 +167,9 @@ public class FileService extends FileRepositoryService {
 			}
 			// 解析文件
 			IFileTransformer transformer;
+			OperationResult<DataWrapping> operationResult = new OperationResult<DataWrapping>();
 			ISerializer serializer = SerializationFactory.createManager().create(SerializationFactory.TYPE_JSON);
+
 			for (FileItem data : opRsltFile.getResultObjects()) {
 				try {
 					if (data == null || data.getName().indexOf(".") < 0) {
@@ -149,16 +191,16 @@ public class FileService extends FileRepositoryService {
 					for (IBusinessObject object : transformer.getOutputData()) {
 						ByteArrayOutputStream writer = new ByteArrayOutputStream();
 						serializer.serialize(object, writer);
-						opRslt.addResultObjects(new DataWrapping(writer.toString()));
+						operationResult.addResultObjects(new DataWrapping(writer.toString()));
 					}
 				} catch (Exception e) {
 					Logger.log(e);
 				}
 			}
+			return operationResult;
 		} catch (Exception e) {
-			opRslt = new OperationResult<DataWrapping>(e);
+			return new OperationResult<DataWrapping>(e);
 		}
-		return opRslt;
 	}
 
 	protected String nameElement(String name) {
@@ -183,7 +225,6 @@ public class FileService extends FileRepositoryService {
 
 	@POST
 	@Path("export")
-	@SuppressWarnings("resource")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public void exportData(FormDataMultiPart formData, @Context HttpServletResponse response,
@@ -223,29 +264,31 @@ public class FileService extends FileRepositoryService {
 				}
 			}
 			token = MyConfiguration.optToken(authorization, token);
-			BORepositoryImportExport boRepository = new BORepositoryImportExport();
-			boRepository.setUserToken(token);
-			IOperationResult<FileItem> opRsltExport = boRepository.exportData(info);
-			if (opRsltExport.getError() != null) {
-				throw new WebApplicationException(
-						Response.status(500).type(MediaType.APPLICATION_JSON).entity(opRsltExport).build());
-			}
-			FileItem fileItem = opRsltExport.getResultObjects().firstOrDefault();
-			if (fileItem != null) {
-				// 数据存在，尝试转为字节数组
-				// 为文件命名
-				response.setHeader("Content-Disposition", String.format("attachment;filename=%s", fileItem.getName()));
-				// 设置内容类型
-				if (info.getContentType() != null && !info.getContentType().isEmpty()) {
-					response.setContentType(info.getContentType());
-				} else {
-					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			try (BORepositoryImportExport boRepository = new BORepositoryImportExport()) {
+				boRepository.setUserToken(token);
+				IOperationResult<FileItem> opRsltExport = boRepository.exportData(info);
+				if (opRsltExport.getError() != null) {
+					throw new WebApplicationException(
+							Response.status(500).type(MediaType.APPLICATION_JSON).entity(opRsltExport).build());
 				}
-				fileItem.writeTo(response.getOutputStream());
-				response.getOutputStream().flush();
-			} else {
-				// 无效的导出数据
-				throw new WebApplicationException(500);
+				FileItem fileItem = opRsltExport.getResultObjects().firstOrDefault();
+				if (fileItem != null) {
+					// 数据存在，尝试转为字节数组
+					// 为文件命名
+					response.setHeader("Content-Disposition",
+							String.format("attachment;filename=%s", fileItem.getName()));
+					// 设置内容类型
+					if (info.getContentType() != null && !info.getContentType().isEmpty()) {
+						response.setContentType(info.getContentType());
+					} else {
+						response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+					}
+					fileItem.writeTo(response.getOutputStream());
+					response.getOutputStream().flush();
+				} else {
+					// 无效的导出数据
+					throw new WebApplicationException(500);
+				}
 			}
 		} catch (WebApplicationException e) {
 			throw e;
