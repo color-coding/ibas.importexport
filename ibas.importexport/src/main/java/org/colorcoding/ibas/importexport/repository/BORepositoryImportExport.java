@@ -3,16 +3,12 @@ package org.colorcoding.ibas.importexport.repository;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Arrays;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 import org.colorcoding.ibas.bobas.bo.BOFactory;
 import org.colorcoding.ibas.bobas.bo.BusinessObject;
-import org.colorcoding.ibas.bobas.bo.IBOMasterData;
-import org.colorcoding.ibas.bobas.bo.IBOMasterDataLine;
 import org.colorcoding.ibas.bobas.bo.IBOStorageTag;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
-import org.colorcoding.ibas.bobas.bo.IBusinessObjects;
 import org.colorcoding.ibas.bobas.common.ConditionOperation;
 import org.colorcoding.ibas.bobas.common.ConditionRelationship;
 import org.colorcoding.ibas.bobas.common.Criteria;
@@ -25,11 +21,9 @@ import org.colorcoding.ibas.bobas.common.Numbers;
 import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.common.Strings;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
-import org.colorcoding.ibas.bobas.core.fields.IManagedFields;
 import org.colorcoding.ibas.bobas.data.ArrayList;
 import org.colorcoding.ibas.bobas.data.FileItem;
 import org.colorcoding.ibas.bobas.data.KeyText;
-import org.colorcoding.ibas.bobas.data.List;
 import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
@@ -45,9 +39,10 @@ import org.colorcoding.ibas.importexport.bo.exportrecord.ExportRecord;
 import org.colorcoding.ibas.importexport.bo.exportrecord.IExportRecord;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.ExportTemplate;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplate;
-import org.colorcoding.ibas.importexport.data.DataConvert;
 import org.colorcoding.ibas.importexport.data.DataExportInfo;
 import org.colorcoding.ibas.importexport.data.emDataUpdateMethod;
+import org.colorcoding.ibas.importexport.repository.updater.DataUpdater;
+import org.colorcoding.ibas.importexport.repository.updater.Factory;
 import org.colorcoding.ibas.importexport.transformer.FileTransformer;
 import org.colorcoding.ibas.importexport.transformer.IFileTransformer;
 import org.colorcoding.ibas.importexport.transformer.ITemplateTransformer;
@@ -230,104 +225,10 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 						"DATA_IMPORT");
 			}
 			// 保存业务对象
-			BusinessObject<?> newOne;
 			IBusinessObject newItem;
 			IOperationResult<IBusinessObject> opRsltExists, opRsltDelete, opRsltSave;
-			BiFunction<IBusinessObject, List<IBusinessObject>, IBusinessObject> funcModify = new BiFunction<IBusinessObject, List<IBusinessObject>, IBusinessObject>() {
+			DataUpdater dataUpdater = Factory.create(updateMethod);
 
-				@Override
-				@SuppressWarnings("unchecked")
-				public IBusinessObject apply(IBusinessObject newData, List<IBusinessObject> oldDatas) {
-					if (oldDatas == null || newData == null) {
-						return null;
-					}
-					if (!(newData instanceof IManagedFields)) {
-						return null;
-					}
-					IManagedFields newFields = (IManagedFields) newData;
-					IFieldData[] newKeys = newFields.getFields(c -> c.isUniqueKey());
-					if (newKeys == null || newKeys.length == 0) {
-						// 无唯一键，无法比较，退出
-						return null;
-					}
-					// 开始匹配
-					boolean matched;
-					IFieldData oldField = null;
-					IFieldData newField = null;
-					IManagedFields oldFields = null;
-					for (IBusinessObject oldData : oldDatas) {
-						if (oldData == null) {
-							continue;
-						}
-						if (newData.getClass() != oldData.getClass()) {
-							continue;
-						}
-						matched = true;
-						oldFields = (IManagedFields) oldData;
-						for (IFieldData item : newKeys) {
-							oldField = oldFields.getField(item.getName());
-							if (oldField != null) {
-								if (item.getValue() == oldField.getValue()) {
-									continue;
-								}
-								if (String.valueOf(item.getValue()).equals(String.valueOf(oldField.getValue()))) {
-									continue;
-								}
-							}
-							matched = false;
-							break;
-						}
-						// 找匹配的数据
-						if (matched) {
-							// 同步主键
-							for (IFieldData item : oldFields.getFields(c -> c.isPrimaryKey())) {
-								newField = newFields.getField(item.getName());
-								if (newField != null) {
-									newField.setValue(item.getValue());
-								}
-							}
-							DataConvert.tagsOf(newFields, oldFields);
-
-							for (IFieldData item : newFields.getFields()) {
-								if (!item.isSavable()) {
-									continue;
-								}
-								if (item.isPrimaryKey()) {
-									continue;
-								}
-								if (item.isUniqueKey()) {
-									continue;
-								}
-								if (!item.isDirty()) {
-									continue;
-								}
-								if (item.getValue() instanceof IBusinessObjects) {
-									// 是数组，则子项比较
-									oldField = oldFields.getField(item.getName());
-									if (oldField != null && oldField.getValue() instanceof IBusinessObjects<?, ?>) {
-										for (IBusinessObject newItem : ((IBusinessObjects<?, ?>) item.getValue())) {
-											if (this.apply(newItem,
-													((List<IBusinessObject>) oldField.getValue())) == null) {
-												// 子项未匹配到，则添加
-												((IBusinessObjects<IBusinessObject, ?>) oldField.getValue())
-														.add(newItem);
-											}
-										}
-									}
-									continue;
-								}
-								// 替换原值
-								oldField = oldFields.getField(item.getName());
-								if (oldField != null) {
-									oldField.setValue(item.getValue());
-								}
-							}
-							return oldData;
-						}
-					}
-					return null;
-				}
-			};
 			for (int i = 0; i < transformer.getOutputData().size(); i++) {
 				try {
 					newItem = transformer.getOutputData().get(i);
@@ -363,52 +264,17 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 						if (criteria != null && !criteria.getConditions().isEmpty()) {
 							opRsltExists = this.fetch(newItem.getClass(), criteria, token);
 							if (!opRsltExists.getResultObjects().isEmpty()) {
-								if (updateMethod == emDataUpdateMethod.REPLACE) {
-									// 替换数据（旧的删除，保存新的）
-									for (IBusinessObject oldItem : opRsltExists.getResultObjects()) {
-										// 主数据类型，保留核心字段
-										if (oldItem instanceof IBOMasterData && newItem instanceof IBOMasterData) {
-											// 主数据则保留DocEntry值，否则丢失关联关系
-											IBOMasterData newMaster = (IBOMasterData) newItem;
-											IBOMasterData oldMaster = (IBOMasterData) oldItem;
-											// 对象信息复制
-											newMaster.setDocEntry(oldMaster.getDocEntry());
-											DataConvert.tagsOf(newMaster, oldMaster);
-											if (newMaster instanceof BusinessObject<?>) {
-												newOne = (BusinessObject<?>) newMaster;
-												newOne.markOld();
-												newOne.markDirty();
-											}
-										} else if (oldItem instanceof IBOMasterDataLine
-												&& newItem instanceof IBOMasterDataLine) {
-											// 主数据行保留LineId值，否则丢失关联关系
-											IBOMasterDataLine newMaster = (IBOMasterDataLine) newItem;
-											IBOMasterDataLine oldMaster = (IBOMasterDataLine) oldItem;
-											// 对象信息复制
-											newMaster.setLineId(oldMaster.getLineId());
-											DataConvert.tagsOf(newMaster, oldMaster);
-											if (newMaster instanceof BusinessObject<?>) {
-												newOne = (BusinessObject<?>) newMaster;
-												newOne.markOld();
-												newOne.markDirty();
-											}
-										} else {
-											// 删除旧数据
-											oldItem.delete();
-											opRsltDelete = this.save(oldItem, token);
-											if (opRsltDelete.getError() != null) {
-												throw opRsltDelete.getError();
-											}
-											operationResult.addInformations("DELETED_EXISTS_DATA", oldItem.toString(),
-													"DATA_IMPORT");
+								newItem = dataUpdater.apply(newItem, opRsltExists.getResultObjects());
+								for (IBusinessObject oldItem : opRsltExists.getResultObjects()) {
+									// 删除旧数据
+									if (oldItem.isDeleted() == true) {
+										opRsltDelete = this.save(oldItem, token);
+										if (opRsltDelete.getError() != null) {
+											throw opRsltDelete.getError();
 										}
+										operationResult.addInformations("DELETED_EXISTS_DATA", oldItem.toString(),
+												"DATA_IMPORT");
 									}
-								} else if (updateMethod == emDataUpdateMethod.MODIFY) {
-									// 修改数据属性
-									newItem = funcModify.apply(newItem, opRsltExists.getResultObjects());
-								} else {
-									// 跳过已存在数据
-									newItem = null;
 								}
 							} else {
 								// 未查到，则新建
