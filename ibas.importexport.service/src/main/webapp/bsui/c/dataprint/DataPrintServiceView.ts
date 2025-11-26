@@ -119,6 +119,7 @@ namespace importexport {
                 }
 
                 private createHTML(content: Blob): sap.ui.core.Control {
+                    let that: this = this;
                     return new sap.extension.core.FrameHTML("", {
                         frameWidth: "100%",
                         frameHeight: "100%",
@@ -160,6 +161,12 @@ namespace importexport {
                                         this.width = revisePx(value, dpi);
                                     }
                                 };
+                                frameHTML.onerror = function (): void {
+                                    that.dialog.destroyContent();
+                                    that.dialog.addContent(new sap.m.IllustratedMessage("", {
+                                        illustrationType: sap.m.IllustratedMessageType.UnableToLoad,
+                                    }));
+                                };
                             }
                         }
                     });
@@ -171,14 +178,18 @@ namespace importexport {
                         frameHeight: "100%",
                         frameSrc: content,
                         afterRendering(this: sap.extension.core.FrameHTML): void {
-                            /* 跨域问题
-                            let frameHTML: any = document.getElementById(this.getFrameId());
-                            if (frameHTML?.contentWindow) {
-                                frameHTML?.contentWindow.addEventListener("afterprint", () => {
-                                    that.fireViewEvents(that.printEvent, frameHTML.id);
-                                });
+                            let frameHTML: HTMLElement = document.getElementById(this.getFrameId());
+                            if (frameHTML instanceof HTMLIFrameElement) {
+                                frameHTML.onload = function (): void {
+
+                                };
+                                frameHTML.onerror = function (): void {
+                                    that.dialog.destroyContent();
+                                    that.dialog.addContent(new sap.m.IllustratedMessage("", {
+                                        illustrationType: sap.m.IllustratedMessageType.UnableToLoad,
+                                    }));
+                                };
                             }
-                            */
                         }
                     });
                 }
