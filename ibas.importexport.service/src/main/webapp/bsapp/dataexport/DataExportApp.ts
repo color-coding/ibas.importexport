@@ -9,7 +9,7 @@ namespace importexport {
     export namespace app {
 
         /** 数据导出 */
-        export class DataExportApp extends ibas.Application<IDataExportView>  {
+        export class DataExportApp extends ibas.BOQueryApplication<IDataExportView>  {
 
             /** 应用标识 */
             static APPLICATION_ID: string = "a6c6252c-ebc0-4feb-8c39-5a97862a68de";
@@ -25,11 +25,11 @@ namespace importexport {
             /** 注册视图 */
             protected registerView(): void {
                 super.registerView();
+                this.view.schemaEvent = this.schema;
                 this.view.exportEvent = this.export;
-                this.view.chooseBusinessObjectEvent = this.chooseBusinessObject;
                 this.view.addConditionEvent = this.addQueryCondition;
                 this.view.removeConditionEvent = this.removeQueryCondition;
-                this.view.schemaEvent = this.schema;
+                this.view.selectedBusinessObjectEvent = this.selectedBusinessObject;
             }
             /** 视图显示后 */
             protected viewShowed(): void {
@@ -37,7 +37,7 @@ namespace importexport {
                 if (ibas.objects.isNull(this.criteria)) {
                     this.criteria = new ibas.Criteria();
                 }
-                this.view.showCriteria(this.criteria);
+
                 let that: this = this;
                 let boRepository: bo.BORepositoryImportExport = new bo.BORepositoryImportExport();
                 boRepository.fetchDataExporter({
@@ -46,7 +46,6 @@ namespace importexport {
                     ],
                     onCompleted(opRslt: ibas.IOperationResult<bo.IDataExporter>): void {
                         try {
-                            that.busy(false);
                             if (opRslt.resultCode !== 0) {
                                 throw new Error(opRslt.message);
                             }
@@ -56,7 +55,6 @@ namespace importexport {
                         }
                     }
                 });
-                this.busy(true);
             }
             /** 运行,覆盖原方法 */
             run(): void {
@@ -77,7 +75,7 @@ namespace importexport {
                             if (opRslt.resultCode !== 0) {
                                 throw new Error(opRslt.message);
                             }
-                            that.messages(ibas.emMessageType.SUCCESS, opRslt.resultObjects.firstOrDefault());
+                            that.view.showSchemaContent(opRslt.resultObjects.firstOrDefault(), type);
                         } catch (error) {
                             that.messages(error);
                         }
@@ -115,56 +113,120 @@ namespace importexport {
                 this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("importexport_exporting"));
             }
             /** 选择业务对象事件 */
-            private chooseBusinessObject(): void {
+            /** 查询数据 */
+            protected fetchData(criteria: ibas.ICriteria): void {
+                this.busy(true);
+                if (criteria instanceof ibas.Criteria) {
+                    criteria.noChilds = true;
+                }
                 let that: this = this;
-                let criteria: ibas.ICriteria = new ibas.Criteria();
-                criteria.noChilds = true;
-                let condition: ibas.ICondition = criteria.conditions.create();
-                condition.alias = initialfantasy.bo.BOInformation.PROPERTY_CODE_NAME;
-                condition.value = ".";
-                condition.operation = ibas.emConditionOperation.NOT_CONTAIN;
-                ibas.servicesManager.runChooseService<initialfantasy.bo.IBOInformation>({
-                    boCode: initialfantasy.bo.BO_CODE_BOINFORMATION,
-                    chooseType: ibas.emChooseType.SINGLE,
+                if (criteria.conditions.firstOrDefault(c =>
+                    c.alias === initialfantasy.bo.BOInformation.PROPERTY_CODE_NAME
+                    && c.operation === ibas.emConditionOperation.NOT_CONTAIN
+                    && c.value === ".") === null) {
+                    if (criteria.conditions.length > 1) {
+                        criteria.conditions.firstOrDefault().bracketOpen += 1;
+                        criteria.conditions.lastOrDefault().bracketClose += 1;
+                    }
+                    let condition: ibas.ICondition = criteria.conditions.create();
+                    condition.alias = initialfantasy.bo.BOInformation.PROPERTY_CODE_NAME;
+                    condition.value = ".";
+                    condition.operation = ibas.emConditionOperation.NOT_CONTAIN;
+                }
+                let boRepository: initialfantasy.bo.BORepositoryInitialFantasy = new initialfantasy.bo.BORepositoryInitialFantasy();
+                boRepository.fetchBOInformation({
                     criteria: criteria,
-                    onCompleted(selecteds: ibas.IList<initialfantasy.bo.IBOInformation>): void {
-                        that.criteria.businessObject = selecteds.firstOrDefault().code;
-                        that.view.showConditions(null);
-                        that.criteria.conditions.clear();
-                        that.view.showCriteria(that.criteria);
-                        that.view.showConditions(that.criteria.conditions);
+                    onCompleted(opRslt: ibas.IOperationResult<initialfantasy.bo.BOInformation>): void {
+                        try {
+                            that.busy(false);
+                            if (opRslt.resultCode !== 0) {
+                                throw new Error(opRslt.message);
+                            }
+                            if (!that.isViewShowed()) {
+                                // 没显示视图，先显示
+                                that.show();
+                            }
+                            if (opRslt.resultObjects.length === 0) {
+                                that.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("shell_data_fetched_none"));
+                            }
+                            that.view.showBusinessObjects(opRslt.resultObjects);
+                        } catch (error) {
+                            that.messages(error);
+                        }
+                    }
+                });
+                this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("shell_fetching_data"));
+            }
+            private selectedBusinessObject(data: initialfantasy.bo.BOInformation): void {
+                if (ibas.objects.isNull(data)) {
+                    this.messages(ibas.emMessageType.WARNING, ibas.i18n.prop("shell_please_chooose_data"));
+                    return;
+                }
+                this.criteria.businessObject = data.code;
+                this.criteria.sorts.clear();
+                this.criteria.conditions.clear();
+                this.criteria.childCriterias.clear();
+                this.view.showConditions(this.criteria.conditions);
+                let criteria: ibas.Criteria = new ibas.Criteria();
+                let condition: ibas.ICondition = criteria.conditions.create();
+                condition.alias = initialfantasy.bo.BOPropertyInformation.PROPERTY_CODE_NAME;
+                condition.value = this.criteria.businessObject;
+                let sort: ibas.ISort = criteria.sorts.create();
+                sort.alias = initialfantasy.bo.BOPropertyInformation.PROPERTY_DESCRIPTION_NAME;
+                sort.sortType = ibas.emSortType.ASCENDING;
+                sort = criteria.sorts.create();
+                sort.alias = initialfantasy.bo.BOPropertyInformation.PROPERTY_PROPERTY_NAME;
+                sort.sortType = ibas.emSortType.ASCENDING;
+
+                let boRepository: initialfantasy.bo.BORepositoryInitialFantasy = new initialfantasy.bo.BORepositoryInitialFantasy();
+                boRepository.fetchBOPropertyInformation({
+                    criteria: criteria,
+                    onCompleted: (opRslt) => {
+                        this.view.showBusinessObjectProperties(opRslt.resultObjects);
                     }
                 });
             }
             private addQueryCondition(): void {
                 this.criteria.conditions.create();
+                if (this.criteria.conditions.length > 0 && this.criteria.conditions.firstOrDefault()?.relationship !== ibas.emConditionRelationship.NONE) {
+                    this.criteria.conditions.firstOrDefault().relationship = ibas.emConditionRelationship.NONE;
+                }
                 this.view.showConditions(this.criteria.conditions);
             }
-            private removeQueryCondition(condition: ibas.ICondition): void {
-                this.criteria.conditions.remove(condition);
+            private removeQueryCondition(conditions: ibas.ICondition[]): void {
+                for (let condition of ibas.arrays.create(conditions)) {
+                    this.criteria.conditions.remove(condition);
+                }
+                if (this.criteria.conditions.length > 0 && this.criteria.conditions.firstOrDefault()?.relationship !== ibas.emConditionRelationship.NONE) {
+                    this.criteria.conditions.firstOrDefault().relationship = ibas.emConditionRelationship.NONE;
+                }
                 this.view.showConditions(this.criteria.conditions);
             }
         }
         /** 数据导出-视图 */
-        export interface IDataExportView extends ibas.IView {
+        export interface IDataExportView extends ibas.IBOQueryView {
             /** 获取Schema，参数1，类型（xml,json） */
             schemaEvent: Function;
-            /** 显示查询 */
-            showCriteria(criteria: ibas.ICriteria): void;
+            /** 显示schema内容 */
+            showSchemaContent(content: string, type: string): void;
             /** 显示数据导出者 */
             showExporters(exporters: bo.IDataExporter[]): void;
-            /** 显示结果 */
-            showResluts(results: bo.IDataExportResult[]): void;
             /** 选择业务对象 */
-            chooseBusinessObjectEvent: Function;
-            /** 导出 */
-            exportEvent: Function;
+            selectedBusinessObjectEvent: Function;
+            /** 显示业务对象信息 */
+            showBusinessObjects(datas: initialfantasy.bo.BOInformation[]): void;
+            /** 显示业务对象属性信息 */
+            showBusinessObjectProperties(datas: initialfantasy.bo.BOPropertyInformation[]): void;
             /** 添加条件 */
             addConditionEvent: Function;
             /** 移出条件 */
             removeConditionEvent: Function;
             /** 显示结果 */
             showConditions(conditions: ibas.ICondition[]): void;
+            /** 导出 */
+            exportEvent: Function;
+            /** 显示结果 */
+            showResluts(results: bo.IDataExportResult[]): void;
         }
     }
 }

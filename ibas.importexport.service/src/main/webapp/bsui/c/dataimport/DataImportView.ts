@@ -60,7 +60,7 @@ namespace importexport {
                             }),
                             new sap.m.StandardListItem("", {
                                 counter: bo.emDataUpdateMethod.MODIFY,
-                                icon: " sap-icon://request",
+                                icon: "sap-icon://request",
                                 title: ibas.enums.describe(bo.emDataUpdateMethod, bo.emDataUpdateMethod.MODIFY),
                             }),
                         ],
