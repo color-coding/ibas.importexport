@@ -159,7 +159,11 @@ declare namespace initialfantasy {
             /** 包括 */
             CONTAIN = 10,
             /** 不包含 */
-            NOT_CONTAIN = 11
+            NOT_CONTAIN = 11,
+            /** 在 */
+            IN = 12,
+            /** 不在 */
+            NOT_IN = 13
         }
         /** 比较关系 */
         enum emConditionRelationship {
@@ -884,6 +888,8 @@ declare namespace initialfantasy {
             invalidDate: Date;
             /** 密码修改日期 */
             lastPwdSetDate: Date;
+            /** 锁定 */
+            locked: ibas.emYesNo;
             /** 对象编号 */
             docEntry: number;
             /** 对象类型 */
@@ -916,6 +922,8 @@ declare namespace initialfantasy {
             dataOwner: number;
             /** 数据所属组织 */
             organization: string;
+            /** 特征（;） */
+            specifics: string;
             /** 备注 */
             remarks: string;
         }
@@ -3307,6 +3315,12 @@ declare namespace initialfantasy {
             get lastPwdSetDate(): Date;
             /** 设置-密码修改日期 */
             set lastPwdSetDate(value: Date);
+            /** 映射的属性名称-已锁定 */
+            static PROPERTY_LOCKED_NAME: string;
+            /** 获取-已锁定 */
+            get locked(): ibas.emYesNo;
+            /** 设置-已锁定 */
+            set locked(value: ibas.emYesNo);
             /** 映射的属性名称-对象编号 */
             static PROPERTY_DOCENTRY_NAME: string;
             /** 获取-对象编号 */
@@ -3409,6 +3423,12 @@ declare namespace initialfantasy {
             get remarks(): string;
             /** 设置-备注 */
             set remarks(value: string);
+            /** 映射的属性名称-特征 */
+            static PROPERTY_SPECIFICS_NAME: string;
+            /** 获取-特征 */
+            get specifics(): string;
+            /** 设置-特征 */
+            set specifics(value: string);
             /** 初始化数据 */
             protected init(): void;
         }
@@ -7111,6 +7131,7 @@ declare namespace initialfantasy {
             /** 运行,覆盖原方法 */
             run(): void;
             run(data: bo.User): void;
+            protected editSpecifics: ibas.IList<ibas.KeyText>;
             /** 保存数据 */
             protected saveData(): void;
             /** 删除数据 */
@@ -7120,6 +7141,10 @@ declare namespace initialfantasy {
             /** 选择组织标识 */
             private chooseOrganization;
             protected editUserIdentity(): void;
+            /** 添加业务对象属性信息事件 */
+            protected addUserSpecific(type: string): void;
+            /** 删除业务对象属性信息事件 */
+            protected removeUserSpecific(items: ibas.KeyText[]): void;
         }
         /** 视图-用户 */
         interface IUserEditView extends ibas.IBOEditView {
@@ -7133,6 +7158,12 @@ declare namespace initialfantasy {
             chooseOrganizationEvent: Function;
             /** 编辑用户身份 */
             editUserIdentityEvent: Function;
+            /** 显示特征数据 */
+            showUserSpecifics(datas: ibas.KeyText[]): void;
+            /** 添加用户特征 */
+            addUserSpecificEvent: Function;
+            /** 移除用户特征 */
+            removeUserSpecificEvent: Function;
         }
     }
 }

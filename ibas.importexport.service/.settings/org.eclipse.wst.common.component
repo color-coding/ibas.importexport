@@ -1,33 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-      
-    <wb-module deploy-name="ibas.importexport.service-0.1.0">
-                
-        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
-            
-        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
-            
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
-            
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <dependent-module archiveName="ibas.importexport-0.1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/ibas.importexport/ibas.importexport">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="ibas.importexport.excel-0.1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/ibas.importexport.excel/ibas.importexport.excel">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="ibas.importexport.html-0.1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/ibas.importexport.html/ibas.importexport.html">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="ibas.initialfantasy-0.1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/ibas.initialfantasy/ibas.initialfantasy">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-            
-        <property name="java-output-path" value="/ibas.importexport.service/target/classes"/>
-                
-        <property name="context-root" value="ibas.importexport.service"/>
-                
-        <property name="component.exclusion.patterns" value="index.html,config.json,**/tsconfig*.json,**/*.map,**/*.ts,**/*.bat,**/*.sh,3rdparty/*.txt,3rdparty/ibas/**,3rdparty/openui5/**,3rdparty/shell/**,modules/**,test/**"/>
           
-    </wb-module>
     
+    <wb-module deploy-name="ibas.importexport.service-0.1.0">
+        <wb-resource deploy-path="/WEB-INF/web.xml" source-path="/src/main/webapp/WEB-INF/web.xml"/>
+                        
+        
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
+                    
+        
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
+                    
+        
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+                    
+        
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+                
+        <dependent-module archiveName="ibas.importexport-0.1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/ibas.importexport/ibas.importexport">
+                        
+            <dependency-type>uses</dependency-type>
+                    
+        </dependent-module>
+                
+        <dependent-module archiveName="ibas.importexport.excel-0.1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/ibas.importexport.excel/ibas.importexport.excel">
+                        
+            <dependency-type>uses</dependency-type>
+                    
+        </dependent-module>
+                
+        <dependent-module archiveName="ibas.importexport.html-0.1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/ibas.importexport.html/ibas.importexport.html">
+                        
+            <dependency-type>uses</dependency-type>
+                    
+        </dependent-module>
+                
+        <dependent-module archiveName="ibas.initialfantasy-0.1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/ibas.initialfantasy/ibas.initialfantasy">
+                        
+            <dependency-type>uses</dependency-type>
+                    
+        </dependent-module>
+                    
+        
+        <property name="java-output-path" value="/ibas.importexport.service/target/classes"/>
+                        
+        
+        <property name="context-root" value="ibas.importexport.service"/>
+        <property name="component.exclusion.patterns" value="WEB-INF/web-*.xml,index.html,config.json,**/tsconfig*.json,**/*.map,**/*.ts,**/*.bat,**/*.sh,3rdparty/*.txt,3rdparty/ibas/**,3rdparty/openui5/**,3rdparty/shell/**,modules/**,test/**"/>
+                  
+    
+    </wb-module>
+        
+
 </project-modules>
