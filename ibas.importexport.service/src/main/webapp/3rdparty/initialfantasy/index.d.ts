@@ -884,6 +884,8 @@ declare namespace initialfantasy {
             invalidDate: Date;
             /** 密码修改日期 */
             lastPwdSetDate: Date;
+            /** 锁定 */
+            locked: ibas.emYesNo;
             /** 对象编号 */
             docEntry: number;
             /** 对象类型 */
@@ -3307,6 +3309,12 @@ declare namespace initialfantasy {
             get lastPwdSetDate(): Date;
             /** 设置-密码修改日期 */
             set lastPwdSetDate(value: Date);
+            /** 映射的属性名称-已锁定 */
+            static PROPERTY_LOCKED_NAME: string;
+            /** 获取-已锁定 */
+            get locked(): ibas.emYesNo;
+            /** 设置-已锁定 */
+            set locked(value: ibas.emYesNo);
             /** 映射的属性名称-对象编号 */
             static PROPERTY_DOCENTRY_NAME: string;
             /** 获取-对象编号 */

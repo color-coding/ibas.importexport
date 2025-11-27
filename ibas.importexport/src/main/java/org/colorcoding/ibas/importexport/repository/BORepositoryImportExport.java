@@ -163,6 +163,8 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 	public OperationResult<String> schema(String boCode, String type, String token) {
 		try (ByteArrayOutputStream writer = new ByteArrayOutputStream()) {
 			this.setUserToken(token);
+			// 初始化工厂
+			initFactory();
 			Class<?> boType = BOFactory.classOf(boCode);
 			if (boType == null) {
 				throw new Exception(I18N.prop("msg_ie_not_found_class", boCode));
