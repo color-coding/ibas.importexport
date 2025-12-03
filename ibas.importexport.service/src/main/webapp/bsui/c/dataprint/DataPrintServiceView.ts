@@ -52,6 +52,39 @@ namespace importexport {
                         content: [
                         ],
                         buttons: [
+                            this.buttonSave = new sap.m.Button("", {
+                                text: ibas.i18n.prop("shell_data_save"),
+                                type: sap.m.ButtonType.Transparent,
+                                visible: false,
+                                press: function (oControlEvent: sap.ui.base.Event): void {
+                                    for (let item of that.dialog.getContent()) {
+                                        if (item instanceof sap.extension.core.FrameHTML) {
+                                            if (!ibas.strings.isWith(item.getFrameSrc(), "blob:http", undefined)) {
+                                                continue;
+                                            }
+                                            let oLink: HTMLAnchorElement = window.document.createElement("a");
+                                            if ("download" in oLink) {
+                                                let name: string = that.title;
+                                                if (!ibas.strings.isEmpty(name) && name.indexOf(" - ") > 0) {
+                                                    name = name.substring(name.indexOf(" - ") + 3);
+                                                }
+                                                if (ibas.strings.isEmpty(name)) {
+                                                    name = item.getFrameSrc().substring(item.getFrameSrc().lastIndexOf("/") + 1);
+                                                } else {
+                                                    name = ibas.strings.replace(name, ": ", "-");
+                                                    name = ibas.strings.replace(name, ", ", "_");
+                                                    name = name + "_" + ibas.dates.toString(ibas.dates.now(), "yyyyMMdd_HHmmss");
+                                                }
+                                                oLink.download = name;
+                                                oLink.href = item.getFrameSrc();
+                                                oLink.style.cssText = "display:none";
+                                                oLink.click();
+                                                oLink.remove();
+                                            }
+                                        }
+                                    }
+                                }
+                            }),
                             new sap.m.Button("", {
                                 text: ibas.i18n.prop("importexport_preview"),
                                 type: sap.m.ButtonType.Transparent,
@@ -83,6 +116,7 @@ namespace importexport {
                 }
                 private dialog: sap.m.Dialog;
                 private select: sap.m.Select;
+                private buttonSave: sap.m.Button;
                 private printing: Function;
 
                 /** 显示内容 */
@@ -102,6 +136,7 @@ namespace importexport {
                         this.printing = function (): void {
                             that.fireViewEvents(that.printEvent, printArea.getFrameId());
                         };
+                        this.buttonSave.setVisible(true);
                     } else if (ibas.strings.equalsIgnoreCase("application/pdf", contentType)) {
                         this.dialog.setContentHeight("80%");
                         this.dialog.setContentWidth("80%");
@@ -111,7 +146,9 @@ namespace importexport {
                         this.printing = function (): void {
                             that.fireViewEvents(that.printEvent, printArea.getFrameId());
                         };
+                        this.buttonSave.setVisible(true);
                     } else {
+                        this.buttonSave.setVisible(false);
                         this.dialog.addContent(new sap.m.IllustratedMessage("", {
                             illustrationType: sap.m.IllustratedMessageType.UnableToLoad,
                         }));
