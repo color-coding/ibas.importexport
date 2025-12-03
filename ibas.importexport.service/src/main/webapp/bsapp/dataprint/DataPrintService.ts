@@ -58,6 +58,7 @@ namespace importexport {
                 }
                 this.busy(true);
                 let that: this = this;
+                let titleBuilder: ibas.StringBuilder = new ibas.StringBuilder();
                 let printDatas: ibas.ArrayList<any> = new ibas.ArrayList();
                 if (this.printData instanceof Array) {
                     for (let item of this.printData) {
@@ -66,7 +67,16 @@ namespace importexport {
                         } else {
                             printDatas.add(item);
                         }
+                        if (item instanceof ibas.BusinessObject) {
+                            if (titleBuilder.length > 0) {
+                                titleBuilder.append(", ");
+                            }
+                            titleBuilder.append(ibas.businessobjects.describe(item.toString()));
+                        }
                     }
+                }
+                if (titleBuilder.length > 0) {
+                    this.view.title = this.description + " - " + titleBuilder.toString();
                 }
                 exporter.export({
                     data: printDatas,

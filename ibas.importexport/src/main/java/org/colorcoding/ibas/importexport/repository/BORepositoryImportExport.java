@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.function.Consumer;
 
 import org.colorcoding.ibas.bobas.bo.BOFactory;
+import org.colorcoding.ibas.bobas.bo.BOUtilities;
 import org.colorcoding.ibas.bobas.bo.BusinessObject;
 import org.colorcoding.ibas.bobas.bo.IBOStorageTag;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
@@ -14,6 +15,7 @@ import org.colorcoding.ibas.bobas.common.ConditionRelationship;
 import org.colorcoding.ibas.bobas.common.Criteria;
 import org.colorcoding.ibas.bobas.common.DateTimes;
 import org.colorcoding.ibas.bobas.common.Enums;
+import org.colorcoding.ibas.bobas.common.Files;
 import org.colorcoding.ibas.bobas.common.ICondition;
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
@@ -24,6 +26,7 @@ import org.colorcoding.ibas.bobas.core.fields.IFieldData;
 import org.colorcoding.ibas.bobas.data.ArrayList;
 import org.colorcoding.ibas.bobas.data.FileItem;
 import org.colorcoding.ibas.bobas.data.KeyText;
+import org.colorcoding.ibas.bobas.data.List;
 import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
@@ -200,22 +203,22 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			// 初始化工厂
 			initFactory();
 			// 创建转换者
-			String type = data.getName().substring(data.getName().lastIndexOf(".") + 1);
-			if (type != null && type.equalsIgnoreCase("xlsm")) {
-				// 带宏的excel文件，识别为普通问
+			String type = Files.extensionOf(data.getName());
+			// 带宏的excel文件，识别为普通问
+			if (Strings.endsWith(type, "xlsm", true)) {
 				type = "xlsx";
 			}
 			type = String.format(FileTransformer.GROUP_TEMPLATE, type).toUpperCase();
 			IFileTransformer transformer = TransformerFactory.create().create(type);
+			// 更新时个别管理字段状态
 			if (updateMethod == emDataUpdateMethod.MODIFY) {
-				// 更新时个别管理字段状态
 				if (transformer instanceof FileTransformer) {
 					((FileTransformer) transformer).setIndividualStatus(true);
 				}
 			}
 			Logger.log(MessageLevel.DEBUG, MSG_TRANSFORMER_IMPORT_DATA, transformer.getClass().getName());
 			// 转换文件数据到业务对象
-			transformer.setInputData(new File(data.getPath()));
+			transformer.setInputData(Files.valueOf(data.getPath()));
 			transformer.transform();
 			OperationResult<String> operationResult = new OperationResult<String>();
 			// 返回存储事务标记
@@ -226,14 +229,18 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 				operationResult.addInformations("REPOSITORY_TRANSACTION_ID", this.getTransaction().getId(),
 						"DATA_IMPORT");
 			}
+			List<IBusinessObject> outputDatas = transformer.getOutputData();
+			transformer = null;
+			type = null;
 			// 保存业务对象
+			ICriteria criteria;
 			IBusinessObject newItem;
 			IOperationResult<IBusinessObject> opRsltExists, opRsltDelete, opRsltSave;
 			DataUpdater dataUpdater = Factory.create(updateMethod);
 
-			for (int i = 0; i < transformer.getOutputData().size(); i++) {
+			for (int i = 0; i < outputDatas.size(); i++) {
 				try {
-					newItem = transformer.getOutputData().get(i);
+					newItem = outputDatas.get(i);
 					// 调试模式，输出识别对象
 					if (MyConfiguration.isDebugMode()) {
 						StringBuilder stringBuilder = new StringBuilder();
@@ -241,7 +248,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 						stringBuilder.append(" ");
 						stringBuilder.append("be imported data");
 						stringBuilder.append(System.getProperty("line.seperator", "\n"));
-						stringBuilder.append(Strings.toXmlString(newItem));
+						stringBuilder.append(BOUtilities.toXmlString(newItem));
 						Logger.log(MessageLevel.DEBUG, stringBuilder.toString());
 					}
 					// 导入的数据，源标记为I
@@ -262,8 +269,12 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 					boolean myTrans = this.beginTransaction();
 					try {
 						// 处理已存在的对象实例
-						ICriteria criteria = newItem.getCriteria();
+						criteria = newItem.getCriteria();
 						if (criteria != null && !criteria.getConditions().isEmpty()) {
+							// 跳过，则不查子项
+							if (updateMethod == emDataUpdateMethod.SKIP) {
+								criteria.setNoChilds(true);
+							}
 							opRsltExists = this.fetch(newItem.getClass(), criteria, token);
 							if (!opRsltExists.getResultObjects().isEmpty()) {
 								newItem = dataUpdater.apply(newItem, opRsltExists.getResultObjects());

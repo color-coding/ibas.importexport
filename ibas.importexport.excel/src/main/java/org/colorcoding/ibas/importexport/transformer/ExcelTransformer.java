@@ -46,7 +46,7 @@ public class ExcelTransformer extends FileTransformer {
 				}
 				// 对象重置
 				if (item instanceof BusinessObject<?>) {
-					((BusinessObject<?>) item).reset();
+					((BusinessObject<?>) item).reset(true);
 				}
 				// 恢复单据状态
 				if (document != null && document.getDocumentStatus() != status) {
