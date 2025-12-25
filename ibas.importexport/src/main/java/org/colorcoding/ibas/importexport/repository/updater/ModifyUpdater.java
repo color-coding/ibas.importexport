@@ -8,8 +8,12 @@ import org.colorcoding.ibas.bobas.data.List;
 
 public class ModifyUpdater extends DataUpdater {
 
-	@SuppressWarnings("unchecked")
+	public ModifyUpdater() {
+		this.setUniqueKeyMode(true);
+	}
+
 	@Override
+	@SuppressWarnings("unchecked")
 	public IBusinessObject apply(IBusinessObject newData, List<IBusinessObject> oldDatas) {
 		if (oldDatas == null || newData == null) {
 			return null;
@@ -18,9 +22,11 @@ public class ModifyUpdater extends DataUpdater {
 			return null;
 		}
 		IManagedFields newFields = (IManagedFields) newData;
-		IFieldData[] newKeys = newFields.getFields(c -> c.isUniqueKey());
+		// 使用唯一键，否则使用主键
+		IFieldData[] newKeys = this.isUniqueKeyMode() ? newFields.getFields(c -> c.isUniqueKey())
+				: newFields.getFields(c -> c.isPrimaryKey());
 		if (newKeys == null || newKeys.length == 0) {
-			// 无唯一键，无法比较，退出
+			// 无检索键，无法比较，退出
 			return null;
 		}
 		// 开始匹配
@@ -35,56 +41,58 @@ public class ModifyUpdater extends DataUpdater {
 			if (newData.getClass() != oldData.getClass()) {
 				continue;
 			}
-			matched = true;
 			oldFields = (IManagedFields) oldData;
-			for (IFieldData item : newKeys) {
-				oldField = oldFields.getField(item.getName());
+			// 找匹配的数据
+			matched = true;
+			for (IFieldData newKey : newKeys) {
+				oldField = oldFields.getField(newKey.getName());
 				if (oldField != null) {
-					if (item.getValue() == oldField.getValue()) {
+					if (newKey.getValue() == oldField.getValue()) {
 						continue;
 					}
-					if (String.valueOf(item.getValue()).equals(String.valueOf(oldField.getValue()))) {
+					if (String.valueOf(newKey.getValue()).equals(String.valueOf(oldField.getValue()))) {
 						continue;
 					}
 				}
 				matched = false;
 				break;
 			}
-			// 找匹配的数据
-			if (matched) {
-				// 同步主键
-				for (IFieldData item : oldFields.getFields(c -> c.isPrimaryKey())) {
-					newField = newFields.getField(item.getName());
-					if (newField != null) {
-						newField.setValue(item.getValue());
-					}
+			if (matched == false) {
+				continue;
+			}
+			// 同步主键和唯一键
+			for (IFieldData item : oldFields.getFields(c -> c.isPrimaryKey() || c.isUniqueKey())) {
+				newField = newFields.getField(item.getName());
+				if (newField == null) {
+					continue;
 				}
-				this.tagsOf(newFields, oldFields);
-
-				for (IFieldData item : newFields.getFields()) {
-					if (!item.isSavable()) {
+				newField.setValue(item.getValue());
+			}
+			// 同步修改过的值
+			for (IFieldData item : newFields.getFields()) {
+				if (!item.isSavable()) {
+					continue;
+				}
+				if (item.isPrimaryKey()) {
+					continue;
+				}
+				if (item.isUniqueKey()) {
+					continue;
+				}
+				if (item.getValue() instanceof IBusinessObjects) {
+					// 是数组，则子项比较
+					oldField = oldFields.getField(item.getName());
+					if (oldField == null || !(oldField.getValue() instanceof IBusinessObjects)) {
 						continue;
 					}
-					if (item.isPrimaryKey()) {
-						continue;
-					}
-					if (item.isUniqueKey()) {
-						continue;
-					}
-					if (!item.isDirty()) {
-						continue;
-					}
-					if (item.getValue() instanceof IBusinessObjects) {
-						// 是数组，则子项比较
-						oldField = oldFields.getField(item.getName());
-						if (oldField != null && oldField.getValue() instanceof IBusinessObjects<?, ?>) {
-							for (IBusinessObject newItem : ((IBusinessObjects<?, ?>) item.getValue())) {
-								if (this.apply(newItem, ((List<IBusinessObject>) oldField.getValue())) == null) {
-									// 子项未匹配到，则添加
-									((IBusinessObjects<IBusinessObject, ?>) oldField.getValue()).add(newItem);
-								}
-							}
+					for (IBusinessObject newItem : ((IBusinessObjects<?, ?>) item.getValue())) {
+						if (this.apply(newItem, ((List<IBusinessObject>) oldField.getValue())) == null) {
+							// 子项未匹配到，则添加
+							((IBusinessObjects<IBusinessObject, ?>) oldField.getValue()).add(newItem);
 						}
+					}
+				} else {
+					if (!item.isDirty()) {
 						continue;
 					}
 					// 替换原值
@@ -93,8 +101,11 @@ public class ModifyUpdater extends DataUpdater {
 						oldField.setValue(item.getValue());
 					}
 				}
-				return oldData;
 			}
+			// 同步标记信息
+			this.tagsOf(newData, oldData);
+			// 返回找到的数据
+			return oldData;
 		}
 		return null;
 	}

@@ -8,6 +8,16 @@ import org.colorcoding.ibas.bobas.data.List;
 
 public abstract class DataUpdater implements BiFunction<IBusinessObject, List<IBusinessObject>, IBusinessObject> {
 
+	private boolean uniqueKeyMode;
+
+	public boolean isUniqueKeyMode() {
+		return uniqueKeyMode;
+	}
+
+	public void setUniqueKeyMode(boolean value) {
+		this.uniqueKeyMode = value;
+	}
+
 	public void tagsOf(Object target, Object source) {
 		if (!(target instanceof IBOStorageTag)) {
 			return;

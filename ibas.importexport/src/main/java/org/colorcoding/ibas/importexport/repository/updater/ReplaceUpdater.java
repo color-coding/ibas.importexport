@@ -21,7 +21,7 @@ public class ReplaceUpdater extends DataUpdater {
 				IBOMasterData oldMaster = (IBOMasterData) oldData;
 				// 对象信息复制
 				newMaster.setDocEntry(oldMaster.getDocEntry());
-				this.tagsOf(newMaster, oldMaster);
+				this.tagsOf(newData, oldData);
 				this.fillsOf(newData, oldData);
 			} else if (oldData instanceof IBOMasterDataLine && newData instanceof IBOMasterDataLine) {
 				// 主数据行保留LineId值，否则丢失关联关系
@@ -29,7 +29,7 @@ public class ReplaceUpdater extends DataUpdater {
 				IBOMasterDataLine oldMaster = (IBOMasterDataLine) oldData;
 				// 对象信息复制
 				newMaster.setLineId(oldMaster.getLineId());
-				this.tagsOf(newMaster, oldMaster);
+				this.tagsOf(newData, oldData);
 				this.fillsOf(newData, oldData);
 			} else {
 				// 删除旧数据
@@ -58,6 +58,9 @@ public class ReplaceUpdater extends DataUpdater {
 			} else if (IBusinessObjects.class.isAssignableFrom(property.getValueType())) {
 				tarList = tarData.getProperty(property);
 				souList = souData.getProperty(property);
+				if (tarList == null || souList == null) {
+					continue;
+				}
 				for (IBusinessObject item : souList) {
 					tarList.add(item);
 					item.delete();

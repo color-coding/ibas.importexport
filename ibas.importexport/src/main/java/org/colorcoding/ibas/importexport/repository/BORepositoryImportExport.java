@@ -23,6 +23,7 @@ import org.colorcoding.ibas.bobas.common.Numbers;
 import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.common.Strings;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
+import org.colorcoding.ibas.bobas.core.fields.IManagedFields;
 import org.colorcoding.ibas.bobas.data.ArrayList;
 import org.colorcoding.ibas.bobas.data.FileItem;
 import org.colorcoding.ibas.bobas.data.KeyText;
@@ -235,8 +236,8 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			// 保存业务对象
 			ICriteria criteria;
 			IBusinessObject newItem;
+			DataUpdater dataUpdater;
 			IOperationResult<IBusinessObject> opRsltExists, opRsltDelete, opRsltSave;
-			DataUpdater dataUpdater = Factory.create(updateMethod);
 
 			for (int i = 0; i < outputDatas.size(); i++) {
 				try {
@@ -270,6 +271,25 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 					try {
 						// 处理已存在的对象实例
 						criteria = newItem.getCriteria();
+						dataUpdater = Factory.create(updateMethod);
+						if (criteria == null && newItem instanceof IManagedFields
+								&& updateMethod == emDataUpdateMethod.MODIFY) {
+							// 尝试使用主键检索
+							criteria = new Criteria();
+							IManagedFields fields = (IManagedFields) newItem;
+							for (IFieldData field : fields.getFields(c -> c.isPrimaryKey())) {
+								ICondition condition = criteria.getConditions().create();
+								condition.setAlias(field.getName());
+								condition.setValue(field.getValue());
+							}
+							// 无有效条件，则查询失效
+							if (criteria.getConditions().isEmpty()) {
+								criteria = null;
+							} else {
+								// 不使用唯一键
+								dataUpdater.setUniqueKeyMode(false);
+							}
+						}
 						if (criteria != null && !criteria.getConditions().isEmpty()) {
 							// 跳过，则不查子项
 							if (updateMethod == emDataUpdateMethod.SKIP) {
@@ -289,8 +309,11 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 												"DATA_IMPORT");
 									}
 								}
+							} else if (updateMethod == emDataUpdateMethod.MODIFY) {
+								// 原有修改，未查到，则跳过
+								newItem = null;
 							} else {
-								// 未查到，则新建
+								// 其他未查到，则新建
 								if (newItem.isNew() == false && newItem instanceof BusinessObject) {
 									((BusinessObject<?>) newItem).markNew();
 								}
@@ -332,7 +355,9 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			operationResult.addInformations("SAVE_DATA_COUNT",
 					String.valueOf(operationResult.getResultObjects().size()), "DATA_IMPORT");
 			return operationResult;
-		} catch (Exception e) {
+		} catch (
+
+		Exception e) {
 			Logger.log(e);
 			return new OperationResult<String>(e);
 		}
