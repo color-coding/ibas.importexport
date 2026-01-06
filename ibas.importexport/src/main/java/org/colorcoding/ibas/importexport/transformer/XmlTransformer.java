@@ -8,6 +8,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.colorcoding.ibas.bobas.bo.BOFactory;
+import org.colorcoding.ibas.bobas.common.Strings;
 import org.colorcoding.ibas.bobas.data.ArrayList;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.message.MessageLevel;
@@ -39,17 +40,24 @@ public class XmlTransformer extends FileTransformerSerialization {
 	@Override
 	public List<Class<?>> getKnownTypes() {
 		List<Class<?>> knownTypes = super.getKnownTypes();
-		knownTypes.add(ArrayList.class);
 		try (InputStream inputStream = new FileInputStream(this.getInputData())) {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			Document document = builder.parse(inputStream);
 			Element root = document.getDocumentElement();
+			if (root == null) {
+				return knownTypes;
+			}
+			if (Strings.equals(root.getNodeName(), ArrayList.class.getSimpleName(), true)
+					|| Strings.endsWith(root.getNodeName(), ":" + ArrayList.class.getSimpleName(), true)) {
+				// 根元素是ArrayList
+				knownTypes.add(ArrayList.class);
+			}
 			NodeList nodeList = root.getElementsByTagName(NODE_BO_CODE_NAME);
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				Node node = nodeList.item(i);
 				String boCode = node.getTextContent();
-				if (boCode == null || boCode.isEmpty()) {
+				if (Strings.isNullOrEmpty(boCode)) {
 					continue;
 				}
 				boCode = MyConfiguration.applyVariables(boCode);

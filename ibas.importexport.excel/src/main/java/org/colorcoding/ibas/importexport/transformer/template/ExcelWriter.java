@@ -292,7 +292,7 @@ public class ExcelWriter extends FileWriter {
 			if (property.getBindingClass() == DateTime.class) {
 				// 日期类型设置格式
 				DataFormat format = this.getWorkbook().createDataFormat();
-				style.setDataFormat(format.getFormat(DateTime.FORMAT_DATE));
+				style.setDataFormat(format.getFormat(DateTimes.FORMAT_DATE));
 			}
 			this.cellStyles.put(property, style);
 		}

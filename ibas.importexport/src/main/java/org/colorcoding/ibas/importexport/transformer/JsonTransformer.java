@@ -38,7 +38,6 @@ public class JsonTransformer extends FileTransformerSerialization {
 
 	public List<Class<?>> getKnownTypes() {
 		List<Class<?>> knownTypes = super.getKnownTypes();
-		knownTypes.add(ArrayList.class);
 		try (InputStream inputStream = new FileInputStream(this.getInputData())) {
 			JsonArray jsonArray = null;
 			JsonStructure jsonStructure = Json.createReader(inputStream).read();
@@ -48,24 +47,27 @@ public class JsonTransformer extends FileTransformerSerialization {
 				jsonArray = arrayBuilder.build();
 			} else if (jsonStructure.getValueType() == JsonValue.ValueType.ARRAY) {
 				jsonArray = jsonStructure.asJsonArray();
+				knownTypes.add(ArrayList.class);
 			}
-			if (jsonArray != null) {
-				JsonObject jsonObject;
-				for (int i = 0; i < jsonArray.size(); i++) {
-					jsonObject = jsonArray.getJsonObject(i);
-					String boCode = jsonObject.getString(NODE_BO_CODE_NAME);
-					if (!Strings.isNullOrEmpty(boCode)) {
-						boCode = MyConfiguration.applyVariables(boCode);
-						Class<?> boType = BOFactory.classOf(boCode);
-						if (boType == null) {
-							Logger.log(MessageLevel.WARN, "transformer: [%s] not found [%s]'s class.",
-									this.getClass().getSimpleName(), boCode);
-						} else if (!knownTypes.contains(boType)) {
-							Logger.log(MessageLevel.INFO, "transformer: [%s] found class [%s|%s].",
-									this.getClass().getSimpleName(), boCode, boType.getName());
-							knownTypes.add(boType);
-						}
-					}
+			if (jsonArray == null) {
+				return knownTypes;
+			}
+			JsonObject jsonObject;
+			for (int i = 0; i < jsonArray.size(); i++) {
+				jsonObject = jsonArray.getJsonObject(i);
+				String boCode = jsonObject.getString(NODE_BO_CODE_NAME);
+				if (Strings.isNullOrEmpty(boCode)) {
+					continue;
+				}
+				boCode = MyConfiguration.applyVariables(boCode);
+				Class<?> boType = BOFactory.classOf(boCode);
+				if (boType == null) {
+					Logger.log(MessageLevel.WARN, "transformer: [%s] not found [%s]'s class.",
+							this.getClass().getSimpleName(), boCode);
+				} else if (!knownTypes.contains(boType)) {
+					Logger.log(MessageLevel.INFO, "transformer: [%s] found class [%s|%s].",
+							this.getClass().getSimpleName(), boCode, boType.getName());
+					knownTypes.add(boType);
 				}
 			}
 		} catch (Exception e) {

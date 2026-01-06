@@ -291,8 +291,8 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 							}
 						}
 						if (criteria != null && !criteria.getConditions().isEmpty()) {
-							// 跳过，则不查子项
-							if (updateMethod == emDataUpdateMethod.SKIP) {
+							// 跳过或替换，则不查子项
+							if (updateMethod == emDataUpdateMethod.SKIP || updateMethod == emDataUpdateMethod.REPLACE) {
 								criteria.setNoChilds(true);
 							}
 							opRsltExists = this.fetch(newItem.getClass(), criteria, token);

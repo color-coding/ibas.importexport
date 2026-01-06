@@ -7,6 +7,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.colorcoding.ibas.bobas.bo.BusinessObject;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
@@ -80,6 +81,12 @@ public abstract class FileTransformerSerialization extends FileTransformer {
 					}
 				} else if (object instanceof IBusinessObject) {
 					outDatas.add((IBusinessObject) object);
+				}
+				// 标记对象为新
+				for (IBusinessObject item : outDatas) {
+					if (item instanceof BusinessObject) {
+						((BusinessObject<?>) item).markNew(true);
+					}
 				}
 				this.setOutputData(outDatas);
 				Logger.log(MessageLevel.INFO, "transformer: [%s] got bo count [%s].", this.getClass().getSimpleName(),
