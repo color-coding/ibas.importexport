@@ -2,7 +2,7 @@ package org.colorcoding.ibas.importexport.repository;
 
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.OperationResult;
-import org.colorcoding.ibas.bobas.data.FileItem;
+import org.colorcoding.ibas.bobas.file.FileItem;
 import org.colorcoding.ibas.bobas.repository.IBORepositorySmartService;
 import org.colorcoding.ibas.importexport.bo.exportrecord.ExportRecord;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.ExportTemplate;

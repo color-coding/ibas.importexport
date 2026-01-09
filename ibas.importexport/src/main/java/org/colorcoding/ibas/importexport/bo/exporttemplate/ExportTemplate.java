@@ -93,7 +93,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 类型 属性
 	 */
-	@DbField(name = "Object", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "Object", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_OBJECTCODE = registerProperty(PROPERTY_OBJECTCODE_NAME,
 			String.class, MY_CLASS);
 
@@ -124,7 +124,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 实例号（版本） 属性
 	 */
-	@DbField(name = "LogInst", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "LogInst", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_LOGINST = registerProperty(PROPERTY_LOGINST_NAME, Integer.class,
 			MY_CLASS);
 
@@ -155,7 +155,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 数据源 属性
 	 */
-	@DbField(name = "DataSource", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "DataSource", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_DATASOURCE = registerProperty(PROPERTY_DATASOURCE_NAME,
 			String.class, MY_CLASS);
 
@@ -186,7 +186,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 服务系列 属性
 	 */
-	@DbField(name = "Series", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "Series", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_SERIES = registerProperty(PROPERTY_SERIES_NAME, Integer.class,
 			MY_CLASS);
 
@@ -217,7 +217,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 创建日期 属性
 	 */
-	@DbField(name = "CreateDate", type = DbFieldType.DATE, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "CreateDate", type = DbFieldType.DATE, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<DateTime> PROPERTY_CREATEDATE = registerProperty(PROPERTY_CREATEDATE_NAME,
 			DateTime.class, MY_CLASS);
 
@@ -248,7 +248,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 创建时间 属性
 	 */
-	@DbField(name = "CreateTime", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "CreateTime", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Short> PROPERTY_CREATETIME = registerProperty(PROPERTY_CREATETIME_NAME,
 			Short.class, MY_CLASS);
 
@@ -279,7 +279,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 修改日期 属性
 	 */
-	@DbField(name = "UpdateDate", type = DbFieldType.DATE, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "UpdateDate", type = DbFieldType.DATE, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<DateTime> PROPERTY_UPDATEDATE = registerProperty(PROPERTY_UPDATEDATE_NAME,
 			DateTime.class, MY_CLASS);
 
@@ -310,7 +310,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 修改时间 属性
 	 */
-	@DbField(name = "UpdateTime", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "UpdateTime", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Short> PROPERTY_UPDATETIME = registerProperty(PROPERTY_UPDATETIME_NAME,
 			Short.class, MY_CLASS);
 
@@ -341,7 +341,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 创建用户 属性
 	 */
-	@DbField(name = "Creator", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "Creator", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_CREATEUSERSIGN = registerProperty(PROPERTY_CREATEUSERSIGN_NAME,
 			Integer.class, MY_CLASS);
 
@@ -372,7 +372,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 修改用户 属性
 	 */
-	@DbField(name = "Updator", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "Updator", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_UPDATEUSERSIGN = registerProperty(PROPERTY_UPDATEUSERSIGN_NAME,
 			Integer.class, MY_CLASS);
 
@@ -403,7 +403,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 创建动作标识 属性
 	 */
-	@DbField(name = "CreateActId", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "CreateActId", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_CREATEACTIONID = registerProperty(PROPERTY_CREATEACTIONID_NAME,
 			String.class, MY_CLASS);
 
@@ -434,7 +434,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 更新动作标识 属性
 	 */
-	@DbField(name = "UpdateActId", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "UpdateActId", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_UPDATEACTIONID = registerProperty(PROPERTY_UPDATEACTIONID_NAME,
 			String.class, MY_CLASS);
 
@@ -465,7 +465,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 数据所有者 属性
 	 */
-	@DbField(name = "DataOwner", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "DataOwner", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_DATAOWNER = registerProperty(PROPERTY_DATAOWNER_NAME,
 			Integer.class, MY_CLASS);
 
@@ -496,7 +496,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 团队成员 属性
 	 */
-	@DbField(name = "TeamMembers", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "TeamMembers", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_TEAMMEMBERS = registerProperty(PROPERTY_TEAMMEMBERS_NAME,
 			String.class, MY_CLASS);
 
@@ -527,7 +527,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 数据所属组织 属性
 	 */
-	@DbField(name = "OrgCode", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "OrgCode", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_ORGANIZATION = registerProperty(PROPERTY_ORGANIZATION_NAME,
 			String.class, MY_CLASS);
 
@@ -558,7 +558,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 名称 属性
 	 */
-	@DbField(name = "Name", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "Name", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_NAME = registerProperty(PROPERTY_NAME_NAME, String.class,
 			MY_CLASS);
 
@@ -589,7 +589,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 已激活的 属性
 	 */
-	@DbField(name = "Activated", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "Activated", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<emYesNo> PROPERTY_ACTIVATED = registerProperty(PROPERTY_ACTIVATED_NAME,
 			emYesNo.class, MY_CLASS);
 
@@ -620,7 +620,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 语言 属性
 	 */
-	@DbField(name = "Language", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "Language", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_LANGUAGE = registerProperty(PROPERTY_LANGUAGE_NAME, String.class,
 			MY_CLASS);
 
@@ -651,7 +651,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 类型 属性
 	 */
-	@DbField(name = "Category", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "Category", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_CATEGORY = registerProperty(PROPERTY_CATEGORY_NAME, String.class,
 			MY_CLASS);
 
@@ -682,7 +682,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 关联的业务对象 属性
 	 */
-	@DbField(name = "BOCode", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "BOCode", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_BOCODE = registerProperty(PROPERTY_BOCODE_NAME, String.class,
 			MY_CLASS);
 
@@ -713,7 +713,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 关联的应用 属性
 	 */
-	@DbField(name = "AppId", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "AppId", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_APPLICATIONID = registerProperty(PROPERTY_APPLICATIONID_NAME,
 			String.class, MY_CLASS);
 
@@ -744,7 +744,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 注释 属性
 	 */
-	@DbField(name = "Notes", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "Notes", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_NOTES = registerProperty(PROPERTY_NOTES_NAME, String.class,
 			MY_CLASS);
 
@@ -775,7 +775,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 输出宽度 属性
 	 */
-	@DbField(name = "Width", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "Width", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_WIDTH = registerProperty(PROPERTY_WIDTH_NAME, Integer.class,
 			MY_CLASS);
 
@@ -806,7 +806,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 输出高度 属性
 	 */
-	@DbField(name = "Height", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "Height", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_HEIGHT = registerProperty(PROPERTY_HEIGHT_NAME, Integer.class,
 			MY_CLASS);
 
@@ -837,7 +837,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 输出像素 属性
 	 */
-	@DbField(name = "Dpi", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "Dpi", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_DPI = registerProperty(PROPERTY_DPI_NAME, Integer.class,
 			MY_CLASS);
 
@@ -868,7 +868,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 左边距 属性
 	 */
-	@DbField(name = "LMargin", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "LMargin", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_MARGINLEFT = registerProperty(PROPERTY_MARGINLEFT_NAME,
 			Integer.class, MY_CLASS);
 
@@ -899,7 +899,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 右边距 属性
 	 */
-	@DbField(name = "RMargin", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "RMargin", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_MARGINRIGHT = registerProperty(PROPERTY_MARGINRIGHT_NAME,
 			Integer.class, MY_CLASS);
 
@@ -930,7 +930,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 上边距 属性
 	 */
-	@DbField(name = "TMargin", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "TMargin", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_MARGINTOP = registerProperty(PROPERTY_MARGINTOP_NAME,
 			Integer.class, MY_CLASS);
 
@@ -961,7 +961,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 下边距 属性
 	 */
-	@DbField(name = "BMargin", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "BMargin", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_MARGINBOTTOM = registerProperty(PROPERTY_MARGINBOTTOM_NAME,
 			Integer.class, MY_CLASS);
 
@@ -992,7 +992,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 区域间隔 属性
 	 */
-	@DbField(name = "AMargin", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "AMargin", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_MARGINAREA = registerProperty(PROPERTY_MARGINAREA_NAME,
 			Integer.class, MY_CLASS);
 
@@ -1023,7 +1023,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 页眉-左坐标 属性
 	 */
-	@DbField(name = "PHLeft", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "PHLeft", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_PAGEHEADERLEFT = registerProperty(PROPERTY_PAGEHEADERLEFT_NAME,
 			Integer.class, MY_CLASS);
 
@@ -1054,7 +1054,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 页眉-上坐标 属性
 	 */
-	@DbField(name = "PHTop", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "PHTop", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_PAGEHEADERTOP = registerProperty(PROPERTY_PAGEHEADERTOP_NAME,
 			Integer.class, MY_CLASS);
 
@@ -1085,7 +1085,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 页眉-宽度 属性
 	 */
-	@DbField(name = "PHWidth", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "PHWidth", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_PAGEHEADERWIDTH = registerProperty(
 			PROPERTY_PAGEHEADERWIDTH_NAME, Integer.class, MY_CLASS);
 
@@ -1116,7 +1116,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 页眉-高度 属性
 	 */
-	@DbField(name = "PHHeight", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "PHHeight", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_PAGEHEADERHEIGHT = registerProperty(
 			PROPERTY_PAGEHEADERHEIGHT_NAME, Integer.class, MY_CLASS);
 
@@ -1147,7 +1147,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 开始部分-左坐标 属性
 	 */
-	@DbField(name = "SSLeft", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "SSLeft", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_STARTSECTIONLEFT = registerProperty(
 			PROPERTY_STARTSECTIONLEFT_NAME, Integer.class, MY_CLASS);
 
@@ -1178,7 +1178,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 开始部分-上坐标 属性
 	 */
-	@DbField(name = "SSTop", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "SSTop", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_STARTSECTIONTOP = registerProperty(
 			PROPERTY_STARTSECTIONTOP_NAME, Integer.class, MY_CLASS);
 
@@ -1209,7 +1209,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 开始部分-宽度 属性
 	 */
-	@DbField(name = "SSWidth", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "SSWidth", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_STARTSECTIONWIDTH = registerProperty(
 			PROPERTY_STARTSECTIONWIDTH_NAME, Integer.class, MY_CLASS);
 
@@ -1240,7 +1240,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 开始部分-高度 属性
 	 */
-	@DbField(name = "SSHeight", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "SSHeight", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_STARTSECTIONHEIGHT = registerProperty(
 			PROPERTY_STARTSECTIONHEIGHT_NAME, Integer.class, MY_CLASS);
 
@@ -1271,7 +1271,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 重复区域头-左坐标 属性
 	 */
-	@DbField(name = "RAHLeft", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "RAHLeft", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_REPETITIONHEADERLEFT = registerProperty(
 			PROPERTY_REPETITIONHEADERLEFT_NAME, Integer.class, MY_CLASS);
 
@@ -1302,7 +1302,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 重复区域头-上坐标 属性
 	 */
-	@DbField(name = "RAHTop", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "RAHTop", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_REPETITIONHEADERTOP = registerProperty(
 			PROPERTY_REPETITIONHEADERTOP_NAME, Integer.class, MY_CLASS);
 
@@ -1333,7 +1333,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 重复区域头-宽度 属性
 	 */
-	@DbField(name = "RAHWidth", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "RAHWidth", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_REPETITIONHEADERWIDTH = registerProperty(
 			PROPERTY_REPETITIONHEADERWIDTH_NAME, Integer.class, MY_CLASS);
 
@@ -1364,7 +1364,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 重复区域头-高度 属性
 	 */
-	@DbField(name = "RAHHeight", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "RAHHeight", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_REPETITIONHEADERHEIGHT = registerProperty(
 			PROPERTY_REPETITIONHEADERHEIGHT_NAME, Integer.class, MY_CLASS);
 
@@ -1395,7 +1395,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 重复区域-左坐标 属性
 	 */
-	@DbField(name = "RALeft", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "RALeft", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_REPETITIONLEFT = registerProperty(PROPERTY_REPETITIONLEFT_NAME,
 			Integer.class, MY_CLASS);
 
@@ -1426,7 +1426,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 重复区域-上坐标 属性
 	 */
-	@DbField(name = "RATop", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "RATop", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_REPETITIONTOP = registerProperty(PROPERTY_REPETITIONTOP_NAME,
 			Integer.class, MY_CLASS);
 
@@ -1457,7 +1457,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 重复区域-宽度 属性
 	 */
-	@DbField(name = "RAWidth", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "RAWidth", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_REPETITIONWIDTH = registerProperty(
 			PROPERTY_REPETITIONWIDTH_NAME, Integer.class, MY_CLASS);
 
@@ -1488,7 +1488,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 重复区域-高度 属性
 	 */
-	@DbField(name = "RAHeight", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "RAHeight", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_REPETITIONHEIGHT = registerProperty(
 			PROPERTY_REPETITIONHEIGHT_NAME, Integer.class, MY_CLASS);
 
@@ -1519,7 +1519,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 重复区域脚-左坐标 属性
 	 */
-	@DbField(name = "RAFLeft", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "RAFLeft", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_REPETITIONFOOTERLEFT = registerProperty(
 			PROPERTY_REPETITIONFOOTERLEFT_NAME, Integer.class, MY_CLASS);
 
@@ -1550,7 +1550,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 重复区域脚-上坐标 属性
 	 */
-	@DbField(name = "RAFTop", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "RAFTop", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_REPETITIONFOOTERTOP = registerProperty(
 			PROPERTY_REPETITIONFOOTERTOP_NAME, Integer.class, MY_CLASS);
 
@@ -1581,7 +1581,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 重复区域脚-宽度 属性
 	 */
-	@DbField(name = "RAFWidth", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "RAFWidth", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_REPETITIONFOOTERWIDTH = registerProperty(
 			PROPERTY_REPETITIONFOOTERWIDTH_NAME, Integer.class, MY_CLASS);
 
@@ -1612,7 +1612,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 重复区域脚-高度 属性
 	 */
-	@DbField(name = "RAFHeight", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "RAFHeight", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_REPETITIONFOOTERHEIGHT = registerProperty(
 			PROPERTY_REPETITIONFOOTERHEIGHT_NAME, Integer.class, MY_CLASS);
 
@@ -1643,7 +1643,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 结束部分-左坐标 属性
 	 */
-	@DbField(name = "ESLeft", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "ESLeft", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_ENDSECTIONLEFT = registerProperty(PROPERTY_ENDSECTIONLEFT_NAME,
 			Integer.class, MY_CLASS);
 
@@ -1674,7 +1674,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 结束部分-上坐标 属性
 	 */
-	@DbField(name = "ESTop", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "ESTop", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_ENDSECTIONTOP = registerProperty(PROPERTY_ENDSECTIONTOP_NAME,
 			Integer.class, MY_CLASS);
 
@@ -1705,7 +1705,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 结束部分-宽度 属性
 	 */
-	@DbField(name = "ESWidth", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "ESWidth", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_ENDSECTIONWIDTH = registerProperty(
 			PROPERTY_ENDSECTIONWIDTH_NAME, Integer.class, MY_CLASS);
 
@@ -1736,7 +1736,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 结束部分-高度 属性
 	 */
-	@DbField(name = "ESHeight", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "ESHeight", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_ENDSECTIONHEIGHT = registerProperty(
 			PROPERTY_ENDSECTIONHEIGHT_NAME, Integer.class, MY_CLASS);
 
@@ -1767,7 +1767,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 页脚-左坐标 属性
 	 */
-	@DbField(name = "PFLeft", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "PFLeft", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_PAGEFOOTERLEFT = registerProperty(PROPERTY_PAGEFOOTERLEFT_NAME,
 			Integer.class, MY_CLASS);
 
@@ -1798,7 +1798,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 页脚-上坐标 属性
 	 */
-	@DbField(name = "PFTop", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "PFTop", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_PAGEFOOTERTOP = registerProperty(PROPERTY_PAGEFOOTERTOP_NAME,
 			Integer.class, MY_CLASS);
 
@@ -1829,7 +1829,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 页脚-宽度 属性
 	 */
-	@DbField(name = "PFWidth", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "PFWidth", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_PAGEFOOTERWIDTH = registerProperty(
 			PROPERTY_PAGEFOOTERWIDTH_NAME, Integer.class, MY_CLASS);
 
@@ -1860,7 +1860,7 @@ public class ExportTemplate extends BusinessObject<ExportTemplate>
 	/**
 	 * 页脚-高度 属性
 	 */
-	@DbField(name = "PFHeight", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "PFHeight", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_PAGEFOOTERHEIGHT = registerProperty(
 			PROPERTY_PAGEFOOTERHEIGHT_NAME, Integer.class, MY_CLASS);
 

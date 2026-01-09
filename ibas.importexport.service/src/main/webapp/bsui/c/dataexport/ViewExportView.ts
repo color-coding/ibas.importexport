@@ -79,6 +79,31 @@ namespace importexport {
                                         }
                                     }
                                 }),
+                                new sap.m.MenuItem("", {
+                                    icon: "sap-icon://indent",
+                                    text: ibas.i18n.prop("importexport_freezable_column"),
+                                    press: function (): void {
+                                        delete (that.exportMode);
+                                        let app: any = sap.ui.getCore().byId("__UI_APP");
+                                        if (app instanceof sap.m.App) {
+                                            let mainPage: any = app.getCurrentPage();
+                                            if (mainPage instanceof sap.tnt.ToolPage) {
+                                                let navContainer: any = mainPage.getMainContents()[0];
+                                                if (navContainer instanceof sap.m.NavContainer) {
+                                                    that.pasingPage(navContainer.getCurrentPage(), that.freezableColumn);
+                                                } else if (navContainer instanceof sap.m.TabContainer) {
+                                                    let page: any = sap.ui.getCore().byId(navContainer.getSelectedItem());
+                                                    if (page instanceof sap.m.TabContainerItem) {
+                                                        page = sap.ui.getCore().byId(page.getKey());
+                                                        if (page instanceof sap.ui.core.Control) {
+                                                            that.pasingPage(page, that.freezableColumn);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }),
                             ]
                         }),
                         defaultAction(): void {
@@ -333,6 +358,10 @@ namespace importexport {
                         }
                         table.autoResizeColumn(i);
                     }
+                }
+
+                private freezableColumn(table: sap.ui.table.Table): void {
+                    table.setEnableColumnFreeze(true);
                 }
 
                 private completeTable(table: sap.ui.table.Table, preLastData?: any): void {

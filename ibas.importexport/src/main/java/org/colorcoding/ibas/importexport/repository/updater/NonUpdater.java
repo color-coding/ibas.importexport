@@ -6,6 +6,11 @@ import org.colorcoding.ibas.bobas.data.List;
 public class NonUpdater extends DataUpdater {
 
 	@Override
+	public boolean isRequiredChilds(Object newData) {
+		return false;
+	}
+
+	@Override
 	public IBusinessObject apply(IBusinessObject newData, List<IBusinessObject> oldDatas) {
 		return null;
 	}

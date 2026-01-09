@@ -92,7 +92,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 类型 属性
 	 */
-	@DbField(name = "Object", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "Object", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_OBJECTCODE = registerProperty(PROPERTY_OBJECTCODE_NAME,
 			String.class, MY_CLASS);
 
@@ -154,7 +154,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 数据源 属性
 	 */
-	@DbField(name = "DataSource", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "DataSource", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_DATASOURCE = registerProperty(PROPERTY_DATASOURCE_NAME,
 			String.class, MY_CLASS);
 
@@ -185,7 +185,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 实例号（版本） 属性
 	 */
-	@DbField(name = "LogInst", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "LogInst", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_LOGINST = registerProperty(PROPERTY_LOGINST_NAME, Integer.class,
 			MY_CLASS);
 
@@ -216,7 +216,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 创建日期 属性
 	 */
-	@DbField(name = "CreateDate", type = DbFieldType.DATE, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "CreateDate", type = DbFieldType.DATE, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<DateTime> PROPERTY_CREATEDATE = registerProperty(PROPERTY_CREATEDATE_NAME,
 			DateTime.class, MY_CLASS);
 
@@ -247,7 +247,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 创建时间 属性
 	 */
-	@DbField(name = "CreateTime", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "CreateTime", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Short> PROPERTY_CREATETIME = registerProperty(PROPERTY_CREATETIME_NAME,
 			Short.class, MY_CLASS);
 
@@ -278,7 +278,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 修改日期 属性
 	 */
-	@DbField(name = "UpdateDate", type = DbFieldType.DATE, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "UpdateDate", type = DbFieldType.DATE, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<DateTime> PROPERTY_UPDATEDATE = registerProperty(PROPERTY_UPDATEDATE_NAME,
 			DateTime.class, MY_CLASS);
 
@@ -309,7 +309,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 修改时间 属性
 	 */
-	@DbField(name = "UpdateTime", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "UpdateTime", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Short> PROPERTY_UPDATETIME = registerProperty(PROPERTY_UPDATETIME_NAME,
 			Short.class, MY_CLASS);
 
@@ -340,7 +340,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 创建用户 属性
 	 */
-	@DbField(name = "Creator", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "Creator", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_CREATEUSERSIGN = registerProperty(PROPERTY_CREATEUSERSIGN_NAME,
 			Integer.class, MY_CLASS);
 
@@ -371,7 +371,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 修改用户 属性
 	 */
-	@DbField(name = "Updator", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "Updator", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_UPDATEUSERSIGN = registerProperty(PROPERTY_UPDATEUSERSIGN_NAME,
 			Integer.class, MY_CLASS);
 
@@ -402,7 +402,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 创建动作标识 属性
 	 */
-	@DbField(name = "CreateActId", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "CreateActId", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_CREATEACTIONID = registerProperty(PROPERTY_CREATEACTIONID_NAME,
 			String.class, MY_CLASS);
 
@@ -433,7 +433,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 更新动作标识 属性
 	 */
-	@DbField(name = "UpdateActId", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "UpdateActId", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_UPDATEACTIONID = registerProperty(PROPERTY_UPDATEACTIONID_NAME,
 			String.class, MY_CLASS);
 
@@ -464,7 +464,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 区域 属性
 	 */
-	@DbField(name = "Area", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "Area", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<emAreaType> PROPERTY_AREA = registerProperty(PROPERTY_AREA_NAME, emAreaType.class,
 			MY_CLASS);
 
@@ -495,7 +495,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 区域子项 属性
 	 */
-	@DbField(name = "AreaSub", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "AreaSub", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_AREASUB = registerProperty(PROPERTY_AREASUB_NAME, Integer.class,
 			MY_CLASS);
 
@@ -526,7 +526,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 项标识 属性
 	 */
-	@DbField(name = "ItemID", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "ItemID", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_ITEMID = registerProperty(PROPERTY_ITEMID_NAME, String.class,
 			MY_CLASS);
 
@@ -557,7 +557,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 项类型 属性
 	 */
-	@DbField(name = "ItemType", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "ItemType", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_ITEMTYPE = registerProperty(PROPERTY_ITEMTYPE_NAME, String.class,
 			MY_CLASS);
 
@@ -588,7 +588,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 项左坐标 属性
 	 */
-	@DbField(name = "ItemLeft", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "ItemLeft", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_ITEMLEFT = registerProperty(PROPERTY_ITEMLEFT_NAME,
 			Integer.class, MY_CLASS);
 
@@ -619,7 +619,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 项上坐标 属性
 	 */
-	@DbField(name = "ItemTop", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "ItemTop", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_ITEMTOP = registerProperty(PROPERTY_ITEMTOP_NAME, Integer.class,
 			MY_CLASS);
 
@@ -650,7 +650,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 数据源 属性
 	 */
-	@DbField(name = "SourceType", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "SourceType", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<emDataSourceType> PROPERTY_SOURCETYPE = registerProperty(PROPERTY_SOURCETYPE_NAME,
 			emDataSourceType.class, MY_CLASS);
 
@@ -681,7 +681,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 项字符串 属性
 	 */
-	@DbField(name = "ItemString", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "ItemString", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_ITEMSTRING = registerProperty(PROPERTY_ITEMSTRING_NAME,
 			String.class, MY_CLASS);
 
@@ -712,7 +712,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 显示格式 属性
 	 */
-	@DbField(name = "ValFormat", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "ValFormat", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_VALUEFORMAT = registerProperty(PROPERTY_VALUEFORMAT_NAME,
 			String.class, MY_CLASS);
 
@@ -743,7 +743,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 项是否可见 属性
 	 */
-	@DbField(name = "ItemVisible", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "ItemVisible", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<emYesNo> PROPERTY_ITEMVISIBLE = registerProperty(PROPERTY_ITEMVISIBLE_NAME,
 			emYesNo.class, MY_CLASS);
 
@@ -774,7 +774,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 项宽度 属性
 	 */
-	@DbField(name = "ItemWidth", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "ItemWidth", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_ITEMWIDTH = registerProperty(PROPERTY_ITEMWIDTH_NAME,
 			Integer.class, MY_CLASS);
 
@@ -805,7 +805,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 项高度 属性
 	 */
-	@DbField(name = "ItemHeight", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "ItemHeight", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_ITEMHEIGHT = registerProperty(PROPERTY_ITEMHEIGHT_NAME,
 			Integer.class, MY_CLASS);
 
@@ -836,7 +836,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 左边距 属性
 	 */
-	@DbField(name = "LMargin", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "LMargin", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_MARGINLEFT = registerProperty(PROPERTY_MARGINLEFT_NAME,
 			Integer.class, MY_CLASS);
 
@@ -867,7 +867,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 右边距 属性
 	 */
-	@DbField(name = "RMargin", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "RMargin", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_MARGINRIGHT = registerProperty(PROPERTY_MARGINRIGHT_NAME,
 			Integer.class, MY_CLASS);
 
@@ -898,7 +898,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 上边距 属性
 	 */
-	@DbField(name = "TMargin", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "TMargin", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_MARGINTOP = registerProperty(PROPERTY_MARGINTOP_NAME,
 			Integer.class, MY_CLASS);
 
@@ -929,7 +929,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 下边距 属性
 	 */
-	@DbField(name = "BMargin", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "BMargin", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_MARGINBOTTOM = registerProperty(PROPERTY_MARGINBOTTOM_NAME,
 			Integer.class, MY_CLASS);
 
@@ -960,7 +960,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 左线宽度 属性
 	 */
-	@DbField(name = "LeftLine", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "LeftLine", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_LINELEFT = registerProperty(PROPERTY_LINELEFT_NAME,
 			Integer.class, MY_CLASS);
 
@@ -991,7 +991,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 右线宽度 属性
 	 */
-	@DbField(name = "RightLine", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "RightLine", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_LINERIGHT = registerProperty(PROPERTY_LINERIGHT_NAME,
 			Integer.class, MY_CLASS);
 
@@ -1022,7 +1022,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 上线宽度 属性
 	 */
-	@DbField(name = "TopLine", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "TopLine", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_LINETOP = registerProperty(PROPERTY_LINETOP_NAME, Integer.class,
 			MY_CLASS);
 
@@ -1053,7 +1053,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 下线宽度 属性
 	 */
-	@DbField(name = "BottomLine", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "BottomLine", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_LINEBOTTOM = registerProperty(PROPERTY_LINEBOTTOM_NAME,
 			Integer.class, MY_CLASS);
 
@@ -1115,7 +1115,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 字体名称 属性
 	 */
-	@DbField(name = "FontName", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "FontName", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_FONTNAME = registerProperty(PROPERTY_FONTNAME_NAME, String.class,
 			MY_CLASS);
 
@@ -1146,7 +1146,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 字体大小 属性
 	 */
-	@DbField(name = "FontSize", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "FontSize", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_FONTSIZE = registerProperty(PROPERTY_FONTSIZE_NAME,
 			Integer.class, MY_CLASS);
 
@@ -1177,7 +1177,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 文本样式 属性
 	 */
-	@DbField(name = "TextStyle", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "TextStyle", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<emTextStyle> PROPERTY_TEXTSTYLE = registerProperty(PROPERTY_TEXTSTYLE_NAME,
 			emTextStyle.class, MY_CLASS);
 
@@ -1208,7 +1208,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 文本段落 属性
 	 */
-	@DbField(name = "TextSegment", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "TextSegment", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<emTextSegment> PROPERTY_TEXTSEGMENT = registerProperty(PROPERTY_TEXTSEGMENT_NAME,
 			emTextSegment.class, MY_CLASS);
 
@@ -1239,7 +1239,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 水平对齐方式 属性
 	 */
-	@DbField(name = "XJustific", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "XJustific", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<emJustificationHorizontal> PROPERTY_JUSTIFICATIONHORIZONTAL = registerProperty(
 			PROPERTY_JUSTIFICATIONHORIZONTAL_NAME, emJustificationHorizontal.class, MY_CLASS);
 
@@ -1270,7 +1270,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 竖直对齐方式 属性
 	 */
-	@DbField(name = "YJustific", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "YJustific", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<emJustificationVertical> PROPERTY_JUSTIFICATIONVERTICAL = registerProperty(
 			PROPERTY_JUSTIFICATIONVERTICAL_NAME, emJustificationVertical.class, MY_CLASS);
 
@@ -1301,7 +1301,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 背景色-红 属性
 	 */
-	@DbField(name = "BGRed", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "BGRed", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_BACKGROUNDRED = registerProperty(PROPERTY_BACKGROUNDRED_NAME,
 			Integer.class, MY_CLASS);
 
@@ -1332,7 +1332,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 背景色-绿 属性
 	 */
-	@DbField(name = "BGGreen", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "BGGreen", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_BACKGROUNDGREEN = registerProperty(
 			PROPERTY_BACKGROUNDGREEN_NAME, Integer.class, MY_CLASS);
 
@@ -1363,7 +1363,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 背景色-蓝 属性
 	 */
-	@DbField(name = "BGBlue", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "BGBlue", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_BACKGROUNDBLUE = registerProperty(PROPERTY_BACKGROUNDBLUE_NAME,
 			Integer.class, MY_CLASS);
 
@@ -1394,7 +1394,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 前景色-红 属性
 	 */
-	@DbField(name = "FGRed", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "FGRed", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_FOREGROUNDRED = registerProperty(PROPERTY_FOREGROUNDRED_NAME,
 			Integer.class, MY_CLASS);
 
@@ -1425,7 +1425,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 前景色-绿 属性
 	 */
-	@DbField(name = "FGGreen", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "FGGreen", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_FOREGROUNDGREEN = registerProperty(
 			PROPERTY_FOREGROUNDGREEN_NAME, Integer.class, MY_CLASS);
 
@@ -1456,7 +1456,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 前景色-蓝 属性
 	 */
-	@DbField(name = "FGBlue", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "FGBlue", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_FOREGROUNDBLUE = registerProperty(PROPERTY_FOREGROUNDBLUE_NAME,
 			Integer.class, MY_CLASS);
 
@@ -1487,7 +1487,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 高亮显示色-红 属性
 	 */
-	@DbField(name = "MrkrRed", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "MrkrRed", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_MARKERRED = registerProperty(PROPERTY_MARKERRED_NAME,
 			Integer.class, MY_CLASS);
 
@@ -1518,7 +1518,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 高亮显示色-绿 属性
 	 */
-	@DbField(name = "MrkrGreen", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "MrkrGreen", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_MARKERGREEN = registerProperty(PROPERTY_MARKERGREEN_NAME,
 			Integer.class, MY_CLASS);
 
@@ -1549,7 +1549,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 高亮显示色-蓝 属性
 	 */
-	@DbField(name = "MrkrBlue", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "MrkrBlue", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_MARKERBLUE = registerProperty(PROPERTY_MARKERBLUE_NAME,
 			Integer.class, MY_CLASS);
 
@@ -1580,7 +1580,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 框架色-红 属性
 	 */
-	@DbField(name = "BrdrRed", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "BrdrRed", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_BORDERRED = registerProperty(PROPERTY_BORDERRED_NAME,
 			Integer.class, MY_CLASS);
 
@@ -1611,7 +1611,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 框架色-绿 属性
 	 */
-	@DbField(name = "BrdrGreen", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "BrdrGreen", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_BORDERGREEN = registerProperty(PROPERTY_BORDERGREEN_NAME,
 			Integer.class, MY_CLASS);
 
@@ -1642,7 +1642,7 @@ public class ExportTemplateItem extends BusinessObject<ExportTemplateItem> imple
 	/**
 	 * 框架色-蓝 属性
 	 */
-	@DbField(name = "BrdrBlue", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "BrdrBlue", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_BORDERBLUE = registerProperty(PROPERTY_BORDERBLUE_NAME,
 			Integer.class, MY_CLASS);
 

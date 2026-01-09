@@ -13,6 +13,11 @@ public class ModifyUpdater extends DataUpdater {
 	}
 
 	@Override
+	public boolean isRequiredChilds(Object newData) {
+		return true;
+	}
+
+	@Override
 	@SuppressWarnings("unchecked")
 	public IBusinessObject apply(IBusinessObject newData, List<IBusinessObject> oldDatas) {
 		if (oldDatas == null || newData == null) {
@@ -70,9 +75,6 @@ public class ModifyUpdater extends DataUpdater {
 			}
 			// 同步修改过的值
 			for (IFieldData item : newFields.getFields()) {
-				if (!item.isSavable()) {
-					continue;
-				}
 				if (item.isPrimaryKey()) {
 					continue;
 				}
@@ -87,7 +89,13 @@ public class ModifyUpdater extends DataUpdater {
 					}
 					for (IBusinessObject newItem : ((IBusinessObjects<?, ?>) item.getValue())) {
 						if (this.apply(newItem, ((List<IBusinessObject>) oldField.getValue())) == null) {
-							// 子项未匹配到，则添加
+							/*
+							 * // 子项未匹配到 if (this.isUniqueKeyMode()) { // 唯一键模式，为找到对象，则尝试使用主键方式
+							 * this.setUniqueKeyMode(false); if (this.apply(newItem,
+							 * ((List<IBusinessObject>) oldField.getValue())) != null) { // 主键匹配到，则下一条
+							 * continue; } this.setUniqueKeyMode(true); }
+							 */
+							// 都没有匹配到，则添加
 							((IBusinessObjects<IBusinessObject, ?>) oldField.getValue()).add(newItem);
 						}
 					}

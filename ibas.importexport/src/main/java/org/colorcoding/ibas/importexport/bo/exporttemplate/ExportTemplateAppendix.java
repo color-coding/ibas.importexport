@@ -88,7 +88,7 @@ public class ExportTemplateAppendix extends BusinessObject<ExportTemplateAppendi
 	/**
 	 * 类型 属性
 	 */
-	@DbField(name = "Object", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "Object", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_OBJECTCODE = registerProperty(PROPERTY_OBJECTCODE_NAME,
 			String.class, MY_CLASS);
 
@@ -150,7 +150,7 @@ public class ExportTemplateAppendix extends BusinessObject<ExportTemplateAppendi
 	/**
 	 * 数据源 属性
 	 */
-	@DbField(name = "DataSource", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "DataSource", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_DATASOURCE = registerProperty(PROPERTY_DATASOURCE_NAME,
 			String.class, MY_CLASS);
 
@@ -181,7 +181,7 @@ public class ExportTemplateAppendix extends BusinessObject<ExportTemplateAppendi
 	/**
 	 * 实例号（版本） 属性
 	 */
-	@DbField(name = "LogInst", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "LogInst", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_LOGINST = registerProperty(PROPERTY_LOGINST_NAME, Integer.class,
 			MY_CLASS);
 
@@ -212,7 +212,7 @@ public class ExportTemplateAppendix extends BusinessObject<ExportTemplateAppendi
 	/**
 	 * 创建日期 属性
 	 */
-	@DbField(name = "CreateDate", type = DbFieldType.DATE, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "CreateDate", type = DbFieldType.DATE, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<DateTime> PROPERTY_CREATEDATE = registerProperty(PROPERTY_CREATEDATE_NAME,
 			DateTime.class, MY_CLASS);
 
@@ -243,7 +243,7 @@ public class ExportTemplateAppendix extends BusinessObject<ExportTemplateAppendi
 	/**
 	 * 创建时间 属性
 	 */
-	@DbField(name = "CreateTime", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "CreateTime", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Short> PROPERTY_CREATETIME = registerProperty(PROPERTY_CREATETIME_NAME,
 			Short.class, MY_CLASS);
 
@@ -274,7 +274,7 @@ public class ExportTemplateAppendix extends BusinessObject<ExportTemplateAppendi
 	/**
 	 * 修改日期 属性
 	 */
-	@DbField(name = "UpdateDate", type = DbFieldType.DATE, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "UpdateDate", type = DbFieldType.DATE, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<DateTime> PROPERTY_UPDATEDATE = registerProperty(PROPERTY_UPDATEDATE_NAME,
 			DateTime.class, MY_CLASS);
 
@@ -305,7 +305,7 @@ public class ExportTemplateAppendix extends BusinessObject<ExportTemplateAppendi
 	/**
 	 * 修改时间 属性
 	 */
-	@DbField(name = "UpdateTime", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "UpdateTime", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Short> PROPERTY_UPDATETIME = registerProperty(PROPERTY_UPDATETIME_NAME,
 			Short.class, MY_CLASS);
 
@@ -336,7 +336,7 @@ public class ExportTemplateAppendix extends BusinessObject<ExportTemplateAppendi
 	/**
 	 * 创建用户 属性
 	 */
-	@DbField(name = "Creator", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "Creator", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_CREATEUSERSIGN = registerProperty(PROPERTY_CREATEUSERSIGN_NAME,
 			Integer.class, MY_CLASS);
 
@@ -367,7 +367,7 @@ public class ExportTemplateAppendix extends BusinessObject<ExportTemplateAppendi
 	/**
 	 * 修改用户 属性
 	 */
-	@DbField(name = "Updator", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "Updator", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_UPDATEUSERSIGN = registerProperty(PROPERTY_UPDATEUSERSIGN_NAME,
 			Integer.class, MY_CLASS);
 
@@ -398,7 +398,7 @@ public class ExportTemplateAppendix extends BusinessObject<ExportTemplateAppendi
 	/**
 	 * 创建动作标识 属性
 	 */
-	@DbField(name = "CreateActId", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "CreateActId", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_CREATEACTIONID = registerProperty(PROPERTY_CREATEACTIONID_NAME,
 			String.class, MY_CLASS);
 
@@ -429,7 +429,7 @@ public class ExportTemplateAppendix extends BusinessObject<ExportTemplateAppendi
 	/**
 	 * 更新动作标识 属性
 	 */
-	@DbField(name = "UpdateActId", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "UpdateActId", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_UPDATEACTIONID = registerProperty(PROPERTY_UPDATEACTIONID_NAME,
 			String.class, MY_CLASS);
 
@@ -460,7 +460,7 @@ public class ExportTemplateAppendix extends BusinessObject<ExportTemplateAppendi
 	/**
 	 * 页序号 属性
 	 */
-	@DbField(name = "PageOrder", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "PageOrder", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_PAGEORDER = registerProperty(PROPERTY_PAGEORDER_NAME,
 			Integer.class, MY_CLASS);
 
@@ -491,7 +491,7 @@ public class ExportTemplateAppendix extends BusinessObject<ExportTemplateAppendi
 	/**
 	 * 使用页眉 属性
 	 */
-	@DbField(name = "PageHeader", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "PageHeader", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<emYesNo> PROPERTY_PAGEHEADER = registerProperty(PROPERTY_PAGEHEADER_NAME,
 			emYesNo.class, MY_CLASS);
 
@@ -522,7 +522,7 @@ public class ExportTemplateAppendix extends BusinessObject<ExportTemplateAppendi
 	/**
 	 * 使用页脚 属性
 	 */
-	@DbField(name = "PageFooter", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "PageFooter", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<emYesNo> PROPERTY_PAGEFOOTER = registerProperty(PROPERTY_PAGEFOOTER_NAME,
 			emYesNo.class, MY_CLASS);
 
@@ -553,7 +553,7 @@ public class ExportTemplateAppendix extends BusinessObject<ExportTemplateAppendi
 	/**
 	 * 内容-左坐标 属性
 	 */
-	@DbField(name = "CntLeft", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "CntLeft", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_CONTENTLEFT = registerProperty(PROPERTY_CONTENTLEFT_NAME,
 			Integer.class, MY_CLASS);
 
@@ -584,7 +584,7 @@ public class ExportTemplateAppendix extends BusinessObject<ExportTemplateAppendi
 	/**
 	 * 内容-上坐标 属性
 	 */
-	@DbField(name = "CntTop", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "CntTop", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_CONTENTTOP = registerProperty(PROPERTY_CONTENTTOP_NAME,
 			Integer.class, MY_CLASS);
 
@@ -615,7 +615,7 @@ public class ExportTemplateAppendix extends BusinessObject<ExportTemplateAppendi
 	/**
 	 * 内容-宽度 属性
 	 */
-	@DbField(name = "CntWidth", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "CntWidth", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_CONTENTWIDTH = registerProperty(PROPERTY_CONTENTWIDTH_NAME,
 			Integer.class, MY_CLASS);
 
@@ -646,7 +646,7 @@ public class ExportTemplateAppendix extends BusinessObject<ExportTemplateAppendi
 	/**
 	 * 内容-高度 属性
 	 */
-	@DbField(name = "CntHeight", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "CntHeight", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_CONTENTHEIGHT = registerProperty(PROPERTY_CONTENTHEIGHT_NAME,
 			Integer.class, MY_CLASS);
 
@@ -677,7 +677,7 @@ public class ExportTemplateAppendix extends BusinessObject<ExportTemplateAppendi
 	/**
 	 * 背景色-红 属性
 	 */
-	@DbField(name = "BGRed", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "BGRed", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_BACKGROUNDRED = registerProperty(PROPERTY_BACKGROUNDRED_NAME,
 			Integer.class, MY_CLASS);
 
@@ -708,7 +708,7 @@ public class ExportTemplateAppendix extends BusinessObject<ExportTemplateAppendi
 	/**
 	 * 背景色-绿 属性
 	 */
-	@DbField(name = "BGGreen", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "BGGreen", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_BACKGROUNDGREEN = registerProperty(
 			PROPERTY_BACKGROUNDGREEN_NAME, Integer.class, MY_CLASS);
 
@@ -739,7 +739,7 @@ public class ExportTemplateAppendix extends BusinessObject<ExportTemplateAppendi
 	/**
 	 * 背景色-蓝 属性
 	 */
-	@DbField(name = "BGBlue", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "BGBlue", type = DbFieldType.NUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<Integer> PROPERTY_BACKGROUNDBLUE = registerProperty(PROPERTY_BACKGROUNDBLUE_NAME,
 			Integer.class, MY_CLASS);
 
@@ -770,7 +770,7 @@ public class ExportTemplateAppendix extends BusinessObject<ExportTemplateAppendi
 	/**
 	 * 背景图 属性
 	 */
-	@DbField(name = "BGImage", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "BGImage", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<String> PROPERTY_BACKGROUNDIMAGE = registerProperty(PROPERTY_BACKGROUNDIMAGE_NAME,
 			String.class, MY_CLASS);
 

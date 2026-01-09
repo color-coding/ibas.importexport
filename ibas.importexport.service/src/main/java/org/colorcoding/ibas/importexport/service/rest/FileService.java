@@ -22,8 +22,8 @@ import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.common.Strings;
-import org.colorcoding.ibas.bobas.data.FileItem;
 import org.colorcoding.ibas.bobas.data.emYesNo;
+import org.colorcoding.ibas.bobas.file.FileItem;
 import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.logic.common.IBOApprovalContract;
 import org.colorcoding.ibas.bobas.message.Logger;
@@ -45,11 +45,10 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 @Path("file")
 public class FileService extends FileRepositoryService {
 
-	public final static String CONFIG_ITEM_IMPORT_WORK_FOLDER = "ImportWorkFolder";
-
 	public FileService() {
-		this.setRepositoryFolder(
-				MyConfiguration.getConfigValue(CONFIG_ITEM_IMPORT_WORK_FOLDER, MyConfiguration.getTempFolder()));
+		super("$$");
+		this.setGroupingFiles(false);
+		this.setRepositoryFolder(MyConfiguration.getTempFolder());
 	}
 
 	private class BORepositoryImportExport

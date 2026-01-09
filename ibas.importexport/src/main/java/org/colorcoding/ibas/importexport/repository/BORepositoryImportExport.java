@@ -25,7 +25,7 @@ import org.colorcoding.ibas.bobas.common.Strings;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
 import org.colorcoding.ibas.bobas.core.fields.IManagedFields;
 import org.colorcoding.ibas.bobas.data.ArrayList;
-import org.colorcoding.ibas.bobas.data.FileItem;
+import org.colorcoding.ibas.bobas.file.FileItem;
 import org.colorcoding.ibas.bobas.data.KeyText;
 import org.colorcoding.ibas.bobas.data.List;
 import org.colorcoding.ibas.bobas.data.emYesNo;
@@ -291,8 +291,8 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 							}
 						}
 						if (criteria != null && !criteria.getConditions().isEmpty()) {
-							// 跳过或替换，则不查子项
-							if (updateMethod == emDataUpdateMethod.SKIP || updateMethod == emDataUpdateMethod.REPLACE) {
+							// 是否需要查询子项
+							if (!dataUpdater.isRequiredChilds(newItem)) {
 								criteria.setNoChilds(true);
 							}
 							opRsltExists = this.fetch(newItem.getClass(), criteria, token);

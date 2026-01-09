@@ -35,5 +35,7 @@ public abstract class DataUpdater implements BiFunction<IBusinessObject, List<IB
 		targetTag.setDataSource(sourceTag.getDataSource());
 	}
 
+	public abstract boolean isRequiredChilds(Object newData);
+
 	public abstract IBusinessObject apply(IBusinessObject newData, List<IBusinessObject> oldDatas);
 }

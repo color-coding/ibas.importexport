@@ -11,6 +11,14 @@ import org.colorcoding.ibas.bobas.data.List;
 public class ReplaceUpdater extends DataUpdater {
 
 	@Override
+	public boolean isRequiredChilds(Object newData) {
+		if (newData instanceof IBOMasterData || newData instanceof IBOMasterDataLine) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
 	public IBusinessObject apply(IBusinessObject newData, List<IBusinessObject> oldDatas) {
 		// 替换数据（旧的删除，保存新的）
 		for (IBusinessObject oldData : oldDatas) {
