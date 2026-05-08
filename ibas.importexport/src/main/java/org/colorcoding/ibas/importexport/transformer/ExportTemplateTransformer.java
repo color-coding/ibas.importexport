@@ -103,6 +103,11 @@ public abstract class ExportTemplateTransformer extends TemplateTransformer {
 
 	public final void setExportTemplate(IExportTemplate template) {
 		this.exportTemplate = template;
+		if (this.exportTemplate != null) {
+			this.setTemplate(this.exportTemplate.toString());
+		} else {
+			this.setTemplate(null);
+		}
 	}
 
 	/**

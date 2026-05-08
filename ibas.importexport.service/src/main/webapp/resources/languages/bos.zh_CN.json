@@ -182,7 +182,8 @@
     },
     {
         "template_item_type_text": "文本",
-        "template_item_type_image": "图片"
+        "template_item_type_image": "图片",
+        "template_item_type_pdf": "PDF"
     },
     {
         "em_areatype_page_header": "页眉",

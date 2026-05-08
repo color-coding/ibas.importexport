@@ -34,6 +34,8 @@ import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.colorcoding.ibas.bobas.common.DateTimes;
 import org.colorcoding.ibas.bobas.common.Enums;
+import org.colorcoding.ibas.bobas.common.Numbers;
+import org.colorcoding.ibas.bobas.common.Strings;
 import org.colorcoding.ibas.bobas.data.DateTime;
 import org.colorcoding.ibas.bobas.data.KeyValue;
 
@@ -223,21 +225,26 @@ public class ExcelWriter extends FileWriter {
 					if (dataCell.getParent().getBindingClass() == DateTime.class) {
 						// 日期类型值
 						if (!DateTimes.VALUE_MIN.equals(dataCell.getValue())) {
-							sheetCell.setCellValue((Date) dataCell.getValue());
+							if (dataCell.getValue() instanceof Date) {
+								sheetCell.setCellValue((Date) dataCell.getValue());
+							} else if (dataCell.getValue() instanceof String
+									&& !dataCell.getValue().equals(Strings.VALUE_EMPTY)) {
+								sheetCell.setCellValue(DateTimes.valueOf((String) dataCell.getValue()));
+							}
 						}
 					} else if (dataCell.getParent().getBindingClass() == Float.class
 							|| dataCell.getParent().getBindingClass() == Double.class
 							|| dataCell.getParent().getBindingClass() == BigDecimal.class) {
 						// 小数类型
 						sheetCell.setCellType(CellType.NUMERIC);
-						sheetCell.setCellValue(Double.valueOf(dataCell.getValue().toString()));
+						sheetCell.setCellValue(Numbers.toDouble(dataCell.getValue()));
 					} else if (dataCell.getParent().getBindingClass() == Long.class
 							|| dataCell.getParent().getBindingClass() == Integer.class
 							|| dataCell.getParent().getBindingClass() == Short.class
 							|| dataCell.getParent().getBindingClass() == BigInteger.class) {
 						// 数值类型
 						sheetCell.setCellType(CellType.NUMERIC);
-						sheetCell.setCellValue(Double.valueOf(dataCell.getValue().toString()));
+						sheetCell.setCellValue(Numbers.toDouble(dataCell.getValue()));
 					} else if (dataCell.getParent().getBindingClass().isEnum()) {
 						// 枚举类型
 						if (this.cellStyles == null || !this.cellStyles.containsKey(dataCell.getParent())) {

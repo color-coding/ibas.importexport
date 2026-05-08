@@ -854,7 +854,11 @@ namespace importexport {
                                         new sap.extension.m.SelectItem("", {
                                             key: "IMG",
                                             text: ibas.i18n.prop("template_item_type_image"),
-                                        })
+                                        }),
+                                        new sap.extension.m.SelectItem("", {
+                                            key: "PDF",
+                                            text: ibas.i18n.prop("template_item_type_pdf"),
+                                        }),
                                     ]
                                 }).bindProperty("bindingValue", {
                                     path: "itemType",

@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -16,6 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.colorcoding.ibas.bobas.common.DateTimes;
+import org.colorcoding.ibas.bobas.data.ArrayList;
 import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
@@ -44,6 +43,7 @@ public class TransformerHtml extends ExportTemplateTransformer {
 
 	public final static String DISPLAY_ELEMENT_IMAGE = "IMG";
 	public final static String DISPLAY_ELEMENT_TEXT = "TEXT";
+	public final static String DISPLAY_ELEMENT_PDF = "PDF";
 
 	private DocumentContext dataContext;
 
@@ -59,30 +59,96 @@ public class TransformerHtml extends ExportTemplateTransformer {
 		try {
 			Matcher matcher = Pattern.compile(MyConfiguration.VARIABLE_PATTERN).matcher(name);
 			while (matcher.find()) {
-				// 带格式名称${}
 				String pName = matcher.group(0);
 				Object pValue = this.paramValue(pName, null);
 				if (pValue != null) {
 					name = name.replace(pName, String.valueOf(pValue));
 				}
 			}
-			if (name.indexOf("[]") > 0) {
-				int index = this.paramValue(PARAM_DATA_INDEX, -1);
-				if (index < 0) {
-					return defaults;
-				}
-				Map<String, Integer> indexMap = DATA_INDEXES.get(index - 1);
-				for (String item : name.split("\\.")) {
-					if (item != null && item.endsWith("[]")) {
-						String key = item.substring(0, item.length() - 2);
-						Integer value = indexMap.get(key);
-						if (value != null && value >= 0) {
-							name = name.replace(item, key + String.format("[%s]", value));
+			Object value = null;
+			// 重复区数据：使用 DATA_INDEXES + PARAM_DATA_INDEX 定位当前行
+			if (this.DATA_INDEXES != null && this.DATA_INDEXES_PATH != null
+					&& name.startsWith(this.DATA_INDEXES_PATH)) {
+				String suffix = name.substring(this.DATA_INDEXES_PATH.length());
+				if (suffix.isEmpty() || suffix.startsWith("[") || suffix.startsWith(".")) {
+					int dataIndex = this.paramValue(PARAM_DATA_INDEX, 0);
+					if (dataIndex > 0 && dataIndex <= this.DATA_INDEXES.size()) {
+						Object element = this.DATA_INDEXES.get(dataIndex - 1);
+						// 提取属性链：去除方括号表达式和点号
+						String propChain = suffix;
+						while (propChain.startsWith("[")) {
+							int bracketEnd = -1;
+							int depth = 0;
+							for (int i = 0; i < propChain.length(); i++) {
+								char c = propChain.charAt(i);
+								if (c == '[') {
+									depth++;
+								} else if (c == ']') {
+									depth--;
+									if (depth == 0) {
+										bracketEnd = i;
+										break;
+									}
+								}
+							}
+							if (bracketEnd >= 0) {
+								propChain = propChain.substring(bracketEnd + 1);
+							} else {
+								break;
+							}
 						}
+						if (propChain.startsWith(".")) {
+							propChain = propChain.substring(1);
+						}
+						if (propChain.isEmpty()) {
+							value = element;
+						} else {
+							value = this.getPropertyValue(element, propChain);
+						}
+						if (value == null) {
+							return defaults;
+						}
+						Logger.log(MessageLevel.DEBUG, "transformer: data [%s], value [%s].", name, value);
+						return (T) value;
 					}
 				}
 			}
-			Object value = this.getDataContext().read(name);
+			// 非重复区数据：使用原始JsonPath读取
+			{
+				String arrayPath = this.extractArrayPath(name);
+				String propertyPath = this.extractPropertyPath(name);
+				if (arrayPath != null && !arrayPath.equals(name)) {
+					Object arrayValue = this.getDataContext().read(arrayPath);
+					if (arrayValue == null) {
+						return defaults;
+					}
+					if (propertyPath != null && !propertyPath.isEmpty()) {
+						if (arrayValue instanceof Iterable) {
+							StringBuilder sb = new StringBuilder();
+							for (Object item : (Iterable<Object>) arrayValue) {
+								if (item instanceof Map) {
+									Object propVal = ((Map<String, Object>) item).get(propertyPath);
+									if (propVal != null) {
+										if (sb.length() > 0) {
+											sb.append(",");
+										}
+										sb.append(String.valueOf(propVal));
+									}
+								}
+							}
+							value = sb.length() > 0 ? sb.toString() : null;
+						} else if (arrayValue instanceof Map) {
+							value = ((Map<String, Object>) arrayValue).get(propertyPath);
+						} else {
+							value = arrayValue;
+						}
+					} else {
+						value = arrayValue;
+					}
+				} else {
+					value = this.getDataContext().read(name);
+				}
+			}
 			if (value == null) {
 				return defaults;
 			}
@@ -113,6 +179,136 @@ public class TransformerHtml extends ExportTemplateTransformer {
 		}
 	}
 
+	/**
+	 * 从JsonPath表达式中提取数组路径部分。 如 $[0].SalesQuoteItems[?(@.price <
+	 * 40)].ItemDescription → $[0].SalesQuoteItems[?(@.price < 40)] 如
+	 * $[0].SalesQuoteItems[].ItemDescription → $[0].SalesQuoteItems[*]
+	 */
+	private String extractArrayPath(String path) {
+		if (path == null || path.isEmpty()) {
+			return null;
+		}
+		// 去除末尾的简单属性（不在[]内的.分隔的部分）
+		// 从右向左找第一个不在括号内的点号
+		int lastDot = -1;
+		int bracketDepth = 0;
+		for (int i = path.length() - 1; i >= 0; i--) {
+			char c = path.charAt(i);
+			if (c == ']') {
+				bracketDepth++;
+			} else if (c == '[') {
+				bracketDepth--;
+			} else if (c == '.' && bracketDepth == 0) {
+				lastDot = i;
+				break;
+			}
+		}
+		if (lastDot > 0) {
+			String afterDot = path.substring(lastDot + 1);
+			// 如果点后面不是数组表达式，则截取数组路径
+			if (!afterDot.contains("[") && !afterDot.contains("]")) {
+				path = path.substring(0, lastDot);
+			}
+		}
+		// 替换所有空数组标记 [] 为 [*]，以支持JsonPath读取全部元素（含嵌套数组）
+		path = path.replace("[]", "[*]");
+		return path;
+	}
+
+	/**
+	 * 从JsonPath数组路径中提取基础路径（去除末尾的方括号表达式）。 如 $[0].SalesQuoteItems[?(@.price < 40)] →
+	 * $[0].SalesQuoteItems 如 $[0].SalesQuoteItems[] → $[0].SalesQuoteItems
+	 * 保留$[数字]这样的根对象索引。
+	 */
+	private String extractBaseArrayPath(String path) {
+		if (path == null || path.isEmpty()) {
+			return null;
+		}
+		String result = path;
+		while (result.endsWith("]")) {
+			int depth = 1;
+			int i = result.length() - 2;
+			while (i >= 0 && depth > 0) {
+				char c = result.charAt(i);
+				if (c == ']') {
+					depth++;
+				} else if (c == '[') {
+					depth--;
+				}
+				i--;
+			}
+			if (depth == 0) {
+				String before = result.substring(0, i + 1);
+				// 去掉后如果不再包含属性名（如 $[0] → $），不再继续
+				if (!before.contains(".")) {
+					break;
+				}
+				result = before;
+			} else {
+				break;
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * 从JsonPath表达式中提取最后一个]后面的属性名。 如 $[0].SalesQuoteItems[?(@.price <
+	 * 40)].ItemDescription → ItemDescription
+	 */
+	private String extractPropertyPath(String path) {
+		if (path == null || path.isEmpty()) {
+			return null;
+		}
+		// 从右向左找第一个不在括号内的点号
+		int lastDot = -1;
+		int bracketDepth = 0;
+		for (int i = path.length() - 1; i >= 0; i--) {
+			char c = path.charAt(i);
+			if (c == ']') {
+				bracketDepth++;
+			} else if (c == '[') {
+				bracketDepth--;
+			} else if (c == '.' && bracketDepth == 0) {
+				lastDot = i;
+				break;
+			}
+		}
+		if (lastDot > 0) {
+			String afterDot = path.substring(lastDot + 1);
+			// 如果点后面不是数组表达式，则是属性名
+			if (!afterDot.contains("[") && !afterDot.contains("]")) {
+				return afterDot;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * 从对象中按属性链获取值。 属性链用.分隔，如 "Item.Name" 表示 element.get("Item").get("Name")
+	 */
+	@SuppressWarnings("unchecked")
+	private Object getPropertyValue(Object obj, String propertyPath) {
+		if (obj == null || propertyPath == null || propertyPath.isEmpty()) {
+			return null;
+		}
+		String[] parts = propertyPath.split("\\.");
+		Object current = obj;
+		for (String part : parts) {
+			if (part.isEmpty()) {
+				continue;
+			}
+			if (current instanceof Map) {
+				current = ((Map<String, Object>) current).get(part);
+			} else {
+				return null;
+			}
+			if (current == null) {
+				return null;
+			}
+		}
+		return current;
+	}
+
 	@Override
 	public void transform() throws TransformException {
 		if (this.getTemplate() == null) {
@@ -141,37 +337,29 @@ public class TransformerHtml extends ExportTemplateTransformer {
 	}
 
 	/**
-	 * 数据的索引
+	 * 重复区数据元素列表（存储JsonPath返回的数组元素对象）
 	 */
-	private List<Map<String, Integer>> DATA_INDEXES;
+	private List<Object> DATA_INDEXES;
 
-	private List<Map<String, Integer>> createDataIndexes(String path) {
-		int index = path.indexOf("[]");
-		if (index >= 0) {
-			String cPath = path.substring(0, index);
-			String[] tmps = cPath.split("\\.");
-			String name = tmps[tmps.length - 1];
-			int size = this.dataValue(String.format("%s.length()", cPath), 0);
-			List<Map<String, Integer>> indexMaps = new ArrayList<>();
-			for (int i = 0; i < size; i++) {
-				cPath = path.replace("[]", String.format("[%s]", i));
-				for (Map<String, Integer> item : this.createDataIndexes(cPath)) {
-					item.put(name, i);
-					indexMaps.add(item);
-				}
+	/**
+	 * 重复区数据对应的数组路径
+	 */
+	private String DATA_INDEXES_PATH;
+
+	/**
+	 * 根据JsonPath表达式读取数组数据，返回实际元素列表。 使用DocumentContext.read()读取数组数据，支持过滤表达式如
+	 * [?(@.price &lt; 40)]。
+	 */
+	private List<Object> createDataIndexes(String path) {
+		try {
+			Object result = this.getDataContext().read(path);
+			if (result == null) {
+				return new ArrayList<>();
 			}
-			return indexMaps;
-		} else {
-			String[] tmps = path.split("\\.");
-			String name = tmps[tmps.length - 1];
-			int size = this.dataValue(String.format("%s.length()", path), 0);
-			List<Map<String, Integer>> indexMaps = new ArrayList<>();
-			for (int i = 0; i < size; i++) {
-				Map<String, Integer> indexMap = new HashMap<>();
-				indexMap.put(name, i);
-				indexMaps.add(indexMap);
-			}
-			return indexMaps;
+			return ArrayList.create(result);
+		} catch (Exception e) {
+			Logger.log(MessageLevel.WARN, e);
+			return new ArrayList<>();
 		}
 	}
 
@@ -192,11 +380,19 @@ public class TransformerHtml extends ExportTemplateTransformer {
 			if (itemString == null || itemString.isEmpty()) {
 				continue;
 			}
-			int index = itemString.lastIndexOf("[]");
-			if (index < 0) {
+			// 提取数组路径部分（去除最后一个]后面的属性路径）
+			String arrayPath = this.extractArrayPath(itemString);
+			if (arrayPath == null) {
 				continue;
 			}
-			this.DATA_INDEXES = this.createDataIndexes(itemString.substring(0, index));
+			this.DATA_INDEXES = this.createDataIndexes(arrayPath);
+			// 计算DATA_INDEXES_PATH：取路径中最后一个数组标记([]或[*])之前的部分
+			int lastEmptyBracket = Math.max(itemString.lastIndexOf("[]"), itemString.lastIndexOf("[*]"));
+			if (lastEmptyBracket >= 0) {
+				this.DATA_INDEXES_PATH = itemString.substring(0, lastEmptyBracket);
+			} else {
+				this.DATA_INDEXES_PATH = this.extractBaseArrayPath(arrayPath);
+			}
 			if (this.DATA_INDEXES != null && this.DATA_INDEXES.size() > 0) {
 				size = this.DATA_INDEXES.size();
 				this.newParam(PARAM_DATA_SIZE, size);
@@ -301,25 +497,21 @@ public class TransformerHtml extends ExportTemplateTransformer {
 		writer.write(this.getExportTemplate().getHeight().toString());
 		writer.write("\" ");
 		writer.write("/>");
-		if (Integer.compare(this.getExportTemplate().getDpi(), 0) > 0) {
-			writer.write("<meta name=\"page_dpi\" content=\"");
-			writer.write(this.getExportTemplate().getDpi().toString());
-			writer.write("\" ");
-			writer.write("/>");
-		}
+		int templateDpi = this.getExportTemplate().getDpi() != null && this.getExportTemplate().getDpi() > 0
+				? this.getExportTemplate().getDpi()
+				: 72;
+		writer.write("<meta name=\"page_dpi\" content=\"");
+		writer.write(String.valueOf(templateDpi));
+		writer.write("\" />");
 		writer.write("<style>");
 		writer.write("@media print {");
 		// 不打印内容
 		writer.write(".no_print { display:none;}");
 		writer.write(" ");
-		writer.write("@page {");
-		writer.write("size: ");
-		writer.write("auto");
-		writer.write(" ");
-		writer.write(";");
-		// 默认不打印边距
-		writer.write("margin: 0;");
-		writer.write("}");
+		// 根据模板pDPI计算物理纸张尺寸
+		double pageWidthMm = (double) this.getExportTemplate().getWidth() / templateDpi * 25.4;
+		double pageHeightMm = (double) this.getExportTemplate().getHeight() / templateDpi * 25.4;
+		writer.write(String.format("@page {size:%.2fmm %.2fmm;margin:0;}", pageWidthMm, pageHeightMm));
 		writer.write("}");
 		writer.write("</style>");
 
@@ -487,6 +679,20 @@ public class TransformerHtml extends ExportTemplateTransformer {
 			this.endDiv(writer);
 		}
 		writer.write("</body>");
+		// DPI校正：CSS px按96 DPI解析，模板按设计DPI，需缩放校正
+		writer.write("<script>");
+		writer.write("(function(){");
+		writer.write("var d=document.querySelector('meta[name=page_dpi]');");
+		writer.write("var dpi=d?parseInt(d.content)||72:72;");
+		writer.write("var s=96/dpi;");
+		writer.write("if(Math.abs(s-1)<0.01)return;");
+		writer.write("document.body.style.zoom=s;");
+		writer.write("window.__dpiCorrected=true;");
+		writer.write("var st=document.createElement('style');");
+		writer.write("st.textContent='@media print{body{zoom:'+s+' !important;}}';");
+		writer.write("document.head.appendChild(st);");
+		writer.write("})();");
+		writer.write("</script>");
 		writer.write("</html>");
 	}
 
@@ -600,7 +806,34 @@ public class TransformerHtml extends ExportTemplateTransformer {
 	}
 
 	protected void drawElement(Writer writer, IExportTemplateItem template) throws IOException {
-		if (DISPLAY_ELEMENT_IMAGE.equalsIgnoreCase(template.getItemType())) {
+		if (DISPLAY_ELEMENT_PDF.equalsIgnoreCase(template.getItemType())) {
+			String pdfSrc = this.templateValue(template);
+			writer.write("<iframe");
+			writer.write(" ");
+			writer.write("id=\"");
+			writer.write(template.getItemID());
+			writer.write("\"");
+			writer.write(" ");
+			writer.write("src=\"");
+			if (pdfSrc != null && !pdfSrc.isEmpty()) {
+				writer.write(pdfSrc);
+				if (!pdfSrc.contains("#")) {
+					writer.write("#view=FitH,0&toolbar=0&scrollbar=0&navpanes=0");
+				}
+			}
+			writer.write("\"");
+			writer.write(" ");
+			writer.write("scrolling=\"no\"");
+			writer.write(" ");
+			writer.write("frameborder=\"0\"");
+			writer.write(" ");
+			writer.write("style=\"");
+			writer.write("width:100%;height:100%;border:none;display:block;overflow:hidden;margin:0;padding:0;");
+			writer.write("\"");
+			writer.write(" ");
+			writer.write(">");
+			writer.write("</iframe>");
+		} else if (DISPLAY_ELEMENT_IMAGE.equalsIgnoreCase(template.getItemType())) {
 			writer.write("<img");
 			writer.write(" ");
 			writer.write("id=\"");

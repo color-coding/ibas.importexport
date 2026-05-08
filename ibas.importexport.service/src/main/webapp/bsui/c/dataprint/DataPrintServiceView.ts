@@ -165,8 +165,11 @@ namespace importexport {
                             let frameHTML: HTMLElement = document.getElementById(this.getFrameId());
                             if (frameHTML instanceof HTMLIFrameElement) {
                                 frameHTML.onload = function (this: HTMLIFrameElement): void {
-                                    // 调整大小，以适应当前终端
                                     let document: HTMLDocument = this.contentDocument;
+                                    // HTML已内嵌DPI校正，跳过逐元素缩放
+                                    if (this.contentWindow && (<any>this.contentWindow).__dpiCorrected) {
+                                        return;
+                                    }
                                     let dpi: number;
                                     let element: Element = document.querySelector("meta[name=page_dpi]");
                                     if (ibas.objects.instanceOf(element, HTMLMetaElement)) {
