@@ -13,7 +13,6 @@
     </organization>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <ibas.version>0.2.0</ibas.version>
         <ibas.if.version>0.2.0</ibas.if.version>
     </properties>
     <build>
@@ -62,46 +61,18 @@
         </repository>
     </repositories>
     <dependencies>
-        <dependency>
+<dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.colorcoding.ibas</groupId>
-            <artifactId>bobas.businessobjectscommon</artifactId>
-            <version>${ibas.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.colorcoding.ibas</groupId>
-            <artifactId>bobas.businessobjectscommon.db.mssql</artifactId>
-            <version>${ibas.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.colorcoding.ibas</groupId>
-            <artifactId>bobas.businessobjectscommon.db.mysql</artifactId>
-            <version>${ibas.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.colorcoding.ibas</groupId>
-            <artifactId>bobas.businessobjectscommon.db.pgsql</artifactId>
-            <version>${ibas.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.colorcoding.ibas</groupId>
-            <artifactId>bobas.businessobjectscommon.db.hana</artifactId>
-            <version>${ibas.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.colorcoding.ibas</groupId>
-            <artifactId>bobas.businessobjectscommon.jersey</artifactId>
-            <version>${ibas.version}</version>
-        </dependency>
-        <dependency>
+
+<dependency>
             <groupId>org.colorcoding.apps</groupId>
             <artifactId>ibas.initialfantasy</artifactId>
             <version>${ibas.if.version}</version>
         </dependency>
+
     </dependencies>
 </project>

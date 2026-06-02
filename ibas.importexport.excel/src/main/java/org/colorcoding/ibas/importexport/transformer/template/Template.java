@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 import org.colorcoding.ibas.bobas.bo.BOFactory;
 import org.colorcoding.ibas.bobas.bo.BusinessObject;
@@ -149,18 +148,11 @@ public class Template extends Area<Area<?>> {
 			this.setName(bo.getClass().getSimpleName());
 			// 初始化数据区
 			this.setDatas(new Data());
-			this.getDatas().setColumnCount(new Function<Template, Integer>() {
-
-				@Override
-				public Integer apply(Template t) {
-					int count = 0;
-					for (Object object : t.getObjects()) {
-						count += object.getProperties().length;
-					}
-					return count;
-				}
-
-			}.apply(this));
+			int columnCount = 0;
+			for (Object object : this.getObjects()) {
+				columnCount += object.getProperties().length;
+			}
+			this.getDatas().setColumnCount(columnCount);
 			this.getDatas().setStartingColumn(this.getStartingColumn());
 			this.getDatas().setEndingColumn(this.getEndingColumn());
 			this.getDatas().setStartingRow(this.getEndingRow() + 1);
@@ -285,7 +277,9 @@ public class Template extends Area<Area<?>> {
 					if (field != null && field.getValue() != null) {
 						cell.setValue(field.getValue());
 					}
-					row[property.getStartingColumn()] = cell;
+					if (property.getStartingColumn() >= 0 && property.getStartingColumn() < row.length) {
+						row[property.getStartingColumn()] = cell;
+					}
 				}
 			} else if (object.getName().indexOf(PROPERTY_PATH_SEPARATOR, level.length() + 1) < 0) {
 				// 当前基本，不同对象。如：TP.BB - TP or TP.AA[] - TP
@@ -326,7 +320,7 @@ public class Template extends Area<Area<?>> {
 				ArrayList<IBusinessObject> businessObjects = new ArrayList<>();
 				Iterator<Cell[]> rows = this.getDatas().getRowIterator();
 				while (rows.hasNext()) {
-					IBusinessObject bo = (IBusinessObject) this.getHead().getBindingClass().newInstance();
+					IBusinessObject bo = (IBusinessObject) this.getHead().getBindingClass().getDeclaredConstructor().newInstance();
 					if (!(bo instanceof IManagedFields)) {
 						throw new ResolvingException(String.format("not supported %s", bo.getClass().getName()));
 					}
@@ -385,18 +379,17 @@ public class Template extends Area<Area<?>> {
 								continue;
 							}
 						}
-						Cell cell = row[property.getStartingColumn()];
+						Cell cell = null;
+						if (property.getStartingColumn() >= 0 && property.getStartingColumn() < row.length) {
+							cell = row[property.getStartingColumn()];
+						}
 						if (cell != null && cell.getValue() != null) {
 							field.setValue(cell.getValue());
-							if (!matched) {
 								matched = true;
-							}
 						}
 					}
 					if (matched) {
-						if (!done) {
 							done = true;
-						}
 					} else {
 						// 此行数据没有被识别，游标回滚
 						rows.back();
@@ -421,9 +414,7 @@ public class Template extends Area<Area<?>> {
 								list.remove(boItem);
 								break;
 							} else {
-								if (!done) {
-									done = true;
-								}
+							done = true;
 							}
 						}
 					}
@@ -435,9 +426,7 @@ public class Template extends Area<Area<?>> {
 						boolean doneItem = false;
 						doneItem = this.resolving((IManagedFields) field.getValue(), object.getName(), rows);
 						if (doneItem) {
-							if (!done) {
-								done = true;
-							}
+							done = true;
 						}
 					}
 				}
@@ -489,7 +478,7 @@ public class Template extends Area<Area<?>> {
 				}
 				try {
 					Class<?> clazz = Class.forName(reader);
-					this.reader = (FileReader) clazz.newInstance();
+					this.reader = (FileReader) clazz.getDeclaredConstructor().newInstance();
 				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}

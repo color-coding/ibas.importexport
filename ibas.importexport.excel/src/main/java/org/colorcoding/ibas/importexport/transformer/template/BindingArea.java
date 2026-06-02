@@ -35,7 +35,7 @@ public abstract class BindingArea<P extends Area<?>> extends Area<P> {
 
 	public boolean resolvingNotes(String note) throws ClassNotFoundException {
 		// 处理linux，windows，mac换行符
-		String[] lines = note.replace("\r", "\n").replace("\n\n", "\n").split("\n");
+		String[] lines = note.replaceAll("\r\n?", "\n").replaceAll("\n+", "\n").split("\n");
 		if (lines == null || lines.length != 3) {
 			return false;
 		}
@@ -56,7 +56,7 @@ public abstract class BindingArea<P extends Area<?>> extends Area<P> {
 			bind = BigDecimal.class.getName();
 		}
 		Class<?> bindType = BOFactory.loadClass(bind);
-		if (type == null) {
+		if (bindType == null) {
 			return false;
 		}
 		this.setName(name);

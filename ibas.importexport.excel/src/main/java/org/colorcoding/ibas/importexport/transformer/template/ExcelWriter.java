@@ -9,11 +9,9 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
@@ -77,18 +75,26 @@ public class ExcelWriter extends FileWriter {
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public void write(File file) throws WriteFileException, IOException {
 		if (file.isFile() && file.exists()) {
-			file.delete();
+			if (!file.delete()) {
+				throw new WriteFileException(String.format("cannot delete existing file [%s].", file.getPath()));
+			}
 		}
-		file.getParentFile().mkdirs();
+		if (!file.getParentFile().exists()) {
+			file.getParentFile().mkdirs();
+		}
 		file.createNewFile();
 		SXSSFWorkbook workBook = null;
 		try (OutputStream stream = new FileOutputStream(file)) {
 			workBook = new SXSSFWorkbook(this.getCacheRows());
-			Sheet sheet = this.getTemplate().getDescription() == null ? workBook.createSheet()
-					: workBook.createSheet(
-							this.getTemplate().getDescription().replaceAll("[\\\\/:*?\\[\\]]", "_").trim());
+			String sheetName = this.getTemplate().getDescription() == null ? null
+					: this.getTemplate().getDescription().replaceAll("[\\\\/:*?\\[\\]]", "_").trim();
+			if (sheetName != null && sheetName.length() > 31) {
+				sheetName = sheetName.substring(0, 31);
+			}
+			Sheet sheet = sheetName == null ? workBook.createSheet() : workBook.createSheet(sheetName);
 			this.setWorkbook(workBook);
 			this.writeHead(sheet);
 			this.writeObjects(sheet);
@@ -236,14 +242,12 @@ public class ExcelWriter extends FileWriter {
 							|| dataCell.getParent().getBindingClass() == Double.class
 							|| dataCell.getParent().getBindingClass() == BigDecimal.class) {
 						// 小数类型
-						sheetCell.setCellType(CellType.NUMERIC);
 						sheetCell.setCellValue(Numbers.toDouble(dataCell.getValue()));
 					} else if (dataCell.getParent().getBindingClass() == Long.class
 							|| dataCell.getParent().getBindingClass() == Integer.class
 							|| dataCell.getParent().getBindingClass() == Short.class
 							|| dataCell.getParent().getBindingClass() == BigInteger.class) {
 						// 数值类型
-						sheetCell.setCellType(CellType.NUMERIC);
 						sheetCell.setCellValue(Numbers.toDouble(dataCell.getValue()));
 					} else if (dataCell.getParent().getBindingClass().isEnum()) {
 						// 枚举类型
@@ -251,20 +255,12 @@ public class ExcelWriter extends FileWriter {
 							// 此列第一次初始化，设置枚举可选值
 							KeyValue[] values = Enums.toKeyValues(dataCell.getParent().getBindingClass());
 							if (values.length > 0) {
-								Function<KeyValue[], String[]> toStrings = new Function<KeyValue[], String[]>() {
-
-									@Override
-									public String[] apply(KeyValue[] t) {
-										String[] values = new String[t.length];
-										for (int i = 0; i < values.length; i++) {
-											values[i] = t[i].getKey();
-										}
-										return values;
-									}
-								};
+								String[] enumKeys = new String[values.length];
+								for (int i = 0; i < values.length; i++) {
+									enumKeys[i] = values[i].getKey();
+								}
 								DataValidationHelper dvHelper = sheet.getDataValidationHelper();
-								DataValidationConstraint dvConstraint = dvHelper
-										.createExplicitListConstraint(toStrings.apply(values));
+								DataValidationConstraint dvConstraint = dvHelper.createExplicitListConstraint(enumKeys);
 								CellRangeAddressList regions = new CellRangeAddressList(
 										this.getTemplate().getDatas().getStartingRow(),
 										this.getTemplate().getDatas().getEndingRow(),

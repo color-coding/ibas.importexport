@@ -9,20 +9,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.util.SAXHelper;
 import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler.SheetContentsHandler;
 import org.apache.poi.xssf.usermodel.XSSFComment;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.colorcoding.ibas.bobas.common.DateTimes;
 import org.colorcoding.ibas.bobas.common.Decimals;
 import org.colorcoding.ibas.bobas.common.Numbers;
@@ -54,7 +54,9 @@ public class ExcelReaderEx extends FileReader implements SheetContentsHandler {
 				try (InputStream stream = sheetIterator.next()) {
 					InputSource sheetSource = new InputSource(stream);
 					try {
-						XMLReader sheetParser = SAXHelper.newXMLReader();
+						SAXParserFactory saxFactory = SAXParserFactory.newInstance();
+						saxFactory.setNamespaceAware(true);
+						XMLReader sheetParser = saxFactory.newSAXParser().getXMLReader();
 						ContentHandler handler = new XSSFSheetXMLHandler(xssfReader.getStylesTable(),
 								sheetIterator.getSheetComments(), strings, this, new DataFormatter(), false);
 						sheetParser.setContentHandler(handler);
@@ -146,8 +148,7 @@ public class ExcelReaderEx extends FileReader implements SheetContentsHandler {
 								matched = false;
 								break;
 							}
-							if (curCell.value == preCell.value
-									|| String.valueOf(curCell.value).equals(String.valueOf(preCell.value))) {
+							if (java.util.Objects.equals(curCell.value, preCell.value)) {
 								tmpCells.set(property.getStartingColumn(), null);
 							} else {
 								matched = false;
@@ -207,7 +208,7 @@ public class ExcelReaderEx extends FileReader implements SheetContentsHandler {
 			cell.value = cell.value.substring(1, cell.value.length() - 1);
 		}
 		if (comment != null) {
-			XSSFRichTextString richText = comment.getString();
+			RichTextString richText = comment.getString();
 			if (richText != null) {
 				cell.comment = richText.getString();
 			}
@@ -247,8 +248,8 @@ public class ExcelReaderEx extends FileReader implements SheetContentsHandler {
 			} catch (Exception e) {
 				throw new ResolvingException(e);
 			}
-			throw new ResolvingException("not found head area.");
 		}
+		throw new ResolvingException("not found head area.");
 	}
 
 	protected void resolvingObject(List<Cell> cells) throws ResolvingException {
@@ -395,7 +396,7 @@ public class ExcelReaderEx extends FileReader implements SheetContentsHandler {
 					} else if (property.getBindingClass() == DateTime.class) {
 						if (Numbers.isNumeric(sheetCell.value)) {
 							dataCell = this.createCell(property, this.currentRow,
-									DateTimes.valueOf(HSSFDateUtil.getJavaDate(Double.valueOf(sheetCell.value))));
+									DateTimes.valueOf(DateUtil.getJavaDate(Double.valueOf(sheetCell.value))));
 						} else {
 							dataCell = this.createCell(property, this.currentRow, DateTimes.valueOf(sheetCell.value));
 						}

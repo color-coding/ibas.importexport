@@ -5,7 +5,7 @@ echo            compile_packages.bat
 echo                     by niuren.zhu
 echo                           2016.06.19
 echo  说明：
-echo     1. 下载apache-maven，地址http://maven.apache.org/download.cgi。
+echo     1. 下载apache-maven，地址https://maven.apache.org/download.cgi。
 echo     2. 解压apache-maven，并设置系统变量MAVEN_HOME为解压的程序目录。
 echo     3. 添加PATH变量到%%MAVEN_HOME%%\bin，并检查JAVA_HOME配置是否正确。
 echo     4. 运行提示符运行mvn -v 检查安装是否成功。

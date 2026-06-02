@@ -4,11 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
-import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -33,8 +32,7 @@ public class ExcelReader extends FileReader {
 		}
 		Workbook workbook = null;
 		try {
-			OPCPackage pkg = OPCPackage.open(file);
-			workbook = new XSSFWorkbook(pkg);
+			workbook = new XSSFWorkbook(file);
 			if (workbook.getNumberOfSheets() > 0) {
 				Sheet sheet = workbook.getSheetAt(0);
 				this.getTemplate().setDescription(sheet.getSheetName());
@@ -55,7 +53,7 @@ public class ExcelReader extends FileReader {
 
 	protected void resolvingHead(Sheet sheet) throws ResolvingException {
 		Head head = new Head();
-		for (int iRow = this.getTemplate().getStartingRow(); iRow < this.getTemplate().getEndingRow(); iRow++) {
+		for (int iRow = this.getTemplate().getStartingRow(); iRow <= this.getTemplate().getEndingRow(); iRow++) {
 			Row row = sheet.getRow(iRow);
 			if (row == null) {
 				continue;
@@ -96,7 +94,7 @@ public class ExcelReader extends FileReader {
 		Object object = null;
 		int propertRow = -1;
 		// 解析对象
-		for (int iRow = this.getTemplate().getHead().getEndingRow() + 1; iRow < this.getTemplate()
+		for (int iRow = this.getTemplate().getHead().getEndingRow() + 1; iRow <= this.getTemplate()
 				.getEndingRow(); iRow++) {
 			Row row = sheet.getRow(iRow);
 			if (row == null) {
@@ -145,7 +143,7 @@ public class ExcelReader extends FileReader {
 			}
 		}
 		// 解析对象的属性
-		for (int iRow = propertRow; iRow < this.getTemplate().getEndingRow(); iRow++) {
+		for (int iRow = propertRow; iRow <= this.getTemplate().getEndingRow(); iRow++) {
 			Row row = sheet.getRow(iRow);
 			if (row == null) {
 				continue;
@@ -245,7 +243,7 @@ public class ExcelReader extends FileReader {
 	protected boolean isEmptyRow(Row row) {
 		for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
 			Cell cell = row.getCell(c);
-			if (cell != null && cell.getCellTypeEnum() != CellType.BLANK)
+			if (cell != null && cell.getCellType() != CellType.BLANK)
 				return false;
 		}
 		return true;
@@ -279,11 +277,11 @@ public class ExcelReader extends FileReader {
 					if (sheetCell == null) {
 						continue;
 					}
-					if (sheetCell.getCellTypeEnum() == CellType.BLANK) {
+					if (sheetCell.getCellType() == CellType.BLANK) {
 						continue;
 					}
 					dataCell = null;
-					cellType = sheetCell.getCellTypeEnum();
+					cellType = sheetCell.getCellType();
 					try {
 						// 公式类型的，判断结果类型
 						if (cellType == CellType.FORMULA) {
@@ -310,7 +308,7 @@ public class ExcelReader extends FileReader {
 								dataCell = this.createCell(property, sheetRow.getRowNum(),
 										DataConvert.convert(property.getBindingClass(), sheetCell.getDateCellValue()));
 							} else if (property.getBindingClass() == String.class
-									&& (HSSFDateUtil.isCellDateFormatted(sheetCell) // 日期类型数据
+									&& (DateUtil.isCellDateFormatted(sheetCell) // 日期类型数据
 											|| sheetCell.getCellStyle().getDataFormat() == 31 // yyyy年m月d日
 											|| sheetCell.getCellStyle().getDataFormat() == 58 // m月d日
 									)) {

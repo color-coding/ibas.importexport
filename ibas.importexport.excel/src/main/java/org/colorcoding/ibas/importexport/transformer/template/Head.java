@@ -16,7 +16,7 @@ public class Head extends BindingArea<Template> {
 	public Head() {
 		this.setStartingRow(HEAD_STARTING_ROW);
 		this.setEndingRow(this.getStartingRow());
-		this.setStartingColumn(HEAD_STARTING_ROW);
+		this.setStartingColumn(HEAD_STARTING_COLUMN);
 		this.setEndingColumn(AREA_AUTO_REGION);
 	}
 
