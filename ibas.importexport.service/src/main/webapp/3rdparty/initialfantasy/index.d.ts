@@ -139,11 +139,11 @@ declare namespace initialfantasy {
             /** 等于(=) */
             EQUAL = 0,
             /** 大于(>) */
-            GRATER_THAN = 1,
+            GREATER_THAN = 1,
             /** 小于(<) */
             LESS_THAN = 2,
             /** 大于等于(>=) */
-            GRATER_EQUAL = 3,
+            GREATER_EQUAL = 3,
             /** 小于等于(<=) */
             LESS_EQUAL = 4,
             /** 不等于(<>) */
@@ -1165,7 +1165,7 @@ declare namespace initialfantasy {
             /** 修改时间 */
             modifyTime: number;
             /** 事务标识 */
-            transationId: string;
+            transactionId: string;
             /** 动机 */
             cause: string;
             /** 内容 */
@@ -4042,11 +4042,11 @@ declare namespace initialfantasy {
             /** 设置-修改时间 */
             set modifyTime(value: number);
             /** 映射的属性名称-事务标识 */
-            static PROPERTY_TRANSATIONID_NAME: string;
+            static PROPERTY_TRANSACTIONID_NAME: string;
             /** 获取-事务标识 */
-            get transationId(): string;
+            get transactionId(): string;
             /** 设置-事务标识 */
-            set transationId(value: string);
+            set transactionId(value: string);
             /** 映射的属性名称-动机 */
             static PROPERTY_CAUSE_NAME: string;
             /** 获取-动机 */

@@ -349,7 +349,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 						throw e;
 					}
 				} catch (Exception e) {
-					throw new Exception(I18N.prop("msg_ie_input_data_faild", i + 1), e);
+					throw new Exception(I18N.prop("msg_ie_input_data_failed", i + 1), e);
 				}
 			}
 			operationResult.addInformations("SAVE_DATA_COUNT",
@@ -398,7 +398,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 				fileTransformer.setWorkFolder(MyConfiguration.getTempFolder());
 				if (criteria == null || criteria.getBusinessObject() == null
 						|| criteria.getBusinessObject().isEmpty()) {
-					throw new Exception(I18N.prop("msg_bobas_invaild_criteria"));
+					throw new Exception(I18N.prop("msg_bobas_invalid_criteria"));
 				}
 				// 获取导出的对象类型
 				Class<?> boType = BOFactory.classOf(criteria.getBusinessObject());
@@ -483,7 +483,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 							continue;
 						}
 					} else {
-						throw new Exception(I18N.prop("msg_bobas_invaild_condition_operation"));
+						throw new Exception(I18N.prop("msg_bobas_invalid_condition_operation"));
 					}
 				}
 				if (pCondition != null) {
@@ -504,7 +504,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 							}
 						}
 					} else {
-						throw new Exception(I18N.prop("msg_bobas_invaild_condition_operation"));
+						throw new Exception(I18N.prop("msg_bobas_invalid_condition_operation"));
 					}
 				}
 				if (transformer.template()) {
@@ -592,7 +592,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			ICriteria criteria = Criteria.create(boKeys);
 			if (criteria == null || Strings.isNullOrEmpty(criteria.getBusinessObject())
 					|| criteria.getConditions().isEmpty()) {
-				throw new Exception(I18N.prop("msg_ie_invaild_bo_keys"));
+				throw new Exception(I18N.prop("msg_ie_invalid_bo_keys"));
 			}
 			ExportRecord record = new ExportRecord();
 			record.setCause(cause);

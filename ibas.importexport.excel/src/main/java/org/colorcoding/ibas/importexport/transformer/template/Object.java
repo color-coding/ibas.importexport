@@ -30,7 +30,7 @@ import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
 import org.colorcoding.ibas.bobas.core.fields.IManagedFields;
 import org.colorcoding.ibas.bobas.data.emYesNo;
-import org.colorcoding.ibas.bobas.db.DbFieldType;
+import org.colorcoding.ibas.bobas.db.DataType;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.organization.OrganizationFactory;
 import org.colorcoding.ibas.bobas.ownership.IDataOwnership;
@@ -245,7 +245,7 @@ public class Object extends BindingArea<Template> {
 								property.setParent(this);
 								property.setName(ptyItem.getPropertyName());
 								property.setBindingClass(UserFieldsFactory.createManager()
-										.classOf(DbFieldType.valueOf(ptyItem.getDataType())));
+										.classOf(DataType.valueOf(ptyItem.getDataType())));
 								property.setStartingRow(property.getParent().getEndingRow() + 1);
 								property.setEndingRow(property.getStartingRow());
 								property.setStartingColumn(

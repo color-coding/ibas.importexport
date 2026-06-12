@@ -74,7 +74,7 @@ public final class TransformerFactory {
 	@SuppressWarnings("unchecked")
 	public final <T extends ITransformer<?, ?>> T create(String sign) throws TransformException {
 		if (sign == null) {
-			throw new TransformException(I18N.prop("msg_ie_invaild_data"));
+			throw new TransformException(I18N.prop("msg_ie_invalid_data"));
 		}
 		Class<?> clazz = null;
 		for (Entry<TransformerInfo, Class<?>> item : this.getTransformers().entrySet()) {

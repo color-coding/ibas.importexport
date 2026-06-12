@@ -116,7 +116,7 @@ public class FileService extends FileRepositoryService {
 				}
 			}
 			if (opRsltFile == null || opRsltFile.getResultObjects().isEmpty()) {
-				throw new Exception(I18N.prop("msg_ie_invaild_data"));
+				throw new Exception(I18N.prop("msg_ie_invalid_data"));
 			}
 			// 导入文件
 			OperationResult<String> operationResult = new OperationResult<String>();

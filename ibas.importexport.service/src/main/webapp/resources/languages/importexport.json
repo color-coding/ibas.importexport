@@ -62,5 +62,11 @@
     "importexport_export_content_selected": "Export Content (Selected)",
     "importexport_export_all": "Export All",
     "importexport_export_selected": "Export Selected",
-    "importexport_closing_delimiter": "---- End ----"
+    "importexport_export_content_current": "Export Content (Current)",
+    "importexport_exportrecord_icon": "sap-icon://document-text",
+    "importexport_freezable_column": "Freezable Columns",
+    "importexport_not_found_link_service": "No service to view [{0}]",
+    "importexport_service_exportrecord": "Export Record",
+    "importexport_update_single_transaction": "Single Transaction:",
+    "importexport_update_skip_approval": "Skip Approval:"
 }
