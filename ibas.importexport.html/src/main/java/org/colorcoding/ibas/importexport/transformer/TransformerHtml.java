@@ -1,11 +1,15 @@
 package org.colorcoding.ibas.importexport.transformer;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +17,10 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.colorcoding.ibas.bobas.common.Bytes;
 import org.colorcoding.ibas.bobas.common.DateTimes;
+import org.colorcoding.ibas.bobas.common.Strings;
+import org.colorcoding.ibas.bobas.common.Urls;
 import org.colorcoding.ibas.bobas.data.ArrayList;
 import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.bobas.i18n.I18N;
@@ -44,6 +51,15 @@ public class TransformerHtml extends ExportTemplateTransformer {
 	public final static String DISPLAY_ELEMENT_IMAGE = "IMG";
 	public final static String DISPLAY_ELEMENT_TEXT = "TEXT";
 	public final static String DISPLAY_ELEMENT_PDF = "PDF";
+
+	/**
+	 * 获取是否将IMG标签的图片地址转为BASE64数据
+	 *
+	 * @return true-开启图片BASE64嵌入，false-保留原始地址（默认）
+	 */
+	public boolean isEmbedImage() {
+		return this.paramValue("EmbedImage", false);
+	}
 
 	private DocumentContext dataContext;
 
@@ -805,6 +821,107 @@ public class TransformerHtml extends ExportTemplateTransformer {
 		}
 	}
 
+	/**
+	 * 图片下载失败时的默认占位图
+	 */
+	public final static String IMAGE_BROKEN_BASE64 = "data:image/svg+xml;base64,"
+			+ "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSI+Cjwvc3ZnPiA=";
+
+	/**
+	 * 下载图片并转为BASE64数据URI。 支持http/https协议的图片地址，将图片内容下载后转为
+	 * data:image/xxx;base64,...格式的数据URI。 如果下载失败或地址无效，则返回图片加载失败的占位图BASE64数据。
+	 *
+	 * @param imageUrl 图片地址
+	 * @return BASE64数据URI；下载失败时返回占位图BASE64数据
+	 */
+	protected String downloadImageAsBase64(String imageUrl) {
+		if (imageUrl == null || imageUrl.isEmpty()) {
+			return IMAGE_BROKEN_BASE64;
+		}
+		// 已经是BASE64数据URI，直接返回
+		if (imageUrl.startsWith("data:")) {
+			return imageUrl;
+		}
+		// 仅处理http/https协议的地址
+		if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+			return IMAGE_BROKEN_BASE64;
+		}
+		// 替换地址中的token参数值为用户令牌
+		String token = this.paramValue("UserToken", Strings.VALUE_EMPTY);
+		if (token != null && !token.isEmpty()) {
+			imageUrl = imageUrl.replaceAll("([?&])token=([^&]*)",
+					"$1token=" + java.util.regex.Matcher.quoteReplacement(token));
+		}
+		HttpURLConnection connection = null;
+		try {
+			URL url = new URL(imageUrl);
+			connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod("GET");
+			connection.setConnectTimeout(10000);
+			connection.setReadTimeout(10000);
+			// 不跟随重定向次数过多
+			connection.setInstanceFollowRedirects(true);
+			int responseCode = connection.getResponseCode();
+			if (responseCode != HttpURLConnection.HTTP_OK) {
+				Logger.log(MessageLevel.WARN, "transformer: download image [%s] failed, response code [%s].", imageUrl,
+						responseCode);
+				return IMAGE_BROKEN_BASE64;
+			}
+			// 获取Content-Type以判断图片类型
+			String contentType = connection.getContentType();
+			if (contentType == null) {
+				switch (Urls.getFileExtension(imageUrl).toLowerCase()) {
+				case "png":
+					contentType = "image/png";
+					break;
+				case "jpg":
+				case "jpeg":
+					contentType = "image/jpeg";
+					break;
+				case "gif":
+					contentType = "image/gif";
+					break;
+				case "bmp":
+					contentType = "image/bmp";
+					break;
+				case "webp":
+					contentType = "image/webp";
+					break;
+				case "svg":
+					contentType = "image/svg+xml";
+					break;
+				default:
+					break;
+				}
+			}
+			if (contentType == null || !contentType.startsWith("image/")) {
+				Logger.log(MessageLevel.WARN, "transformer: download image [%s] content type [%s] is not image.",
+						imageUrl, contentType);
+				return IMAGE_BROKEN_BASE64;
+			}
+			// 读取图片数据
+			try (InputStream inputStream = connection.getInputStream();
+					ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+				int bytesRead;
+				byte[] bytes = new byte[4096];
+				while ((bytesRead = inputStream.read(bytes)) != -1) {
+					outputStream.write(bytes, 0, bytesRead);
+				}
+				bytes = outputStream.toByteArray();
+				Logger.log(MessageLevel.DEBUG, "transformer: image [%s] converted to BASE64, size [%s].", imageUrl,
+						bytes.length);
+				return Bytes.toBase64String(bytes, contentType);
+			}
+		} catch (Exception e) {
+			Logger.log(MessageLevel.WARN, "transformer: download image [%s] error [%s].", imageUrl, e.getMessage());
+			return IMAGE_BROKEN_BASE64;
+		} finally {
+			if (connection != null) {
+				connection.disconnect();
+			}
+		}
+	}
+
 	protected void drawElement(Writer writer, IExportTemplateItem template) throws IOException {
 		if (DISPLAY_ELEMENT_PDF.equalsIgnoreCase(template.getItemType())) {
 			String pdfSrc = this.templateValue(template);
@@ -834,6 +951,11 @@ public class TransformerHtml extends ExportTemplateTransformer {
 			writer.write(">");
 			writer.write("</iframe>");
 		} else if (DISPLAY_ELEMENT_IMAGE.equalsIgnoreCase(template.getItemType())) {
+			String imgSrc = this.templateValue(template);
+			// 若开启BASE64嵌入，则下载图片并转为BASE64数据URI
+			if (this.isEmbedImage()) {
+				imgSrc = this.downloadImageAsBase64(imgSrc);
+			}
 			writer.write("<img");
 			writer.write(" ");
 			writer.write("id=\"");
@@ -845,11 +967,15 @@ public class TransformerHtml extends ExportTemplateTransformer {
 			writer.write("\"");
 			writer.write(" ");
 			writer.write("src=\"");
-			writer.write(this.templateValue(template));
+			writer.write(imgSrc);
 			writer.write("\"");
 			writer.write(" ");
-			writer.write(
-					"onerror=\"this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSI+Cjwvc3ZnPiA=';\"");
+			if (!this.isEmbedImage()) {
+				// 默认模式：onerror使用空白SVG占位
+				writer.write("onerror=\"this.src='");
+				writer.write(IMAGE_BROKEN_BASE64);
+				writer.write("';\"");
+			}
 			writer.write(" ");
 			writer.write(">");
 			writer.write("</img>");

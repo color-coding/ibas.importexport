@@ -52,7 +52,7 @@ public abstract class TemplateTransformer extends Transformer<InputStream, File>
 	 * @param name  变量名
 	 * @param value 值
 	 */
-	protected <T> void newParam(String name, T value) {
+	public <T> void newParam(String name, T value) {
 		if (this.params == null) {
 			this.params = new HashMap<>();
 		}

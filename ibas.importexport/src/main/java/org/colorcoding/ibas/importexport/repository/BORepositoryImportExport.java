@@ -25,10 +25,10 @@ import org.colorcoding.ibas.bobas.common.Strings;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
 import org.colorcoding.ibas.bobas.core.fields.IManagedFields;
 import org.colorcoding.ibas.bobas.data.ArrayList;
-import org.colorcoding.ibas.bobas.file.FileItem;
 import org.colorcoding.ibas.bobas.data.KeyText;
 import org.colorcoding.ibas.bobas.data.List;
 import org.colorcoding.ibas.bobas.data.emYesNo;
+import org.colorcoding.ibas.bobas.file.FileItem;
 import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.message.MessageLevel;
@@ -48,12 +48,10 @@ import org.colorcoding.ibas.importexport.data.emDataUpdateMethod;
 import org.colorcoding.ibas.importexport.repository.updater.DataUpdater;
 import org.colorcoding.ibas.importexport.repository.updater.Factory;
 import org.colorcoding.ibas.importexport.transformer.FileTransformer;
-import org.colorcoding.ibas.importexport.transformer.IFileTransformer;
-import org.colorcoding.ibas.importexport.transformer.ITemplateTransformer;
-import org.colorcoding.ibas.importexport.transformer.ITransformer;
-import org.colorcoding.ibas.importexport.transformer.ITransformerFile;
 import org.colorcoding.ibas.importexport.transformer.TemplateTransformer;
+import org.colorcoding.ibas.importexport.transformer.Transformer;
 import org.colorcoding.ibas.importexport.transformer.TransformerFactory;
+import org.colorcoding.ibas.importexport.transformer.TransformerFile;
 import org.colorcoding.ibas.importexport.transformer.TransformerInfo;
 
 /**
@@ -210,12 +208,10 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 				type = "xlsx";
 			}
 			type = String.format(FileTransformer.GROUP_TEMPLATE, type).toUpperCase();
-			IFileTransformer transformer = TransformerFactory.create().create(type);
+			FileTransformer transformer = TransformerFactory.create().create(type);
 			// 更新时个别管理字段状态
 			if (updateMethod == emDataUpdateMethod.MODIFY) {
-				if (transformer instanceof FileTransformer) {
-					((FileTransformer) transformer).setIndividualStatus(true);
-				}
+				transformer.setIndividualStatus(true);
 			}
 			Logger.log(MessageLevel.DEBUG, MSG_TRANSFORMER_IMPORT_DATA, transformer.getClass().getName());
 			// 转换文件数据到业务对象
@@ -382,7 +378,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 		try {
 			this.setUserToken(token);
 			// 获取导出的模板
-			ITransformer<?, ?> transformer = TransformerFactory.create().create(info.getTransformer());
+			Transformer<?, ?> transformer = TransformerFactory.create().create(info.getTransformer());
 			if (transformer == null) {
 				throw new Exception(I18N.prop("msg_ie_not_found_transformer", info.getTransformer()));
 			}
@@ -391,10 +387,10 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 
 			OperationResult<FileItem> operationResult = new OperationResult<FileItem>();
 			Logger.log(MessageLevel.DEBUG, MSG_TRANSFORMER_EXPORT_DATA, transformer.getClass().getName());
-			if (transformer instanceof ITransformerFile) {
+			if (transformer instanceof TransformerFile) {
 				// 查询数据
 				ICriteria criteria = info.getCriteria();
-				ITransformerFile fileTransformer = (ITransformerFile) transformer;
+				TransformerFile fileTransformer = (TransformerFile) transformer;
 				fileTransformer.setWorkFolder(MyConfiguration.getTempFolder());
 				if (criteria == null || criteria.getBusinessObject() == null
 						|| criteria.getBusinessObject().isEmpty()) {
@@ -430,11 +426,15 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 				fileItem.setName(file.getName());
 				fileItem.setPath(file.getPath());
 				operationResult.addResultObjects(fileItem);
-			} else if (transformer instanceof ITemplateTransformer) {
-				ITemplateTransformer templateTransformer = (ITemplateTransformer) transformer;
+			} else if (transformer instanceof TemplateTransformer) {
+				TemplateTransformer templateTransformer = (TemplateTransformer) transformer;
 				templateTransformer.setWorkFolder(MyConfiguration.getTempFolder());
 				templateTransformer.setTemplate(info.getTemplate());
 				templateTransformer.setInputData(info.getContent());
+				// 传递参数
+				templateTransformer.newParam("UserToken", token); // 用户口令
+				templateTransformer.newParam("EmbedImage", true); // 签入图片
+
 				templateTransformer.transform();
 				File file = templateTransformer.getOutputData().firstOrDefault();
 				if (file == null) {
@@ -508,7 +508,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 					}
 				}
 				if (transformer.template()) {
-					ITransformer<?, ?> instance = TransformerFactory.create().create(transformer.name());
+					Transformer<?, ?> instance = TransformerFactory.create().create(transformer.name());
 					if (instance instanceof TemplateTransformer) {
 						TemplateTransformer templateTransformer = (TemplateTransformer) instance;
 						String name = transformer.name();
