@@ -30,7 +30,7 @@ public abstract class Transformer<IN, OUT> implements ITransformer<IN, OUT> {
 		if (data == null) {
 			return;
 		}
-		List<OUT> tmps = new ArrayList<>();
+		List<OUT> tmps = new ArrayList<>(data.size());
 		tmps.addAll(data);
 		this.setOutputData(tmps);
 	}
@@ -39,7 +39,7 @@ public abstract class Transformer<IN, OUT> implements ITransformer<IN, OUT> {
 		if (data == null) {
 			return;
 		}
-		List<OUT> tmps = new ArrayList<>();
+		List<OUT> tmps = new ArrayList<>(data.length);
 		for (OUT out : data) {
 			tmps.add(out);
 		}

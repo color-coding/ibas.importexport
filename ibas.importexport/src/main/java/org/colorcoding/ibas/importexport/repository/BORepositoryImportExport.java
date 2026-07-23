@@ -28,6 +28,7 @@ import org.colorcoding.ibas.bobas.data.ArrayList;
 import org.colorcoding.ibas.bobas.data.KeyText;
 import org.colorcoding.ibas.bobas.data.List;
 import org.colorcoding.ibas.bobas.data.emYesNo;
+import org.colorcoding.ibas.bobas.db.DbTransaction;
 import org.colorcoding.ibas.bobas.file.FileItem;
 import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
@@ -230,9 +231,12 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			transformer = null;
 			type = null;
 			// 保存业务对象
+			IBOStorageTag tag;
 			ICriteria criteria;
 			IBusinessObject newItem;
+			IDataOwnership ownership;
 			DataUpdater dataUpdater;
+			StringBuilder stringBuilder;
 			IOperationResult<IBusinessObject> opRsltExists, opRsltDelete, opRsltSave;
 
 			for (int i = 0; i < outputDatas.size(); i++) {
@@ -240,28 +244,31 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 					newItem = outputDatas.get(i);
 					// 调试模式，输出识别对象
 					if (MyConfiguration.isDebugMode()) {
-						StringBuilder stringBuilder = new StringBuilder();
+						stringBuilder = new StringBuilder();
 						stringBuilder.append("transformer:");
 						stringBuilder.append(" ");
 						stringBuilder.append("be imported data");
 						stringBuilder.append(System.getProperty("line.seperator", "\n"));
 						stringBuilder.append(BOUtilities.toXmlString(newItem));
 						Logger.log(MessageLevel.DEBUG, stringBuilder.toString());
+						stringBuilder = null;
 					}
 					// 导入的数据，源标记为I
 					if (newItem instanceof IBOStorageTag) {
-						IBOStorageTag tag = (IBOStorageTag) newItem;
+						tag = (IBOStorageTag) newItem;
 						tag.setDataSource(MyConfiguration.SIGN_DATA_SOURCE);
+						tag = null;
 					}
 					// 设置数据所有者
 					if (newItem instanceof IDataOwnership) {
-						IDataOwnership ownership = (IDataOwnership) newItem;
+						ownership = (IDataOwnership) newItem;
 						if (ownership.getDataOwner() == null || ownership.getDataOwner() == 0) {
 							ownership.setDataOwner(this.getCurrentUser().getId());
 						}
 						if (ownership.getOrganization() == null || ownership.getOrganization().isEmpty()) {
 							ownership.setOrganization(this.getCurrentUser().getBelong());
 						}
+						ownership = null;
 					}
 					boolean myTrans = this.beginTransaction();
 					try {
@@ -303,6 +310,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 										}
 										operationResult.addInformations("DELETED_EXISTS_DATA", oldItem.toString(),
 												"DATA_IMPORT");
+										opRsltDelete = null;
 									}
 								}
 							} else if (updateMethod == emDataUpdateMethod.MODIFY) {
@@ -314,6 +322,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 									((BusinessObject<?>) newItem).markNew();
 								}
 							}
+							opRsltExists = null;
 						}
 						if (newItem == null) {
 							if (myTrans) {
@@ -332,8 +341,11 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 						if (myTrans) {
 							this.commitTransaction();
 						}
+						criteria = null;
+						opRsltSave = null;
+						dataUpdater = null;
 					} catch (Exception e) {
-						operationResult.addResultObjects(e.getMessage());
+						operationResult.addInformations("IMPORT_ERROR", e.getMessage(), "DATA_IMPORT");
 						if (myTrans) {
 							try {
 								this.rollbackTransaction();
@@ -344,6 +356,12 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 						}
 						throw e;
 					}
+					newItem = null;
+					outputDatas.set(i, null);
+					// 自行管理的事务，清理缓存释放业务逻辑影响对象的引用
+					if (myTrans && this.getTransaction() instanceof DbTransaction) {
+						((DbTransaction) this.getTransaction()).clearCache();
+					}
 				} catch (Exception e) {
 					throw new Exception(I18N.prop("msg_ie_input_data_failed", i + 1), e);
 				}
@@ -351,9 +369,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			operationResult.addInformations("SAVE_DATA_COUNT",
 					String.valueOf(operationResult.getResultObjects().size()), "DATA_IMPORT");
 			return operationResult;
-		} catch (
-
-		Exception e) {
+		} catch (Exception e) {
 			Logger.log(e);
 			return new OperationResult<String>(e);
 		}
@@ -582,13 +598,13 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 
 	@Override
 	public IOperationResult<IExportRecord> writeExportRecord(String boKeys, String cause, String content) {
-		return this.writeExportRecord(boKeys, cause, content);
+		return this.writeExportRecord(boKeys, cause, content, this.getUserToken());
 	}
 
 	@Override
 	public OperationResult<ExportRecord> writeExportRecord(String boKeys, String cause, String content, String token) {
 		try (BORepositoryImportExport boRepository = new BORepositoryImportExport()) {
-			this.setUserToken(token);
+			boRepository.setUserToken(token);
 			ICriteria criteria = Criteria.create(boKeys);
 			if (criteria == null || Strings.isNullOrEmpty(criteria.getBusinessObject())
 					|| criteria.getConditions().isEmpty()) {
@@ -601,7 +617,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			record.setBOCode(criteria.getBusinessObject());
 			record.setExportDate(DateTimes.today());
 			record.setExportTime(Short.valueOf(DateTimes.now().toString("HHmm")));
-			record.setExportUser(this.getCurrentUser().getId());
+			record.setExportUser(boRepository.getCurrentUser().getId());
 			// 获取导出的对象并修改状态
 			try {
 				boRepository.beginTransaction();

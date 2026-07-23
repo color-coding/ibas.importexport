@@ -9,6 +9,7 @@ public abstract class BindingArea<P extends Area<?>> extends Area<P> {
 	public final static String NOTE_LINE_TYPE = "type: ";
 	public final static String NOTE_LINE_PATH = "path: ";
 	public final static String NOTE_LINE_CLASS = "class: ";
+	private final static String LINE_SEPARATOR = System.getProperty("line.separator");
 
 	private Class<?> bindingClass;
 
@@ -24,10 +25,10 @@ public abstract class BindingArea<P extends Area<?>> extends Area<P> {
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append(NOTE_LINE_TYPE);
 		stringBuilder.append(this.getClass().getSimpleName());
-		stringBuilder.append(System.getProperty("line.separator"));
+		stringBuilder.append(LINE_SEPARATOR);
 		stringBuilder.append(NOTE_LINE_PATH);
 		stringBuilder.append(this.getName());
-		stringBuilder.append(System.getProperty("line.separator"));
+		stringBuilder.append(LINE_SEPARATOR);
 		stringBuilder.append(NOTE_LINE_CLASS);
 		stringBuilder.append(this.getBindingClass().getName());
 		return stringBuilder.toString();
@@ -39,12 +40,21 @@ public abstract class BindingArea<P extends Area<?>> extends Area<P> {
 		if (lines == null || lines.length != 3) {
 			return false;
 		}
+		if (!lines[0].startsWith(NOTE_LINE_TYPE)) {
+			return false;
+		}
 		String type = lines[0].substring(NOTE_LINE_TYPE.length());
 		if (!this.getClass().getSimpleName().equals(type)) {
 			return false;
 		}
+		if (!lines[1].startsWith(NOTE_LINE_PATH)) {
+			return false;
+		}
 		String name = lines[1].substring(NOTE_LINE_PATH.length());
 		if (name == null || name.isEmpty()) {
+			return false;
+		}
+		if (!lines[2].startsWith(NOTE_LINE_CLASS)) {
 			return false;
 		}
 		String bind = lines[2].substring(NOTE_LINE_CLASS.length());

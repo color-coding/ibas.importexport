@@ -27,7 +27,7 @@ import org.colorcoding.ibas.initialfantasy.repository.BORepositoryInitialFantasy
 
 /**
  * 业务对象转换xlsx文件
- * 
+ *
  * @author Niuren.Zhu
  *
  */
@@ -55,7 +55,7 @@ public class TransformerExcel extends TransformerFile {
 			File file = new File(this.getWorkFolder() + File.separator + template.getName() + "_"
 					+ DateTimes.now().getTime() + "." + TYPE_NAME);
 			if (!file.getParentFile().exists()) {
-				file.mkdirs();
+				file.getParentFile().mkdirs();
 			}
 			template.write(file);
 			this.setOutputData(new ArrayList<>());
@@ -67,7 +67,7 @@ public class TransformerExcel extends TransformerFile {
 
 	/**
 	 * 描述模板
-	 * 
+	 *
 	 * @param template
 	 * @throws InvalidAuthorizationException
 	 * @throws Exception
