@@ -96,6 +96,17 @@ public class ExcelWriter extends FileWriter {
 
 	private Workbook workbook;
 
+	/** 当前写入行号 */
+	private int currentRow;
+	/** 当前工作表索引 */
+	private int sheetIndex;
+	/** 所有工作表（用于设置枚举验证） */
+	private List<Sheet> sheets = new ArrayList<>();
+	/** 各工作表数据行范围（用于设置枚举验证） */
+	private List<int[]> sheetRanges = new ArrayList<>();
+	/** 当前工作表数据起始行 */
+	private int sheetStartRow;
+
 	protected final Workbook getWorkbook() {
 		return workbook;
 	}
@@ -104,9 +115,86 @@ public class ExcelWriter extends FileWriter {
 		this.workbook = workbook;
 	}
 
-	@Override
-	@SuppressWarnings("deprecation")
-	public void write(File file) throws WriteFileException, IOException {
+	/**
+	 * 开始写入：创建工作簿、工作表及表头
+	 *
+	 * @throws WriteFileException
+	 */
+	public void beginWrite() throws WriteFileException {
+		SXSSFWorkbook workBook = new SXSSFWorkbook(this.getCacheRows());
+		this.setWorkbook(workBook);
+		String sheetName = this.generateSheetName(0);
+		Sheet sheet = workBook.createSheet(sheetName);
+		this.writeHead(sheet);
+		this.writeObjects(sheet);
+		// 冻结头信息
+		sheet.createFreezePane(0, this.getTemplate().getDatas().getStartingRow());
+		this.currentRow = this.getTemplate().getDatas().getStartingRow();
+		this.sheetIndex = 0;
+		this.sheets.clear();
+		this.sheetRanges.clear();
+		this.sheets.add(sheet);
+		this.sheetStartRow = this.currentRow;
+	}
+
+	/**
+	 * 写入当前模板中的数据行
+	 */
+	public void writeDatas() {
+		Sheet sheet = this.sheets.get(this.sheets.size() - 1);
+		for (org.colorcoding.ibas.importexport.transformer.template.Cell[] dataRow : this.getTemplate().getDatas()
+				.getRows()) {
+			if (this.currentRow > MAX_ROW_INDEX) {
+				// 记录当前工作表行范围
+				this.sheetRanges.add(new int[] { this.sheetStartRow, this.currentRow - 1 });
+				// 超出单张工作表最大行数，创建新工作表
+				this.sheetIndex++;
+				String sheetName = this.generateSheetName(this.sheetIndex);
+				sheet = this.getWorkbook().createSheet(sheetName);
+				this.writeHead(sheet);
+				this.writeObjects(sheet);
+				sheet.createFreezePane(0, this.getTemplate().getDatas().getStartingRow());
+				this.currentRow = this.getTemplate().getDatas().getStartingRow();
+				this.sheetStartRow = this.currentRow;
+				this.sheets.add(sheet);
+			}
+			Row sheetRow = sheet.createRow(this.currentRow++);
+			for (org.colorcoding.ibas.importexport.transformer.template.Cell dataCell : dataRow) {
+				this.writeDataCell(sheet, sheetRow, dataCell);
+			}
+		}
+	}
+
+	/**
+	 * 结束写入：设置枚举验证，写入文件并关闭
+	 *
+	 * @param file
+	 * @throws WriteFileException
+	 * @throws IOException
+	 */
+	public void endWrite(File file) throws WriteFileException, IOException {
+		// 记录最后一张工作表行范围
+		this.sheetRanges.add(new int[] { this.sheetStartRow, this.currentRow - 1 });
+		try {
+			// 设置枚举类型列的数据验证（所有工作表）
+			Object[] objects = this.getTemplate().getObjects();
+			for (int i = 0; i < this.sheets.size(); i++) {
+				Sheet s = this.sheets.get(i);
+				int[] range = this.sheetRanges.get(i);
+				if (range[1] >= range[0]) {
+					for (Object object : objects) {
+						for (Property property : object.getProperties()) {
+							if (property.getBindingClass() != null && property.getBindingClass().isEnum()) {
+								this.setupEnumValidation(s, property, range[0], range[1]);
+							}
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			throw new WriteFileException(e);
+		}
+		// 写入文件
 		if (file.isFile() && file.exists()) {
 			if (!file.delete()) {
 				throw new WriteFileException(String.format("cannot delete existing file [%s].", file.getPath()));
@@ -115,29 +203,29 @@ public class ExcelWriter extends FileWriter {
 		if (!file.getParentFile().exists()) {
 			file.getParentFile().mkdirs();
 		}
-		file.createNewFile();
-		SXSSFWorkbook workBook = null;
+		if (!file.createNewFile()) {
+			throw new WriteFileException(String.format("cannot create file [%s].", file.getPath()));
+		}
 		try (OutputStream stream = new FileOutputStream(file)) {
-			workBook = new SXSSFWorkbook(this.getCacheRows());
-			String sheetName = this.generateSheetName(0);
-			Sheet sheet = workBook.createSheet(sheetName);
-			this.setWorkbook(workBook);
-			this.writeHead(sheet);
-			this.writeObjects(sheet);
-			// 冻结头信息
-			sheet.createFreezePane(0, this.getTemplate().getDatas().getStartingRow());
-			this.writeDatas(sheet);
-			workBook.write(stream);
+			this.getWorkbook().write(stream);
 		} catch (Exception e) {
 			throw new WriteFileException(e);
 		} finally {
-			if (workBook != null) {
-				workBook.close();
-				workBook.dispose();
+			if (this.workbook != null) {
+				this.workbook.close();
+				((SXSSFWorkbook) this.workbook).dispose();
 				this.setWorkbook(null);
 			}
 			this.clearStyleCache();
 		}
+	}
+
+	@Override
+	@SuppressWarnings("deprecation")
+	public void write(File file) throws WriteFileException, IOException {
+		this.beginWrite();
+		this.writeDatas();
+		this.endWrite(file);
 	}
 
 	protected void writeHead(Sheet sheet) {
@@ -210,55 +298,6 @@ public class ExcelWriter extends FileWriter {
 				cell.setCellComment(comment);
 				// 设置单元格样式
 				cell.setCellStyle(styleProperty);
-			}
-		}
-	}
-
-	protected void writeDatas(Sheet sheet) {
-		int startingRow = this.getTemplate().getDatas().getStartingRow();
-		int currentRow = startingRow;
-		int sheetIndex = 0;
-		// 跟踪所有工作表及其数据行范围，用于设置枚举验证
-		List<Sheet> sheets = new ArrayList<>();
-		List<int[]> sheetRanges = new ArrayList<>();
-		sheets.add(sheet);
-		int sheetStartRow = currentRow;
-		for (org.colorcoding.ibas.importexport.transformer.template.Cell[] dataRow : this.getTemplate().getDatas()
-				.getRows()) {
-			if (currentRow > MAX_ROW_INDEX) {
-				// 记录当前工作表行范围
-				sheetRanges.add(new int[] { sheetStartRow, currentRow - 1 });
-				// 超出单张工作表最大行数，创建新工作表
-				sheetIndex++;
-				String sheetName = this.generateSheetName(sheetIndex);
-				sheet = this.getWorkbook().createSheet(sheetName);
-				this.writeHead(sheet);
-				this.writeObjects(sheet);
-				sheet.createFreezePane(0, startingRow);
-				currentRow = startingRow;
-				sheetStartRow = currentRow;
-				sheets.add(sheet);
-			}
-			Row sheetRow = sheet.createRow(currentRow++);
-			for (org.colorcoding.ibas.importexport.transformer.template.Cell dataCell : dataRow) {
-				this.writeDataCell(sheet, sheetRow, dataCell);
-			}
-		}
-		// 记录最后一张工作表行范围
-		sheetRanges.add(new int[] { sheetStartRow, currentRow - 1 });
-		// 设置枚举类型列的数据验证（所有工作表）
-		Object[] objects = this.getTemplate().getObjects();
-		for (int i = 0; i < sheets.size(); i++) {
-			Sheet s = sheets.get(i);
-			int[] range = sheetRanges.get(i);
-			if (range[1] >= range[0]) {
-				for (Object object : objects) {
-					for (Property property : object.getProperties()) {
-						if (property.getBindingClass() != null && property.getBindingClass().isEnum()) {
-							this.setupEnumValidation(s, property, range[0], range[1]);
-						}
-					}
-				}
 			}
 		}
 	}
@@ -429,6 +468,27 @@ public class ExcelWriter extends FileWriter {
 		this.headStyle = null;
 		this.objectStyles = null;
 		this.propertyStyle = null;
+	}
+
+	/**
+	 * 释放资源（未调用 endWrite 时的安全清理）。
+	 * 关闭工作簿并清理 SXSSFWorkbook 的磁盘临时文件。
+	 */
+	public void dispose() {
+		if (this.workbook != null) {
+			try {
+				this.workbook.close();
+				if (this.workbook instanceof SXSSFWorkbook) {
+					((SXSSFWorkbook) this.workbook).dispose();
+				}
+			} catch (Exception e) {
+				// 释放资源时忽略异常
+			}
+			this.setWorkbook(null);
+		}
+		this.sheets.clear();
+		this.sheetRanges.clear();
+		this.clearStyleCache();
 	}
 
 }

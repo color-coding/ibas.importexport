@@ -106,6 +106,15 @@ public class Template extends Area<Area<?>> {
 		return datas;
 	}
 
+	/**
+	 * 清理数据行，释放内存（保留模板结构）
+	 */
+	public final void clearDatas() {
+		if (this.datas != null) {
+			this.datas.clearRows();
+		}
+	}
+
 	final void setDatas(Data datas) {
 		datas.setParent(this);
 		this.datas = datas;
@@ -145,8 +154,8 @@ public class Template extends Area<Area<?>> {
 						if (lastProperty.getEndingColumn() > maxEndingColumn) {
 							maxEndingColumn = lastProperty.getEndingColumn();
 						}
-						if (object.getEndingRow() > maxEndingRow) {
-							maxEndingRow = object.getEndingRow();
+						if (lastProperty.getEndingRow() > maxEndingRow) {
+							maxEndingRow = lastProperty.getEndingRow();
 						}
 					}
 				}

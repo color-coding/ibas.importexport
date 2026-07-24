@@ -1,6 +1,6 @@
 package org.colorcoding.ibas.importexport.transformer;
 
-import org.colorcoding.ibas.bobas.data.List;
+import java.util.List;
 
 /**
  * 转换者
@@ -12,10 +12,17 @@ public interface ITransformer<IN, OUT> {
 
 	/**
 	 * 设置输入数据
-	 * 
+	 *
 	 * @param data
 	 */
-	void setInputData(IN data);
+	void setInputData(List<IN> data);
+
+	/**
+	 * 添加输入数据
+	 *
+	 * @param data
+	 */
+	void addInputData(IN data);
 
 	/**
 	 * 获取转换后数据

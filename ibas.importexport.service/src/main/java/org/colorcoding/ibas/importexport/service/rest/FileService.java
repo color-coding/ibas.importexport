@@ -185,7 +185,7 @@ public class FileService extends FileRepositoryService {
 					Logger.log(MessageLevel.DEBUG, BORepositoryImportExport.MSG_TRANSFORMER_IMPORT_DATA,
 							transformer.getClass().getName());
 					// 转换文件数据到业务对象
-					transformer.setInputData(new File(data.getPath()));
+					transformer.addInputData(new File(data.getPath()));
 					transformer.transform();
 					for (IBusinessObject object : transformer.getOutputData()) {
 						ByteArrayOutputStream writer = new ByteArrayOutputStream();

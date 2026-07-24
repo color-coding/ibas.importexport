@@ -10,7 +10,7 @@ import org.colorcoding.ibas.bobas.bo.IBusinessObject;
  * @author Niuren.Zhu
  *
  */
-public abstract class TransformerFile extends Transformer<IBusinessObject[], File> implements ITransformerFile {
+public abstract class TransformerFile extends Transformer<IBusinessObject, File> implements ITransformerFile {
 
 	private String workFolder;
 

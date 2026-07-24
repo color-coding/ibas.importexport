@@ -92,6 +92,15 @@ public class Data extends Area<Template> {
 		return row;
 	}
 
+	/**
+	 * 清理数据行，释放内存（保留结构信息）
+	 */
+	public void clearRows() {
+		if (this.rows != null) {
+			this.rows.clear();
+		}
+	}
+
 	@Override
 	public String toString() {
 		return String.format("{data: %s}", super.toString());

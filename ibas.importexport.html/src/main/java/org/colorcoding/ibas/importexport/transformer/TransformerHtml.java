@@ -41,7 +41,9 @@ import com.jayway.jsonpath.JsonPath;
 
 /**
  * 业务对象转换html文件
- * 
+ *
+ * 注意：HTML 模板仅支持单一数据源，多个输入数据时仅使用第一个。
+ *
  * @author Niuren.Zhu
  *
  */
@@ -65,7 +67,9 @@ public class TransformerHtml extends ExportTemplateTransformer {
 
 	private final DocumentContext getDataContext() {
 		if (this.dataContext == null) {
-			this.dataContext = JsonPath.parse(this.getInputData());
+			if (this.getInputData() != null && !this.getInputData().isEmpty()) {
+				this.dataContext = JsonPath.parse(this.getInputData().get(0));
+			}
 		}
 		return dataContext;
 	}
@@ -330,7 +334,7 @@ public class TransformerHtml extends ExportTemplateTransformer {
 		if (this.getTemplate() == null) {
 			throw new TransformException(I18N.prop("msg_ie_no_template"));
 		}
-		if (this.getInputData() == null) {
+		if (this.getInputData() == null || this.getInputData().isEmpty()) {
 			throw new TransformException(I18N.prop("msg_ie_no_input_data"));
 		}
 		this.init();
@@ -338,7 +342,7 @@ public class TransformerHtml extends ExportTemplateTransformer {
 		try (OutputStream stream = new FileOutputStream(file)) {
 			try (OutputStreamWriter writer = new OutputStreamWriter(stream, "utf-8")) {
 				if (!file.getParentFile().exists()) {
-					file.mkdirs();
+					file.getParentFile().mkdirs();
 				}
 				if (!file.exists()) {
 					file.createNewFile();
