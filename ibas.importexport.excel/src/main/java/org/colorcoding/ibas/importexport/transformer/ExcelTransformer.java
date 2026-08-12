@@ -1,5 +1,7 @@
 package org.colorcoding.ibas.importexport.transformer;
 
+import java.io.File;
+
 import org.colorcoding.ibas.bobas.bo.BusinessObject;
 import org.colorcoding.ibas.bobas.bo.IBODocument;
 import org.colorcoding.ibas.bobas.bo.IBODocumentLine;
@@ -10,7 +12,7 @@ import org.colorcoding.ibas.importexport.transformer.template.Template;
 
 /**
  * xlsx文件转换业务对象
- * 
+ *
  * @author Niuren.Zhu
  *
  */
@@ -19,14 +21,14 @@ public class ExcelTransformer extends FileTransformer {
 
 	@Override
 	public void transform() throws TransformException {
-		if (this.getInputData() == null) {
+		if (this.getInputData() == null || this.getInputData().isEmpty()) {
 			return;
 		}
 		try {
 			Template template = new Template();
 			template.setIndividualStatus(this.isIndividualStatus());
-			// 解析输入数据
-			template.resolving(this.getInputData());
+			// 解析输入数据（Excel 模板一次只能解析一个文件）
+			template.resolving(this.getInputData().get(0));
 			IBusinessObject[] businessObjects = template.resolving();
 			// 重置状态
 			IBODocument document;

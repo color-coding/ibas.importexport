@@ -77,7 +77,7 @@ public class Template extends Area<Area<?>> {
 
 	/**
 	 * 获取-模板拥有对象
-	 * 
+	 *
 	 * @return
 	 */
 	public final Object[] getObjects() {
@@ -89,7 +89,7 @@ public class Template extends Area<Area<?>> {
 
 	/**
 	 * 添加-模板拥有对象
-	 * 
+	 *
 	 * @param object
 	 */
 	final void addObject(Object object) {
@@ -104,6 +104,15 @@ public class Template extends Area<Area<?>> {
 
 	public final Data getDatas() {
 		return datas;
+	}
+
+	/**
+	 * 清理数据行，释放内存（保留模板结构）
+	 */
+	public final void clearDatas() {
+		if (this.datas != null) {
+			this.datas.clearRows();
+		}
 	}
 
 	final void setDatas(Data datas) {
@@ -137,13 +146,22 @@ public class Template extends Area<Area<?>> {
 			this.setStartingColumn(this.getHead().getStartingColumn());
 			this.setStartingRow(this.getHead().getStartingRow());
 			if (this.getObjects().length > 0) {
-				Object lastObject = this.getObjects()[this.getObjects().length - 1];
-				if (lastObject.getProperties().length > 0) {
-					Property lastProperty = lastObject.getProperties()[lastObject.getProperties().length - 1];
-					this.setEndingColumn(lastProperty.getEndingColumn());
-					this.setEndingRow(lastProperty.getEndingRow());
-					this.getHead().setEndingColumn(this.getEndingColumn());
+				int maxEndingColumn = this.getStartingColumn();
+				int maxEndingRow = this.getStartingRow();
+				for (Object object : this.getObjects()) {
+					if (object.getProperties().length > 0) {
+						Property lastProperty = object.getProperties()[object.getProperties().length - 1];
+						if (lastProperty.getEndingColumn() > maxEndingColumn) {
+							maxEndingColumn = lastProperty.getEndingColumn();
+						}
+						if (lastProperty.getEndingRow() > maxEndingRow) {
+							maxEndingRow = lastProperty.getEndingRow();
+						}
+					}
 				}
+				this.setEndingColumn(maxEndingColumn);
+				this.setEndingRow(maxEndingRow);
+				this.getHead().setEndingColumn(this.getEndingColumn());
 			}
 			this.setName(bo.getClass().getSimpleName());
 			// 初始化数据区

@@ -7,7 +7,9 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -50,6 +52,9 @@ public class ExcelWriter extends FileWriter {
 			IndexedColors.LIGHT_CORNFLOWER_BLUE.getIndex(), IndexedColors.LAVENDER.getIndex() };
 	public static final short COLORS_PROPERTY = IndexedColors.LIGHT_ORANGE.getIndex();
 
+	/** Excel XLSX最大行索引（0-based） */
+	public static final int MAX_ROW_INDEX = 1048575;
+
 	public ExcelWriter() {
 		this.setCacheRows(60);
 	}
@@ -64,7 +69,43 @@ public class ExcelWriter extends FileWriter {
 		this.cacheRows = cacheRows;
 	}
 
+	/**
+	 * 生成工作表名称
+	 *
+	 * @param index 工作表索引（0-based，0为首个工作表）
+	 * @return 工作表名称（不超过31字符）
+	 */
+	protected String generateSheetName(int index) {
+		String sheetName = this.getTemplate().getDescription() == null ? null
+				: this.getTemplate().getDescription().replaceAll("[\\\\/:*?\\[\\]]", "_").trim();
+		if (sheetName == null || sheetName.isEmpty()) {
+			sheetName = "Sheet";
+		}
+		if (index > 0) {
+			// 后续工作表追加序号后缀，确保名称不超过31字符
+			String suffix = "_" + (index + 1);
+			if (sheetName.length() + suffix.length() > 31) {
+				sheetName = sheetName.substring(0, 31 - suffix.length());
+			}
+			sheetName = sheetName + suffix;
+		} else if (sheetName.length() > 31) {
+			sheetName = sheetName.substring(0, 31);
+		}
+		return sheetName;
+	}
+
 	private Workbook workbook;
+
+	/** 当前写入行号 */
+	private int currentRow;
+	/** 当前工作表索引 */
+	private int sheetIndex;
+	/** 所有工作表（用于设置枚举验证） */
+	private List<Sheet> sheets = new ArrayList<>();
+	/** 各工作表数据行范围（用于设置枚举验证） */
+	private List<int[]> sheetRanges = new ArrayList<>();
+	/** 当前工作表数据起始行 */
+	private int sheetStartRow;
 
 	protected final Workbook getWorkbook() {
 		return workbook;
@@ -74,9 +115,86 @@ public class ExcelWriter extends FileWriter {
 		this.workbook = workbook;
 	}
 
-	@Override
-	@SuppressWarnings("deprecation")
-	public void write(File file) throws WriteFileException, IOException {
+	/**
+	 * 开始写入：创建工作簿、工作表及表头
+	 *
+	 * @throws WriteFileException
+	 */
+	public void beginWrite() throws WriteFileException {
+		SXSSFWorkbook workBook = new SXSSFWorkbook(this.getCacheRows());
+		this.setWorkbook(workBook);
+		String sheetName = this.generateSheetName(0);
+		Sheet sheet = workBook.createSheet(sheetName);
+		this.writeHead(sheet);
+		this.writeObjects(sheet);
+		// 冻结头信息
+		sheet.createFreezePane(0, this.getTemplate().getDatas().getStartingRow());
+		this.currentRow = this.getTemplate().getDatas().getStartingRow();
+		this.sheetIndex = 0;
+		this.sheets.clear();
+		this.sheetRanges.clear();
+		this.sheets.add(sheet);
+		this.sheetStartRow = this.currentRow;
+	}
+
+	/**
+	 * 写入当前模板中的数据行
+	 */
+	public void writeDatas() {
+		Sheet sheet = this.sheets.get(this.sheets.size() - 1);
+		for (org.colorcoding.ibas.importexport.transformer.template.Cell[] dataRow : this.getTemplate().getDatas()
+				.getRows()) {
+			if (this.currentRow > MAX_ROW_INDEX) {
+				// 记录当前工作表行范围
+				this.sheetRanges.add(new int[] { this.sheetStartRow, this.currentRow - 1 });
+				// 超出单张工作表最大行数，创建新工作表
+				this.sheetIndex++;
+				String sheetName = this.generateSheetName(this.sheetIndex);
+				sheet = this.getWorkbook().createSheet(sheetName);
+				this.writeHead(sheet);
+				this.writeObjects(sheet);
+				sheet.createFreezePane(0, this.getTemplate().getDatas().getStartingRow());
+				this.currentRow = this.getTemplate().getDatas().getStartingRow();
+				this.sheetStartRow = this.currentRow;
+				this.sheets.add(sheet);
+			}
+			Row sheetRow = sheet.createRow(this.currentRow++);
+			for (org.colorcoding.ibas.importexport.transformer.template.Cell dataCell : dataRow) {
+				this.writeDataCell(sheet, sheetRow, dataCell);
+			}
+		}
+	}
+
+	/**
+	 * 结束写入：设置枚举验证，写入文件并关闭
+	 *
+	 * @param file
+	 * @throws WriteFileException
+	 * @throws IOException
+	 */
+	public void endWrite(File file) throws WriteFileException, IOException {
+		// 记录最后一张工作表行范围
+		this.sheetRanges.add(new int[] { this.sheetStartRow, this.currentRow - 1 });
+		try {
+			// 设置枚举类型列的数据验证（所有工作表）
+			Object[] objects = this.getTemplate().getObjects();
+			for (int i = 0; i < this.sheets.size(); i++) {
+				Sheet s = this.sheets.get(i);
+				int[] range = this.sheetRanges.get(i);
+				if (range[1] >= range[0]) {
+					for (Object object : objects) {
+						for (Property property : object.getProperties()) {
+							if (property.getBindingClass() != null && property.getBindingClass().isEnum()) {
+								this.setupEnumValidation(s, property, range[0], range[1]);
+							}
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			throw new WriteFileException(e);
+		}
+		// 写入文件
 		if (file.isFile() && file.exists()) {
 			if (!file.delete()) {
 				throw new WriteFileException(String.format("cannot delete existing file [%s].", file.getPath()));
@@ -85,42 +203,36 @@ public class ExcelWriter extends FileWriter {
 		if (!file.getParentFile().exists()) {
 			file.getParentFile().mkdirs();
 		}
-		file.createNewFile();
-		SXSSFWorkbook workBook = null;
+		if (!file.createNewFile()) {
+			throw new WriteFileException(String.format("cannot create file [%s].", file.getPath()));
+		}
 		try (OutputStream stream = new FileOutputStream(file)) {
-			workBook = new SXSSFWorkbook(this.getCacheRows());
-			String sheetName = this.getTemplate().getDescription() == null ? null
-					: this.getTemplate().getDescription().replaceAll("[\\\\/:*?\\[\\]]", "_").trim();
-			if (sheetName != null && sheetName.length() > 31) {
-				sheetName = sheetName.substring(0, 31);
-			}
-			Sheet sheet = sheetName == null ? workBook.createSheet() : workBook.createSheet(sheetName);
-			this.setWorkbook(workBook);
-			this.writeHead(sheet);
-			this.writeObjects(sheet);
-			// 冻结头信息
-			sheet.createFreezePane(0, this.getTemplate().getDatas().getStartingRow());
-			this.writeDatas(sheet);
-			workBook.write(stream);
+			this.getWorkbook().write(stream);
 		} catch (Exception e) {
 			throw new WriteFileException(e);
 		} finally {
-			if (workBook != null) {
-				workBook.close();
-				workBook.dispose();
+			if (this.workbook != null) {
+				this.workbook.close();
+				((SXSSFWorkbook) this.workbook).dispose();
 				this.setWorkbook(null);
 			}
-			if (this.cellStyles != null) {
-				this.cellStyles = null;
-			}
+			this.clearStyleCache();
 		}
+	}
+
+	@Override
+	@SuppressWarnings("deprecation")
+	public void write(File file) throws WriteFileException, IOException {
+		this.beginWrite();
+		this.writeDatas();
+		this.endWrite(file);
 	}
 
 	protected void writeHead(Sheet sheet) {
 		Head head = this.getTemplate().getHead();
-		CellRangeAddress range = new CellRangeAddress(head.getStartingRow(), head.getEndingRow(),
-				head.getStartingColumn(), head.getEndingColumn());
 		if (head.getEndingColumn() > head.getStartingColumn()) {
+			CellRangeAddress range = new CellRangeAddress(head.getStartingRow(), head.getEndingRow(),
+					head.getStartingColumn(), head.getEndingColumn());
 			sheet.addMergedRegion(range);
 		}
 		Row row = sheet.createRow(head.getStartingRow());
@@ -136,31 +248,20 @@ public class ExcelWriter extends FileWriter {
 		comment.setAuthor(Template.TEMPLATE_NAME);
 		cell.setCellComment(comment);
 		// 设置单元格样式
-		CellStyle style = this.getWorkbook().createCellStyle();
-		style.setFillForegroundColor(COLORS_HEAD);// 背景色
-		style.setFillPattern(FillPatternType.SOLID_FOREGROUND);// 颜色填充方式
-		style.setAlignment(HorizontalAlignment.LEFT);// 水平居中
-		style.setVerticalAlignment(VerticalAlignment.CENTER);// 垂直居中
-		// 设置字体
-		Font font = this.getWorkbook().createFont();
-		font.setItalic(true);
-		font.setBold(true);
-		style.setFont(font);
-		cell.setCellStyle(style);
+		cell.setCellStyle(this.getHeadStyle());
 	}
 
 	protected void writeObjects(Sheet sheet) {
 		CellRangeAddress range = null;
 		Cell cell = null;
 		Comment comment = null;
-		CellStyle style = null;
-		Font font = null;
 		CreationHelper creationHelper = this.getWorkbook().getCreationHelper();
 		Drawing<?> drawing = sheet.createDrawingPatriarch();
-		for (Object object : this.getTemplate().getObjects()) {
-			range = new CellRangeAddress(object.getStartingRow(), object.getEndingRow(), object.getStartingColumn(),
-					object.getEndingColumn());
+		Object[] objects = this.getTemplate().getObjects();
+		for (Object object : objects) {
 			if (object.getEndingColumn() > object.getStartingColumn()) {
+				range = new CellRangeAddress(object.getStartingRow(), object.getEndingRow(),
+						object.getStartingColumn(), object.getEndingColumn());
 				sheet.addMergedRegion(range);
 			}
 		}
@@ -168,18 +269,13 @@ public class ExcelWriter extends FileWriter {
 		oRow.setHeight((short) (oRow.getHeight() * 1.4));
 		Row pRow = sheet.createRow(oRow.getRowNum() + 1);
 		pRow.setHeight((short) (pRow.getHeight() * 1.6));
-		// 初始化属性单元格格式
-		CellStyle styleProperty = this.getWorkbook().createCellStyle();
-		styleProperty.setFillForegroundColor(COLORS_PROPERTY);// 背景色
-		styleProperty.setFillPattern(FillPatternType.SOLID_FOREGROUND);// 颜色填充方式
-		styleProperty.setAlignment(HorizontalAlignment.CENTER);// 水平居中
-		styleProperty.setVerticalAlignment(VerticalAlignment.CENTER);// 垂直居中
-		// 设置字体
-		font = this.getWorkbook().createFont();
-		font.setBold(true);
-		styleProperty.setFont(font);
+		CellStyle styleProperty = this.getPropertyStyle();
 		// 写入信息
-		for (Object object : this.getTemplate().getObjects()) {
+		for (Object object : objects) {
+			if (object.getProperties().length == 0) {
+				// 无属性的子对象不输出列
+				continue;
+			}
 			cell = oRow.createCell(object.getStartingColumn());
 			cell.setCellValue(object.getDescription());
 			// 写入绑定信息
@@ -189,16 +285,7 @@ public class ExcelWriter extends FileWriter {
 			comment.setAuthor(Template.TEMPLATE_NAME);
 			cell.setCellComment(comment);
 			// 设置单元格样式
-			style = this.getWorkbook().createCellStyle();
-			style.setFillForegroundColor(COLORS_OBJECT[object.getIndex() % COLORS_OBJECT.length]);// 背景色
-			style.setFillPattern(FillPatternType.SOLID_FOREGROUND);// 颜色填充方式
-			style.setAlignment(HorizontalAlignment.CENTER);// 水平居中
-			style.setVerticalAlignment(VerticalAlignment.CENTER);// 垂直居中
-			// 设置字体
-			font = this.getWorkbook().createFont();
-			font.setBold(true);
-			style.setFont(font);
-			cell.setCellStyle(style);
+			cell.setCellStyle(this.getObjectStyle(object.getIndex()));
 			// 输出属性
 			for (Property property : object.getProperties()) {
 				cell = pRow.createCell(property.getStartingColumn());
@@ -215,74 +302,84 @@ public class ExcelWriter extends FileWriter {
 		}
 	}
 
-	protected void writeDatas(Sheet sheet) {
-		for (int iRow = this.getTemplate().getDatas().getStartingRow(); iRow <= this.getTemplate().getDatas()
-				.getEndingRow(); iRow++) {
-			int index = iRow - this.getTemplate().getDatas().getStartingRow();
-			org.colorcoding.ibas.importexport.transformer.template.Cell[] dataRow = this.getTemplate().getDatas()
-					.getRows().get(index);
-			Row sheetRow = sheet.createRow(iRow);
-			for (org.colorcoding.ibas.importexport.transformer.template.Cell dataCell : dataRow) {
-				if (dataCell == null || dataCell.getParent() == null) {
-					continue;
-				}
-				Cell sheetCell = sheetRow.createCell(dataCell.getStartingColumn());
-				if (dataCell.getValue() != null) {
-					if (dataCell.getParent().getBindingClass() == DateTime.class) {
-						// 日期类型值
-						if (!DateTimes.VALUE_MIN.equals(dataCell.getValue())) {
-							if (dataCell.getValue() instanceof Date) {
-								sheetCell.setCellValue((Date) dataCell.getValue());
-							} else if (dataCell.getValue() instanceof String
-									&& !dataCell.getValue().equals(Strings.VALUE_EMPTY)) {
-								sheetCell.setCellValue(DateTimes.valueOf((String) dataCell.getValue()));
-							}
-						}
-					} else if (dataCell.getParent().getBindingClass() == Float.class
-							|| dataCell.getParent().getBindingClass() == Double.class
-							|| dataCell.getParent().getBindingClass() == BigDecimal.class) {
-						// 小数类型
-						sheetCell.setCellValue(Numbers.toDouble(dataCell.getValue()));
-					} else if (dataCell.getParent().getBindingClass() == Long.class
-							|| dataCell.getParent().getBindingClass() == Integer.class
-							|| dataCell.getParent().getBindingClass() == Short.class
-							|| dataCell.getParent().getBindingClass() == BigInteger.class) {
-						// 数值类型
-						sheetCell.setCellValue(Numbers.toDouble(dataCell.getValue()));
-					} else if (dataCell.getParent().getBindingClass().isEnum()) {
-						// 枚举类型
-						if (this.cellStyles == null || !this.cellStyles.containsKey(dataCell.getParent())) {
-							// 此列第一次初始化，设置枚举可选值
-							KeyValue[] values = Enums.toKeyValues(dataCell.getParent().getBindingClass());
-							if (values.length > 0) {
-								String[] enumKeys = new String[values.length];
-								for (int i = 0; i < values.length; i++) {
-									enumKeys[i] = values[i].getKey();
-								}
-								DataValidationHelper dvHelper = sheet.getDataValidationHelper();
-								DataValidationConstraint dvConstraint = dvHelper.createExplicitListConstraint(enumKeys);
-								CellRangeAddressList regions = new CellRangeAddressList(
-										this.getTemplate().getDatas().getStartingRow(),
-										this.getTemplate().getDatas().getEndingRow(),
-										dataCell.getParent().getStartingColumn(),
-										dataCell.getParent().getEndingColumn());
-								DataValidation validation = dvHelper.createValidation(dvConstraint, regions);
-								sheet.addValidationData(validation);
-							}
-						}
-						sheetCell.setCellValue(dataCell.getValue().toString());
-					} else {
-						// 字符
-						sheetCell.setCellValue(dataCell.getValue().toString());
+	/**
+	 * 写入单个数据单元格
+	 *
+	 * @param sheet    工作表
+	 * @param sheetRow 行
+	 * @param dataCell 数据单元格
+	 */
+	protected void writeDataCell(Sheet sheet, Row sheetRow,
+			org.colorcoding.ibas.importexport.transformer.template.Cell dataCell) {
+		if (dataCell == null || dataCell.getParent() == null) {
+			return;
+		}
+		Cell sheetCell = sheetRow.createCell(dataCell.getStartingColumn());
+		if (dataCell.getValue() != null) {
+			if (dataCell.getParent().getBindingClass() == DateTime.class) {
+				// 日期类型值
+				if (!DateTimes.VALUE_MIN.equals(dataCell.getValue())) {
+					if (dataCell.getValue() instanceof Date) {
+						sheetCell.setCellValue((Date) dataCell.getValue());
+					} else if (dataCell.getValue() instanceof String
+							&& !dataCell.getValue().equals(Strings.VALUE_EMPTY)) {
+						sheetCell.setCellValue(DateTimes.valueOf((String) dataCell.getValue()));
 					}
 				}
-				// 最后设置单元格格式
-				sheetCell.setCellStyle(this.getCellStyle(dataCell.getParent()));
+			} else if (dataCell.getParent().getBindingClass() == Float.class
+					|| dataCell.getParent().getBindingClass() == Double.class
+					|| dataCell.getParent().getBindingClass() == BigDecimal.class) {
+				// 小数类型
+				sheetCell.setCellValue(Numbers.toDouble(dataCell.getValue()));
+			} else if (dataCell.getParent().getBindingClass() == Long.class
+					|| dataCell.getParent().getBindingClass() == Integer.class
+					|| dataCell.getParent().getBindingClass() == Short.class
+					|| dataCell.getParent().getBindingClass() == BigInteger.class) {
+				// 数值类型
+				sheetCell.setCellValue(Numbers.toDouble(dataCell.getValue()));
+			} else if (dataCell.getParent().getBindingClass().isEnum()) {
+				// 枚举类型
+				sheetCell.setCellValue(dataCell.getValue().toString());
+			} else {
+				// 字符
+				sheetCell.setCellValue(dataCell.getValue().toString());
 			}
+		}
+		// 最后设置单元格格式
+		sheetCell.setCellStyle(this.getCellStyle(dataCell.getParent()));
+	}
+
+	/**
+	 * 设置枚举类型列的数据验证
+	 *
+	 * @param sheet    工作表
+	 * @param property 属性
+	 * @param startRow 起始行
+	 * @param endRow   结束行
+	 */
+	protected void setupEnumValidation(Sheet sheet, Property property, int startRow, int endRow) {
+		KeyValue[] values = Enums.toKeyValues(property.getBindingClass());
+		if (values.length > 0) {
+			String[] enumKeys = new String[values.length];
+			for (int i = 0; i < values.length; i++) {
+				enumKeys[i] = values[i].getKey();
+			}
+			DataValidationHelper dvHelper = sheet.getDataValidationHelper();
+			DataValidationConstraint dvConstraint = dvHelper.createExplicitListConstraint(enumKeys);
+			CellRangeAddressList regions = new CellRangeAddressList(startRow, endRow,
+					property.getStartingColumn(), property.getEndingColumn());
+			DataValidation validation = dvHelper.createValidation(dvConstraint, regions);
+			sheet.addValidationData(validation);
 		}
 	}
 
 	private Map<Property, CellStyle> cellStyles;
+	/** 缓存-表头样式 */
+	private CellStyle headStyle;
+	/** 缓存-对象头样式（按颜色索引） */
+	private CellStyle[] objectStyles;
+	/** 缓存-属性头样式 */
+	private CellStyle propertyStyle;
 
 	protected CellStyle getCellStyle(Property property) {
 		if (this.cellStyles == null) {
@@ -300,6 +397,98 @@ public class ExcelWriter extends FileWriter {
 			this.cellStyles.put(property, style);
 		}
 		return this.cellStyles.get(property);
+	}
+
+	/**
+	 * 获取表头样式（缓存）
+	 */
+	protected CellStyle getHeadStyle() {
+		if (this.headStyle == null) {
+			CellStyle style = this.getWorkbook().createCellStyle();
+			style.setFillForegroundColor(COLORS_HEAD);
+			style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			style.setAlignment(HorizontalAlignment.LEFT);
+			style.setVerticalAlignment(VerticalAlignment.CENTER);
+			Font font = this.getWorkbook().createFont();
+			font.setItalic(true);
+			font.setBold(true);
+			style.setFont(font);
+			this.headStyle = style;
+		}
+		return this.headStyle;
+	}
+
+	/**
+	 * 获取对象头样式（按颜色索引缓存，最多 COLORS_OBJECT.length 种）
+	 */
+	protected CellStyle getObjectStyle(int objectIndex) {
+		int colorIndex = objectIndex % COLORS_OBJECT.length;
+		if (this.objectStyles == null) {
+			this.objectStyles = new CellStyle[COLORS_OBJECT.length];
+		}
+		if (this.objectStyles[colorIndex] == null) {
+			CellStyle style = this.getWorkbook().createCellStyle();
+			style.setFillForegroundColor(COLORS_OBJECT[colorIndex]);
+			style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			style.setAlignment(HorizontalAlignment.CENTER);
+			style.setVerticalAlignment(VerticalAlignment.CENTER);
+			Font font = this.getWorkbook().createFont();
+			font.setBold(true);
+			style.setFont(font);
+			this.objectStyles[colorIndex] = style;
+		}
+		return this.objectStyles[colorIndex];
+	}
+
+	/**
+	 * 获取属性头样式（缓存）
+	 */
+	protected CellStyle getPropertyStyle() {
+		if (this.propertyStyle == null) {
+			CellStyle style = this.getWorkbook().createCellStyle();
+			style.setFillForegroundColor(COLORS_PROPERTY);
+			style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			style.setAlignment(HorizontalAlignment.CENTER);
+			style.setVerticalAlignment(VerticalAlignment.CENTER);
+			Font font = this.getWorkbook().createFont();
+			font.setBold(true);
+			style.setFont(font);
+			this.propertyStyle = style;
+		}
+		return this.propertyStyle;
+	}
+
+	/**
+	 * 清理样式缓存，释放资源
+	 */
+	private void clearStyleCache() {
+		if (this.cellStyles != null) {
+			this.cellStyles = null;
+		}
+		this.headStyle = null;
+		this.objectStyles = null;
+		this.propertyStyle = null;
+	}
+
+	/**
+	 * 释放资源（未调用 endWrite 时的安全清理）。
+	 * 关闭工作簿并清理 SXSSFWorkbook 的磁盘临时文件。
+	 */
+	public void dispose() {
+		if (this.workbook != null) {
+			try {
+				this.workbook.close();
+				if (this.workbook instanceof SXSSFWorkbook) {
+					((SXSSFWorkbook) this.workbook).dispose();
+				}
+			} catch (Exception e) {
+				// 释放资源时忽略异常
+			}
+			this.setWorkbook(null);
+		}
+		this.sheets.clear();
+		this.sheetRanges.clear();
+		this.clearStyleCache();
 	}
 
 }

@@ -41,6 +41,8 @@ import org.xml.sax.XMLReader;
  */
 public class ExcelReaderEx extends FileReader implements SheetContentsHandler {
 
+	private int sheetIndex = 0;
+
 	@Override
 	public void read(File file) throws ReadFileException, IOException {
 		if (this.getTemplate() == null) {
@@ -50,7 +52,8 @@ public class ExcelReaderEx extends FileReader implements SheetContentsHandler {
 			ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(pkg);
 			XSSFReader xssfReader = new XSSFReader(pkg);
 			XSSFReader.SheetIterator sheetIterator = (XSSFReader.SheetIterator) xssfReader.getSheetsData();
-			if (sheetIterator.hasNext()) {
+			this.sheetIndex = 0;
+			while (sheetIterator.hasNext()) {
 				try (InputStream stream = sheetIterator.next()) {
 					InputSource sheetSource = new InputSource(stream);
 					try {
@@ -65,6 +68,7 @@ public class ExcelReaderEx extends FileReader implements SheetContentsHandler {
 						throw new RuntimeException("SAX parser appears to be broken - " + e.getMessage());
 					}
 				}
+				this.sheetIndex++;
 			}
 		} catch (Exception e) {
 			throw new ReadFileException(e);
@@ -83,6 +87,10 @@ public class ExcelReaderEx extends FileReader implements SheetContentsHandler {
 
 	@Override
 	public void startRow(int rowNum) {
+		if (rowNum == 0 && this.sheetIndex > 0) {
+			// 新sheet开始，重置合并基础，避免跨sheet数据合并
+			this.previousCells = null;
+		}
 		currentRow = rowNum;
 		currentCol = -1;
 		if (this.currentCells == null) {
@@ -97,6 +105,10 @@ public class ExcelReaderEx extends FileReader implements SheetContentsHandler {
 	public void endRow(int rowNum) {
 		try {
 			if (this.currentCells == null || this.currentCells.isEmpty()) {
+				return;
+			}
+			if (this.sheetIndex > 0 && this.currentRow <= 2) {
+				// 后续sheet的头行（head/object/property），跳过
 				return;
 			}
 			if (this.currentRow == 0) {

@@ -1,5 +1,6 @@
 package org.colorcoding.ibas.importexport.transformer;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
@@ -40,39 +41,46 @@ public class XmlTransformer extends FileTransformerSerialization {
 	@Override
 	public List<Class<?>> getKnownTypes() {
 		List<Class<?>> knownTypes = super.getKnownTypes();
-		try (InputStream inputStream = new FileInputStream(this.getInputData())) {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document document = builder.parse(inputStream);
-			Element root = document.getDocumentElement();
-			if (root == null) {
-				return knownTypes;
-			}
-			if (Strings.equals(root.getNodeName(), ArrayList.class.getSimpleName(), true)
-					|| Strings.endsWith(root.getNodeName(), ":" + ArrayList.class.getSimpleName(), true)) {
-				// 根元素是ArrayList
-				knownTypes.add(ArrayList.class);
-			}
-			NodeList nodeList = root.getElementsByTagName(NODE_BO_CODE_NAME);
-			for (int i = 0; i < nodeList.getLength(); i++) {
-				Node node = nodeList.item(i);
-				String boCode = node.getTextContent();
-				if (Strings.isNullOrEmpty(boCode)) {
+		if (this.getInputData() == null || this.getInputData().isEmpty()) {
+			return knownTypes;
+		}
+		for (File inputFile : this.getInputData()) {
+			try (InputStream inputStream = new FileInputStream(inputFile)) {
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder builder = factory.newDocumentBuilder();
+				Document document = builder.parse(inputStream);
+				Element root = document.getDocumentElement();
+				if (root == null) {
 					continue;
 				}
-				boCode = MyConfiguration.applyVariables(boCode);
-				Class<?> boType = BOFactory.classOf(boCode);
-				if (boType == null) {
-					Logger.log(MessageLevel.WARN, "transformer: [%s] not found [%s]'s class.",
-							this.getClass().getSimpleName(), boCode);
-				} else if (!knownTypes.contains(boType)) {
-					Logger.log(MessageLevel.INFO, "transformer: [%s] found class [%s|%s].",
-							this.getClass().getSimpleName(), boCode, boType.getName());
-					knownTypes.add(boType);
+				if (Strings.equals(root.getNodeName(), ArrayList.class.getSimpleName(), true)
+						|| Strings.endsWith(root.getNodeName(), ":" + ArrayList.class.getSimpleName(), true)) {
+					// 根元素是ArrayList
+					if (!knownTypes.contains(ArrayList.class)) {
+						knownTypes.add(ArrayList.class);
+					}
 				}
+				NodeList nodeList = root.getElementsByTagName(NODE_BO_CODE_NAME);
+				for (int i = 0; i < nodeList.getLength(); i++) {
+					Node node = nodeList.item(i);
+					String boCode = node.getTextContent();
+					if (Strings.isNullOrEmpty(boCode)) {
+						continue;
+					}
+					boCode = MyConfiguration.applyVariables(boCode);
+					Class<?> boType = BOFactory.classOf(boCode);
+					if (boType == null) {
+						Logger.log(MessageLevel.WARN, "transformer: [%s] not found [%s]'s class.",
+								this.getClass().getSimpleName(), boCode);
+					} else if (!knownTypes.contains(boType)) {
+						Logger.log(MessageLevel.INFO, "transformer: [%s] found class [%s|%s].",
+								this.getClass().getSimpleName(), boCode, boType.getName());
+						knownTypes.add(boType);
+					}
+				}
+			} catch (Exception e) {
+				Logger.log(MessageLevel.WARN, e);
 			}
-		} catch (Exception e) {
-			Logger.log(MessageLevel.DEBUG, e);
 		}
 		return knownTypes;
 	}

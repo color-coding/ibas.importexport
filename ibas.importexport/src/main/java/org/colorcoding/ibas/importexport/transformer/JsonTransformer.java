@@ -1,5 +1,6 @@
 package org.colorcoding.ibas.importexport.transformer;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
@@ -8,6 +9,7 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 
@@ -38,40 +40,48 @@ public class JsonTransformer extends FileTransformerSerialization {
 
 	public List<Class<?>> getKnownTypes() {
 		List<Class<?>> knownTypes = super.getKnownTypes();
-		try (InputStream inputStream = new FileInputStream(this.getInputData())) {
-			JsonArray jsonArray = null;
-			JsonStructure jsonStructure = Json.createReader(inputStream).read();
-			if (jsonStructure.getValueType() == JsonValue.ValueType.OBJECT) {
-				JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-				arrayBuilder.add(jsonStructure);
-				jsonArray = arrayBuilder.build();
-			} else if (jsonStructure.getValueType() == JsonValue.ValueType.ARRAY) {
-				jsonArray = jsonStructure.asJsonArray();
-				knownTypes.add(ArrayList.class);
-			}
-			if (jsonArray == null) {
-				return knownTypes;
-			}
-			JsonObject jsonObject;
-			for (int i = 0; i < jsonArray.size(); i++) {
-				jsonObject = jsonArray.getJsonObject(i);
-				String boCode = jsonObject.getString(NODE_BO_CODE_NAME);
-				if (Strings.isNullOrEmpty(boCode)) {
+		if (this.getInputData() == null || this.getInputData().isEmpty()) {
+			return knownTypes;
+		}
+		for (File inputFile : this.getInputData()) {
+			try (InputStream inputStream = new FileInputStream(inputFile);
+					JsonReader reader = Json.createReader(inputStream)) {
+				JsonArray jsonArray = null;
+				JsonStructure jsonStructure = reader.read();
+				if (jsonStructure.getValueType() == JsonValue.ValueType.OBJECT) {
+					JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+					arrayBuilder.add(jsonStructure);
+					jsonArray = arrayBuilder.build();
+				} else if (jsonStructure.getValueType() == JsonValue.ValueType.ARRAY) {
+					jsonArray = jsonStructure.asJsonArray();
+					if (!knownTypes.contains(ArrayList.class)) {
+						knownTypes.add(ArrayList.class);
+					}
+				}
+				if (jsonArray == null) {
 					continue;
 				}
-				boCode = MyConfiguration.applyVariables(boCode);
-				Class<?> boType = BOFactory.classOf(boCode);
-				if (boType == null) {
-					Logger.log(MessageLevel.WARN, "transformer: [%s] not found [%s]'s class.",
-							this.getClass().getSimpleName(), boCode);
-				} else if (!knownTypes.contains(boType)) {
-					Logger.log(MessageLevel.INFO, "transformer: [%s] found class [%s|%s].",
-							this.getClass().getSimpleName(), boCode, boType.getName());
-					knownTypes.add(boType);
+				JsonObject jsonObject;
+				for (int i = 0; i < jsonArray.size(); i++) {
+					jsonObject = jsonArray.getJsonObject(i);
+					String boCode = jsonObject.getString(NODE_BO_CODE_NAME);
+					if (Strings.isNullOrEmpty(boCode)) {
+						continue;
+					}
+					boCode = MyConfiguration.applyVariables(boCode);
+					Class<?> boType = BOFactory.classOf(boCode);
+					if (boType == null) {
+						Logger.log(MessageLevel.WARN, "transformer: [%s] not found [%s]'s class.",
+								this.getClass().getSimpleName(), boCode);
+					} else if (!knownTypes.contains(boType)) {
+						Logger.log(MessageLevel.INFO, "transformer: [%s] found class [%s|%s].",
+								this.getClass().getSimpleName(), boCode, boType.getName());
+						knownTypes.add(boType);
+					}
 				}
+			} catch (Exception e) {
+				Logger.log(MessageLevel.WARN, e);
 			}
-		} catch (Exception e) {
-			Logger.log(MessageLevel.DEBUG, e);
 		}
 		return knownTypes;
 	}

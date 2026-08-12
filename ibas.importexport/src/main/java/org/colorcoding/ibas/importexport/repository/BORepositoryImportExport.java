@@ -3,11 +3,19 @@ package org.colorcoding.ibas.importexport.repository;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
 
 import org.colorcoding.ibas.bobas.bo.BOFactory;
 import org.colorcoding.ibas.bobas.bo.BOUtilities;
 import org.colorcoding.ibas.bobas.bo.BusinessObject;
+import org.colorcoding.ibas.bobas.bo.IBODocument;
+import org.colorcoding.ibas.bobas.bo.IBODocumentLine;
+import org.colorcoding.ibas.bobas.bo.IBOLine;
+import org.colorcoding.ibas.bobas.bo.IBOMasterData;
+import org.colorcoding.ibas.bobas.bo.IBOMasterDataLine;
+import org.colorcoding.ibas.bobas.bo.IBOSimple;
+import org.colorcoding.ibas.bobas.bo.IBOSimpleLine;
 import org.colorcoding.ibas.bobas.bo.IBOStorageTag;
 import org.colorcoding.ibas.bobas.bo.IBusinessObject;
 import org.colorcoding.ibas.bobas.common.ConditionOperation;
@@ -19,15 +27,18 @@ import org.colorcoding.ibas.bobas.common.Files;
 import org.colorcoding.ibas.bobas.common.ICondition;
 import org.colorcoding.ibas.bobas.common.ICriteria;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
+import org.colorcoding.ibas.bobas.common.ISort;
 import org.colorcoding.ibas.bobas.common.Numbers;
 import org.colorcoding.ibas.bobas.common.OperationResult;
+import org.colorcoding.ibas.bobas.common.SortType;
 import org.colorcoding.ibas.bobas.common.Strings;
+import org.colorcoding.ibas.bobas.core.IPropertyInfo;
 import org.colorcoding.ibas.bobas.core.fields.IFieldData;
 import org.colorcoding.ibas.bobas.core.fields.IManagedFields;
 import org.colorcoding.ibas.bobas.data.ArrayList;
 import org.colorcoding.ibas.bobas.data.KeyText;
-import org.colorcoding.ibas.bobas.data.List;
 import org.colorcoding.ibas.bobas.data.emYesNo;
+import org.colorcoding.ibas.bobas.db.DbTransaction;
 import org.colorcoding.ibas.bobas.file.FileItem;
 import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
@@ -215,7 +226,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			}
 			Logger.log(MessageLevel.DEBUG, MSG_TRANSFORMER_IMPORT_DATA, transformer.getClass().getName());
 			// 转换文件数据到业务对象
-			transformer.setInputData(Files.valueOf(data.getPath()));
+			transformer.addInputData(Files.valueOf(data.getPath()));
 			transformer.transform();
 			OperationResult<String> operationResult = new OperationResult<String>();
 			// 返回存储事务标记
@@ -230,9 +241,12 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			transformer = null;
 			type = null;
 			// 保存业务对象
+			IBOStorageTag tag;
 			ICriteria criteria;
 			IBusinessObject newItem;
+			IDataOwnership ownership;
 			DataUpdater dataUpdater;
+			StringBuilder stringBuilder;
 			IOperationResult<IBusinessObject> opRsltExists, opRsltDelete, opRsltSave;
 
 			for (int i = 0; i < outputDatas.size(); i++) {
@@ -240,28 +254,31 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 					newItem = outputDatas.get(i);
 					// 调试模式，输出识别对象
 					if (MyConfiguration.isDebugMode()) {
-						StringBuilder stringBuilder = new StringBuilder();
+						stringBuilder = new StringBuilder();
 						stringBuilder.append("transformer:");
 						stringBuilder.append(" ");
 						stringBuilder.append("be imported data");
 						stringBuilder.append(System.getProperty("line.seperator", "\n"));
 						stringBuilder.append(BOUtilities.toXmlString(newItem));
 						Logger.log(MessageLevel.DEBUG, stringBuilder.toString());
+						stringBuilder = null;
 					}
 					// 导入的数据，源标记为I
 					if (newItem instanceof IBOStorageTag) {
-						IBOStorageTag tag = (IBOStorageTag) newItem;
+						tag = (IBOStorageTag) newItem;
 						tag.setDataSource(MyConfiguration.SIGN_DATA_SOURCE);
+						tag = null;
 					}
 					// 设置数据所有者
 					if (newItem instanceof IDataOwnership) {
-						IDataOwnership ownership = (IDataOwnership) newItem;
+						ownership = (IDataOwnership) newItem;
 						if (ownership.getDataOwner() == null || ownership.getDataOwner() == 0) {
 							ownership.setDataOwner(this.getCurrentUser().getId());
 						}
 						if (ownership.getOrganization() == null || ownership.getOrganization().isEmpty()) {
 							ownership.setOrganization(this.getCurrentUser().getBelong());
 						}
+						ownership = null;
 					}
 					boolean myTrans = this.beginTransaction();
 					try {
@@ -303,6 +320,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 										}
 										operationResult.addInformations("DELETED_EXISTS_DATA", oldItem.toString(),
 												"DATA_IMPORT");
+										opRsltDelete = null;
 									}
 								}
 							} else if (updateMethod == emDataUpdateMethod.MODIFY) {
@@ -314,6 +332,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 									((BusinessObject<?>) newItem).markNew();
 								}
 							}
+							opRsltExists = null;
 						}
 						if (newItem == null) {
 							if (myTrans) {
@@ -332,8 +351,11 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 						if (myTrans) {
 							this.commitTransaction();
 						}
+						criteria = null;
+						opRsltSave = null;
+						dataUpdater = null;
 					} catch (Exception e) {
-						operationResult.addResultObjects(e.getMessage());
+						operationResult.addInformations("IMPORT_ERROR", e.getMessage(), "DATA_IMPORT");
 						if (myTrans) {
 							try {
 								this.rollbackTransaction();
@@ -344,6 +366,12 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 						}
 						throw e;
 					}
+					newItem = null;
+					outputDatas.set(i, null);
+					// 自行管理的事务，清理缓存释放业务逻辑影响对象的引用
+					if (myTrans && this.getTransaction() instanceof DbTransaction) {
+						((DbTransaction) this.getTransaction()).clearCache();
+					}
 				} catch (Exception e) {
 					throw new Exception(I18N.prop("msg_ie_input_data_failed", i + 1), e);
 				}
@@ -351,9 +379,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			operationResult.addInformations("SAVE_DATA_COUNT",
 					String.valueOf(operationResult.getResultObjects().size()), "DATA_IMPORT");
 			return operationResult;
-		} catch (
-
-		Exception e) {
+		} catch (Exception e) {
 			Logger.log(e);
 			return new OperationResult<String>(e);
 		}
@@ -401,23 +427,108 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 				if (boType == null) {
 					throw new Exception(I18N.prop("msg_ie_not_found_class", criteria.getBusinessObject()));
 				}
+				boolean transformed = false;
 				if (criteria.getConditions().isEmpty()) {
 					// 没有条件，认为是只要模板
 					Object object = boType.newInstance();
 					if (object instanceof IBusinessObject) {
-						fileTransformer.setInputData(new IBusinessObject[] { (IBusinessObject) object });
+						fileTransformer.addInputData((IBusinessObject) object);
 					}
+					// 导出数据
+					fileTransformer.transform();
+					transformed = true;
 				} else {
-					// 查询并返回数据
-					IOperationResult<IBusinessObject> opRsltFetch = this.fetch(boType, criteria, token);
-					if (opRsltFetch.getError() != null) {
-						throw opRsltFetch.getError();
+					// 分批查询数据
+					int batchSize = MyConfiguration.getConfigValue(MyConfiguration.CONFIG_ITEM_DB_STATEMENT_BATCH_COUNT,
+							512);
+					ICriteria batchCriteria = criteria.clone();
+					batchCriteria.setResultCount(batchSize);
+					// 无排序时，根据对象类型增加主键排序，确保分页查询结果有序
+					if (batchCriteria.getSorts().isEmpty()) {
+						if (IBOSimple.class.isAssignableFrom(boType)) {
+							ISort sort = batchCriteria.getSorts().create();
+							sort.setAlias(IBOSimple.MASTER_PRIMARY_KEY_NAME);
+							sort.setSortType(SortType.ASCENDING);
+						} else if (IBODocument.class.isAssignableFrom(boType)) {
+							ISort sort = batchCriteria.getSorts().create();
+							sort.setAlias(IBODocument.MASTER_PRIMARY_KEY_NAME);
+							sort.setSortType(SortType.ASCENDING);
+						} else if (IBOMasterData.class.isAssignableFrom(boType)) {
+							ISort sort = batchCriteria.getSorts().create();
+							sort.setAlias(IBOMasterData.MASTER_PRIMARY_KEY_NAME);
+							sort.setSortType(SortType.ASCENDING);
+						} else if (IBOSimpleLine.class.isAssignableFrom(boType)) {
+							ISort sort = batchCriteria.getSorts().create();
+							sort.setAlias(IBOSimpleLine.MASTER_PRIMARY_KEY_NAME);
+							sort.setSortType(SortType.ASCENDING);
+							sort = batchCriteria.getSorts().create();
+							sort.setAlias(IBOLine.SECONDARY_PRIMARY_KEY_NAME);
+							sort.setSortType(SortType.ASCENDING);
+						} else if (IBODocumentLine.class.isAssignableFrom(boType)) {
+							ISort sort = batchCriteria.getSorts().create();
+							sort.setAlias(IBODocumentLine.MASTER_PRIMARY_KEY_NAME);
+							sort.setSortType(SortType.ASCENDING);
+							sort = batchCriteria.getSorts().create();
+							sort.setAlias(IBOLine.SECONDARY_PRIMARY_KEY_NAME);
+							sort.setSortType(SortType.ASCENDING);
+						} else if (IBOMasterDataLine.class.isAssignableFrom(boType)) {
+							ISort sort = batchCriteria.getSorts().create();
+							sort.setAlias(IBOMasterDataLine.MASTER_PRIMARY_KEY_NAME);
+							sort.setSortType(SortType.ASCENDING);
+							sort = batchCriteria.getSorts().create();
+							sort.setAlias(IBOLine.SECONDARY_PRIMARY_KEY_NAME);
+							sort.setSortType(SortType.ASCENDING);
+						} else {
+							for (IPropertyInfo<?> propertyInfo : BOFactory.propertyInfos(boType)) {
+								if (!propertyInfo.isPrimaryKey()) {
+									continue;
+								}
+								ISort sort = batchCriteria.getSorts().create();
+								sort.setAlias(propertyInfo.getName());
+								sort.setSortType(SortType.ASCENDING);
+							}
+						}
 					}
-					fileTransformer.setInputData(opRsltFetch.getResultObjects().toArray(new IBusinessObject[] {}));
+					IBusinessObject lastBO = null;
+					do {
+						ICriteria currentCriteria;
+						if (lastBO != null) {
+							currentCriteria = batchCriteria.next(lastBO);
+							if (currentCriteria == null) {
+								break;
+							}
+						} else {
+							// 克隆避免 fetch 修改原始 criteria 影响后续分页
+							currentCriteria = batchCriteria.clone();
+						}
+						// 查询数据；当总记录数恰好是 batchSize 整数倍时会多一次空查询，
+						// 这是“取到不足一页即结束”模式下的固有开销，无法通过当前 repository API 避免。
+						IOperationResult<IBusinessObject> opRsltFetch = this.fetch(boType, currentCriteria, token);
+						if (opRsltFetch.getError() != null) {
+							throw opRsltFetch.getError();
+						}
+						if (opRsltFetch.getResultObjects().isEmpty()) {
+							break;
+						}
+						// 添加输入数据并转换
+						fileTransformer.addInputData(opRsltFetch.getResultObjects());
+						fileTransformer.transform();
+						transformed = true;
+						Logger.log(MessageLevel.DEBUG, "transformer: batch transformed, count [%s].",
+								opRsltFetch.getResultObjects().size());
+						// 记录最后一条数据，用于下一批查询
+						lastBO = opRsltFetch.getResultObjects().lastOrDefault();
+						// 查询结果少于批次大小，说明没有更多数据
+						if (opRsltFetch.getResultObjects().size() < batchSize) {
+							break;
+						}
+					} while (lastBO != null);
 				}
-				// 导出数据
-				fileTransformer.transform();
-				File file = fileTransformer.getOutputData().firstOrDefault();
+				File file = null;
+				if (transformed) {
+					// 已调用过 transform()，获取输出（可能触发文件写入）
+					file = fileTransformer.getOutputData().get(0);
+				}
 				if (file == null) {
 					throw new Exception(I18N.prop("msg_ie_no_transformed_data"));
 				}
@@ -430,13 +541,13 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 				TemplateTransformer templateTransformer = (TemplateTransformer) transformer;
 				templateTransformer.setWorkFolder(MyConfiguration.getTempFolder());
 				templateTransformer.setTemplate(info.getTemplate());
-				templateTransformer.setInputData(info.getContent());
+				templateTransformer.addInputData(info.getContent());
 				// 传递参数
 				templateTransformer.newParam("UserToken", token); // 用户口令
 				templateTransformer.newParam("EmbedImage", true); // 签入图片
 
 				templateTransformer.transform();
-				File file = templateTransformer.getOutputData().firstOrDefault();
+				File file = templateTransformer.getOutputData().get(0);
 				if (file == null) {
 					throw new Exception(I18N.prop("msg_ie_no_transformed_data"));
 				}
@@ -582,13 +693,13 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 
 	@Override
 	public IOperationResult<IExportRecord> writeExportRecord(String boKeys, String cause, String content) {
-		return this.writeExportRecord(boKeys, cause, content);
+		return new OperationResult<IExportRecord>(this.writeExportRecord(boKeys, cause, content, this.getUserToken()));
 	}
 
 	@Override
 	public OperationResult<ExportRecord> writeExportRecord(String boKeys, String cause, String content, String token) {
 		try (BORepositoryImportExport boRepository = new BORepositoryImportExport()) {
-			this.setUserToken(token);
+			boRepository.setUserToken(token);
 			ICriteria criteria = Criteria.create(boKeys);
 			if (criteria == null || Strings.isNullOrEmpty(criteria.getBusinessObject())
 					|| criteria.getConditions().isEmpty()) {
@@ -601,7 +712,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 			record.setBOCode(criteria.getBusinessObject());
 			record.setExportDate(DateTimes.today());
 			record.setExportTime(Short.valueOf(DateTimes.now().toString("HHmm")));
-			record.setExportUser(this.getCurrentUser().getId());
+			record.setExportUser(boRepository.getCurrentUser().getId());
 			// 获取导出的对象并修改状态
 			try {
 				boRepository.beginTransaction();
