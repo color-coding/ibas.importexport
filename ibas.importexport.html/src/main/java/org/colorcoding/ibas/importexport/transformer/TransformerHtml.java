@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.List;
@@ -858,7 +859,7 @@ public class TransformerHtml extends ExportTemplateTransformer {
 		}
 		HttpURLConnection connection = null;
 		try {
-			URL url = new URL(imageUrl);
+			URL url = URI.create(imageUrl).toURL();
 			connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("GET");
 			connection.setConnectTimeout(10000);

@@ -1,6 +1,6 @@
 package org.colorcoding.ibas.importexport.data;
 
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.colorcoding.ibas.bobas.common.Value;
 import org.colorcoding.ibas.importexport.MyConfiguration;

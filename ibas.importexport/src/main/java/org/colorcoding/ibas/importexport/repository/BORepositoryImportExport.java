@@ -430,7 +430,7 @@ public class BORepositoryImportExport extends BORepositoryServiceApplication
 				boolean transformed = false;
 				if (criteria.getConditions().isEmpty()) {
 					// 没有条件，认为是只要模板
-					Object object = boType.newInstance();
+					Object object = boType.getConstructor().newInstance();
 					if (object instanceof IBusinessObject) {
 						fileTransformer.addInputData((IBusinessObject) object);
 					}

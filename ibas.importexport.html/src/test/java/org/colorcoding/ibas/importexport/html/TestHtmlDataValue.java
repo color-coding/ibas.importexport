@@ -10,8 +10,12 @@ import org.colorcoding.ibas.importexport.transformer.TransformerHtml;
 /**
  * HTML 数据值提取 测试。
  *
- * <p>覆盖：TH-T10 ~ TH-T13</p>
- * <p>核心：{@link TransformerHtml#dataValue(String, Object)} 的 JsonPath 路径解析</p>
+ * <p>
+ * 覆盖：TH-T10 ~ TH-T13
+ * </p>
+ * <p>
+ * 核心：{@link TransformerHtml#dataValue(String, Object)} 的 JsonPath 路径解析
+ * </p>
  */
 public class TestHtmlDataValue extends AbstractHtmlTestCase {
 
@@ -22,7 +26,6 @@ public class TestHtmlDataValue extends AbstractHtmlTestCase {
 			return new ArrayList<>();
 		}
 
-		@SuppressWarnings("unchecked")
 		public <T> T callDataValue(String name, T defaults) {
 			return (T) this.dataValue(name, defaults);
 		}
@@ -51,8 +54,7 @@ public class TestHtmlDataValue extends AbstractHtmlTestCase {
 
 	public void testTH_T11_PathNotFound_Default() {
 		HtmlStub stub = createStub("[{\"Name\":\"Alice\"}]");
-		assertEquals("Default for missing path.", "fallback",
-				stub.callDataValue("$[0].NotExists", "fallback"));
+		assertEquals("Default for missing path.", "fallback", stub.callDataValue("$[0].NotExists", "fallback"));
 		assertNull("Null default for missing path.", stub.callDataValue("$[0].NotExists", (String) null));
 	}
 
@@ -79,9 +81,7 @@ public class TestHtmlDataValue extends AbstractHtmlTestCase {
 	public void testTH_T13_NestedPropertyChain() {
 		String json = "[{\"Customer\":{\"Name\":\"Acme Corp\",\"Phone\":\"123456\"}}]";
 		HtmlStub stub = createStub(json);
-		assertEquals("Nested name.", "Acme Corp",
-				stub.callDataValue("$[0].Customer.Name", ""));
-		assertEquals("Nested phone.", "123456",
-				stub.callDataValue("$[0].Customer.Phone", ""));
+		assertEquals("Nested name.", "Acme Corp", stub.callDataValue("$[0].Customer.Name", ""));
+		assertEquals("Nested phone.", "123456", stub.callDataValue("$[0].Customer.Phone", ""));
 	}
 }

@@ -1,7 +1,5 @@
 package org.colorcoding.ibas.importexport.transformer;
 
-import java.io.File;
-
 import org.colorcoding.ibas.bobas.bo.BusinessObject;
 import org.colorcoding.ibas.bobas.bo.IBODocument;
 import org.colorcoding.ibas.bobas.bo.IBODocumentLine;

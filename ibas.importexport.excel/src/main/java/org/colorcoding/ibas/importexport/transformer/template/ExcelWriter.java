@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Date;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -213,7 +213,6 @@ public class ExcelWriter extends FileWriter {
 		} finally {
 			if (this.workbook != null) {
 				this.workbook.close();
-				((SXSSFWorkbook) this.workbook).dispose();
 				this.setWorkbook(null);
 			}
 			this.clearStyleCache();
@@ -221,7 +220,6 @@ public class ExcelWriter extends FileWriter {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void write(File file) throws WriteFileException, IOException {
 		this.beginWrite();
 		this.writeDatas();
@@ -260,8 +258,8 @@ public class ExcelWriter extends FileWriter {
 		Object[] objects = this.getTemplate().getObjects();
 		for (Object object : objects) {
 			if (object.getEndingColumn() > object.getStartingColumn()) {
-				range = new CellRangeAddress(object.getStartingRow(), object.getEndingRow(),
-						object.getStartingColumn(), object.getEndingColumn());
+				range = new CellRangeAddress(object.getStartingRow(), object.getEndingRow(), object.getStartingColumn(),
+						object.getEndingColumn());
 				sheet.addMergedRegion(range);
 			}
 		}
@@ -366,8 +364,8 @@ public class ExcelWriter extends FileWriter {
 			}
 			DataValidationHelper dvHelper = sheet.getDataValidationHelper();
 			DataValidationConstraint dvConstraint = dvHelper.createExplicitListConstraint(enumKeys);
-			CellRangeAddressList regions = new CellRangeAddressList(startRow, endRow,
-					property.getStartingColumn(), property.getEndingColumn());
+			CellRangeAddressList regions = new CellRangeAddressList(startRow, endRow, property.getStartingColumn(),
+					property.getEndingColumn());
 			DataValidation validation = dvHelper.createValidation(dvConstraint, regions);
 			sheet.addValidationData(validation);
 		}
@@ -471,15 +469,14 @@ public class ExcelWriter extends FileWriter {
 	}
 
 	/**
-	 * 释放资源（未调用 endWrite 时的安全清理）。
-	 * 关闭工作簿并清理 SXSSFWorkbook 的磁盘临时文件。
+	 * 释放资源（未调用 endWrite 时的安全清理）。 关闭工作簿并清理 SXSSFWorkbook 的磁盘临时文件。
 	 */
 	public void dispose() {
 		if (this.workbook != null) {
 			try {
 				this.workbook.close();
 				if (this.workbook instanceof SXSSFWorkbook) {
-					((SXSSFWorkbook) this.workbook).dispose();
+					this.workbook.close();
 				}
 			} catch (Exception e) {
 				// 释放资源时忽略异常

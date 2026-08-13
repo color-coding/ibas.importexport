@@ -6,7 +6,6 @@ import org.colorcoding.ibas.bobas.bo.BOFactory;
 import org.colorcoding.ibas.bobas.common.DateTimes;
 import org.colorcoding.ibas.bobas.configuration.Configuration;
 import org.colorcoding.ibas.bobas.data.emYesNo;
-import org.colorcoding.ibas.importexport.MyConfiguration;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.ExportTemplate;
 import org.colorcoding.ibas.importexport.bo.exporttemplate.IExportTemplateItem;
 
@@ -15,15 +14,18 @@ import junit.framework.TestCase;
 /**
  * Excel 转换者测试基类。
  *
- * <p>提供：BO 构造、断言辅助等公共方法。</p>
- * <p>风格参考：ibas.purchase.AbstractPurchaseQuantityTestCase</p>
+ * <p>
+ * 提供：BO 构造、断言辅助等公共方法。
+ * </p>
+ * <p>
+ * 风格参考：ibas.purchase.AbstractPurchaseQuantityTestCase
+ * </p>
  */
 public abstract class AbstractExcelTestCase extends TestCase {
 
 	static {
 		// 使用英文，跳过 TransformerExcel.describing() 的数据库查询
-		Configuration.addConfigValue(
-				org.colorcoding.ibas.bobas.MyConfiguration.CONFIG_ITEM_LANGUAGE_CODE, "en");
+		Configuration.addConfigValue(org.colorcoding.ibas.bobas.MyConfiguration.CONFIG_ITEM_LANGUAGE_CODE, "en");
 	}
 
 	/** 注册业务对象命名空间 */

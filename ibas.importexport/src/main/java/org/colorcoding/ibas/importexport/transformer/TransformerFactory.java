@@ -86,7 +86,7 @@ public final class TransformerFactory {
 			throw new TransformException(I18N.prop("msg_ie_not_found_transformer", sign));
 		}
 		try {
-			return (T) clazz.newInstance();
+			return (T) clazz.getConstructor().newInstance();
 		} catch (Exception e) {
 			throw new TransformException(e);
 		}
