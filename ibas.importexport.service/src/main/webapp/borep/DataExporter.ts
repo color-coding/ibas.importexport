@@ -212,14 +212,23 @@ namespace importexport {
                         let workBook: XLSX.WorkBook = XLSX.utils.book_new();
                         let sheet: XLSX.Sheet = XLSX.utils.aoa_to_sheet(sheetDatas);
                         XLSX.utils.book_append_sheet(workBook, sheet, !ibas.strings.isEmpty(table.description) ? table.description : table.name);
-                        let outWorkBook: any = XLSX.write(workBook, this.writingOptions());
-                        let result: DataExportResultBlob = new DataExportResultBlob(new Blob([outWorkBook], { type: "application/octet-stream" }));
+                        let writingOptions: any = this.writingOptions();
+                        let outWorkBook: any = XLSX.write(workBook, writingOptions);
+                        let blobParts: any[] = new Array<any>();
+                        if (writingOptions.bookType === "csv") {
+                            // 添加 UTF-8 BOM，确保 Excel 按 UTF-8 读取中文 CSV。
+                            blobParts.push("\ufeff");
+                        }
+                        blobParts.push(outWorkBook);
+                        let result: DataExportResultBlob = new DataExportResultBlob(new Blob(blobParts, {
+                            type: writingOptions.bookType === "csv" ? "text/csv;charset=utf-8" : "application/octet-stream"
+                        }));
                         result.fileName = table.description;
                         if (ibas.strings.isEmpty(result.fileName)) {
                             result.fileName = "datatable";
                         }
                         result.fileName = ibas.strings.format("{0}_{1}.{2}",
-                            result.fileName, ibas.dates.toString(ibas.dates.now(), "yyyyMMddHHss"), this.writingOptions().bookType);
+                            result.fileName, ibas.dates.toString(ibas.dates.now(), "yyyyMMddHHss"), writingOptions.bookType);
                         caller.onCompleted(new ibas.OperationResult<DataExportResultBlob>().addResults(result));
                     }, (error: RequireError) => {
                         caller.onCompleted(new ibas.OperationResult<DataExportResultBlob>(error));

@@ -87,8 +87,39 @@ namespace importexport {
                             reader.onload = (event) => {
                                 let workbook: XLSX.WorkBook;
                                 let data: any = event.target.result;
-                                if (file.type === "text/csv") {
-                                    let sData: string = cptable.utils.decode(936, data);
+                                if (file.type.toLowerCase().indexOf("text/csv") === 0) {
+                                    // CSV 文件可能是 UTF-8（带 BOM）或本地 GBK 编码。
+                                    // 先识别 UTF-8 BOM，避免将 UTF-8 字节按 GBK 解码导致中文乱码。
+                                    let bytes: Uint8Array = new Uint8Array(data.length);
+                                    for (let i: number = 0; i < data.length; i++) {
+                                        bytes[i] = data.charCodeAt(i) & 0xff;
+                                    }
+                                    let isUtf8Bom: boolean = bytes.length >= 3
+                                        && bytes[0] === 0xef
+                                        && bytes[1] === 0xbb
+                                        && bytes[2] === 0xbf;
+                                    let fileType: string = file.type.toLowerCase();
+                                    let isUtf8: boolean = isUtf8Bom
+                                        || fileType.indexOf("charset=utf-8") >= 0
+                                        || fileType.indexOf("charset=utf8") >= 0;
+                                    if (!isUtf8) {
+                                        // 无 BOM 时校验字节序列，识别 UTF-8，避免误按 GBK 解码。
+                                        try {
+                                            new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+                                            isUtf8 = true;
+                                        } catch (error) {
+                                            // 非 UTF-8 文件按 GBK 处理。
+                                        }
+                                    }
+                                    let sData: string;
+                                    if (isUtf8) {
+                                        sData = new TextDecoder("utf-8").decode(bytes);
+                                    } else {
+                                        sData = cptable.utils.decode(936, data);
+                                    }
+                                    if (sData.charCodeAt(0) === 0xfeff) {
+                                        sData = sData.substring(1);
+                                    }
                                     workbook = XLSX.read(sData, { type: "string" });
                                 } else {
                                     workbook = XLSX.read(data, { type: "array" });
@@ -153,7 +184,7 @@ namespace importexport {
                             reader.onerror = (event) => {
                                 this.messages(new Error(event.target?.error?.message));
                             };
-                            if (file.type === "text/csv") {
+                            if (file.type.toLowerCase().indexOf("text/csv") === 0) {
                                 reader.readAsBinaryString(file);
                             } else {
                                 reader.readAsArrayBuffer(file);

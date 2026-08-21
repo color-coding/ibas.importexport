@@ -8,7 +8,7 @@
 namespace importexport {
     export namespace app {
         /** 编辑应用-导出模板 */
-        export class ExportTemplateEditApp extends ibas.BOEditApplication<IExportTemplateEditView, bo.ExportTemplate> {
+        export class ExportTemplateEditApp extends ibas.BOEditService<IExportTemplateEditView, bo.ExportTemplate> {
 
             /** 应用标识 */
             static APPLICATION_ID: string = "72869ec1-90de-4354-8a2c-1c06f2184a53";
@@ -499,6 +499,21 @@ namespace importexport {
             removeAppendixEvent: Function;
             /** 显示数据-附录 */
             showAppendixes(datas: bo.ExportTemplateAppendix[]): void;
+        }
+        /** ExportTemplate编辑服务映射 */
+        export class ExportTemplateEditServiceMapping extends ibas.BOEditServiceMapping {
+            /** 构造函数 */
+            constructor() {
+                super();
+                this.id = ExportTemplateEditApp.APPLICATION_ID;
+                this.name = ExportTemplateEditApp.APPLICATION_NAME;
+                this.boCode = ExportTemplateEditApp.BUSINESS_OBJECT_CODE;
+                this.description = ibas.i18n.prop(this.name);
+            }
+            /** 创建服务实例 */
+            create(): ibas.IService<ibas.IBOEditServiceCaller<bo.ExportTemplate>> {
+                return new ExportTemplateEditApp();
+            }
         }
     }
 }
