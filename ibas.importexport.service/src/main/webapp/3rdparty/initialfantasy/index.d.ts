@@ -4719,6 +4719,11 @@ declare namespace initialfantasy {
              */
             fetchBOLogst(fetcher: ibas.IFetchCaller<bo.BOLogst>): void;
             /**
+             * 删除 业务对象日志
+             * @param fetcher 调用者
+             */
+            deleteBOLogst(fetcher: ibas.IFetchCaller<bo.BOLogst>): void;
+            /**
              * 查询 业务对象关系
              * @param fetcher 查询者
              */
@@ -5048,7 +5053,7 @@ declare namespace initialfantasy {
 declare namespace initialfantasy {
     namespace app {
         /** 编辑应用-应用程序元素 */
-        class ApplicationElementEditApp extends ibas.BOEditApplication<IApplicationElementEditView, bo.ApplicationElement> {
+        class ApplicationElementEditApp extends ibas.BOEditService<IApplicationElementEditView, bo.ApplicationElement> {
             /** 应用标识 */
             static APPLICATION_ID: string;
             /** 应用名称 */
@@ -5078,6 +5083,13 @@ declare namespace initialfantasy {
             deleteDataEvent: Function;
             /** 新建数据事件，参数1：是否克隆 */
             createDataEvent: Function;
+        }
+        /** ApplicationElement编辑服务映射 */
+        class ApplicationElementEditServiceMapping extends ibas.BOEditServiceMapping {
+            /** 构造函数 */
+            constructor();
+            /** 创建服务实例 */
+            create(): ibas.IService<ibas.IBOEditServiceCaller<bo.ApplicationElement>>;
         }
     }
 }
@@ -5140,7 +5152,7 @@ declare namespace initialfantasy {
 declare namespace initialfantasy {
     namespace app {
         /** 应用-应用程序模块 */
-        class ApplicationModuleEditApp extends ibas.BOEditApplication<IApplicationModuleEditView, bo.ApplicationModule> {
+        class ApplicationModuleEditApp extends ibas.BOEditService<IApplicationModuleEditView, bo.ApplicationModule> {
             /** 应用标识 */
             static APPLICATION_ID: string;
             /** 应用名称 */
@@ -5171,6 +5183,13 @@ declare namespace initialfantasy {
             deleteDataEvent: Function;
             /** 新建数据事件，参数1：是否克隆 */
             createDataEvent: Function;
+        }
+        /** ApplicationModule编辑服务映射 */
+        class ApplicationModuleEditServiceMapping extends ibas.BOEditServiceMapping {
+            /** 构造函数 */
+            constructor();
+            /** 创建服务实例 */
+            create(): ibas.IService<ibas.IBOEditServiceCaller<bo.ApplicationModule>>;
         }
     }
 }
@@ -5299,7 +5318,7 @@ declare namespace initialfantasy {
 declare namespace initialfantasy {
     namespace app {
         /** 应用-应用程序平台 */
-        class ApplicationPlatformEditApp extends ibas.BOEditApplication<IApplicationPlatformEditView, bo.ApplicationPlatform> {
+        class ApplicationPlatformEditApp extends ibas.BOEditService<IApplicationPlatformEditView, bo.ApplicationPlatform> {
             /** 应用标识 */
             static APPLICATION_ID: string;
             /** 应用名称 */
@@ -5330,6 +5349,13 @@ declare namespace initialfantasy {
             deleteDataEvent: Function;
             /** 新建数据事件，参数1：是否克隆 */
             createDataEvent: Function;
+        }
+        /** ApplicationPlatform编辑服务映射 */
+        class ApplicationPlatformEditServiceMapping extends ibas.BOEditServiceMapping {
+            /** 构造函数 */
+            constructor();
+            /** 创建服务实例 */
+            create(): ibas.IService<ibas.IBOEditServiceCaller<bo.ApplicationPlatform>>;
         }
     }
 }
@@ -5458,7 +5484,7 @@ declare namespace initialfantasy {
 declare namespace initialfantasy {
     namespace app {
         /** 应用-业务对象检索条件 */
-        class BOCriteriaEditApp extends ibas.BOEditApplication<IBOCriteriaEditView, bo.BOCriteria> {
+        class BOCriteriaEditApp extends ibas.BOEditService<IBOCriteriaEditView, bo.BOCriteria> {
             /** 应用标识 */
             static APPLICATION_ID: string;
             /** 应用名称 */
@@ -5503,6 +5529,13 @@ declare namespace initialfantasy {
             editCriteriaEvent: Function;
             /** 编辑目标名称 */
             target: string;
+        }
+        /** BOCriteria编辑服务映射 */
+        class BOCriteriaEditServiceMapping extends ibas.BOEditServiceMapping {
+            /** 构造函数 */
+            constructor();
+            /** 创建服务实例 */
+            create(): ibas.IService<ibas.IBOEditServiceCaller<bo.BOCriteria>>;
         }
     }
 }
@@ -5631,7 +5664,7 @@ declare namespace initialfantasy {
 declare namespace initialfantasy {
     namespace app {
         /** 应用-业务对象筛选 */
-        class BOFilteringEditApp extends ibas.BOEditApplication<IBOFilteringEditView, bo.BOFiltering> {
+        class BOFilteringEditApp extends ibas.BOEditService<IBOFilteringEditView, bo.BOFiltering> {
             /** 应用标识 */
             static APPLICATION_ID: string;
             /** 应用名称 */
@@ -5680,6 +5713,13 @@ declare namespace initialfantasy {
             removeBOFilteringConditionEvent: Function;
             /** 显示数据 */
             showBOFilteringConditions(datas: bo.BOFilteringCondition[]): void;
+        }
+        /** BOFiltering编辑服务映射 */
+        class BOFilteringEditServiceMapping extends ibas.BOEditServiceMapping {
+            /** 构造函数 */
+            constructor();
+            /** 创建服务实例 */
+            create(): ibas.IService<ibas.IBOEditServiceCaller<bo.BOFiltering>>;
         }
     }
 }
@@ -5808,7 +5848,7 @@ declare namespace initialfantasy {
 declare namespace initialfantasy {
     namespace app {
         /** 应用-业务对象信息 */
-        class BOInformationEditApp extends ibas.BOEditApplication<IBOInformationEditView, bo.BOInformation> {
+        class BOInformationEditApp extends ibas.BOEditService<IBOInformationEditView, bo.BOInformation> {
             /** 应用标识 */
             static APPLICATION_ID: string;
             /** 应用名称 */
@@ -5879,6 +5919,13 @@ declare namespace initialfantasy {
             showBORelationships(datas: bo.BORelationship[]): void;
             /** 编辑业务对象信息 */
             editBOInformationEvent: Function;
+        }
+        /** BOInformation编辑服务映射 */
+        class BOInformationEditServiceMapping extends ibas.BOEditServiceMapping {
+            /** 构造函数 */
+            constructor();
+            /** 创建服务实例 */
+            create(): ibas.IService<ibas.IBOEditServiceCaller<bo.BOInformation>>;
         }
     }
 }
@@ -6200,7 +6247,7 @@ declare namespace initialfantasy {
 declare namespace initialfantasy {
     namespace app {
         /** 应用-组织 */
-        class OrganizationEditApp extends ibas.BOEditApplication<IOrganizationEditView, bo.Organization> {
+        class OrganizationEditApp extends ibas.BOEditService<IOrganizationEditView, bo.Organization> {
             /** 应用标识 */
             static APPLICATION_ID: string;
             /** 应用名称 */
@@ -6234,6 +6281,13 @@ declare namespace initialfantasy {
             createDataEvent: Function;
             /** 选择父项资源事件 */
             chooseParentEvent: Function;
+        }
+        /** Organization编辑服务映射 */
+        class OrganizationEditServiceMapping extends ibas.BOEditServiceMapping {
+            /** 构造函数 */
+            constructor();
+            /** 创建服务实例 */
+            create(): ibas.IService<ibas.IBOEditServiceCaller<bo.Organization>>;
         }
     }
 }
@@ -6331,7 +6385,7 @@ declare namespace initialfantasy {
             run(): void;
             run(data: bo.Organization): void;
             /** 查询数据 */
-            protected fetchData(criteria: ibas.ICriteria | string): void;
+            protected fetchData(criteria: ibas.ICriteria | string | number): void;
         }
         /** 视图-组织 */
         interface IOrganizationViewView extends ibas.IBOViewView {
@@ -6408,7 +6462,7 @@ declare namespace initialfantasy {
 declare namespace initialfantasy {
     namespace app {
         /** 应用-系统权限 */
-        class PrivilegeEditApp extends ibas.BOEditApplication<IPrivilegeEditView, bo.Privilege> {
+        class PrivilegeEditApp extends ibas.BOEditService<IPrivilegeEditView, bo.Privilege> {
             /** 应用标识 */
             static APPLICATION_ID: string;
             /** 应用名称 */
@@ -6455,6 +6509,13 @@ declare namespace initialfantasy {
             chooseModuleEvent: Function;
             /** 选择目标标识 */
             chooseTargetEvent: Function;
+        }
+        /** Privilege编辑服务映射 */
+        class PrivilegeEditServiceMapping extends ibas.BOEditServiceMapping {
+            /** 构造函数 */
+            constructor();
+            /** 创建服务实例 */
+            create(): ibas.IService<ibas.IBOEditServiceCaller<bo.Privilege>>;
         }
     }
 }
@@ -7115,7 +7176,7 @@ declare namespace initialfantasy {
 declare namespace initialfantasy {
     namespace app {
         /** 应用-用户 */
-        class UserEditApp extends ibas.BOEditApplication<IUserEditView, bo.User> {
+        class UserEditApp extends ibas.BOEditService<IUserEditView, bo.User> {
             /** 应用标识 */
             static APPLICATION_ID: string;
             /** 应用名称 */
@@ -7164,6 +7225,13 @@ declare namespace initialfantasy {
             addUserSpecificEvent: Function;
             /** 移除用户特征 */
             removeUserSpecificEvent: Function;
+        }
+        /** User编辑服务映射 */
+        class UserEditServiceMapping extends ibas.BOEditServiceMapping {
+            /** 构造函数 */
+            constructor();
+            /** 创建服务实例 */
+            create(): ibas.IService<ibas.IBOEditServiceCaller<bo.User>>;
         }
     }
 }
@@ -7303,7 +7371,7 @@ declare namespace initialfantasy {
             run(): void;
             run(data: bo.User): void;
             /** 查询数据 */
-            protected fetchData(criteria: ibas.ICriteria | string): void;
+            protected fetchData(criteria: ibas.ICriteria | string | number): void;
         }
         /** 视图-用户 */
         interface IUserViewView extends ibas.IBOViewView {
@@ -7488,7 +7556,7 @@ declare namespace initialfantasy {
 declare namespace initialfantasy {
     namespace app {
         /** 编辑应用-身份 */
-        class IdentityEditApp extends ibas.BOEditApplication<IIdentityEditView, bo.Identity> {
+        class IdentityEditApp extends ibas.BOEditService<IIdentityEditView, bo.Identity> {
             /** 应用标识 */
             static APPLICATION_ID: string;
             /** 应用名称 */
@@ -7518,6 +7586,13 @@ declare namespace initialfantasy {
             deleteDataEvent: Function;
             /** 新建数据事件，参数1：是否克隆 */
             createDataEvent: Function;
+        }
+        /** Identity编辑服务映射 */
+        class IdentityEditServiceMapping extends ibas.BOEditServiceMapping {
+            /** 构造函数 */
+            constructor();
+            /** 创建服务实例 */
+            create(): ibas.IService<ibas.IBOEditServiceCaller<bo.Identity>>;
         }
     }
 }
@@ -7649,7 +7724,7 @@ declare namespace initialfantasy {
 declare namespace initialfantasy {
     namespace app {
         /** 编辑应用-用户身份 */
-        class UserIdentityEditApp extends ibas.BOEditApplication<IUserIdentityEditView, bo.UserIdentity> {
+        class UserIdentityEditApp extends ibas.BOEditService<IUserIdentityEditView, bo.UserIdentity> {
             /** 应用标识 */
             static APPLICATION_ID: string;
             /** 应用名称 */
@@ -7686,6 +7761,13 @@ declare namespace initialfantasy {
             /** 选择身份事件 */
             chooseIdentityEvent: Function;
         }
+        /** UserIdentity编辑服务映射 */
+        class UserIdentityEditServiceMapping extends ibas.BOEditServiceMapping {
+            /** 构造函数 */
+            constructor();
+            /** 创建服务实例 */
+            create(): ibas.IService<ibas.IBOEditServiceCaller<bo.UserIdentity>>;
+        }
     }
 }
 /**
@@ -7705,7 +7787,7 @@ declare namespace initialfantasy {
 declare namespace initialfantasy {
     namespace app {
         /** 列表应用-业务对象日志 */
-        class BOLogstListApp extends ibas.BOListApplication<IBOLogstListView, bo.BOLogst> {
+        class BOLogstListApp extends ibas.BOQueryApplication<IBOLogstListView> {
             /** 应用标识 */
             static APPLICATION_ID: string;
             /** 应用名称 */
@@ -7718,19 +7800,54 @@ declare namespace initialfantasy {
             protected viewShowed(): void;
             /** 查询数据 */
             protected fetchData(criteria: ibas.ICriteria): void;
-            /** 新建数据 */
-            protected newData(): void;
+            /** 当前选中的业务对象 */
+            private selectedBO;
+            /** 选择业务对象 */
+            private selectedBusinessObject;
+            /** 查询日志数据 */
+            private fetchLogsts;
+            /** 删除日志数据，参数：保留天数（0表示清理全部） */
+            private deleteLogsts;
             /** 查看数据，参数：目标数据 */
-            protected viewData(data: bo.BOLogst): void;
+            private viewData;
         }
         /** 视图-业务对象日志 */
-        interface IBOLogstListView extends ibas.IBOListView {
-            /** 删除数据 */
-            deleteDataEvent: Function;
-            /** 显示数据 */
-            showData(datas: bo.BOLogst[]): void;
-            /** 查看数据 */
+        interface IBOLogstListView extends ibas.IBOQueryView {
+            /** 选择业务对象信息，参数：选择对象 */
+            selectedBusinessObjectEvent: Function;
+            /** 查询日志数据（分页），参数：查询条件 */
+            fetchLogstEvent: Function;
+            /** 删除日志数据，参数：保留天数（0表示清理全部） */
+            deleteLogstEvent: Function;
+            /** 显示业务对象信息 */
+            showBusinessObjects(datas: bo.BOInformation[]): void;
+            /** 显示数据，参数：数据集合，是否追加 */
+            showData(datas: bo.BOLogst[], append: boolean): void;
+            /** 查询日志数据，参数：业务对象编码 */
+            queryLogsts(boCode: string): void;
+            /** 查看数据，参数：目标数据，模式 */
             viewDataEvent: Function;
+        }
+    }
+}
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+declare namespace initialfantasy {
+    namespace app {
+        class BOLogstFunc extends ibas.ModuleFunction {
+            /** 功能标识 */
+            static FUNCTION_ID: string;
+            /** 功能名称 */
+            static FUNCTION_NAME: string;
+            /** 构造函数 */
+            constructor();
+            /** 默认功能 */
+            default(): ibas.IApplication<ibas.IView>;
         }
     }
 }
@@ -7827,14 +7944,14 @@ declare namespace initialfantasy {
             protected viewShowed(): void;
             /** 运行服务 */
             runService(contract: ibas.IBOServiceContract): void;
-            /** 关联的数据 */
-            private bo;
+            /** 当前版本日志（虚拟，不入库） */
+            private currentLogst;
             private viewData;
         }
         /** 业务对象日志服务-视图 */
         interface IBOLogstServiceView extends ibas.IView {
             /** 显示关联对象 */
-            showBusinessObject(bo: ibas.IBusinessObject): void;
+            showBusinessObject(description: string): void;
             /** 显示已存在日志 */
             showLogsts(datas: bo.BOLogst[]): void;
             /** 查看数据 */
